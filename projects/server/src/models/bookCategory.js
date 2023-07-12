@@ -14,6 +14,12 @@ module.exports = (sequelize, Sequelize) => {
     {
       paranoid: true,
       primaryKey: ["CategoryId", "BookId"], // Define the composite key
+      indexes: [
+        {
+          unique: true,
+          fields: ["CategoryId", "BookId"], // Add the unique constraint on the composite key
+        },
+      ],
     }
   );
   return Book;
