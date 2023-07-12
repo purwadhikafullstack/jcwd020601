@@ -1,21 +1,15 @@
 import axios from "axios";
 import logo from "./logo.svg";
 import "./App.css";
+import routes from "./routes/routes";
+import { Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 
 function App() {
-	const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
 
-	useEffect(() => {
-		(async () => {
-			const { data } = await axios.get(
-				`${process.env.REACT_APP_API_BASE_URL}/greetings`
-			);
-			setMessage(data?.message || "");
-		})();
-	}, []);
-	return <HomePage />;
+  return <Routes>{routes.map((val) => val)}</Routes>;
 }
 
 export default App;

@@ -31,14 +31,14 @@ const adminController = {
   },
   editAdmin: async (req, res) => {
     try {
-      const { role, email, phone, password, branchId } = req.body;
+      const { role, email, phone, password, BranchId } = req.body;
       await db.Admin.update(
         {
           role,
           email,
           phone,
           password,
-          branchId,
+          BranchId,
         },
         {
           where: {
@@ -61,13 +61,13 @@ const adminController = {
   },
   insertAdmin: async (req, res) => {
     try {
-      const { role, email, phone, password, branchId } = req.body;
+      const { role, email, phone, password, BranchId } = req.body;
       await db.Admin.create({
         role,
         email,
         phone,
         password,
-        branchId,
+        BranchId,
       });
       return await db.Admin.findAll().then((result) => {
         res.send(result);

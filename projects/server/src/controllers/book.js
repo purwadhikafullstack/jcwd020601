@@ -44,8 +44,8 @@ const bookController = {
         dimension,
         price,
         rating,
-        categoryId,
-        discountId,
+        CategoryId,
+        DiscountId,
       } = req.body;
       await db.Book.update(
         {
@@ -61,8 +61,8 @@ const bookController = {
           dimension,
           price,
           rating,
-          categoryId,
-          discountId,
+          CategoryId,
+          DiscountId,
         },
         {
           where: {
@@ -98,8 +98,8 @@ const bookController = {
         dimension,
         price,
         rating,
-        categoryId,
-        discountId,
+        CategoryId,
+        DiscountId,
       } = req.body;
       await db.Book.create({
         title,
@@ -114,8 +114,8 @@ const bookController = {
         dimension,
         price,
         rating,
-        categoryId,
-        discountId,
+        CategoryId,
+        DiscountId,
       });
       return await db.Book.findAll().then((result) => {
         res.send(result);

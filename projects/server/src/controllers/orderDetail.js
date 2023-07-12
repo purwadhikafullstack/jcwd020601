@@ -31,9 +31,9 @@ const orderDetailController = {
   },
   editOrderDetail: async (req, res) => {
     try {
-      const { quantity, price, orderId, stockId } = req.body;
+      const { quantity, price, OrderId, StockId } = req.body;
       await db.OrderDetail.update(
-        { quantity, price, orderId, stockId },
+        { quantity, price, OrderId, StockId },
         {
           where: {
             id: req.params.id,
@@ -55,12 +55,12 @@ const orderDetailController = {
   },
   insertOrderDetail: async (req, res) => {
     try {
-      const { quantity, price, orderId, stockId } = req.body;
+      const { quantity, price, OrderId, StockId } = req.body;
       await db.OrderDetail.create({
         quantity,
         price,
-        orderId,
-        stockId,
+        OrderId,
+        StockId,
       });
       return await db.OrderDetail.findAll().then((result) => {
         res.send(result);
