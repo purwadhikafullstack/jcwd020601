@@ -22,7 +22,7 @@ const routes = [
   //     }
   //   ></Route>,
   <Route
-    path="/HomePage"
+    path="/home"
     element={
       //   <ProtectedPage needLogin={true}>
       <HomePage />
