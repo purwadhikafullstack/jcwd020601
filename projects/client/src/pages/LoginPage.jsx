@@ -22,6 +22,33 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useCallback } from "react";
 
 export default function LoginPage() {
+  async function submitLogin() {
+    try {
+      let token;
+      await api.post("/auth/v2", login).then((res) => {
+        localStorage.setItem("auth", JSON.stringify(res.data.token));
+        token = res.data.token;
+        toast({
+          title: res.data.message,
+          description: "Login Successful.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+      await api.get("/auth/v3?token=" + token).then((res) => {
+        console.log(res.data);
+        dispatch({
+          type: "login",
+          payload: res.data,
+        });
+      });
+      nav("/home");
+    } catch (err) {
+      console.log(err);
+      alert(err.message);
+    }
+  }
   const inputa = document.getElementById("password");
 
   const handleKeyPress = useCallback((event) => {
@@ -32,7 +59,7 @@ export default function LoginPage() {
 
   const [seePassword, setSeePassword] = useState(false);
   const toast = useToast();
-  //   const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const [login, setLogin] = useState({
     emus: "",
     password: "",
@@ -48,7 +75,7 @@ export default function LoginPage() {
   }
   return (
     <>
-      <Center flexDir={"column"} gap={"10px"} pt={"10px"} w={"100%"}>
+      <Center flexDir={"column"} gap={"10px"} pt={"30px"} w={"100%"}>
         <Center flexDir={"column"} gap={"80px"}>
           <Center flexDir={"column"}>
             <Center gap={"12px"} flexDir={"column"}>
@@ -57,12 +84,12 @@ export default function LoginPage() {
                 flexDir={"column"}
                 border={"1px solid #dbdbdb"}
               >
-                <Img src={logo} width={"300px"}></Img>
-                <Center
-                  gap={"10px"}
-                  flexDir={"column"}
-                  className="loginpage-inputs"
-                >
+                <Img
+                  src={logo}
+                  width={"300px"}
+                  className="loginpage-logo"
+                ></Img>
+                <Center flexDir={"column"} className="loginpage-inputs">
                   <Input
                     fontSize={"12px"}
                     bgColor={"#fafafa"}
@@ -98,36 +125,9 @@ export default function LoginPage() {
                     borderRadius={"10px"}
                     id="submit"
                     w={"100%"}
-                    colorScheme="cyan"
-                    onClick={async () => {
-                      try {
-                        let token;
-                        await api.post("/auth/v2", login).then((res) => {
-                          localStorage.setItem(
-                            "auth",
-                            JSON.stringify(res.data.token)
-                          );
-                          token = res.data.token;
-                          toast({
-                            title: res.data.message,
-                            description: "Login Successful.",
-                            status: "success",
-                            duration: 5000,
-                            isClosable: true,
-                          });
-                        });
-                        await api.get("/auth/v3?token=" + token).then((res) => {
-                          console.log(res.data);
-                          //   dispatch({
-                          //     type: "login",
-                          //     payload: res.data,
-                          //   });
-                        });
-                        nav("/homepage");
-                      } catch (err) {
-                        console.log(err);
-                        alert(err.message);
-                      }
+                    colorScheme="facebook"
+                    onClick={() => {
+                      submitLogin();
                     }}
                   >
                     Login
@@ -170,7 +170,7 @@ export default function LoginPage() {
                   Don't Have An Account?{" "}
                   <Flex
                     fontSize={"14px"}
-                    color={"#0bc5ea"}
+                    color={"#0060ae"}
                     cursor={"pointer"}
                     onClick={() => nav("/register")}
                   >
@@ -221,7 +221,7 @@ export default function LoginPage() {
               Locations
             </Flex>
             <Flex fontSize={"13px"} cursor={"pointer"}>
-              Instagram Lite
+              Gramedia Lite
             </Flex>
             <Flex fontSize={"13px"} cursor={"pointer"}>
               Contact Uploading & Non-Users
@@ -233,7 +233,7 @@ export default function LoginPage() {
         </Center>
         <Center color={"blackAlpha.700"} gap={"20px"}>
           <Flex fontSize={"13px"}> English</Flex>
-          <Flex fontSize={"13px"}> © 2023 Instagram from Meta</Flex>
+          <Flex fontSize={"13px"}> © 2023 Gramedia from Meta</Flex>
         </Center>
       </Center>
     </>

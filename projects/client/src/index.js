@@ -5,13 +5,26 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter } from "react-router-dom";
+import { configureStore } from "@reduxjs/toolkit";
+import AuthProvider from "./hoc/authprovider";
+import { Provider } from "react-redux";
+import rootReducer from "./redux/store";
 
+const store = configureStore({
+  reducer: {
+    login: rootReducer,
+  },
+});
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ChakraProvider>
       <BrowserRouter>
-        <App />
+        <Provider store={store}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </Provider>
       </BrowserRouter>
     </ChakraProvider>
   </React.StrictMode>

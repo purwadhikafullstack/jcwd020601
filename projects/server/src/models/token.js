@@ -16,9 +16,18 @@ module.exports = (sequelize, Sequelize) => {
       status: {
         type: Sequelize.ENUM("LOGIN", "FORGOT-PASSWORD", "VERIFY-ACCOUNT"),
       },
+      UserId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      AdminId: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
     }, // nama nama kolom
     {
       paranoid: true,
+      primaryKey: ["UserId", "AdminId"],
     } // options
   );
 

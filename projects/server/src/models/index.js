@@ -83,6 +83,8 @@ db.StockHistory.belongsTo(db.Stock, {
 });
 db.User.hasOne(db.Token);
 db.Token.belongsTo(db.User);
+db.Admin.hasOne(db.Token);
+db.Token.belongsTo(db.Admin);
 db.Book.hasOne(db.Stock);
 db.Stock.belongsTo(db.Book);
 

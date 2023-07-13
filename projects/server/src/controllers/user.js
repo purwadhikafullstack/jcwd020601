@@ -1,12 +1,38 @@
 const db = require("../models");
-const Sequelize = require("sequelize");
-const { Op } = db.Sequelize;
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const private_key = process.env.private_key;
+const { nanoid } = require("nanoid");
 const moment = require("moment");
+const url = process.env.URL;
+const urlVerify = process.env.URLverify;
+const opencage = require("opencage-api-client");
+
+const mailer = require("../lib/mailer");
+const image_url = process.env.URL_IMAGE;
+const sharp = require("sharp");
+const { Op } = db.Sequelize;
+
 const userController = {
   getAll: async (req, res) => {
     try {
       const User = await db.User.findAll();
       return res.send(User);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getByEmail: async (req, res) => {
+    try {
+      const user = await db.User.findOne({
+        where: {
+          email: req.query.email,
+        },
+      });
+      return res.send(user);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -124,6 +150,244 @@ const userController = {
       return res.status(500).send({
         error: err.message,
       });
+    }
+  },
+  register: async (req, res) => {
+    try {
+      const { first_name, last_name, email, username, password } = req.body;
+      const hashPassword = await bcrypt.hash(password, 10);
+      console.log(hashPassword);
+
+      await db.User.create({
+        first_name,
+        last_name,
+        email,
+        username,
+        password: hashPassword,
+      });
+
+      return res.send({
+        message: "register berhasil",
+        private_key,
+      });
+    } catch (err) {
+      console.log(err.message);
+      return res.status(500).send(err.message);
+    }
+  },
+  loginV2: async (req, res) => {
+    try {
+      const { emus, password } = req.body;
+      const user = await db.User.findOne({
+        where: {
+          [Op.or]: {
+            email: emus,
+            username: emus,
+          },
+        },
+      });
+
+      if (user) {
+        const match = await bcrypt.compare(password, user.dataValues.password);
+        if (match) {
+          const payload = user.dataValues.id;
+          const generateToken = nanoid();
+          console.log(nanoid());
+          const token = await db.Token.create({
+            expired: moment().add(1, "days").format(),
+            token: generateToken,
+            UserId: JSON.stringify(payload),
+            status: "LOGIN",
+          });
+
+          console.log(token);
+          //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6InVkaW4yIiwiYWRkcmVzcyI6ImJhdGFtIiwicGFzc3dvcmQiOiIkMmIkMTAkWUkvcTl2dVdTOXQ0R1V5a1lxRGtTdWJnTTZwckVnRm9nZzJLSi9FckFHY3NXbXBRUjFOcXEiLCJlbWFpbCI6InVkaW4yQG1haWwuY29tIiwiY3JlYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwiZGVsZXRlZEF0IjpudWxsLCJDb21wYW55SWQiOm51bGwsImlhdCI6MTY4NDQ4MzQ4NSwiZXhwIjoxNjg0NDgzNTQ1fQ.Ye5l7Yml1TBWUgV7eUnhTVQjdT3frR9E0HXNxO7bTXw;
+
+          return res.send({
+            message: "login berhasil",
+            // value: user,
+            token: token.dataValues.token,
+          });
+        } else {
+          throw new Error("wrong password");
+        }
+      } else {
+        throw new Error("user not found");
+      }
+    } catch (err) {
+      console.log(err.message);
+      return res
+        .status(500)
+        .send({ message: "Email or password is incorrect" });
+    }
+  },
+  getByToken: async (req, res, next) => {
+    try {
+      let { token } = req.query;
+      console.log(token);
+      let payload = await db.Token.findOne({
+        where: {
+          token,
+          expired: {
+            [db.Sequelize.Op.gte]: moment().format(),
+          },
+          valid: true,
+        },
+      });
+      if (!payload) {
+        throw new Error("token has expired");
+      }
+      console.log(payload.dataValues);
+      let user = await db.User.findOne({
+        where: {
+          id: payload.dataValues.UserId,
+        },
+      });
+      delete user.dataValues.password;
+
+      req.user = user;
+      next();
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send({ message: err.message });
+    }
+  },
+  getUserByToken: async (req, res) => {
+    res.status(200).send(req.user);
+  },
+  generateTokenByEmail: async (req, res) => {
+    try {
+      const { email } = req.query;
+      const user = await db.User.findOne({
+        where: {
+          email,
+        },
+      });
+
+      if (user.dataValues) {
+        await db.Token.update(
+          {
+            valid: false,
+          },
+          {
+            where: {
+              UserId: JSON.stringify(user.dataValues.id),
+              Status: "FORGOT-PASSWORD",
+            },
+          }
+        );
+        const generateToken = nanoid();
+        const token = await db.Token.create({
+          expired: moment().add(60, "minutes").format(),
+          token: generateToken,
+          UserId: JSON.stringify(user.dataValues.id),
+          status: "FORGOT-PASSWORD",
+        });
+
+        mailer({
+          subject: "Hello, " + user.dataValues.username,
+          to: user.dataValues.email,
+          text: `Hello ${
+            user.dataValues.username
+          } We received a request to reset the password to your Gramedia account, please click the link to reset your password
+          \n${
+            url + token.dataValues.token
+          } \nand do not share this link to anyone else`,
+        });
+
+        return res.send({ message: "please check your email" });
+      } else {
+        throw new Error("user is not found");
+      }
+    } catch (err) {
+      res.status(500).send({ message: err.message });
+    }
+  },
+  generateTokenByEmailVerify: async (req, res) => {
+    try {
+      const { email } = req.query;
+      const user = await db.User.findOne({
+        where: {
+          email,
+        },
+      });
+
+      if (user.dataValues) {
+        await db.Token.update(
+          {
+            valid: false,
+          },
+          {
+            where: {
+              UserId: JSON.stringify({ id: user.dataValues.id }),
+              Status: "VERIFY-ACCOUNT",
+            },
+          }
+        );
+        const generateToken = nanoid();
+        const token = await db.Token.create({
+          expired: moment().add(60, "minutes").format(),
+          token: generateToken,
+          UserId: user.dataValues.id,
+          status: "VERIFY-ACCOUNT",
+        });
+
+        mailer({
+          subject: "hello," + user.dataValues.username,
+          to: user.dataValues.email,
+          text: `hello ${
+            user.dataValues.username
+          } We received a request to reset the password to your Gramedia account, please click the link to reset your password${
+            urlVerify + token.dataValues.token
+          } and do not share this link to anyone else`,
+        });
+
+        return res.send({ message: "please check your email" });
+      } else {
+        throw new Error("user is not found");
+      }
+    } catch (err) {
+      res.status(500).send({ message: err.message });
+    }
+  },
+
+  changePassword: async (req, res) => {
+    try {
+      console.log(req.body);
+      const { token } = req.query;
+      const { password } = req.body.user;
+      const { id } = req.user;
+      console.log(id);
+
+      const hashPassword = await bcrypt.hash(password, 10);
+
+      await db.User.update(
+        {
+          password: hashPassword,
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+
+      await db.Token.update(
+        {
+          valid: false,
+        },
+        {
+          where: {
+            token,
+          },
+        }
+      );
+
+      res.send({
+        message: "password successfully updated",
+      });
+    } catch (err) {
+      res.status(500).send({ message: err.message });
     }
   },
 };
