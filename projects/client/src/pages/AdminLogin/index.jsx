@@ -11,11 +11,11 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import logo from "../assets/images/gramedia-icon-2.png";
+import logo from "../../assets/images/gramedia-icon-2.png";
 
 import { useNavigate } from "react-router-dom";
 import { BsApple, BsFacebook, BsGift, BsGoogle } from "react-icons/bs";
-import { api } from "../api/api";
+import { api } from "../../api/api";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -25,7 +25,7 @@ export default function LoginPage() {
   async function submitLogin() {
     try {
       let token;
-      await api.post("/auth/v2", login).then((res) => {
+      await api.post("/admin/v2", login).then((res) => {
         localStorage.setItem("auth", JSON.stringify(res.data.token));
         token = res.data.token;
         toast({
@@ -36,14 +36,14 @@ export default function LoginPage() {
           isClosable: true,
         });
       });
-      await api.get("/auth/v3?token=" + token).then((res) => {
+      await api.get("/admin/v3?token=" + token).then((res) => {
         console.log(res.data);
         dispatch({
           type: "login",
           payload: res.data,
         });
       });
-      nav("/home");
+      nav("/adminpage");
     } catch (err) {
       console.log(err);
       alert(err.message);
@@ -61,7 +61,7 @@ export default function LoginPage() {
   const toast = useToast();
   const dispatch = useDispatch();
   const [login, setLogin] = useState({
-    emus: "",
+    email: "",
     password: "",
   });
   const nav = useNavigate();
@@ -87,8 +87,16 @@ export default function LoginPage() {
                 <Img
                   src={logo}
                   width={"300px"}
-                  className="loginpage-logo"
+                  className="adminloginpage-logo"
                 ></Img>
+                <Center
+                  pb={"30px"}
+                  fontSize={"28px"}
+                  fontWeight={"700"}
+                  color={"#385898"}
+                >
+                  Login Admin
+                </Center>
                 <Center flexDir={"column"} className="loginpage-inputs">
                   <Input
                     fontSize={"12px"}
@@ -96,7 +104,7 @@ export default function LoginPage() {
                     placeholder="Email or Phone Number"
                     pl={"15px"}
                     onChange={inputHandler}
-                    id="emus"
+                    id="email"
                   ></Input>
                   <InputGroup>
                     <Input
@@ -145,10 +153,7 @@ export default function LoginPage() {
                       bgColor={"blackAlpha.300"}
                     ></Flex>
                   </Center>
-                  <Flex gap={"10px"}>
-                    <Icon as={BsFacebook} fontSize={"24px"}></Icon>
-                    <Flex alignItems={"center"}>Login With Facebook</Flex>
-                  </Flex>
+
                   <Flex
                     pb={"24px"}
                     fontSize={"12px"}

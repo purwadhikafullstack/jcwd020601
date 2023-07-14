@@ -5,11 +5,24 @@ import routes from "./routes/routes";
 import { Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
+import Loading from "./components/Loading";
 
 function App() {
-  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
-  return <Routes>{routes.map((val) => val)}</Routes>;
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, [isLoading]);
+  return (
+    <>
+      {isLoading ? (
+        <Loading /> // <Loading />
+      ) : (
+        <Routes>{routes.map((val) => val)}</Routes>
+      )}
+    </>
+  );
 }
-
 export default App;
