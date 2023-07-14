@@ -19,7 +19,9 @@ const routes = [
     }
   ></Route>,
   <Route
+
     path="/Register"
+
     element={
       <ProtectedPage guestOnly={true}>
         <RegisterPage />
