@@ -398,7 +398,7 @@ const userController = {
       console.log(id);
       await db.User.update(
         {
-          status: "verified",
+          verified: true,
         },
         {
           where: {
