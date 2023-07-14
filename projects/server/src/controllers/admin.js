@@ -275,22 +275,22 @@ const adminController = {
         throw new Error("token has expired");
       }
       console.log(payload.dataValues);
-      let user = await db.User.findOne({
+      let admin = await db.Admin.findOne({
         where: {
-          id: payload.dataValues.UserId,
+          id: payload.dataValues.AdminId,
         },
       });
-      delete user.dataValues.password;
+      delete admin.dataValues.password;
 
-      req.user = user;
+      req.admin = admin;
       next();
     } catch (err) {
       console.log(err);
       return res.status(500).send({ message: err.message });
     }
   },
-  getUserByToken: async (req, res) => {
-    res.status(200).send(req.user);
+  getAdminByToken: async (req, res) => {
+    res.status(200).send(req.admin);
   },
 };
 

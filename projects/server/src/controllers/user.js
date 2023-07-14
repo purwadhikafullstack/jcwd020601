@@ -271,7 +271,7 @@ const userController = {
           },
           {
             where: {
-              UserId: JSON.stringify(user.dataValues.id),
+              UserId: user.dataValues.id,
               Status: "FORGOT-PASSWORD",
             },
           }
@@ -319,7 +319,7 @@ const userController = {
           },
           {
             where: {
-              UserId: JSON.stringify({ id: user.dataValues.id }),
+              UserId: user.dataValues.id,
               Status: "VERIFY-ACCOUNT",
             },
           }
@@ -337,12 +337,12 @@ const userController = {
           to: user.dataValues.email,
           text: `hello ${
             user.dataValues.username
-          } We received a request to reset the password to your Gramedia account, please click the link to reset your password${
+          } We received a request to verify the account to your Gramedia account, please click the link below to verify your account \n${
             urlVerify + token.dataValues.token
-          } and do not share this link to anyone else`,
+          } \nand do not share this link to anyone else`,
         });
 
-        return res.send({ message: "please check your email" });
+        return res.send({ message: "Please check your email" });
       } else {
         throw new Error("user is not found");
       }
@@ -385,6 +385,41 @@ const userController = {
 
       res.send({
         message: "password successfully updated",
+      });
+    } catch (err) {
+      res.status(500).send({ message: err.message });
+    }
+  },
+  verifyEmail: async (req, res) => {
+    try {
+      console.log(req.body);
+      const { token } = req.query;
+      const { id } = req.user;
+      console.log(id);
+      await db.User.update(
+        {
+          status: "verified",
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+
+      await db.Token.update(
+        {
+          valid: false,
+        },
+        {
+          where: {
+            token,
+          },
+        }
+      );
+
+      res.send({
+        message: "Email Verified",
       });
     } catch (err) {
       res.status(500).send({ message: err.message });

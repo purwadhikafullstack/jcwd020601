@@ -23,8 +23,33 @@ import {
 import { BsChevronDown, BsCart } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
 import logo from "../assets/images/gramedia-icon-2.png";
+import { useDispatch, useSelector } from "react-redux";
+import { api } from "../api/api";
 
 export default function Navbar() {
+  const userSelector = useSelector((state) => state.login.auth);
+  const dispatch = useDispatch();
+  async function logout() {
+    window.location.reload();
+    localStorage.removeItem("auth");
+    dispatch({
+      type: "logout",
+    });
+    return;
+  }
+  async function verify() {
+    await api
+      .get("auth/generate-token/emailverify", {
+        params: {
+          email: userSelector.email,
+        },
+      })
+      .then(
+        (res) => alert(res.data.message)
+        // /forgot-password/token
+        //    console.log(res.data));
+      );
+  }
   return (
     <Flex justifyContent={"space-around"} alignItems={"center"} height={"65px"}>
       <Box>
@@ -122,6 +147,8 @@ export default function Navbar() {
                 Halo, User
                 <Box>Full Name</Box>
                 <Box>Address</Box>
+                <Box onClick={logout}>Logout</Box>
+                <Box onClick={verify}>Verify Account</Box>
               </Flex>
               <Center
                 bgColor={"blue.400"}

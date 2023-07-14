@@ -6,6 +6,8 @@ import AdminLogin from "../pages/AdminLogin";
 import ProtectedPage from "./protectedpage";
 import ForgotPassword, { RequestForgotPassword } from "../pages/ForgetPassword";
 import AuthProvider from "../hoc/authprovider";
+import AdminPage from "../pages/AdminPage";
+import VerifyEmail from "../pages/VerifyPage";
 
 const routes = [
   <Route
@@ -25,9 +27,9 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/HomePage"
+    path="/Home"
     element={
-      <ProtectedPage>
+      <ProtectedPage needLogin={true}>
         <HomePage />
       </ProtectedPage>
     }
@@ -49,10 +51,26 @@ const routes = [
     }
   ></Route>,
   <Route
+    path="/verify/:token"
+    element={
+      <ProtectedPage>
+        <VerifyEmail />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
     path="/admin"
     element={
-      <ProtectedPage needLoginAdmin={true}>
+      <ProtectedPage guestOnly={true}>
         <AdminLogin />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/adminpage"
+    element={
+      <ProtectedPage needLoginAdmin={true}>
+        <AdminPage />
       </ProtectedPage>
     }
   ></Route>,

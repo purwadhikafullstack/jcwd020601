@@ -4,6 +4,7 @@ const adminController = require("../controllers").adminController;
 //get
 
 router.get("/", adminController.getAll);
+router.get("/v3", adminController.getByToken, adminController.getAdminByToken);
 router.get("/:id", adminController.getById);
 router.post("/v1", adminController.insertAdmin);
 router.post("/", adminController.register);

@@ -9,7 +9,7 @@ module.exports = (sequelize, Sequelize) => {
       username: Sequelize.STRING,
       password: Sequelize.TEXT,
       birthday: Sequelize.DATE,
-      status: Sequelize.ENUM("Not-Verified", "Verfified"),
+      status: Sequelize.ENUM("Not-Verified", "Verified"),
       avatar_url: Sequelize.TEXT,
     },
     {

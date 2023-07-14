@@ -22,10 +22,25 @@ export default function AuthProvider({ children }) {
         .catch((err) => {
           return err.message;
         });
+
+      const admin = await api
+        .get("/admin/v3?token=" + token)
+        .then((res) => {
+          return res.data;
+        })
+        .catch((err) => {
+          return err.message;
+        });
+
       if (user?.email) {
         dispatch({
           type: "login",
           payload: user,
+        });
+      } else if (admin?.email) {
+        dispatch({
+          type: "login",
+          payload: admin,
         });
       } else {
         dispatch({
