@@ -58,26 +58,28 @@ const userController = {
   editUser: async (req, res) => {
     try {
       const {
-        name,
+        first_name,
+        last_name,
         email,
         phone,
         gender,
         username,
         password,
-        birthday,
-        status,
+        birthdate,
+        verified,
         avatar_url,
       } = req.body;
       await db.User.update(
         {
-          name,
+          first_name,
+          last_name,
           email,
           phone,
           gender,
           username,
           password,
-          birthday,
-          status,
+          birthdate,
+          verified,
           avatar_url,
         },
         {
@@ -102,25 +104,27 @@ const userController = {
   insertUser: async (req, res) => {
     try {
       const {
-        name,
+        first_name,
+        last_name,
         email,
         phone,
         gender,
         username,
         password,
-        birthday,
-        status,
+        birthdate,
+        verified,
         avatar_url,
       } = req.body;
       await db.User.create({
-        name,
+        first_name,
+        last_name,
         email,
         phone,
         gender,
         username,
         password,
-        birthday,
-        status,
+        birthdate,
+        verified,
         avatar_url,
       });
       return await db.User.findAll().then((result) => {
