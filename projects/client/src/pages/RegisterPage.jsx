@@ -12,18 +12,81 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import logo from "../assets/images/gramedia-icon-2.png";
-
+import jwt_decode from "jwt-decode";
 import * as Yup from "yup";
 import YupPassword from "yup-password";
 import { Formik, useFormik } from "formik";
 import { BsApple, BsFacebook, BsGift, BsGoogle } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { useDispatch } from "react-redux";
 
 export default function RegisterPage() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    /*global google*/
+    google.accounts.id.initialize({
+      client_id:
+        "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
+      callback: handleCallbackResponse,
+    });
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+      theme: "outline",
+      size: "medium",
+      width: "300",
+    });
+    google.accounts.id.prompt();
+  });
+  async function handleCallbackResponse(response) {
+    var userObject = jwt_decode(response.credential);
+    console.log(userObject);
+    try {
+      let token;
+      const loggingIn = await api
+        .post("/auth/v3", userObject)
+        .then((res) => {
+          localStorage.setItem("auth", JSON.stringify(res.data.token));
+          token = res.data.token;
+          toast({
+            title: res.data.message,
+            description: "Login Successful.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          return res.data.message;
+        })
+        .catch((err) => {
+          console.log(err);
+          toast({
+            position: "top",
+            title: "Login ERROR",
+            description: err.response.data.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        });
+      console.log(loggingIn);
+      if (loggingIn) {
+        await api.get("/auth/v3?token=" + token).then((res) => {
+          console.log(res.data);
+          dispatch({
+            type: "login",
+            payload: res.data,
+          });
+        });
+        nav("/home");
+      }
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.message);
+    }
+    // document.getElementById("signInDiv").hidden = true;
+  }
   YupPassword(Yup);
   const [seepassword, setSeePassword] = useState(false);
   const [seepassword2, setSeePassword2] = useState(false);
@@ -89,16 +152,21 @@ export default function RegisterPage() {
         alert("Email has been used");
         formik.values.email = "";
       } else {
-        await api.post("/auth", account).then(() => {
-          toast({
-            title: "Account created.",
-            description: "We've created your account for you.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
+        await api
+          .post("/auth", account)
+          .then(() => {
+            toast({
+              title: "Account created.",
+              description: "We've created your account for you.",
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+            nav("/login");
+          })
+          .catch((err) => {
+            alert(err.response.data.message);
           });
-          nav("/login");
-        });
       }
     },
   });
@@ -140,23 +208,7 @@ export default function RegisterPage() {
                 >
                   Sign up to buy books from Gramedia
                 </Center>
-                <Center pb={"20px"}>
-                  <Button
-                    color={"white"}
-                    borderRadius={"10px"}
-                    w={"300px"}
-                    colorScheme="facebook"
-                    gap={"5px"}
-                  >
-                    <Icon as={BsFacebook} fontSize={"20px"}></Icon>
-                    <Flex alignItems={"center"}>Login With Facebook</Flex>
-                  </Button>
-                </Center>
-                <Center gap={"10px"}>
-                  <Flex h={"2px"} w={"130px"} bgColor={"blackAlpha.300"}></Flex>
-                  <Flex>OR</Flex>
-                  <Flex h={"2px"} w={"130px"} bgColor={"blackAlpha.300"}></Flex>
-                </Center>
+
                 <Center gap={"10px"} flexDir={"column"} pt={"10px"} w={"300px"}>
                   <Input
                     w={"300px"}
@@ -256,6 +308,21 @@ export default function RegisterPage() {
                       ></IconButton>
                     </InputRightElement>
                   </InputGroup>
+                  <Center gap={"10px"}>
+                    <Flex
+                      h={"2px"}
+                      w={"130px"}
+                      bgColor={"blackAlpha.300"}
+                    ></Flex>
+                    <Flex>OR</Flex>
+                    <Flex
+                      h={"2px"}
+                      w={"130px"}
+                      bgColor={"blackAlpha.300"}
+                    ></Flex>
+                  </Center>
+                  <div id="signInDiv"></div>
+
                   <Flex w={"100%"} fontSize={"12px"} color={"red"}>
                     {formik.errors.password2}
                   </Flex>
@@ -301,6 +368,7 @@ export default function RegisterPage() {
                       Sign Up
                     </Button>
                   </Flex>
+
                   <Flex pb={"15px"} fontSize={"12px"}>
                     <span>
                       Already Registered?&nbsp;

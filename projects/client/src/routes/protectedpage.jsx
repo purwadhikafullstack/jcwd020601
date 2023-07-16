@@ -10,6 +10,7 @@ export default function ProtectedPage({
   guestOnly = false,
   needLogin = false,
   needLoginAdmin = false,
+  needSuperAdminLogin = false,
   noFooter = false,
 }) {
   const userSelector = useSelector((state) => state.login.auth);
@@ -21,11 +22,9 @@ export default function ProtectedPage({
     }, 500);
   }, [isLoading]);
   useEffect(() => {
-    // alert("hello");
     setIsLoading(true);
 
     setTimeout(() => {
-      //   alert(isLoading);
       setIsLoading(false);
     }, 500);
     if (redirect) {
@@ -34,6 +33,8 @@ export default function ProtectedPage({
     } else if (guestOnly && userSelector?.email && !userSelector.role) {
       console.log(userSelector);
       return nav("/home");
+    } else if (needSuperAdminLogin && userSelector?.role != "Super-Admin") {
+      return nav("/admin");
     } else if (
       guestOnly &&
       userSelector?.email &&

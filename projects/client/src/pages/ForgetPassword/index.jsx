@@ -8,6 +8,7 @@ import {
   InputRightElement,
   IconButton,
   Img,
+  useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Formik, useFormik } from "formik";
@@ -20,6 +21,7 @@ import { useDispatch } from "react-redux";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import logo from "../../assets/images/gramedia-icon-2.png";
 import YupPassword from "yup-password";
+import React from "react";
 
 export default function ForgotPassword() {
   YupPassword(Yup);
@@ -188,21 +190,49 @@ export default function ForgotPassword() {
 }
 
 export function RequestForgotPassword() {
+  const toastIdRef = React.useRef();
+
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const nav = useNavigate();
+  const [cooldown, setCooldown] = useState(false);
+  function nothing() {}
 
   async function forgotPassword() {
-    await axios
-      .get("http://localhost:2000/auth/generate-token/email", {
-        params: {
-          email,
-        },
-      })
-      .then(
-        (res) => alert(res.data.message)
-        // /forgot-password/token
-        //    console.log(res.data));
-      );
+    setCooldown(true);
+    try {
+      await axios
+        .get("http://localhost:2000/auth/generate-token/email", {
+          params: {
+            email,
+          },
+        })
+        .then((res) => {
+          toast({
+            id: "err",
+            position: "top",
+            title: "Success",
+            description: res.data.message,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        });
+    } catch (err) {
+      await toast.closeAll();
+      toastIdRef.current = toast({
+        id: "err",
+        position: "top",
+        title: "Recover Password ERROR",
+        description: err.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+    setTimeout(() => {
+      setCooldown(false);
+    }, 500);
   }
   return (
     <Box w="100vw" h="100vh">
@@ -226,6 +256,7 @@ export function RequestForgotPassword() {
               Email
             </Box>
             <Input
+              placeholder="Email"
               id="email"
               onChange={(e) => {
                 setEmail(e.target.value);
@@ -238,7 +269,7 @@ export function RequestForgotPassword() {
             bgColor="#035EBF"
             color={"white"}
             w="100%"
-            onClick={forgotPassword}
+            onClick={cooldown ? nothing : forgotPassword}
           >
             Send
           </Button>

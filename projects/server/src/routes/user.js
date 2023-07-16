@@ -20,6 +20,8 @@ router.get("/:id", userController.getById);
 router.post("/v1", userController.insertUser);
 router.post("/", userController.register);
 router.post("/v2", userController.loginV2);
+router.post("/v3", userController.loginV3);
+
 router.patch("/v4", userController.getByToken, userController.changePassword);
 router.patch("/v2/:id", userController.editUser);
 router.delete("/v3/:id", userController.deleteUser);

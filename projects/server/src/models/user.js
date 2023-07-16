@@ -9,10 +9,9 @@ module.exports = (sequelize, Sequelize) => {
       gender: Sequelize.STRING,
       username: Sequelize.STRING,
       password: Sequelize.TEXT,
-
       birthdate: Sequelize.DATE,
       verified: Sequelize.BOOLEAN(false, true),
-
+      registered_by: Sequelize.ENUM("Google", "Register"),
       avatar_url: Sequelize.TEXT,
     },
     {
