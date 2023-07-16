@@ -42,8 +42,12 @@ export default function LoginPage() {
           type: "login",
           payload: res.data,
         });
+        if ((res.data.role = "Super-Admin")) {
+          nav("/superadminpage");
+        } else {
+          nav("/adminpage");
+        }
       });
-      nav("/adminpage");
     } catch (err) {
       console.log(err);
       alert(err.message);
@@ -105,9 +109,11 @@ export default function LoginPage() {
                     pl={"15px"}
                     onChange={inputHandler}
                     id="email"
+                    w={"300px"}
                   ></Input>
                   <InputGroup>
                     <Input
+                      w={"300px"}
                       id="password"
                       onKeyPress={handleKeyPress}
                       onChange={inputHandler}
@@ -140,19 +146,6 @@ export default function LoginPage() {
                   >
                     Login
                   </Button>
-                  <Center gap={"10px"}>
-                    <Flex
-                      h={"2px"}
-                      w={"130px"}
-                      bgColor={"blackAlpha.300"}
-                    ></Flex>
-                    <Flex>OR</Flex>
-                    <Flex
-                      h={"2px"}
-                      w={"130px"}
-                      bgColor={"blackAlpha.300"}
-                    ></Flex>
-                  </Center>
 
                   <Flex
                     pb={"24px"}

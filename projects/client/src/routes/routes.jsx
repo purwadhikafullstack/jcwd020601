@@ -19,9 +19,7 @@ const routes = [
     }
   ></Route>,
   <Route
-
     path="/Register"
-
     element={
       <ProtectedPage guestOnly={true}>
         <RegisterPage />
@@ -72,6 +70,14 @@ const routes = [
     path="/adminpage"
     element={
       <ProtectedPage needLoginAdmin={true}>
+        <AdminPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/superadminpage"
+    element={
+      <ProtectedPage needLoginSuperAdmin={true}>
         <AdminPage />
       </ProtectedPage>
     }

@@ -160,20 +160,28 @@ const userController = {
     try {
       const { first_name, last_name, email, username, password } = req.body;
       const hashPassword = await bcrypt.hash(password, 10);
-      console.log(hashPassword);
-
-      await db.User.create({
-        first_name,
-        last_name,
-        email,
-        username,
-        password: hashPassword,
+      const User = await db.User.findOne({
+        where: {
+          email,
+        },
       });
+      if (User) {
+        throw new Error("Email has been used");
+      } else {
+        await db.User.create({
+          first_name,
+          last_name,
+          email,
+          username,
+          password: hashPassword,
+          registered_by: "Register",
+        });
 
-      return res.send({
-        message: "register berhasil",
-        private_key,
-      });
+        return res.send({
+          message: "register berhasil",
+          private_key,
+        });
+      }
     } catch (err) {
       console.log(err.message);
       return res.status(500).send(err.message);
@@ -225,6 +233,90 @@ const userController = {
         .send({ message: "Email or password is incorrect" });
     }
   },
+  loginV3: async (req, res) => {
+    try {
+      let create = {};
+      let newToken = "";
+      const { email, family_name, given_name, name } = req.body;
+      const checkUser = await db.User.findOne({
+        where: {
+          email,
+          registered_by: "Register",
+        },
+      });
+      if (checkUser) {
+        throw new Error(
+          "Email has been Registered in this website, please sign in with the email and password that was registered"
+        );
+      } else {
+        const user = await db.User.findOne({
+          where: {
+            email,
+            registered_by: "Google",
+          },
+        });
+
+        if (!user) {
+          create = await db.User.create({
+            first_name: given_name,
+            last_name: family_name,
+            email,
+            username: name,
+            registered_by: "Google",
+          });
+        }
+
+        if (create || user) {
+          const payload = user?.dataValues.id || create.dataValues.id;
+          const generateToken = nanoid();
+          // console.log(nanoid());
+          const findToken = await db.Token.findOne({
+            where: {
+              UserId: payload,
+              Status: "LOGIN",
+            },
+          });
+          if (findToken) {
+            await db.Token.update(
+              {
+                token: generateToken,
+              },
+              {
+                where: {
+                  UserId: payload,
+                  Status: "LOGIN",
+                },
+              }
+            );
+            newToken = generateToken;
+          } else {
+            const token = await db.Token.create({
+              expired: moment().add(1, "days").format(),
+              token: generateToken,
+              UserId: payload,
+              status: "LOGIN",
+            });
+            newToken = generateToken;
+          }
+
+          // console.log(token);
+          //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6InVkaW4yIiwiYWRkcmVzcyI6ImJhdGFtIiwicGFzc3dvcmQiOiIkMmIkMTAkWUkvcTl2dVdTOXQ0R1V5a1lxRGtTdWJnTTZwckVnRm9nZzJLSi9FckFHY3NXbXBRUjFOcXEiLCJlbWFpbCI6InVkaW4yQG1haWwuY29tIiwiY3JlYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwiZGVsZXRlZEF0IjpudWxsLCJDb21wYW55SWQiOm51bGwsImlhdCI6MTY4NDQ4MzQ4NSwiZXhwIjoxNjg0NDgzNTQ1fQ.Ye5l7Yml1TBWUgV7eUnhTVQjdT3frR9E0HXNxO7bTXw;
+
+          return res.send({
+            message: "login berhasil",
+            // value: user,
+            token: newToken,
+          });
+        } else {
+          throw new Error("wrong password");
+        }
+      }
+    } catch (err) {
+      console.log(err.message);
+      // console.log(dataValues);
+      return res.status(500).send({ message: err.message });
+    }
+  },
   getByToken: async (req, res, next) => {
     try {
       let { token } = req.query;
@@ -268,7 +360,7 @@ const userController = {
         },
       });
 
-      if (user.dataValues) {
+      if (user?.dataValues) {
         await db.Token.update(
           {
             valid: false,
@@ -299,11 +391,12 @@ const userController = {
           } \nand do not share this link to anyone else`,
         });
 
-        return res.send({ message: "please check your email" });
+        return res.send({ message: "Please check your email" });
       } else {
-        throw new Error("user is not found");
+        throw new Error("User is not found");
       }
     } catch (err) {
+      console.log(err);
       res.status(500).send({ message: err.message });
     }
   },
