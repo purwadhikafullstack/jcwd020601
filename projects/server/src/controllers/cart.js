@@ -31,12 +31,12 @@ const cartController = {
   },
   editCart: async (req, res) => {
     try {
-      const { quantity, userId, stockId } = req.body;
+      const { quantity, UserId, StockId } = req.body;
       await db.Cart.update(
         {
           quantity,
-          userId,
-          stockId,
+          UserId,
+          StockId,
         },
         {
           where: {
@@ -59,11 +59,11 @@ const cartController = {
   },
   insertCart: async (req, res) => {
     try {
-      const { quantity, userId, stockId } = req.body;
+      const { quantity, UserId, StockId } = req.body;
       await db.Cart.create({
         quantity,
-        userId,
-        stockId,
+        UserId,
+        StockId,
       });
       return await db.Cart.findAll().then((result) => {
         res.send(result);

@@ -31,14 +31,14 @@ const stockHistoryController = {
   },
   editStockHistory: async (req, res) => {
     try {
-      const { stockIn, stockOut, totalBefore, totalAfter, stockId } = req.body;
+      const { stockIn, stockOut, totalBefore, totalAfter, StockId } = req.body;
       await db.StockHistory.update(
         {
           stockIn,
           stockOut,
           totalBefore,
           totalAfter,
-          stockId,
+          StockId,
         },
         {
           where: {
@@ -61,13 +61,13 @@ const stockHistoryController = {
   },
   insertStockHistory: async (req, res) => {
     try {
-      const { stockIn, stockOut, totalBefore, totalAfter, stockId } = req.body;
+      const { stockIn, stockOut, totalBefore, totalAfter, StockId } = req.body;
       await db.StockHistory.create({
         stockIn,
         stockOut,
         totalBefore,
         totalAfter,
-        stockId,
+        StockId,
       });
       return await db.StockHistory.findAll().then((result) => {
         res.send(result);

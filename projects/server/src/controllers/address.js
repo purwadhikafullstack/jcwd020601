@@ -39,7 +39,7 @@ const addressController = {
         isMain,
         latitude,
         longitude,
-        userId,
+        UserId,
       } = req.body;
       await db.Address.update(
         {
@@ -50,7 +50,7 @@ const addressController = {
           isMain,
           latitude,
           longitude,
-          userId,
+          UserId,
         },
         {
           where: {
@@ -81,7 +81,7 @@ const addressController = {
         isMain,
         latitude,
         longitude,
-        userId,
+        UserId,
       } = req.body;
       await db.Address.create({
         province,
@@ -91,7 +91,7 @@ const addressController = {
         isMain,
         latitude,
         longitude,
-        userId,
+        UserId,
       });
       return await db.Address.findAll().then((result) => {
         res.send(result);

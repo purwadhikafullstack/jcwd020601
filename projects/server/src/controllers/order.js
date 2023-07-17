@@ -31,16 +31,16 @@ const orderController = {
   },
   editOrder: async (req, res) => {
     try {
-      const { payment_url, status, total, userId, branchId, addressId } =
+      const { payment_url, status, total, UserId, BranchId, AddressId } =
         req.body;
       await db.Order.update(
         {
           payment_url,
           status,
           total,
-          userId,
-          branchId,
-          addressId,
+          UserId,
+          BranchId,
+          AddressId,
         },
         {
           where: {
@@ -63,15 +63,15 @@ const orderController = {
   },
   insertOrder: async (req, res) => {
     try {
-      const { payment_url, status, total, userId, branchId, addressId } =
+      const { payment_url, status, total, UserId, BranchId, AddressId } =
         req.body;
       await db.Order.create({
         payment_url,
         status,
         total,
-        userId,
-        branchId,
-        addressId,
+        UserId,
+        BranchId,
+        AddressId,
       });
       return await db.Order.findAll().then((result) => {
         res.send(result);

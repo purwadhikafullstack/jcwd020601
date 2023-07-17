@@ -1,9 +1,8 @@
 module.exports = (sequelize, Sequelize) => {
-  const Stock = sequelize.define(
-    "Stocks",
+  const Book = sequelize.define(
+    "BooksCategories",
     {
-      stock: Sequelize.INTEGER,
-      BranchId: {
+      CategoryId: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -14,14 +13,16 @@ module.exports = (sequelize, Sequelize) => {
     },
     {
       paranoid: true,
-      primaryKey: ["BranchId", "BookId"], // Define the composite key
+
+      primaryKey: ["CategoryId", "BookId"], // Define the composite key
+
       indexes: [
         {
           unique: true,
-          fields: ["BranchId", "BookId"], // Add the unique constraint on the composite key
+          fields: ["CategoryId", "BookId"], // Add the unique constraint on the composite key
         },
       ],
     }
   );
-  return Stock;
+  return Book;
 };

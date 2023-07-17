@@ -32,41 +32,7 @@ import {
 import { BsChevronDown, BsCart } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
 import logo from "../assets/images/gramedia-icon-2.png";
-import { useState } from "react";
 
-export default function Navbar() {
-	const [large] = useMediaQuery("(min-width: 768px)");
-
-	return (
-		<>
-			<Box
-				justifyContent={"center"}
-				alignItems={"center"}
-				display={"flex"}
-				flexDirection={{
-					base: "column",
-					sm: "column",
-					md: "row",
-					lg: "row",
-					xl: "row",
-				}}
-				height={
-					large
-						? { base: "170px", sm: "170px", md: "85px" }
-						: { base: "50px", sm: "50px" }
-				}
-				boxShadow="0 0 25px skyblue"
-				position={"fixed"}
-				top={0}
-				width={"100%"}
-				zIndex={1000}
-				bg={{ base: "white", md: "white" }}
-				py={large ? "0px" : "60px"}
-			>
-				{large ? <DesktopNav /> : <MobileNav />}
-			</Box>
-		</>
-	);
 }
 
 function MobileNav() {

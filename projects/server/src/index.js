@@ -9,12 +9,13 @@ const routes = require("./routes");
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(
-	cors({
-		origin: [
-			process.env.WHITELISTED_DOMAIN &&
-				process.env.WHITELISTED_DOMAIN.split(","),
-		],
-	})
+  cors()
+  //   {
+  //   origin: [
+  //     process.env.WHITELISTED_DOMAIN &&
+  //       process.env.WHITELISTED_DOMAIN.split(","),
+  //   ],
+  // }
 );
 
 app.use(express.json());
@@ -83,9 +84,9 @@ app.use("/voucher", routes.voucherRoutes);
 //#endregion
 
 app.listen(PORT, (err) => {
-	if (err) {
-		console.log(`ERROR: ${err}`);
-	} else {
-		console.log(`APP RUNNING at ${PORT} ✅`);
-	}
+  if (err) {
+    console.log(`ERROR: ${err}`);
+  } else {
+    console.log(`APP RUNNING at ${PORT} ✅`);
+  }
 });

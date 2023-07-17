@@ -31,12 +31,12 @@ const stockController = {
   },
   editStock: async (req, res) => {
     try {
-      const { stock, branchId, bookId } = req.body;
+      const { stock, BranchId, BookId } = req.body;
       await db.Stock.update(
         {
           stock,
-          branchId,
-          bookId,
+          BranchId,
+          BookId,
         },
         {
           where: {
@@ -59,11 +59,11 @@ const stockController = {
   },
   insertStock: async (req, res) => {
     try {
-      const { stock, branchId, bookId } = req.body;
+      const { stock, BranchId, BookId } = req.body;
       await db.Stock.create({
         stock,
-        branchId,
-        bookId,
+        BranchId,
+        BookId,
       });
       return await db.Stock.findAll().then((result) => {
         res.send(result);

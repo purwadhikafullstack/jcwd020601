@@ -31,7 +31,7 @@ const discountController = {
   },
   editDiscount: async (req, res) => {
     try {
-      const { title, discount, isPercent, start, end, branchId } = req.body;
+      const { title, discount, isPercent, start, end, BranchId } = req.body;
       await db.Discount.update(
         {
           title,
@@ -39,7 +39,7 @@ const discountController = {
           isPercent,
           start,
           end,
-          branchId,
+          BranchId,
         },
         {
           where: {
@@ -62,14 +62,14 @@ const discountController = {
   },
   insertDiscount: async (req, res) => {
     try {
-      const { title, discount, isPercent, start, end, branchId } = req.body;
+      const { title, discount, isPercent, start, end, BranchId } = req.body;
       await db.Discount.create({
         title,
         discount,
         isPercent,
         start,
         end,
-        branchId,
+        BranchId,
       });
       return await db.Discount.findAll().then((result) => {
         res.send(result);
