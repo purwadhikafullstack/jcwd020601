@@ -25,6 +25,7 @@ import { GoSearch } from "react-icons/go";
 import logo from "../assets/images/gramedia-icon-2.png";
 import { useDispatch, useSelector } from "react-redux";
 import { api } from "../api/api";
+import { useEffect } from "react";
 
 export default function Navbar() {
   const userSelector = useSelector((state) => state.login.auth);
@@ -50,6 +51,9 @@ export default function Navbar() {
         //    console.log(res.data));
       );
   }
+  useEffect(() => {
+    console.log(userSelector.username);
+  }, []);
   return (
     <Flex justifyContent={"space-around"} alignItems={"center"} height={"65px"}>
       <Box>
@@ -144,11 +148,11 @@ export default function Navbar() {
                 flexDir={"column"}
                 alignItems={"center"}
               >
-                Halo, User
-                <Box>Full Name</Box>
-                <Box>Address</Box>
-                <Box onClick={logout}>Logout</Box>
-                <Box onClick={verify}>Verify Account</Box>
+                Halo, {userSelector.username}
+                <MenuItem>Full Name</MenuItem>
+                <MenuItem>Address</MenuItem>
+                <MenuItem onClick={logout}>Logout</MenuItem>
+                <MenuItem onClick={verify}>Verify Account</MenuItem>
               </Flex>
               <Center
                 bgColor={"blue.400"}

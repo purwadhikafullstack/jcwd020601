@@ -238,79 +238,79 @@ const userController = {
       let create = {};
       let newToken = "";
       const { email, family_name, given_name, name } = req.body;
-      const checkUser = await db.User.findOne({
+      // const checkUser = await db.User.findOne({
+      //   where: {
+      //     email,
+      //     registered_by: "Register",
+      //   },
+      // });
+      // if (checkUser) {
+      //   throw new Error(
+      //     "Email has been Registered in this website, please sign in with the email and password that was registered"
+      //   );
+      // } else {
+      const user = await db.User.findOne({
         where: {
           email,
-          registered_by: "Register",
+          // registered_by: "Google",
         },
       });
-      if (checkUser) {
-        throw new Error(
-          "Email has been Registered in this website, please sign in with the email and password that was registered"
-        );
-      } else {
-        const user = await db.User.findOne({
+
+      if (!user) {
+        create = await db.User.create({
+          first_name: given_name,
+          last_name: family_name,
+          email,
+          username: name,
+          registered_by: "Google",
+        });
+      }
+
+      if (create || user) {
+        const payload = user?.dataValues.id || create.dataValues.id;
+        const generateToken = nanoid();
+        // console.log(nanoid());
+        const findToken = await db.Token.findOne({
           where: {
-            email,
-            registered_by: "Google",
+            UserId: payload,
+            Status: "LOGIN",
           },
         });
-
-        if (!user) {
-          create = await db.User.create({
-            first_name: given_name,
-            last_name: family_name,
-            email,
-            username: name,
-            registered_by: "Google",
-          });
-        }
-
-        if (create || user) {
-          const payload = user?.dataValues.id || create.dataValues.id;
-          const generateToken = nanoid();
-          // console.log(nanoid());
-          const findToken = await db.Token.findOne({
-            where: {
-              UserId: payload,
-              Status: "LOGIN",
-            },
-          });
-          if (findToken) {
-            await db.Token.update(
-              {
-                token: generateToken,
-              },
-              {
-                where: {
-                  UserId: payload,
-                  Status: "LOGIN",
-                },
-              }
-            );
-            newToken = generateToken;
-          } else {
-            const token = await db.Token.create({
-              expired: moment().add(1, "days").format(),
+        if (findToken) {
+          await db.Token.update(
+            {
               token: generateToken,
-              UserId: payload,
-              status: "LOGIN",
-            });
-            newToken = generateToken;
-          }
-
-          // console.log(token);
-          //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6InVkaW4yIiwiYWRkcmVzcyI6ImJhdGFtIiwicGFzc3dvcmQiOiIkMmIkMTAkWUkvcTl2dVdTOXQ0R1V5a1lxRGtTdWJnTTZwckVnRm9nZzJLSi9FckFHY3NXbXBRUjFOcXEiLCJlbWFpbCI6InVkaW4yQG1haWwuY29tIiwiY3JlYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwiZGVsZXRlZEF0IjpudWxsLCJDb21wYW55SWQiOm51bGwsImlhdCI6MTY4NDQ4MzQ4NSwiZXhwIjoxNjg0NDgzNTQ1fQ.Ye5l7Yml1TBWUgV7eUnhTVQjdT3frR9E0HXNxO7bTXw;
-
-          return res.send({
-            message: "login berhasil",
-            // value: user,
-            token: newToken,
-          });
+            },
+            {
+              where: {
+                UserId: payload,
+                Status: "LOGIN",
+              },
+            }
+          );
+          newToken = generateToken;
         } else {
-          throw new Error("wrong password");
+          const token = await db.Token.create({
+            expired: moment().add(1, "days").format(),
+            token: generateToken,
+            UserId: payload,
+            status: "LOGIN",
+          });
+          newToken = generateToken;
         }
+
+        // console.log(token);
+        //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6InVkaW4yIiwiYWRkcmVzcyI6ImJhdGFtIiwicGFzc3dvcmQiOiIkMmIkMTAkWUkvcTl2dVdTOXQ0R1V5a1lxRGtTdWJnTTZwckVnRm9nZzJLSi9FckFHY3NXbXBRUjFOcXEiLCJlbWFpbCI6InVkaW4yQG1haWwuY29tIiwiY3JlYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwiZGVsZXRlZEF0IjpudWxsLCJDb21wYW55SWQiOm51bGwsImlhdCI6MTY4NDQ4MzQ4NSwiZXhwIjoxNjg0NDgzNTQ1fQ.Ye5l7Yml1TBWUgV7eUnhTVQjdT3frR9E0HXNxO7bTXw;
+
+        return res.send({
+          message: "login berhasil",
+          // value: user,
+          token: newToken,
+        });
+      } else {
+        throw new Error("wrong password");
       }
+      // }
     } catch (err) {
       console.log(err.message);
       // console.log(dataValues);

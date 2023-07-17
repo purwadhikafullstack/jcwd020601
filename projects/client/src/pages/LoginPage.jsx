@@ -145,11 +145,7 @@ export default function LoginPage() {
                 flexDir={"column"}
                 border={"1px solid #dbdbdb"}
               >
-                <Img
-                  src={logo}
-                  width={"300px"}
-                  className="loginpage-logo"
-                ></Img>
+                <Img src={logo} width={"300px"} py={"40px"}></Img>
                 <Center flexDir={"column"} className="loginpage-inputs">
                   <Input
                     fontSize={"12px"}

@@ -13,13 +13,12 @@ import {
 import { useEffect, useState } from "react";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
-import { api } from "../../api/api";
-import "./index.css";
+import { api } from "../api/api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import logo from "../../assets/images/gramedia-icon-2.png";
+import logo from "../assets/images/gramedia-icon-2.png";
 import YupPassword from "yup-password";
 import React from "react";
 
@@ -217,6 +216,7 @@ export function RequestForgotPassword() {
             duration: 5000,
             isClosable: true,
           });
+          setEmail("");
         });
     } catch (err) {
       await toast.closeAll();
@@ -258,6 +258,7 @@ export function RequestForgotPassword() {
             <Input
               placeholder="Email"
               id="email"
+              value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
               }}
