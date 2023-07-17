@@ -28,11 +28,15 @@ export default function ProtectedPage({
       setIsLoading(false);
     }, 500);
     if (redirect) {
+      return nav("/login");
+    } else if (needLogin && !userSelector?.email) {
       console.log(userSelector.email);
       return nav("/login");
-    } else if (guestOnly && userSelector?.email && !userSelector.role) {
-      console.log(userSelector);
+    } else if (guestOnly && userSelector?.username && !userSelector.role) {
       return nav("/home");
+    } else if (needLoginAdmin && userSelector?.role != "Admin-Branch") {
+      console.log(userSelector);
+      return nav("/admin");
     } else if (needSuperAdminLogin && userSelector?.role != "Super-Admin") {
       return nav("/admin");
     } else if (
@@ -40,17 +44,14 @@ export default function ProtectedPage({
       userSelector?.email &&
       userSelector?.role == "Admin-Branch"
     ) {
-      console.log(userSelector.role);
       return nav("/adminpage");
-    } else if (needLoginAdmin && userSelector?.role != "Admin-Branch") {
-      console.log(userSelector);
-      return nav("/login");
     } else if (needLogin && userSelector?.role == "Admin-Branch") {
       console.log(userSelector.email);
       return nav("/adminpage");
-    } else if (needLogin && !userSelector?.email) {
-      console.log(userSelector.email);
-      return nav("/login");
+    } else if (needLogin && userSelector?.role == "Super-Admin") {
+      return nav("/superadminpage");
+    } else if (guestOnly && userSelector?.role == "Super-Admin") {
+      return nav("/superadminpage");
     }
   }, [children]);
   return (

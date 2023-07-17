@@ -1,13 +1,15 @@
 import { Route } from "react-router-dom";
-import LoginPage from "../pages/LoginPage";
-import HomePage from "../pages/HomePage";
-import RegisterPage from "../pages/RegisterPage";
 import AdminLogin from "../pages/AdminLogin";
-import ProtectedPage from "./protectedpage";
-import ForgotPassword, { RequestForgotPassword } from "../pages/ForgetPassword";
-import AuthProvider from "../hoc/authprovider";
 import AdminPage from "../pages/AdminPage";
+import ForgotPassword, {
+  RequestForgotPassword,
+} from "../pages/ForgetPassword.jsx";
+import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
+import RegisterPage from "../pages/RegisterPage";
 import VerifyEmail from "../pages/VerifyPage";
+import ProtectedPage from "./protectedpage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 const routes = [
   <Route
@@ -45,7 +47,7 @@ const routes = [
   <Route
     path="/forgot-password/:token"
     element={
-      <ProtectedPage guestOnly={true}>
+      <ProtectedPage>
         <ForgotPassword />
       </ProtectedPage>
     }
@@ -77,8 +79,24 @@ const routes = [
   <Route
     path="/superadminpage"
     element={
-      <ProtectedPage needLoginSuperAdmin={true}>
+      <ProtectedPage needSuperAdminLogin={true}>
         <AdminPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/superadminpage"
+    element={
+      <ProtectedPage needSuperAdminLogin={true}>
+        <AdminPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/:notfound"
+    element={
+      <ProtectedPage guestOnly={true}>
+        <NotFoundPage />
       </ProtectedPage>
     }
   ></Route>,

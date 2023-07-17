@@ -11,11 +11,11 @@ import {
   Box,
   useToast,
 } from "@chakra-ui/react";
-import logo from "../../assets/images/gramedia-icon-2.png";
+import logo from "../assets/images/gramedia-icon-2.png";
 
 import { useNavigate } from "react-router-dom";
 import { BsApple, BsFacebook, BsGift, BsGoogle } from "react-icons/bs";
-import { api } from "../../api/api";
+import { api } from "../api/api";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
