@@ -31,9 +31,10 @@ import {
 } from "@chakra-ui/icons";
 import { BsChevronDown, BsCart } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
+import { api } from "../api/api";
 import logo from "../assets/images/gramedia-icon-2.png";
 import { useState } from "react";
-
+import { useDispatch, useSelector } from "react-redux";
 export default function Navbar() {
   const [large] = useMediaQuery("(min-width: 768px)");
 
@@ -214,9 +215,32 @@ function MobileNav() {
 }
 
 function DesktopNav() {
+  const userSelector = useSelector((state) => state.login.auth);
+  const dispatch = useDispatch();
   const [trans, setTrans] = useState(true);
   function handleTrans() {
     setTrans(!trans);
+  }
+  async function logout() {
+    window.location.reload();
+    localStorage.removeItem("auth");
+    dispatch({
+      type: "logout",
+    });
+    return;
+  }
+  async function verify() {
+    await api
+      .get("auth/generate-token/emailverify", {
+        params: {
+          email: userSelector.email,
+        },
+      })
+      .then(
+        (res) => alert(res.data.message)
+        // /forgot-password/token
+        //    console.log(res.data));
+      );
   }
   return (
     <>
@@ -420,6 +444,8 @@ function DesktopNav() {
                   Halo, User
                   <Box>Full Name</Box>
                   <Box>Address</Box>
+                  <Box onClick={logout}>Logout</Box>
+                  <Box onClick={verify}>Verify Account</Box>
                 </Flex>
                 <Center
                   bgColor={"blue.400"}
