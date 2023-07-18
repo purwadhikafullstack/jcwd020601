@@ -11,6 +11,7 @@ import RegisterPage from "../pages/RegisterPage";
 import VerifyEmail from "../pages/VerifyPage";
 import ProtectedPage from "./protectedpage";
 import NotFoundPage from "../pages/NotFoundPage";
+import ProfilePage from "../pages/ProfilePage";
 
 
 const routes = [
@@ -31,9 +32,9 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/Home"
+    path="/"
     element={
-      <ProtectedPage needLogin={true}>
+      <ProtectedPage>
         <HomePage />
       </ProtectedPage>
     }
@@ -91,6 +92,14 @@ const routes = [
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <AdminPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/profile"
+    element={
+      <ProtectedPage guestOnly={true}>
+        <ProfilePage />
       </ProtectedPage>
     }
   ></Route>,
