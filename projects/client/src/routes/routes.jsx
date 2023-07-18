@@ -5,12 +5,14 @@ import ForgotPassword, {
   RequestForgotPassword,
 } from "../pages/ForgetPassword.jsx";
 import HomePage from "../pages/HomePage";
+import CartPage from "../pages/CartPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import VerifyEmail from "../pages/VerifyPage";
 import ProtectedPage from "./protectedpage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage";
+
 
 const routes = [
   <Route
@@ -107,6 +109,14 @@ const routes = [
       <ProtectedPage guestOnly={true}>
         <NotFoundPage />
       </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/cart"
+    element={
+      //   <ProtectedPage needLogin={true}>
+      <CartPage />
+      //   </ProtectedPage>
     }
   ></Route>,
 ];
