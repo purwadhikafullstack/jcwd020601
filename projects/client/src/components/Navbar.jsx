@@ -35,6 +35,7 @@ import { api } from "../api/api";
 import logo from "../assets/images/gramedia-icon-2.png";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 export default function Navbar() {
   const [large] = useMediaQuery("(min-width: 768px)");
 
@@ -217,6 +218,7 @@ function MobileNav() {
 function DesktopNav() {
   const userSelector = useSelector((state) => state.login.auth);
   const dispatch = useDispatch();
+  const nav = useNavigate();
   const [trans, setTrans] = useState(true);
   function handleTrans() {
     setTrans(!trans);
@@ -227,6 +229,10 @@ function DesktopNav() {
     dispatch({
       type: "logout",
     });
+    return;
+  }
+  async function login() {
+    nav("/login");
     return;
   }
   async function verify() {
@@ -440,22 +446,16 @@ function DesktopNav() {
                   justifyContent={"center"}
                   flexDir={"column"}
                   alignItems={"center"}
+                  onClick={() => nav("/profile")}
                 >
-                  Halo, User
+                  Profile
                   <Box>Full Name</Box>
                   <Box>Address</Box>
-                  <Box onClick={logout}>Logout</Box>
+                  <Box onClick={userSelector.email ? logout : login}>
+                    {userSelector.email ? "Logout" : "Login"}
+                  </Box>
                   <Box onClick={verify}>Verify Account</Box>
                 </Flex>
-                <Center
-                  bgColor={"blue.400"}
-                  cursor={"pointer"}
-                  _hover={{
-                    opacity: "0.9",
-                  }}
-                >
-                  Full Profile
-                </Center>
               </Flex>
             </MenuList>
           </Menu>
