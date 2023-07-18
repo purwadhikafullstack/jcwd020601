@@ -81,12 +81,19 @@ db.Discount.belongsTo(db.Branch, {
 db.StockHistory.belongsTo(db.Stock, {
   foreignKey: "StockId",
 });
+
 db.User.hasOne(db.Token);
 db.Token.belongsTo(db.User);
+
+// db.Book.hasOne(db.Stock);
+db.Stock.belongsTo(db.Book),
+  {
+    foreignKey: "BookId",
+  };
+
 db.Admin.hasOne(db.Token);
 db.Token.belongsTo(db.Admin);
-db.Book.hasOne(db.Stock);
-db.Stock.belongsTo(db.Book);
+
 
 db.Cart.belongsTo(db.Stock, {
   foreignKey: "StockId",
