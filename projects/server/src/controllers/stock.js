@@ -5,7 +5,18 @@ const moment = require("moment");
 const stockController = {
   getAll: async (req, res) => {
     try {
-      const Stock = await db.Stock.findAll();
+      const Stock = await db.Stock.findAll({
+        include: [
+          {
+            model: db.Book,
+            required: true, // Inner join
+          },
+          {
+            model: db.Branch,
+            required: true, // Inner join
+          },
+        ],
+      });
       return res.send(Stock);
     } catch (err) {
       console.log(err.message);
@@ -20,6 +31,16 @@ const stockController = {
         where: {
           id: req.params.id,
         },
+        include: [
+          {
+            model: db.Book,
+            required: true, // Inner join
+          },
+          {
+            model: db.Branch,
+            required: true, // Inner join
+          },
+        ],
       });
       return res.send(Stock);
     } catch (err) {
@@ -31,25 +52,56 @@ const stockController = {
   },
   editStock: async (req, res) => {
     try {
-      const { stock, BranchId, BookId } = req.body;
-      await db.Stock.update(
-        {
-          stock,
-          BranchId,
-          BookId,
-        },
-        {
-          where: {
-            id: req.params.id,
-          },
-        }
+      // const { stock, BranchId, BookId } = req.body;
+      // await db.Stock.update(
+      //   {
+      //     stock,
+      //     BranchId,
+      //     BookId,
+      //   },
+      //   {
+      //     where: {
+      //       id: req.params.id,
+      //     },
+      //   }
+      // );
+
+      const stockUpdates = req.body.stockUpdates;
+
+      const updatedStocks = await Promise.all(
+        stockUpdates.map(async (update) => {
+          const { stock, BranchId, BookId, ...updateData } = update;
+
+          // Find the existing stock
+          const existingStock = await db.Stock.findOne({
+            where: {
+              BranchId,
+              BookId,
+            },
+          });
+
+          if (existingStock) {
+            // Update the stock with the values from the update
+            return existingStock.update(updateData);
+          } else {
+            // Create a new stock entry
+            return db.Stock.create({
+              stock,
+              BranchId,
+              BookId,
+              ...updateData,
+            });
+          }
+        })
       );
 
-      return await db.Stock.findOne({
-        where: {
-          id: req.params.id,
-        },
-      }).then((result) => res.send(result));
+      res.send(updatedStocks);
+
+      // return await db.Stock.findOne({
+      //   where: {
+      //     id: req.params.id,
+      //   },
+      // }).then((result) => res.send(result));
     } catch (err) {
       console.log(err.message);
       res.status(500).send({

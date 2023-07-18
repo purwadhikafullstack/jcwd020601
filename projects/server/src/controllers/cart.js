@@ -5,7 +5,20 @@ const moment = require("moment");
 const cartController = {
   getAll: async (req, res) => {
     try {
-      const Cart = await db.Cart.findAll();
+      const Cart = await db.Cart.findAll({
+        include: [
+          {
+            model: db.Stock,
+            required: true, // Inner join
+            include: [
+              {
+                model: db.Book,
+                required: true, // Inner join
+              },
+            ],
+          },
+        ],
+      });
       return res.send(Cart);
     } catch (err) {
       console.log(err.message);
@@ -16,10 +29,22 @@ const cartController = {
   },
   getById: async (req, res) => {
     try {
-      const Cart = await db.Cart.findOne({
+      const Cart = await db.Cart.findAll({
         where: {
-          id: req.params.id,
+          UserId: req.params.id,
         },
+        include: [
+          {
+            model: db.Stock,
+            required: true, // Inner join
+            include: [
+              {
+                model: db.Book,
+                required: true, // Inner join
+              },
+            ],
+          },
+        ],
       });
       return res.send(Cart);
     } catch (err) {
@@ -31,11 +56,10 @@ const cartController = {
   },
   editCart: async (req, res) => {
     try {
-      const { quantity, UserId, StockId } = req.body;
+      const { quantity, StockId } = req.body;
       await db.Cart.update(
         {
           quantity,
-          UserId,
           StockId,
         },
         {
@@ -60,11 +84,34 @@ const cartController = {
   insertCart: async (req, res) => {
     try {
       const { quantity, UserId, StockId } = req.body;
-      await db.Cart.create({
-        quantity,
-        UserId,
-        StockId,
+
+      const check = await db.Cart.findOne({
+        where: {
+          StockId,
+          UserId,
+        },
       });
+
+      if (check) {
+        await db.Cart.update(
+          {
+            quantity,
+          },
+          {
+            where: {
+              StockId,
+              UserId,
+            },
+          }
+        );
+      } else {
+        await db.Cart.create({
+          quantity,
+          UserId,
+          StockId,
+        });
+      }
+
       return await db.Cart.findAll().then((result) => {
         res.send(result);
       });
