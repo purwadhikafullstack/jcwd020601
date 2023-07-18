@@ -15,79 +15,17 @@ import logo from "../assets/images/gramedia-icon-2.png";
 
 import { useNavigate } from "react-router-dom";
 import { BsApple, BsFacebook, BsGift, BsGoogle } from "react-icons/bs";
-import { FcGoogle } from "react-icons/fc";
-import jwt_decode from "jwt-decode";
 import { api } from "../api/api";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useCallback } from "react";
 
 export default function LoginPage() {
-  useEffect(() => {
-    /*global google*/
-    google.accounts.id.initialize({
-      client_id:
-        "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
-      callback: handleCallbackResponse,
-    });
-    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-      theme: "outline",
-      size: "medium",
-      width: "300",
-    });
-    google.accounts.id.prompt();
-  });
-  async function handleCallbackResponse(response) {
-    var userObject = jwt_decode(response.credential);
-    console.log(userObject);
-    try {
-      let token;
-      const loggingIn = await api
-        .post("/auth/v3", userObject)
-        .then((res) => {
-          localStorage.setItem("auth", JSON.stringify(res.data.token));
-          token = res.data.token;
-          toast({
-            title: res.data.message,
-            description: "Login Successful.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
-          return res.data.message;
-        })
-        .catch((err) => {
-          console.log(err);
-          toast({
-            position: "top",
-            title: "Login ERROR",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-        });
-      if (loggingIn) {
-        await api.get("/auth/v3?token=" + token).then((res) => {
-          console.log(res.data);
-          dispatch({
-            type: "login",
-            payload: res.data,
-          });
-        });
-        nav("/home");
-      }
-    } catch (err) {
-      console.log(err);
-      alert(err.response.data.message);
-    }
-    // document.getElementById("signInDiv").hidden = true;
-  }
   async function submitLogin() {
     try {
       let token;
-      await api.post("/auth/v2", login).then((res) => {
+      await api.post("/admin/v2", login).then((res) => {
         localStorage.setItem("auth", JSON.stringify(res.data.token));
         token = res.data.token;
         toast({
@@ -98,19 +36,24 @@ export default function LoginPage() {
           isClosable: true,
         });
       });
-      await api.get("/auth/v3?token=" + token).then((res) => {
+      await api.get("/admin/v3?token=" + token).then((res) => {
         console.log(res.data);
         dispatch({
           type: "login",
           payload: res.data,
         });
+        if ((res.data.role = "Super-Admin")) {
+          nav("/superadminpage");
+        } else {
+          nav("/adminpage");
+        }
       });
-      nav("/home");
     } catch (err) {
       console.log(err);
       alert(err.message);
     }
   }
+  const inputa = document.getElementById("password");
 
   const handleKeyPress = useCallback((event) => {
     if (event.key === "Enter") {
@@ -122,18 +65,18 @@ export default function LoginPage() {
   const toast = useToast();
   const dispatch = useDispatch();
   const [login, setLogin] = useState({
-    emus: "",
+    email: "",
     password: "",
   });
   const nav = useNavigate();
   function inputHandler(input) {
+    console.log(inputa);
     const { value, id } = input.target;
     const tempobject = { ...login };
     tempobject[id] = value;
     setLogin(tempobject);
     console.log(tempobject);
   }
-
   return (
     <>
       <Center flexDir={"column"} gap={"10px"} pt={"30px"} w={"100%"}>
@@ -145,7 +88,19 @@ export default function LoginPage() {
                 flexDir={"column"}
                 border={"1px solid #dbdbdb"}
               >
-                <Img src={logo} width={"300px"} py={"40px"}></Img>
+                <Img
+                  src={logo}
+                  width={"300px"}
+                  className="adminloginpage-logo"
+                ></Img>
+                <Center
+                  pb={"30px"}
+                  fontSize={"28px"}
+                  fontWeight={"700"}
+                  color={"#385898"}
+                >
+                  Login Admin
+                </Center>
                 <Center flexDir={"column"} className="loginpage-inputs">
                   <Input
                     fontSize={"12px"}
@@ -153,10 +108,12 @@ export default function LoginPage() {
                     placeholder="Email or Phone Number"
                     pl={"15px"}
                     onChange={inputHandler}
-                    id="emus"
+                    id="email"
+                    w={"300px"}
                   ></Input>
                   <InputGroup>
                     <Input
+                      w={"300px"}
                       id="password"
                       onKeyPress={handleKeyPress}
                       onChange={inputHandler}
@@ -189,22 +146,7 @@ export default function LoginPage() {
                   >
                     Login
                   </Button>
-                  <Center gap={"10px"}>
-                    <Flex
-                      h={"2px"}
-                      w={"130px"}
-                      bgColor={"blackAlpha.300"}
-                    ></Flex>
-                    <Flex>OR</Flex>
-                    <Flex
-                      h={"2px"}
-                      w={"130px"}
-                      bgColor={"blackAlpha.300"}
-                    ></Flex>
-                  </Center>
-                  <Flex gap={"10px"}>
-                    <div id="signInDiv"></div>
-                  </Flex>
+
                   <Flex
                     pb={"24px"}
                     fontSize={"12px"}

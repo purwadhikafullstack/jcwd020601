@@ -91,6 +91,10 @@ db.Stock.belongsTo(db.Book),
     foreignKey: "BookId",
   };
 
+db.Admin.hasOne(db.Token);
+db.Token.belongsTo(db.Admin);
+
+
 db.Cart.belongsTo(db.Stock, {
   foreignKey: "StockId",
 });
