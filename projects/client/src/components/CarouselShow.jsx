@@ -64,7 +64,7 @@ export default function CarouselShow() {
       <Box
         display={"flex"}
         justifyContent={"center"}
-        mt={"140px"}
+        mt={"40px"}
         mb={"50px"}
         gap={"10px"}
       >
@@ -85,7 +85,6 @@ export default function CarouselShow() {
                 backgroundSize="cover"
                 borderRadius="10px"
                 objectFit={"contain"}
-                bgColor={"red"}
               >
                 <Image
                   src={url}

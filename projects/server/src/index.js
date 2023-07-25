@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(
   cors({
+    credentials: true,
     // origin: [
     //   process.env.WHITELISTED_DOMAIN &&
     //     process.env.WHITELISTED_DOMAIN.split(","),
@@ -18,7 +19,7 @@ app.use(
 );
 
 app.use(express.json());
-
+app.use("/avatar", express.static(`${__dirname}/public/avatar`));
 app.use("/auth", routes.userRoutes);
 app.use("/address", routes.addressRoutes);
 app.use("/admin", routes.adminRoutes);
