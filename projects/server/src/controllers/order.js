@@ -73,6 +73,7 @@ const orderController = {
         orderDetails, // [quantity, price, StockId]
       } = req.body;
 
+      // create order
       const order = await db.Order.create({
         payment_url,
         status,
@@ -82,7 +83,7 @@ const orderController = {
         AddressId,
       });
 
-      //post multiple orderdetails
+      //post multiple orderdetails from order
       await Promise.all(
         orderDetails.map(async (detail) => {
           const { quantity, price, StockId } = detail;
@@ -95,25 +96,22 @@ const orderController = {
         })
       );
 
+      // delete cart by UserId
       await db.Cart.destroy({
         where: {
-          id: UserId,
+          UserId: UserId,
         },
       });
 
-      // const data = await db.OrderDetail.findAll({
-      //   where: {
-      //     OrderId: order.id,
-      //   },
-      // });
-
-      //update multiple stocks
+      // update multiple bucket in stocks
       await Promise.all(
         orderDetails.map(async (detail) => {
           const { quantity, StockId } = detail;
+          const stock = await db.Stock.findByPk(StockId);
+          const updatedStock = stock.bucket + quantity;
           return db.Stock.update(
             {
-              stock: quantity,
+              bucket: updatedStock,
             },
             {
               where: {
@@ -132,36 +130,60 @@ const orderController = {
       });
     }
   },
-  confirmPayment: async (req, res) => {
+  //
+  // Uploud Payment Img
+  //
+  uploadPayment: async (req, res) => {
     try {
-      const { status } = req.body;
-      await db.Order.update(
+      const { id } = req.body;
+      console.log(req.body);
+      console.log("cek");
+      const { filename } = req.file;
+      console.log(req.file);
+      const result = await db.Order.update(
         {
-          status,
+          payment_url: process.env.payment_img + filename,
         },
         {
           where: {
-            id: req.params.id,
+            id,
           },
         }
       );
+      res.send(result);
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+
+  //
+  // ------------ confirm payment by OrderId ---------- //
+  //
+  confirmPayment: async (req, res) => {
+    try {
+      const { status } = req.body;
 
       const data = await db.OrderDetail.findAll({
         where: {
           OrderId: req.params.id,
         },
       });
+      // console.log(data);
 
-      console.log(data);
-
+      // check if cancel
       if (status === "cancel") {
-        // update multiple stock if cancel
+        // update multiple buckets on stock
+        console.log("masuk cancel");
         await Promise.all(
           data.map(async (detail) => {
             const { quantity, StockId } = detail;
+            const stock = await db.Stock.findByPk(StockId);
+            const updatedStock = stock.bucket - quantity;
             return db.Stock.update(
               {
-                stock: quantity,
+                bucket: updatedStock,
               },
               {
                 where: {
@@ -170,6 +192,62 @@ const orderController = {
               }
             );
           })
+        );
+        await db.Order.update(
+          {
+            status,
+          },
+          {
+            where: {
+              id: req.params.id,
+            },
+          }
+        );
+      } else if (status === "payed") {
+        // update multiple stocks
+        // update multiple stocksHistory
+        await Promise.all(
+          data.map(async (detail) => {
+            const { quantity, StockId } = detail;
+            const stock = await db.Stock.findByPk(StockId);
+            const updatedStock = stock.stock - quantity;
+            const updatedBucket = stock.bucket - quantity;
+            const sH = await db.StockHistory.findByPk(StockId);
+            console.log(sH);
+            return Promise.all([
+              db.Stock.update(
+                {
+                  stock: updatedStock,
+                  bucket: updatedBucket,
+                  quantity: quantity,
+                },
+                {
+                  where: {
+                    id: StockId,
+                  },
+                }
+              ),
+              db.StockHistory.create({
+                StockId,
+                totalBefore: sH.totalAfter,
+                totalAfter: updatedStock,
+                quantity: quantity,
+                type: "minus",
+                subject: "transaction",
+              }),
+            ]);
+          })
+        );
+        //
+        await db.Order.update(
+          {
+            status,
+          },
+          {
+            where: {
+              id: req.params.id,
+            },
+          }
         );
       }
 

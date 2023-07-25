@@ -85,36 +85,51 @@ const cartController = {
     try {
       const { quantity, UserId, StockId } = req.body;
 
-      const check = await db.Cart.findOne({
+      //condition for stocks availability
+      const stock = await db.Stock.findOne({
         where: {
-          StockId,
-          UserId,
+          id: StockId,
         },
       });
+      const qty = stock.stock - stock.bucket;
 
-      if (check) {
-        await db.Cart.update(
-          {
-            quantity,
+      if (qty >= quantity) {
+        // check to update or create cart
+        const check = await db.Cart.findOne({
+          where: {
+            StockId,
+            UserId,
           },
-          {
-            where: {
-              StockId,
-              UserId,
-            },
-          }
-        );
-      } else {
-        await db.Cart.create({
-          quantity,
-          UserId,
-          StockId,
         });
-      }
 
-      return await db.Cart.findAll().then((result) => {
-        res.send(result);
-      });
+        if (check) {
+          await db.Cart.update(
+            {
+              quantity,
+            },
+            {
+              where: {
+                StockId,
+                UserId,
+              },
+            }
+          );
+        } else {
+          await db.Cart.create({
+            quantity,
+            UserId,
+            StockId,
+          });
+        }
+        const result = await db.Cart.findAll({
+          where: {
+            UserId,
+          },
+        });
+        return res.send(result);
+      } else if (qty < quantity) {
+        res.send("Stock Insufficient");
+      }
     } catch (err) {
       console.log(err);
       return res.status(500).send({

@@ -8,15 +8,15 @@ import Footer from "../components/Footer";
 import NavbarFooter from "../components/NavbarFooter";
 
 export default function HomePage() {
-	return (
-		<Flex display={"colums"}>
-			<Navbar></Navbar>
-			<CarouselShow />
-			<CarouselBooks />
-			<BookCard />
-			<CarouselAll />
-			<Footer />
-			<NavbarFooter />
-		</Flex>
-	);
+  return (
+    <Flex display={"colums"}>
+      <Navbar></Navbar>
+      <CarouselShow />
+      <CarouselBooks />
+      <BookCard />
+      <CarouselAll />
+      <Footer />
+      <NavbarFooter />
+    </Flex>
+  );
 }

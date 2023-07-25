@@ -112,10 +112,14 @@ const stockController = {
   insertStock: async (req, res) => {
     try {
       const { stock, BranchId, BookId } = req.body;
-      await db.Stock.create({
+      const data = await db.Stock.create({
         stock,
         BranchId,
         BookId,
+      });
+      // add to stockHistory
+      await db.StockHistory.create({
+        StockId: data.id,
       });
       return await db.Stock.findAll().then((result) => {
         res.send(result);

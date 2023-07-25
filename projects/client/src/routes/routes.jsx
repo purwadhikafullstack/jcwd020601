@@ -12,7 +12,6 @@ import VerifyEmail from "../pages/VerifyPage";
 import ProtectedPage from "./protectedpage";
 import NotFoundPage from "../pages/NotFoundPage";
 
-
 const routes = [
   <Route
     path="/login"
@@ -105,9 +104,9 @@ const routes = [
   <Route
     path="/cart"
     element={
-      //   <ProtectedPage needLogin={true}>
-      <CartPage />
-      //   </ProtectedPage>
+      <ProtectedPage needLogin={true}>
+        <CartPage />
+      </ProtectedPage>
     }
   ></Route>,
 ];
