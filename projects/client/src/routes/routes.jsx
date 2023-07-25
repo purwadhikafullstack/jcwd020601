@@ -12,7 +12,7 @@ import VerifyEmail from "../pages/VerifyPage";
 import ProtectedPage from "./protectedpage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage";
-
+import SuperAdminPage from "../pages/SuperAdminPage";
 
 const routes = [
   <Route
@@ -83,31 +83,16 @@ const routes = [
     path="/superadminpage"
     element={
       <ProtectedPage needSuperAdminLogin={true}>
-        <AdminPage />
+        <SuperAdminPage />
       </ProtectedPage>
     }
   ></Route>,
-  <Route
-    path="/superadminpage"
-    element={
-      <ProtectedPage needSuperAdminLogin={true}>
-        <AdminPage />
-      </ProtectedPage>
-    }
-  ></Route>,
+
   <Route
     path="/profile"
     element={
-      <ProtectedPage guestOnly={true}>
+      <ProtectedPage needLogin={true}>
         <ProfilePage />
-      </ProtectedPage>
-    }
-  ></Route>,
-  <Route
-    path="/:notfound"
-    element={
-      <ProtectedPage guestOnly={true}>
-        <NotFoundPage />
       </ProtectedPage>
     }
   ></Route>,
@@ -117,6 +102,14 @@ const routes = [
       //   <ProtectedPage needLogin={true}>
       <CartPage />
       //   </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/:notfound"
+    element={
+      <ProtectedPage>
+        <NotFoundPage />
+      </ProtectedPage>
     }
   ></Route>,
 ];

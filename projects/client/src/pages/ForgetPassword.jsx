@@ -28,9 +28,12 @@ export default function ForgotPassword() {
   const [user, setUser] = useState({});
   const [token, setToken] = useState();
   const [seepassword, setSeePassword] = useState(false);
+  const [seepassword2, setSeePassword2] = useState(false);
+
   const formik = useFormik({
     initialValues: {
       password: "",
+      password2: "",
     },
     validationSchema: Yup.object().shape({
       password: Yup.string()
@@ -51,6 +54,9 @@ export default function ForgotPassword() {
           8,
           "Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
         ),
+      password2: Yup.string()
+        .required("You need to confirm your password")
+        .oneOf([Yup.ref("password")], "Passwords don't match"),
     }),
     onSubmit: async () => {
       const { password } = formik.values;
@@ -140,29 +146,52 @@ export default function ForgotPassword() {
                   {" "}
                   New Password
                 </Box>
-                <InputGroup>
-                  <Input
-                    id="password"
-                    onChange={inputHandler}
-                    type={seepassword ? "text" : "password"}
-                    border={"1px #878787 solid"}
-                    placeholder="Create your password"
-                    paddingY={"8px"}
-                  ></Input>
-                  <InputRightElement width={"2.5rem"} h={"100%"}>
-                    <IconButton
-                      colorScheme="whiteAlpha"
-                      color={"grey"}
-                      as={seepassword ? AiOutlineEye : AiOutlineEyeInvisible}
-                      w={"32px"}
-                      h={"32px"}
-                      onClick={() => setSeePassword(!seepassword)}
-                      cursor={"pointer"}
-                    ></IconButton>
-                  </InputRightElement>
-                </InputGroup>
+                <Flex flexDir={"column"} gap={"20px"}>
+                  <InputGroup>
+                    <Input
+                      id="password"
+                      onChange={inputHandler}
+                      type={seepassword ? "text" : "password"}
+                      border={"1px #878787 solid"}
+                      placeholder="Create your password"
+                      paddingY={"8px"}
+                    ></Input>
+                    <InputRightElement width={"2.5rem"} h={"100%"}>
+                      <IconButton
+                        colorScheme="whiteAlpha"
+                        color={"grey"}
+                        as={seepassword ? AiOutlineEye : AiOutlineEyeInvisible}
+                        w={"32px"}
+                        h={"32px"}
+                        onClick={() => setSeePassword(!seepassword)}
+                        cursor={"pointer"}
+                      ></IconButton>
+                    </InputRightElement>
+                  </InputGroup>
+                  <InputGroup>
+                    <Input
+                      id="password2"
+                      onChange={inputHandler}
+                      type={seepassword2 ? "text" : "password"}
+                      border={"1px #878787 solid"}
+                      placeholder="Confirm your password"
+                      paddingY={"8px"}
+                    ></Input>
+                    <InputRightElement width={"2.5rem"} h={"100%"}>
+                      <IconButton
+                        colorScheme="whiteAlpha"
+                        color={"grey"}
+                        as={seepassword2 ? AiOutlineEye : AiOutlineEyeInvisible}
+                        w={"32px"}
+                        h={"32px"}
+                        onClick={() => setSeePassword2(!seepassword2)}
+                        cursor={"pointer"}
+                      ></IconButton>
+                    </InputRightElement>
+                  </InputGroup>
+                </Flex>
                 <Flex w={"100%"} fontSize={"12px"} color={"red"}>
-                  {formik.errors.password}
+                  {formik.errors.password2}
                 </Flex>
               </Box>
 

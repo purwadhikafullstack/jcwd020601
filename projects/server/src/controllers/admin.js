@@ -272,7 +272,7 @@ const adminController = {
       if (!payload) {
         throw new Error("token has expired");
       }
-      console.log(payload.dataValues);
+      console.log(payload);
       let admin = await db.Admin.findOne({
         where: {
           id: payload.dataValues.AdminId,
