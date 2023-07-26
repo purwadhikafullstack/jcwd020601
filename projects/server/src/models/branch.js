@@ -3,7 +3,10 @@ module.exports = (sequelize, Sequelize) => {
     "Branches",
     {
       name: Sequelize.STRING,
-      address: Sequelize.STRING,
+      province: Sequelize.STRING,
+      city: Sequelize.STRING,
+      alamatLengkap: Sequelize.STRING,
+      pos: Sequelize.STRING,
       latitude: Sequelize.STRING,
       longitude: Sequelize.STRING,
     },

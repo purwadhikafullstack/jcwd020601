@@ -3,6 +3,7 @@ const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
 const { default: axios } = require("axios");
+const opencage = require("opencage-api-client");
 const addressController = {
   getAll: async (req, res) => {
     try {
@@ -114,22 +115,25 @@ const addressController = {
         longitude,
         UserId,
       } = req.body;
-      await db.Address.create({
-        labelAlamat,
-        namaPenerima,
-        no_Handphone,
-        province,
-        city,
-        isMain: Main ? false : true,
-        alamatLengkap,
-        pos,
+      await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
+        const place = res.results.place;
 
-        latitude,
-        longitude,
-        UserId,
-      });
-      return await db.Address.findAll().then((result) => {
-        res.send(result);
+        await db.Address.create({
+          labelAlamat,
+          namaPenerima,
+          no_Handphone,
+          province,
+          city,
+          isMain: Main ? false : true,
+          alamatLengkap,
+          pos,
+          latitude: place.lat,
+          longitude: place.lng,
+          UserId,
+        });
+        return await db.Address.findAll().then((result) => {
+          res.send(result);
+        });
       });
     } catch (err) {
       console.log(err);
@@ -168,11 +172,11 @@ const addressController = {
         no_Handphone,
       } = req.body;
       opencage
-        .geocode({ q: "1.1388883, 104.0074718", language: "id" })
+        .geocode({ q: "TanjungPinang", language: "id" })
         .then(async (data) => {
           // console.log(JSON.stringify(data));
           if (data.status.code === 200 && data.results.length > 0) {
-            const place = data.results[0];
+            const place = data.results[0].geometry;
             const Main = await db.Address.findOne({
               where: {
                 isMain: true,
@@ -198,15 +202,16 @@ const addressController = {
             //   UserId,
             // });
             res.send({
-              namaPenerima,
-              no_Handphone,
-              province: place.components.state,
-              city: place.components.city,
-              alamatLengkap,
-              pos: place.components.postcode,
-              latitude,
-              longitude,
-              UserId,
+              place: place,
+              // namaPenerima,
+              // no_Handphone,
+              // province: place.components.state,
+              // city: place.components.city,
+              // alamatLengkap,
+              // pos: place.components.postcode,
+              // latitude,
+              // longitude,
+              // UserId,
             });
           } else {
             console.log("status", data.status.message);
