@@ -28,7 +28,6 @@ const fileUploader = ({
       cb(null, true);
     },
   });
-
   return uploader;
 };
 const upload = multer({

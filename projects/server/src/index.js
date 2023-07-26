@@ -19,7 +19,11 @@ app.use(
 );
 
 app.use(express.json());
+
+app.use("/paymentImg", express.static(`${__dirname}/public/paymentImg`));
+
 app.use("/avatar", express.static(`${__dirname}/public/avatar`));
+
 app.use("/auth", routes.userRoutes);
 app.use("/address", routes.addressRoutes);
 app.use("/admin", routes.adminRoutes);
