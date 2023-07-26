@@ -3,6 +3,7 @@ module.exports = (sequelize, Sequelize) => {
     "Stocks",
     {
       stock: Sequelize.INTEGER,
+      bucket: Sequelize.INTEGER,
       BranchId: {
         type: Sequelize.INTEGER,
         allowNull: false,

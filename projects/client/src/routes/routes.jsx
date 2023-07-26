@@ -14,6 +14,7 @@ import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage";
 import SuperAdminPage from "../pages/SuperAdminPage";
 
+
 const routes = [
   <Route
     path="/login"
@@ -99,9 +100,9 @@ const routes = [
   <Route
     path="/cart"
     element={
-      //   <ProtectedPage needLogin={true}>
-      <CartPage />
-      //   </ProtectedPage>
+      <ProtectedPage needLogin={true}>
+        <CartPage />
+      </ProtectedPage>
     }
   ></Route>,
   <Route
