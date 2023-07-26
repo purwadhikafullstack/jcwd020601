@@ -6,6 +6,21 @@ import { api } from "../api/api";
 import axios from "axios";
 
 export default function ModalAddAddress(props) {
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await axios
+        .get("http://localhost:2000/address/province", {
+          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
+        })
+        .then((res) => {
+          props.setProvinces(res.data);
+        });
+    };
+    // call the function
+    fetchData();
+    // make sure to catch any error
+    // .catch(console.error);
+  }, []);
   return (
     <>
       <Flex
