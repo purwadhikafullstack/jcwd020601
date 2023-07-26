@@ -33,12 +33,12 @@ export default function ProtectedPage({
       console.log(userSelector.email);
       return nav("/login");
     } else if (guestOnly && userSelector?.username && !userSelector.role) {
-      return nav("/home");
+      return nav("/");
     } else if (needLoginAdmin && userSelector?.role != "Admin-Branch") {
       console.log(userSelector);
-      return nav("/admin");
+      return nav("/notfound");
     } else if (needSuperAdminLogin && userSelector?.role != "Super-Admin") {
-      return nav("/admin");
+      return nav("/notfound");
     } else if (
       guestOnly &&
       userSelector?.email &&

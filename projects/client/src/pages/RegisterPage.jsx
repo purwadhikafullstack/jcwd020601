@@ -108,10 +108,15 @@ export default function RegisterPage() {
       email: Yup.string()
         .required("You need to enter your email")
         .email("Email is not valid"),
-      first_name: Yup.string().required("You need to enter your first name"),
-      last_name: Yup.string().required("You need to enter your last name"),
+      first_name: Yup.string()
+        .required("You need to enter your first name")
+        .trim(),
+      last_name: Yup.string()
+        .required("You need to enter your last name")
+        .trim(),
       password2: Yup.string()
         .required("You need to confirm your password")
+        .trim()
         .oneOf([Yup.ref("password")], "Passwords don't match"),
       password: Yup.string()
         .required("You need to enter your password")
@@ -130,8 +135,10 @@ export default function RegisterPage() {
         .min(
           8,
           "Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
-        ),
-      username: Yup.string().required("You need to enter your username"),
+        )
+        .trim(),
+
+      username: Yup.string().required("You need to enter your username").trim(),
     }),
     onSubmit: async () => {
       const { email, password, username, first_name, last_name } =

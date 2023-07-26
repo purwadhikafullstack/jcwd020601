@@ -159,16 +159,14 @@ const adminController = {
             token: token.dataValues.token,
           });
         } else {
-          throw new Error("wrong password");
+          throw new Error("Wrong Email or Password");
         }
       } else {
-        throw new Error("user not found");
+        throw new Error("User not found");
       }
     } catch (err) {
       console.log(err.message);
-      return res
-        .status(500)
-        .send({ message: "Email or password is incorrect" });
+      return res.status(500).send({ message: err.message });
     }
   },
   changePassword: async (req, res) => {
@@ -274,7 +272,7 @@ const adminController = {
       if (!payload) {
         throw new Error("token has expired");
       }
-      console.log(payload.dataValues);
+      console.log(payload);
       let admin = await db.Admin.findOne({
         where: {
           id: payload.dataValues.AdminId,

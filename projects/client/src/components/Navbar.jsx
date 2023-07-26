@@ -35,6 +35,7 @@ import { api } from "../api/api";
 import logo from "../assets/images/gramedia-icon-2.png";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 export default function Navbar() {
   const [large] = useMediaQuery("(min-width: 768px)");
 
@@ -57,7 +58,7 @@ export default function Navbar() {
             : { base: "50px", sm: "50px" }
         }
         boxShadow="0 0 25px skyblue"
-        position={"fixed"}
+        position={"sticky"}
         top={0}
         width={"100%"}
         zIndex={1000}
@@ -215,8 +216,11 @@ function MobileNav() {
 }
 
 function DesktopNav() {
+  const locatio = useLocation();
+  const location = locatio.pathname.split("/")[1];
   const userSelector = useSelector((state) => state.login.auth);
   const dispatch = useDispatch();
+  const nav = useNavigate();
   const [trans, setTrans] = useState(true);
   function handleTrans() {
     setTrans(!trans);
@@ -229,19 +233,11 @@ function DesktopNav() {
     });
     return;
   }
-  async function verify() {
-    await api
-      .get("auth/generate-token/emailverify", {
-        params: {
-          email: userSelector.email,
-        },
-      })
-      .then(
-        (res) => alert(res.data.message)
-        // /forgot-password/token
-        //    console.log(res.data));
-      );
+  async function login() {
+    nav("/login");
+    return;
   }
+
   return (
     <>
       <Box
@@ -436,26 +432,28 @@ function DesktopNav() {
             <MenuList my={5} position={"fixed"} left={"-6em"}>
               <Flex padding={"0 0.5rem"} flexDir={"column"} gap={"0.4rem"}>
                 <Flex
+                  px={"10px"}
                   gap={"1rem"}
-                  justifyContent={"center"}
-                  flexDir={"column"}
-                  alignItems={"center"}
-                >
-                  Halo, User
-                  <Box>Full Name</Box>
-                  <Box>Address</Box>
-                  <Box onClick={logout}>Logout</Box>
-                  <Box onClick={verify}>Verify Account</Box>
-                </Flex>
-                <Center
-                  bgColor={"blue.400"}
+                  color={
+                    location == "profile" || location == "Profile"
+                      ? "white"
+                      : "black"
+                  }
+                  bg={
+                    location == "profile" || location == "Profile"
+                      ? "#25225a"
+                      : "white"
+                  }
+                  onClick={() => nav("/profile")}
                   cursor={"pointer"}
-                  _hover={{
-                    opacity: "0.9",
-                  }}
                 >
-                  Full Profile
-                </Center>
+                  My Account
+                </Flex>
+                <Flex px={"10px"}>My Orders</Flex>
+                <Flex px={"10px"}>My Wishlist</Flex>
+                <Flex px={"10px"} onClick={userSelector.email ? logout : login}>
+                  {userSelector.email ? "Logout" : "Login"}
+                </Flex>
               </Flex>
             </MenuList>
           </Menu>
