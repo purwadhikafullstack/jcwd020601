@@ -50,7 +50,7 @@ export default function LoginPage() {
       });
     } catch (err) {
       console.log(err);
-      alert(err.message);
+      alert(err.response.data.message);
     }
   }
   const inputa = document.getElementById("password");

@@ -76,7 +76,7 @@ export default function LoginPage() {
             payload: res.data,
           });
         });
-        nav("/home");
+        nav("/");
       }
     } catch (err) {
       console.log(err);
@@ -105,10 +105,10 @@ export default function LoginPage() {
           payload: res.data,
         });
       });
-      nav("/home");
+      nav("/");
     } catch (err) {
       console.log(err);
-      alert(err.message);
+      alert(err.response.data.message);
     }
   }
 

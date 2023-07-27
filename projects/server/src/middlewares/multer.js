@@ -22,14 +22,14 @@ const fileUploader = ({
 		fileFilter: (req, file, cb) => {
 			console.log(file);
 
-			if (file.mimetype.split("/")[0] != fileType) {
-				return cb(null, false);
-			}
-			cb(null, true);
-		},
-	});
 
-	return uploader;
+      if (file.mimetype.split("/")[0] != fileType) {
+        return cb(null, false);
+      }
+      cb(null, true);
+    },
+  });
+  return uploader;
 };
 const upload = multer({
 	limits: {

@@ -11,6 +11,7 @@ const opencage = require("opencage-api-client");
 const mailer = require("../lib/mailer");
 const image_url = process.env.URL_IMAGE;
 const sharp = require("sharp");
+const { default: axios } = require("axios");
 const { Op } = db.Sequelize;
 
 const userController = {
@@ -189,6 +190,7 @@ const userController = {
   },
   loginV2: async (req, res) => {
     try {
+      let token = "";
       const { emus, password } = req.body;
       const user = await db.User.findOne({
         where: {
@@ -204,21 +206,43 @@ const userController = {
         if (match) {
           const payload = user.dataValues.id;
           const generateToken = nanoid();
-          console.log(nanoid());
-          const token = await db.Token.create({
-            expired: moment().add(1, "days").format(),
-            token: generateToken,
-            UserId: JSON.stringify(payload),
-            status: "LOGIN",
+          const findToken = await db.Token.findOne({
+            where: {
+              UserId: payload,
+              Status: "LOGIN",
+            },
           });
+          if (findToken) {
+            console.log("skadaskk");
+            token = await db.Token.update(
+              {
+                expired: moment().add(1, "days").format(),
+                token: generateToken,
+              },
+              {
+                where: {
+                  UserId: 6,
+                  Status: "LOGIN",
+                },
+              }
+            );
+            newToken = generateToken;
+          } else {
+            token = await db.Token.create({
+              expired: moment().add(1, "days").format(),
+              token: generateToken,
+              UserId: payload,
+              status: "LOGIN",
+            });
+            newToken = generateToken;
+          }
 
-          console.log(token);
           //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6InVkaW4yIiwiYWRkcmVzcyI6ImJhdGFtIiwicGFzc3dvcmQiOiIkMmIkMTAkWUkvcTl2dVdTOXQ0R1V5a1lxRGtTdWJnTTZwckVnRm9nZzJLSi9FckFHY3NXbXBRUjFOcXEiLCJlbWFpbCI6InVkaW4yQG1haWwuY29tIiwiY3JlYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwiZGVsZXRlZEF0IjpudWxsLCJDb21wYW55SWQiOm51bGwsImlhdCI6MTY4NDQ4MzQ4NSwiZXhwIjoxNjg0NDgzNTQ1fQ.Ye5l7Yml1TBWUgV7eUnhTVQjdT3frR9E0HXNxO7bTXw;
 
           return res.send({
             message: "login berhasil",
             // value: user,
-            token: token.dataValues.token,
+            token: newToken,
           });
         } else {
           throw new Error("wrong password");
@@ -231,6 +255,38 @@ const userController = {
       return res
         .status(500)
         .send({ message: "Email or password is incorrect" });
+    }
+  },
+  updateProfile: async (req, res) => {
+    try {
+      const { first_name, last_name, gender, phone, id } = req.body;
+      console.log(req.body);
+      const user = await db.User.update(
+        {
+          first_name,
+          last_name,
+          gender,
+          phone:
+            phone && phone[1] == "0"
+              ? phone.slice(2)
+              : phone && phone[0] == "0"
+              ? phone.slice(1)
+              : phone,
+        },
+        {
+          where: {
+            id: req.body.id,
+          },
+        }
+      );
+      console.log(user);
+
+      return res.status(200).send({
+        message: "your account has been updated",
+      });
+    } catch (err) {
+      console.log(err.message);
+      return res.status(500).send(err.message);
     }
   },
   loginV3: async (req, res) => {
@@ -277,9 +333,11 @@ const userController = {
           },
         });
         if (findToken) {
+          console.log("skadaskk");
           await db.Token.update(
             {
               token: generateToken,
+              expired: moment().add(1, "days").format(),
             },
             {
               where: {
@@ -320,7 +378,7 @@ const userController = {
   getByToken: async (req, res, next) => {
     try {
       let { token } = req.query;
-      console.log(token);
+      // console.log(token);
       let payload = await db.Token.findOne({
         where: {
           token,
@@ -333,7 +391,8 @@ const userController = {
       if (!payload) {
         throw new Error("token has expired");
       }
-      console.log(payload.dataValues);
+
+      // console.log(payload.dataValues);
       let user = await db.User.findOne({
         where: {
           id: payload.dataValues.UserId,
@@ -344,7 +403,7 @@ const userController = {
       req.user = user;
       next();
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       return res.status(500).send({ message: err.message });
     }
   },
@@ -447,7 +506,62 @@ const userController = {
       res.status(500).send({ message: err.message });
     }
   },
+  checkOldPassword: async (req, res, next) => {
+    try {
+      const { email, oldPassword } = req.body;
+      const user = await db.User.findOne({
+        where: {
+          [Op.or]: {
+            email,
+          },
+        },
+      });
 
+      if (user) {
+        const match = await bcrypt.compare(
+          oldPassword,
+          user.dataValues.password
+        );
+        if (match) {
+          req.user = user;
+          next();
+        } else {
+          throw new Error("old password is incorrect");
+        }
+      } else {
+        throw new Error("user not found");
+      }
+    } catch (err) {
+      res.status(500).send({ message: err.message });
+    }
+  },
+  changePasswordNoToken: async (req, res) => {
+    try {
+      console.log(req.body);
+      const { password } = req.body.user;
+      const { id } = req.user;
+      console.log(id);
+
+      const hashPassword = await bcrypt.hash(password, 10);
+
+      await db.User.update(
+        {
+          password: hashPassword,
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+
+      res.send({
+        message: "password successfully updated",
+      });
+    } catch (err) {
+      res.status(500).send({ message: err.message });
+    }
+  },
   changePassword: async (req, res) => {
     try {
       console.log(req.body);
@@ -521,6 +635,69 @@ const userController = {
     } catch (err) {
       res.status(500).send({ message: err.message });
     }
+  },
+  renderAvatar: async (req, res) => {
+    try {
+      await db.User.findOne({
+        where: {
+          id: req.params.id,
+        },
+      }).then((result) => {
+        res.set("Content-type", "image/png");
+        res.send(result.dataValues.avatar);
+      });
+    } catch (err) {
+      return res.send({
+        message: err.message,
+      });
+    }
+  },
+  uploadAvatar: async (req, res) => {
+    const { filename } = req.file;
+    console.log(req.file);
+    await db.User.update(
+      {
+        avatar_url: image_url + filename,
+      },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    );
+    await db.User.findOne({
+      where: {
+        id: req.params.id,
+      },
+    }).then((result) => res.send(result));
+  },
+  uploadAvatarv2: async (req, res) => {
+    console.log(req.file);
+    const buffer = await sharp(req.file.buffer).resize(25, 25).png().toBuffer();
+    var fullUrl =
+      req.protocol +
+      "://" +
+      req.get("host") +
+      "/auth/image/render/" +
+      req.params.id;
+    console.log(fullUrl);
+    await db.User.update(
+      {
+        avatar_url: fullUrl,
+        avatar: buffer,
+      },
+      {
+        where: {
+          id: req.params.id,
+        },
+      }
+    );
+    // await db.User.findOne({
+    //   where: {
+    //     id: req.params.id,
+    //   },
+    // }).then((result) => res.send(result));
+    res.send("berhasil upload");
   },
 };
 
