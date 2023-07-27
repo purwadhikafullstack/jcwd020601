@@ -51,117 +51,117 @@ const adminController = {
 					},
 				}
 			);
-      return await db.Admin.findOne({
-        where: {
-          id: req.params.id,
-        },
-      }).then((result) => res.send(result));
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  insertAdmin: async (req, res) => {
-    try {
-      const { role, email, phone, password, BranchId } = req.body;
-      await db.Admin.create({
-        role,
-        email,
-        phone,
-        password,
-        BranchId,
-      });
-      return await db.Admin.findAll().then((result) => {
-        res.send(result);
-      });
-    } catch (err) {
-      console.log(err);
-      return res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  insertBranchAdminAndBranch: async (req, res) => {
-    // const t = await db.sequelize.transaction();
-    try {
-      let place = {};
-      let BranchId;
-      const {
-        name,
-        email,
-        password,
-        phone,
-        branchName,
-        province,
-        city,
-        pos,
-        alamatLengkap,
-      } = req.body;
-      const hashPassword = await bcrypt.hash(password, 10);
-      await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
-        place = res.results[0].geometry;
+			return await db.Admin.findOne({
+				where: {
+					id: req.params.id,
+				},
+			}).then((result) => res.send(result));
+		} catch (err) {
+			console.log(err.message);
+			res.status(500).send({
+				message: err.message,
+			});
+		}
+	},
+	insertAdmin: async (req, res) => {
+		try {
+			const { role, email, phone, password, BranchId } = req.body;
+			await db.Admin.create({
+				role,
+				email,
+				phone,
+				password,
+				BranchId,
+			});
+			return await db.Admin.findAll().then((result) => {
+				res.send(result);
+			});
+		} catch (err) {
+			console.log(err);
+			return res.status(500).send({
+				message: err.message,
+			});
+		}
+	},
+	insertBranchAdminAndBranch: async (req, res) => {
+		// const t = await db.sequelize.transaction();
+		try {
+			let place = {};
+			let BranchId;
+			const {
+				name,
+				email,
+				password,
+				phone,
+				branchName,
+				province,
+				city,
+				pos,
+				alamatLengkap,
+			} = req.body;
+			const hashPassword = await bcrypt.hash(password, 10);
+			await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
+				place = res.results[0].geometry;
 
-        await db.Branch.create(
-          {
-            latitude: place.lat,
-            longitude: place.lng,
-            name: branchName,
-            province,
-            city,
-            pos,
-            alamatLengkap,
-          }
-          // { transaction: t }
-        ).then(async () => {
-          const branch = await db.Branch.findOne({
-            where: {
-              latitude: place.lat,
-              longitude: place.lng,
-              name: branchName,
-              province,
-              city,
-              pos,
-              alamatLengkap,
-            },
-          });
-          console.log(branch);
+				await db.Branch.create(
+					{
+						latitude: place.lat,
+						longitude: place.lng,
+						name: branchName,
+						province,
+						city,
+						pos,
+						alamatLengkap,
+					}
+					// { transaction: t }
+				).then(async () => {
+					const branch = await db.Branch.findOne({
+						where: {
+							latitude: place.lat,
+							longitude: place.lng,
+							name: branchName,
+							province,
+							city,
+							pos,
+							alamatLengkap,
+						},
+					});
+					console.log(branch);
 
-          console.log("ksafjsa");
-          console.log(branch.id);
+					console.log("ksafjsa");
+					console.log(branch.id);
 
-          BranchId = branch.id;
-        });
-      });
-      await db.Admin.create(
-        {
-          BranchId,
-          name,
-          email,
-          password: hashPassword,
-          role: "Admin-Branch",
-          phone,
-        }
-        // { transaction: t }
-      );
+					BranchId = branch.id;
+				});
+			});
+			await db.Admin.create(
+				{
+					BranchId,
+					name,
+					email,
+					password: hashPassword,
+					role: "Admin-Branch",
+					phone,
+				}
+				// { transaction: t }
+			);
 
-      return await db.Admin.findAll().then((result) => {
-        // t.commit();
-        res.send("Success!");
-      });
-    } catch (err) {
-      console.log(err);
-      return res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  deleteAdmin: async (req, res) => {
-    try {
-      await db.Admin.destroy({
-        where: {
-          //  id: req.params.id
+			return await db.Admin.findAll().then((result) => {
+				// t.commit();
+				res.send("Success!");
+			});
+		} catch (err) {
+			console.log(err);
+			return res.status(500).send({
+				message: err.message,
+			});
+		}
+	},
+	deleteAdmin: async (req, res) => {
+		try {
+			await db.Admin.destroy({
+				where: {
+					//  id: req.params.id
 					//   [Op.eq]: req.params.id
 					id: req.params.id,
 				},
@@ -251,29 +251,29 @@ const adminController = {
 			const { id } = req.user;
 			console.log(id);
 
-          return res.send({
-            message: "login berhasil",
-            // value: user,
-            token: token.dataValues.token,
-          });
-        } else {
-          throw new Error("Wrong Email or Password");
-        }
-      } else {
-        throw new Error("User not found");
-      }
-    } catch (err) {
-      console.log(err.message);
-      return res.status(500).send({ message: err.message });
-    }
-  },
-  changePassword: async (req, res) => {
-    try {
-      console.log(req.body);
-      const { token } = req.query;
-      const { password } = req.body.user;
-      const { id } = req.user;
-      console.log(id);
+			return res.send({
+				message: "login berhasil",
+				// value: user,
+				token: token.dataValues.token,
+			});
+			//     } else {
+			//       throw new Error("Wrong Email or Password");
+			//     }
+			//   } else {
+			//     throw new Error("User not found");
+			//   }
+		} catch (err) {
+			console.log(err.message);
+			return res.status(500).send({ message: err.message });
+		}
+	},
+	changePassword: async (req, res) => {
+		try {
+			console.log(req.body);
+			const { token } = req.query;
+			const { password } = req.body.user;
+			const { id } = req.user;
+			console.log(id);
 			await db.User.update(
 				{
 					password: hashPassword,
@@ -342,37 +342,37 @@ const adminController = {
 						url + token.dataValues.token
 					} \nand do not share this link to anyone else`,
 				});
-        return res.send({ message: "please check your email" });
-      } else {
-        throw new Error("user is not found");
-      }
-    } catch (err) {
-      res.status(500).send({ message: err.message });
-    }
-  },
-  getByToken: async (req, res, next) => {
-    try {
-      let { token } = req.query;
-      console.log(token);
-      let payload = await db.Token.findOne({
-        where: {
-          token,
-          expired: {
-            [db.Sequelize.Op.gte]: moment().format(),
-          },
-          valid: true,
-        },
-      });
-      if (!payload) {
-        throw new Error("token has expired");
-      }
-      console.log(payload);
-      let admin = await db.Admin.findOne({
-        where: {
-          id: payload.dataValues.AdminId,
-        },
-      });
-      delete admin.dataValues.password;
+				return res.send({ message: "please check your email" });
+			} else {
+				throw new Error("user is not found");
+			}
+		} catch (err) {
+			res.status(500).send({ message: err.message });
+		}
+	},
+	getByToken: async (req, res, next) => {
+		try {
+			let { token } = req.query;
+			console.log(token);
+			let payload = await db.Token.findOne({
+				where: {
+					token,
+					expired: {
+						[db.Sequelize.Op.gte]: moment().format(),
+					},
+					valid: true,
+				},
+			});
+			if (!payload) {
+				throw new Error("token has expired");
+			}
+			console.log(payload);
+			let admin = await db.Admin.findOne({
+				where: {
+					id: payload.dataValues.AdminId,
+				},
+			});
+			delete admin.dataValues.password;
 			req.admin = admin;
 			next();
 		} catch (err) {
