@@ -1,56 +1,79 @@
 .loginpage-border {
-  width: 430px;
+	width: 430px;
 }
 .loginpage-container {
-  width: 430px;
+	width: 430px;
 }
 .loginpage-inputs {
-  gap: 15px;
-  padding-left: 20px;
-  padding-right: 20px;
+	gap: 15px;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 .loginpage-forgot-password:hover {
-  color: #0060ae;
-  cursor: pointer;
+	color: #0060ae;
+	cursor: pointer;
 }
 .adminloginpage-logo {
-  padding-top: 30px;
-  padding-bottom: 30px;
+	padding-top: 30px;
+	padding-bottom: 30px;
 }
 
 .register-logo {
-  padding-top: 40px;
-  padding-bottom: 20px;
+	padding-top: 40px;
+	padding-bottom: 20px;
 }
 .forgetpassword-logo {
-  width: 200px;
+	width: 200px;
 }
 .forgetpassword-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
 }
 .forgetpassword-title {
-  font-size: 32px;
-  color: #0060ae;
-  text-align: center;
+	font-size: 32px;
+	color: #0060ae;
+	text-align: center;
 }
 .forgetpassword-description {
-  color: #9ea3bd;
-  font-size: 16px;
-  text-align: center;
+	color: #9ea3bd;
+	font-size: 16px;
+	text-align: center;
 }
 .forgetpassword-container2 {
-  width: 440px;
-  gap: 15px;
+	width: 440px;
+	gap: 15px;
 }
 .forgetpassword-link {
-  text-decoration: underline;
-  cursor: pointer;
+	text-decoration: underline;
+	cursor: pointer;
 }
 
 .forgetpassword-textlink {
-  justify-content: center;
-  color: #0060ae;
+	justify-content: center;
+	color: #0060ae;
+}
+.pagination {
+	list-style: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 5rem;
+	font-size: 1.2rem;
+	gap: 5px;
+}
+.pagination .page-num {
+	padding: 8px 15px;
+	cursor: pointer;
+	border-radius: 3px;
+	font-weight: 400;
+}
+
+.pagination .page-num:hover {
+	background-color: #5ab1bb;
+	color: #fff;
+}
+.pagination .active {
+	background-color: #5ab1bb;
 }
