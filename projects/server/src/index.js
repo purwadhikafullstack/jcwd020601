@@ -38,6 +38,8 @@ app.use("/stock", routes.stockRoutes);
 app.use("/stockhistory", routes.stockHistoryRoutes);
 app.use("/voucher", routes.voucherRoutes);
 
+app.use("/bookImage", express.static(`${__dirname}/public/book`));
+
 //#region API ROUTES
 
 // ===========================
@@ -88,9 +90,9 @@ app.use("/voucher", routes.voucherRoutes);
 //#endregion
 
 app.listen(PORT, (err) => {
-  if (err) {
-    console.log(`ERROR: ${err}`);
-  } else {
-    console.log(`APP RUNNING at ${PORT} ✅`);
-  }
+	if (err) {
+		console.log(`ERROR: ${err}`);
+	} else {
+		console.log(`APP RUNNING at ${PORT} ✅`);
+	}
 });

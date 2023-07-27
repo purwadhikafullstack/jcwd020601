@@ -2,7 +2,7 @@ import { Route } from "react-router-dom";
 import AdminLogin from "../pages/AdminLogin";
 import AdminPage from "../pages/AdminPage";
 import ForgotPassword, {
-  RequestForgotPassword,
+	RequestForgotPassword,
 } from "../pages/ForgetPassword.jsx";
 import HomePage from "../pages/HomePage";
 import CartPage from "../pages/CartPage";
@@ -13,7 +13,6 @@ import ProtectedPage from "./protectedpage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage";
 import SuperAdminPage from "../pages/SuperAdminPage";
-
 
 const routes = [
   <Route
@@ -80,6 +79,14 @@ const routes = [
       </ProtectedPage>
     }
   ></Route>,
+<Route
+		path="/Category"
+		element={
+			<ProtectedPage needLoginAdmin={true}>
+				<CategoryPage />
+			</ProtectedPage>
+		}
+	></Route>,
   <Route
     path="/superadminpage"
     element={
