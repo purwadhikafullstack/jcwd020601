@@ -96,6 +96,7 @@ const addressController = {
   },
   insertAddress: async (req, res) => {
     try {
+      let place = {};
       const Main = await db.Address.findOne({
         where: {
           isMain: true,
@@ -116,7 +117,7 @@ const addressController = {
         UserId,
       } = req.body;
       await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
-        const place = res.results.place;
+        place = res.results[0].geometry;
 
         await db.Address.create({
           labelAlamat,
@@ -131,10 +132,9 @@ const addressController = {
           longitude: place.lng,
           UserId,
         });
-        return await db.Address.findAll().then((result) => {
-          res.send(result);
-        });
       });
+      const result = await db.Address.findAll();
+      res.send(result);
     } catch (err) {
       console.log(err);
       return res.status(500).send({

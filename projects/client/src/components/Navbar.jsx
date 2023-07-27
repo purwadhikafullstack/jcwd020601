@@ -226,7 +226,7 @@ function DesktopNav() {
     setTrans(!trans);
   }
   async function logout() {
-    window.location.reload();
+    nav("/");
     localStorage.removeItem("auth");
     dispatch({
       type: "logout",
@@ -434,16 +434,8 @@ function DesktopNav() {
                 <Flex
                   px={"10px"}
                   gap={"1rem"}
-                  color={
-                    location == "profile" || location == "Profile"
-                      ? "white"
-                      : "black"
-                  }
-                  bg={
-                    location == "profile" || location == "Profile"
-                      ? "#25225a"
-                      : "white"
-                  }
+                  color={location == "profile" ? "white" : "black"}
+                  bg={location == "profile" ? "#25225a" : "white"}
                   onClick={() => nav("/profile")}
                   cursor={"pointer"}
                 >

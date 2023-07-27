@@ -6,7 +6,6 @@ const { nanoid } = require("nanoid");
 const moment = require("moment");
 const url = process.env.URL;
 const urlVerify = process.env.URLverify;
-const opencage = require("opencage-api-client");
 
 const mailer = require("../lib/mailer");
 const image_url = process.env.URL_IMAGE;
@@ -564,11 +563,9 @@ const userController = {
   },
   changePassword: async (req, res) => {
     try {
-      console.log(req.body);
       const { token } = req.query;
       const { password } = req.body.user;
       const { id } = req.user;
-      console.log(id);
 
       const hashPassword = await bcrypt.hash(password, 10);
 
@@ -582,7 +579,6 @@ const userController = {
           },
         }
       );
-
       await db.Token.update(
         {
           valid: false,
@@ -593,7 +589,6 @@ const userController = {
           },
         }
       );
-
       res.send({
         message: "password successfully updated",
       });

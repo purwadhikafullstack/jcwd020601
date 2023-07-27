@@ -35,6 +35,7 @@ export default function ModalAddAddress(props) {
             <Flex fontWeight={"500"}>Label Alamat</Flex>
             <Flex>
               <Input
+                maxLength={32}
                 _placeholder={{ opacity: "1" }}
                 id="labelAlamat"
                 onChange={props.inputHandlerAddress}
@@ -60,6 +61,7 @@ export default function ModalAddAddress(props) {
               <Input
                 _placeholder={{ opacity: "1" }}
                 onChange={props.inputHandlerAddress}
+                maxLength={32}
                 id="namaPenerima"
                 variant={"flushed"}
                 value={props.namaPenerima}
@@ -76,6 +78,7 @@ export default function ModalAddAddress(props) {
               <Input
                 _placeholder={{ opacity: "1" }}
                 onChange={props.inputHandlerAddress}
+                maxLength={32}
                 id="no_Handphone"
                 variant={"flushed"}
                 placeholder="Receiver's Phone Number"

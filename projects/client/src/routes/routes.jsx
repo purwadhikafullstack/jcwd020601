@@ -15,6 +15,7 @@ import ProfilePage from "../pages/ProfilePage";
 import SuperAdminPage from "../pages/SuperAdminPage";
 import CategoryPage from "../pages/CategoryPage";
 
+
 const routes = [
 	<Route
 		path="/login"

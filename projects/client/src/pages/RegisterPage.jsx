@@ -26,8 +26,10 @@ import { useDispatch } from "react-redux";
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
+
   useEffect(() => {
     /*global google*/
+
     google.accounts.id.initialize({
       client_id:
         "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
@@ -39,7 +41,8 @@ export default function RegisterPage() {
       width: "300",
     });
     google.accounts.id.prompt();
-  });
+  }, []);
+
   async function handleCallbackResponse(response) {
     var userObject = jwt_decode(response.credential);
     console.log(userObject);
@@ -79,7 +82,7 @@ export default function RegisterPage() {
             payload: res.data,
           });
         });
-        nav("/home");
+        nav("/");
       }
     } catch (err) {
       console.log(err);
@@ -190,7 +193,6 @@ export default function RegisterPage() {
     tempobject[id] = value;
     setRegister(tempobject);
     formik.setFieldValue(id, value);
-    console.log(formik.values);
   }
   return (
     <>
@@ -218,6 +220,7 @@ export default function RegisterPage() {
 
                 <Center gap={"10px"} flexDir={"column"} pt={"10px"} w={"300px"}>
                   <Input
+                    maxLength={32}
                     w={"300px"}
                     fontSize={"12px"}
                     bgColor={"#fafafa"}
@@ -231,6 +234,7 @@ export default function RegisterPage() {
                     {formik.errors.email}
                   </Flex>
                   <Input
+                    maxLength={32}
                     w={"300px"}
                     fontSize={"12px"}
                     bgColor={"#fafafa"}
@@ -243,6 +247,7 @@ export default function RegisterPage() {
                     {formik.errors.first_name}
                   </Flex>
                   <Input
+                    maxLength={32}
                     w={"300px"}
                     fontSize={"12px"}
                     bgColor={"#fafafa"}
@@ -255,6 +260,7 @@ export default function RegisterPage() {
                     {formik.errors.last_name}
                   </Flex>
                   <Input
+                    maxLength={32}
                     w={"300px"}
                     fontSize={"12px"}
                     bgColor={"#fafafa"}
@@ -270,6 +276,7 @@ export default function RegisterPage() {
                     <Input
                       pl={"7px"}
                       id="password"
+                      maxLength={32}
                       onChange={inputHandler}
                       bgColor={"#fafafa"}
                       fontSize={"12px"}
@@ -295,6 +302,7 @@ export default function RegisterPage() {
                   <InputGroup>
                     <Input
                       pl={"7px"}
+                      maxLength={32}
                       fontSize={"12px"}
                       bgColor={"#fafafa"}
                       id="password2"
@@ -329,7 +337,6 @@ export default function RegisterPage() {
                     ></Flex>
                   </Center>
                   <div id="signInDiv"></div>
-
                   <Flex w={"100%"} fontSize={"12px"} color={"red"}>
                     {formik.errors.password2}
                   </Flex>
