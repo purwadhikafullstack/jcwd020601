@@ -16,42 +16,45 @@ export default function ProtectedPage({
   const userSelector = useSelector((state) => state.login.auth);
   const nav = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsLoading(false);
+  //   }, 500);
+  // }, [isLoading]);
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, [isLoading]);
-  useEffect(() => {
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
     if (redirect) {
+      setIsLoading(false);
       return nav("/login");
     } else if (needLogin && !userSelector?.email) {
-      console.log(userSelector.email);
+      setIsLoading(false);
       return nav("/login");
     } else if (guestOnly && userSelector?.username && !userSelector.role) {
+      setIsLoading(false);
       return nav("/");
     } else if (needLoginAdmin && userSelector?.role != "Admin-Branch") {
-      console.log(userSelector);
+      setIsLoading(false);
       return nav("/notfound");
     } else if (needSuperAdminLogin && userSelector?.role != "Super-Admin") {
+      setIsLoading(false);
       return nav("/notfound");
     } else if (
       guestOnly &&
       userSelector?.email &&
       userSelector?.role == "Admin-Branch"
     ) {
+      setIsLoading(false);
       return nav("/adminpage");
     } else if (needLogin && userSelector?.role == "Admin-Branch") {
-      console.log(userSelector.email);
+      setIsLoading(false);
       return nav("/adminpage");
     } else if (needLogin && userSelector?.role == "Super-Admin") {
+      setIsLoading(false);
       return nav("/superadminpage");
     } else if (guestOnly && userSelector?.role == "Super-Admin") {
+      setIsLoading(false);
       return nav("/superadminpage");
+    } else {
+      setIsLoading(false);
     }
   }, [children]);
   return (

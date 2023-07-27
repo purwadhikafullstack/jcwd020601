@@ -148,6 +148,7 @@ export default function LoginPage() {
                 <Img src={logo} width={"300px"} py={"40px"}></Img>
                 <Center flexDir={"column"} className="loginpage-inputs">
                   <Input
+                    maxLength={32}
                     fontSize={"12px"}
                     bgColor={"#fafafa"}
                     placeholder="Email or Phone Number"
@@ -159,6 +160,7 @@ export default function LoginPage() {
                     <Input
                       id="password"
                       onKeyPress={handleKeyPress}
+                      maxLength={32}
                       onChange={inputHandler}
                       fontSize={"12px"}
                       type={seePassword ? "text" : "password"}

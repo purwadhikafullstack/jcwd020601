@@ -37,7 +37,7 @@ export default function VerifyEmail() {
       })
       .catch((err) => {
         alert("Tokena has expired");
-        nav("/homepage");
+        nav("/");
       });
   }
 

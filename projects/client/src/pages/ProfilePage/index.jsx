@@ -23,7 +23,6 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect } from "react";
 import { MdClose } from "react-icons/md";
-
 import { motion } from "framer-motion";
 import { faker } from "@faker-js/faker";
 import Navbar from "../../components/Navbar";
@@ -37,7 +36,6 @@ import { Radio, RadioGroup } from "@chakra-ui/react";
 import ModalChangePassword from "../../components/ModalChangePassword";
 import { useFormik } from "formik";
 import { useRef } from "react";
-
 import ModalAddAddress from "../../components/ModalAddAddress";
 import axios from "axios";
 import { GoVerified } from "react-icons/go";
@@ -45,7 +43,6 @@ import ModalEditAddress from "../../components/ModalEditAddress";
 export default function ProfilePage() {
   const modalChangePassword = useDisclosure();
   const modalAddAddress = useDisclosure();
-
   const userSelector = useSelector((state) => state.login.auth);
   const [tab, setTab] = useState("biodata");
   const [gender, setGender] = useState(userSelector.gender);
@@ -67,18 +64,13 @@ export default function ProfilePage() {
   const [provinceId, setProvinceId] = useState();
   const [cityId, setCityId] = useState();
   const [addressId, setAddressId] = useState();
-
   const inputFileRef = useRef(null);
-
   const handleFile = async (event) => {
     setSelectedFile(event.target.files[0]);
-
     uploadAvatar(event.target.files[0], userSelector.id);
   };
   async function uploadAvatar(file, id) {
     try {
-      console.log(file);
-      console.log(id);
       let user;
       const formData = new FormData();
       formData.append("avatar", file);
@@ -91,21 +83,10 @@ export default function ProfilePage() {
           console.log(res.data);
           return res.data;
         });
-      // const token = JSON.parse(localStorage.getItem("auth"));
-      // user = await api
-      //   .get("/auth/v3?token=" + token)
-      //   .then(async (res) => {
-      //     return res.data;
-      //   })
-      //   .catch((err) => {
-      //     return err.message;
-      //   });
       await dispatch({
         type: "login",
         payload: user,
       });
-      await console.log(user);
-
       toast({
         title: "Image has been added",
         status: "success",
@@ -121,8 +102,6 @@ export default function ProfilePage() {
     }
   }
   async function fetchCity() {
-    console.log(provinceId);
-
     await axios
       .post(
         "http://localhost:2000/address/city",
@@ -136,7 +115,6 @@ export default function ProfilePage() {
       });
   }
   async function fetchPos() {
-    console.log(cityId);
     await axios
       .post(
         "http://localhost:2000/address/pos",
@@ -159,7 +137,7 @@ export default function ProfilePage() {
         .catch((err) => {
           toast({
             position: "top",
-            title: "Something went wrong",
+            title: "Something went wrongsas",
             description: err.response.data.message,
             status: "error",
             duration: 5000,
@@ -171,20 +149,22 @@ export default function ProfilePage() {
     }
   }
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await axios
-        .get("http://localhost:2000/address/province", {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        })
-        .then((res) => {
-          setProvinces(res.data);
-        });
-    };
-    // call the function
-    fetchData();
-    fetchUserAddresses();
-    // make sure to catch any error
-    // .catch(console.error);
+    if (userSelector.email) {
+      const fetchData = async () => {
+        const data = await axios
+          .get("http://localhost:2000/address/province", {
+            headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
+          })
+          .then((res) => {
+            setProvinces(res.data);
+          });
+      };
+      // call the function
+      fetchData();
+      fetchUserAddresses();
+      // make sure to catch any error
+      // .catch(console.error);
+    }
   }, []);
 
   const formik = useFormik({
@@ -212,7 +192,6 @@ export default function ProfilePage() {
           const user = await api.get("/auth/v3?token=" + token).then((res) => {
             return res.data;
           });
-          console.log(user);
           if (user?.email) {
             dispatch({
               type: "login",
@@ -228,7 +207,6 @@ export default function ProfilePage() {
           });
         })
         .catch((err) => {
-          console.log(err);
           toast({
             position: "top",
             title: "Login ERROR",
@@ -282,67 +260,36 @@ export default function ProfilePage() {
         alamatLengkap,
         UserId: userSelector.id,
       };
-      if (id) {
-        await api
-          .patch("/address/v2/" + id, address2)
-          .then(async (res) => {
-            modalAddAddress.onClose();
-            formikAddress.resetForm();
-            fetchUserAddresses();
-            toast({
-              position: "top",
-              title: res.data.message,
-              description: "Address Added.",
-              status: "success",
-              duration: 5000,
-              isClosable: true,
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-            toast({
-              position: "top",
-              title: "Something went wrong",
-              description: err.response.data.message,
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-            });
+
+      await api
+        .post("/address/v1", address2)
+        .then(async (res) => {
+          modalAddAddress.onClose();
+          formikAddress.resetForm();
+          fetchUserAddresses();
+          toast({
+            position: "top",
+            title: res.data.message,
+            description: "Address Added.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
           });
-      } else {
-        await api
-          .post("/address/v1", address2)
-          .then(async (res) => {
-            modalAddAddress.onClose();
-            formikAddress.resetForm();
-            fetchUserAddresses();
-            toast({
-              position: "top",
-              title: res.data.message,
-              description: "Address Added.",
-              status: "success",
-              duration: 5000,
-              isClosable: true,
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-            toast({
-              position: "top",
-              title: "Something went wrong",
-              description: err.response.data.message,
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-            });
+        })
+        .catch((err) => {
+          toast({
+            position: "top",
+            title: "Something went wrong",
+            description: err.response.data.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
           });
-      }
+        });
     },
   });
   function radioInputHandler(value) {
     const id = "gender";
-    console.log(value);
-    console.log(formik.values);
     formik.setFieldValue(id, value);
   }
   function inputHandler(input) {
@@ -350,39 +297,38 @@ export default function ProfilePage() {
     const tempobject = { ...changes };
     tempobject[id] = value;
     setChanges(tempobject);
-    console.log(tempobject);
     formik.setFieldValue(id, value);
-    console.log(formik.values);
   }
   async function inputHandlerAddress(input) {
     const { value, id } = input.target;
-
-    async function lol() {
-      console.log(value);
-      console.log(id);
-      const tempobject = {};
-      tempobject[id] = value.split("#")[0];
-      console.log(tempobject);
-      if (id == "province") {
-        setProvinceId(value.split("#")[0]);
-        formikAddress.setFieldValue(id, value.split("#")[1]);
-      } else if (id == "city") {
-        console.log("safjas");
-        setCityId(value.split("#")[0]);
-        formikAddress.setFieldValue(id, value.split("#")[1]);
-      } else formikAddress.setFieldValue(id, value);
+    const tempobject = {};
+    tempobject[id] = value.split("#")[0];
+    if (id == "province") {
+      setProvinceId(value.split("#")[0]);
+      formikAddress.setFieldValue(id, value.split("#")[1]);
+    } else if (id == "city") {
+      setCityId(value.split("#")[0]);
+      formikAddress.setFieldValue(id, value.split("#")[1]);
+    } else formikAddress.setFieldValue(id, value);
+  }
+  async function inputHandlerPhone(input) {
+    let { value, id, maxLength } = input.target;
+    const tempobject = {};
+    if (value[0] == 0) {
+      input.target.value = value.slice(1);
     }
-    await lol();
-
-    return "lol";
+    if (value.length >= maxLength) {
+      input.target.value = value.slice(0, maxLength);
+    }
+    formik.setFieldValue(id, value);
+    console.log(tempobject);
+    console.log(formik.values);
   }
   useEffect(() => {
     fetchCity();
-    console.log(formikAddress.values.province);
   }, [formikAddress.values.province]);
   useEffect(() => {
     fetchPos();
-    console.log(formikAddress.values);
   }, [formikAddress.values.city]);
   async function verify() {
     await api
@@ -391,11 +337,7 @@ export default function ProfilePage() {
           email: userSelector.email,
         },
       })
-      .then(
-        (res) => alert(res.data.message)
-        // /forgot-password/token
-        //    console.log(res.data));
-      );
+      .then((res) => alert(res.data.message));
   }
   return (
     <>
@@ -421,6 +363,8 @@ export default function ProfilePage() {
                   }
                   fontWeight={"500"}
                   onClick={() => {
+                    console.log(formik.values);
+                    console.log(phone);
                     setTab("biodata");
                   }}
                 >
@@ -488,7 +432,12 @@ export default function ProfilePage() {
                       h="50px"
                       borderRadius="full"
                       objectFit={"fill"}
-                      src={userSelector.avatar_url}
+                      border={"2px #0060ae solid"}
+                      src={
+                        userSelector.avatar_url
+                          ? userSelector.avatar_url
+                          : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT19eLyqRHQDO-VnXj1HhzL_9q8yHF-3ewIhA&usqp=CAU"
+                      }
                       onClick={() => inputFileRef.current.click()}
                     ></Image>
                     <Flex fontSize={"1.2rem"} fontWeight={600}>
@@ -508,6 +457,7 @@ export default function ProfilePage() {
                     w={"260px"}
                     id="first_name"
                     variant={"flushed"}
+                    maxLength={32}
                     borderColor="black.800"
                     value={first_name}
                   ></Input>
@@ -517,6 +467,7 @@ export default function ProfilePage() {
                     Last Name
                   </Flex>
                   <Input
+                    maxLength={32}
                     id="last_name"
                     onChange={(val) => {
                       inputHandler(val);
@@ -580,13 +531,13 @@ export default function ProfilePage() {
                   <InputGroup w={"260px"} variant={"flushed"} gap={"10px"}>
                     <InputLeftAddon children="+62" />
                     <Input
-                      focu
+                      maxLength={12}
                       id="phone"
                       onChange={(val) => {
-                        inputHandler(val);
+                        inputHandlerPhone(val);
                         setPhone(val.target.value);
                       }}
-                      type="tel"
+                      type="number"
                       value={phone}
                     />
                   </InputGroup>
