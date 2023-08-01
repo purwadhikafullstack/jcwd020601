@@ -13,8 +13,10 @@ import ProtectedPage from "./protectedpage";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage";
 import SuperAdminPage from "../pages/SuperAdminPage";
+import OrderPage from "../pages/OrderPage";
 import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
+
 
 const routes = [
   <Route
@@ -113,6 +115,14 @@ const routes = [
     element={
       <ProtectedPage needLogin={true}>
         <CartPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/order"
+    element={
+      <ProtectedPage needLogin={true}>
+        <OrderPage />
       </ProtectedPage>
     }
   ></Route>,

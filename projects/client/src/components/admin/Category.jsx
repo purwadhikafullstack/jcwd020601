@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import Add from "./category/Add";
 import Action from "./category/Action";
 export default function Category() {
+	let t = localStorage.getItem("auth");
 	const [value, setValue] = useState([]);
 	const [page, setPage] = useState(0);
 	const [limit, setLimit] = useState(10);
@@ -29,10 +30,16 @@ export default function Category() {
 	const [pages, setPages] = useState(0);
 	const [keyword, setKeyword] = useState("");
 	const [query, setQuery] = useState("");
+	const [token, setToken] = useState(JSON.parse(t));
 
 	async function fetchCategori() {
 		let response = await api.get(
-			`/category?search_query=${keyword}&page=${page}&limit=${limit}`
+			`/category?search_query=${keyword}&page=${page}&limit=${limit}`,
+			{
+				headers: {
+					Authorization: token,
+				},
+			}
 		);
 		setValue(response.data.result);
 		setPage(response.data.page);
@@ -96,7 +103,7 @@ export default function Category() {
 								Reset
 							</Button>
 						</Box>
-						<Add getData={fetchCategori} />
+						<Add getData={fetchCategori} token={token} />
 					</Box>
 					<Table variant="simple">
 						<TableCaption my={5}>
@@ -119,6 +126,7 @@ export default function Category() {
 											id={val.id}
 											name={val.category}
 											getData={fetchCategori}
+											token={token}
 										/>
 									</Td>
 								</Tr>

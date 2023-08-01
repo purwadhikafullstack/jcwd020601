@@ -13,10 +13,14 @@ import Edit from "./Edit";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
-export default function Action({ id, name, getData }) {
+export default function Action({ id, name, getData, token }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const deleteData = async () => {
-		await api.delete(`/book/v3/${id}`);
+		await api.delete(`/book/v3/${id}`, {
+			headers: {
+				Authorization: token,
+			},
+		});
 	};
 	const handleClick = () => {
 		Swal.fire({
@@ -56,7 +60,13 @@ export default function Action({ id, name, getData }) {
 						}}
 						// bgColor={"red"}
 					>
-						<Edit isOpen={isOpen} onClose={onClose} id={id} getData={getData} />
+						<Edit
+							isOpen={isOpen}
+							onClose={onClose}
+							id={id}
+							getData={getData}
+							token={token}
+						/>
 					</MenuItem>
 				</MenuList>
 			</Menu>

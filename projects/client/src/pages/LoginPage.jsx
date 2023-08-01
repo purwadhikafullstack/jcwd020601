@@ -1,15 +1,15 @@
 import {
-  Button,
-  Center,
-  Flex,
-  Icon,
-  IconButton,
-  Img,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Box,
-  useToast,
+	Button,
+	Center,
+	Flex,
+	Icon,
+	IconButton,
+	Img,
+	Input,
+	InputGroup,
+	InputRightElement,
+	Box,
+	useToast,
 } from "@chakra-ui/react";
 import logo from "../assets/images/gramedia-icon-2.png";
 
@@ -109,6 +109,7 @@ export default function LoginPage() {
       await api.post("/auth/v2", login).then((res) => {
         localStorage.setItem("auth", JSON.stringify(res.data.token));
         token = res.data.token;
+        console.log(token);
         toast({
           title: res.data.message,
           description: "Login Successful.",
@@ -148,27 +149,28 @@ export default function LoginPage() {
     }
   }
 
-  const handleKeyPress = useCallback((event) => {
-    if (event.key === "Enter") {
-      document.getElementById("submit").click();
-    }
-  }, []);
+	const handleKeyPress = useCallback((event) => {
+		if (event.key === "Enter") {
+			document.getElementById("submit").click();
+		}
+	}, []);
 
-  const [seePassword, setSeePassword] = useState(false);
-  const toast = useToast();
-  const dispatch = useDispatch();
-  const [login, setLogin] = useState({
-    emus: "",
-    password: "",
-  });
-  const nav = useNavigate();
-  function inputHandler(input) {
-    const { value, id } = input.target;
-    const tempobject = { ...login };
-    tempobject[id] = value;
-    setLogin(tempobject);
-    console.log(tempobject);
-  }
+	const [seePassword, setSeePassword] = useState(false);
+	const toast = useToast();
+	const dispatch = useDispatch();
+	const [login, setLogin] = useState({
+		emus: "",
+		password: "",
+	});
+	const nav = useNavigate();
+	function inputHandler(input) {
+		const { value, id } = input.target;
+		const tempobject = { ...login };
+		tempobject[id] = value;
+		setLogin(tempobject);
+		console.log(tempobject);
+	}
+
 
   return (
     <>
@@ -276,61 +278,60 @@ export default function LoginPage() {
               <Center></Center>
             </Center>
           </Center>
-
-          <Center
-            flexWrap={"wrap"}
-            className="loginpage-about"
-            display={"flex"}
-            color={"blackAlpha.700"}
-            px={"10px"}
-            gap={"20px"}
-          >
-            <Box fontSize={"13px"} cursor={"pointer"}>
-              Meta
-            </Box>{" "}
-            <Box fontSize={"13px"} cursor={"pointer"}>
-              About
-            </Box>
-            <Box fontSize={"13px"} cursor={"pointer"}>
-              Blog
-            </Box>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Jobs
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Help
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              API
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Privacy
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Terms
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Top Accounts
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Locations
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Gramedia Lite
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Contact Uploading & Non-Users
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Meta Verified
-            </Flex>
-          </Center>
-        </Center>
-        <Center color={"blackAlpha.700"} gap={"20px"}>
-          <Flex fontSize={"13px"}> English</Flex>
-          <Flex fontSize={"13px"}> © 2023 Gramedia from Meta</Flex>
-        </Center>
-      </Center>
-    </>
-  );
+					<Center
+						flexWrap={"wrap"}
+						className="loginpage-about"
+						display={"flex"}
+						color={"blackAlpha.700"}
+						px={"10px"}
+						gap={"20px"}
+					>
+						<Box fontSize={"13px"} cursor={"pointer"}>
+							Meta
+						</Box>{" "}
+						<Box fontSize={"13px"} cursor={"pointer"}>
+							About
+						</Box>
+						<Box fontSize={"13px"} cursor={"pointer"}>
+							Blog
+						</Box>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Jobs
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Help
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							API
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Privacy
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Terms
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Top Accounts
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Locations
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Gramedia Lite
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Contact Uploading & Non-Users
+						</Flex>
+						<Flex fontSize={"13px"} cursor={"pointer"}>
+							Meta Verified
+						</Flex>
+					</Center>
+				</Center>
+				<Center color={"blackAlpha.700"} gap={"20px"}>
+					<Flex fontSize={"13px"}> English</Flex>
+					<Flex fontSize={"13px"}> © 2023 Gramedia from Meta</Flex>
+				</Center>
+			</Center>
+		</>
+	);
 }

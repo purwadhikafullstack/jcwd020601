@@ -14,36 +14,36 @@ import {
 	useMediaQuery,
 } from "@chakra-ui/react";
 
-const item = [
-	{
-		pengarang: "Husna Widyani",
-		judul: "60+ Dongeng Fabel Sepanjang Masa",
-		harga: " Rp 78.400 ",
-		image:
-			"https://cdn.gramedia.com/uploads/items/9786020523835__w150_hauto.jpg",
-	},
-	{
-		pengarang: "Morten",
-		judul: "Great at Work",
-		harga: " Rp 100.000",
-		image:
-			"https://cdn.gramedia.com/uploads/items/Cover_Great_At_Work_2022_page-0001__w150_hauto.jpg",
-	},
-	{
-		pengarang: "Vita Wahid",
-		judul: "Finding Ikigai in My Journey",
-		harga: "  Rp 64.800 ",
-		image:
-			"https://cdn.gramedia.com/uploads/picture_meta/2023/4/5/ryfyia6xkccddzfirnusd7__w150_hauto.jpg",
-	},
-	{
-		pengarang: "RATIH KUMALA",
-		judul: "Saga dari Samudra",
-		harga: " Rp 74.250 ",
-		image:
-			"https://cdn.gramedia.com/uploads/picture_meta/2023/5/17/la6bjhefmuksgptcjgggbi__w150_hauto.jpg",
-	},
-];
+// const item = [
+// 	{
+// 		pengarang: "Husna Widyani",
+// 		judul: "60+ Dongeng Fabel Sepanjang Masa",
+// 		harga: " Rp 78.400 ",
+// 		image:
+// 			"https://cdn.gramedia.com/uploads/items/9786020523835__w150_hauto.jpg",
+// 	},
+// 	{
+// 		pengarang: "Morten",
+// 		judul: "Great at Work",
+// 		harga: " Rp 100.000",
+// 		image:
+// 			"https://cdn.gramedia.com/uploads/items/Cover_Great_At_Work_2022_page-0001__w150_hauto.jpg",
+// 	},
+// 	{
+// 		pengarang: "Vita Wahid",
+// 		judul: "Finding Ikigai in My Journey",
+// 		harga: "  Rp 64.800 ",
+// 		image:
+// 			"https://cdn.gramedia.com/uploads/picture_meta/2023/4/5/ryfyia6xkccddzfirnusd7__w150_hauto.jpg",
+// 	},
+// 	{
+// 		pengarang: "RATIH KUMALA",
+// 		judul: "Saga dari Samudra",
+// 		harga: " Rp 74.250 ",
+// 		image:
+// 			"https://cdn.gramedia.com/uploads/picture_meta/2023/5/17/la6bjhefmuksgptcjgggbi__w150_hauto.jpg",
+// 	},
+// ];
 
 export default function CarouselAll() {
 	const [large] = useMediaQuery("(min-width: 1280px)");
@@ -116,7 +116,7 @@ export default function CarouselAll() {
 					flexWrap={"wrap"}
 					justifyContent={"center"}
 				>
-					{item.map((val, idx) => (
+					{/* {item.map((val, idx) => (
 						<Card maxW="sm" key={idx}>
 							<CardBody pb={0}>
 								<Image
@@ -149,7 +149,7 @@ export default function CarouselAll() {
 								</ButtonGroup>
 							</CardFooter>
 						</Card>
-					))}
+					))} */}
 				</Box>
 			</Box>
 
