@@ -3,7 +3,8 @@ const router = express.Router();
 const stockController = require("../controllers").stockController;
 //get
 
-router.get("/", stockController.getAll);
+router.get("/", stockController.getAllAsc);
+router.get("/Desc", stockController.getAllDesc);
 router.get("/:id", stockController.getById);
 router.post("/v1", stockController.insertStock);
 router.patch("/v2", stockController.editStock);
