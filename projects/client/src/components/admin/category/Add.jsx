@@ -19,7 +19,7 @@ import { GrFormAdd } from "react-icons/gr";
 import { useState } from "react";
 import { api } from "../../../api/api";
 
-export default function Add({ getData }) {
+export default function Add({ getData, token }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [scrollBehavior, setScrollBehavior] = useState("inside");
 	const formik = useFormik({
@@ -30,7 +30,11 @@ export default function Add({ getData }) {
 			category: Yup.string().trim().required("Isi dalam bentuk karakter"),
 		}),
 		onSubmit: async (values, { resetForm }) => {
-			await api.post("/category/v1", values);
+			await api.post("/category/v1", values, {
+				headers: {
+					Authorization: token,
+				},
+			});
 			onClose();
 			resetForm({ values: "" });
 			Swal.fire("Good job!", "Your data category has been Added.", "success");

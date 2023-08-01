@@ -18,14 +18,12 @@ import { api } from "../../api/api";
 import ReactPaginate from "react-paginate";
 import "../../App.css";
 import { BiSearchAlt } from "react-icons/bi";
-
 import { GrFormAdd, GrPowerReset } from "react-icons/gr";
-
 import Add from "./product/Add";
-
 import Action from "./product/Action";
 
 export default function Product() {
+	let t = localStorage.getItem("auth");
 	const [value, setValue] = useState([]);
 	const [page, setPage] = useState(0);
 	const [limit, setLimit] = useState(10);
@@ -33,11 +31,18 @@ export default function Product() {
 	const [pages, setPages] = useState(0);
 	const [keyword, setKeyword] = useState("");
 	const [query, setQuery] = useState("");
+	const [token, setToken] = useState(JSON.parse(t));
 
 	async function fetchProduct() {
 		let response = await api.get(
-			`/book?search_query=${keyword}&page=${page}&limit=${limit}`
+			`/book?search_query=${keyword}&page=${page}&limit=${limit}`,
+			{
+				headers: {
+					Authorization: token,
+				},
+			}
 		);
+		// setToken(JSON.parse(t));
 		setValue(response.data.result);
 		setPage(response.data.page);
 		setRows(response.data.totalRows);
@@ -57,7 +62,6 @@ export default function Product() {
 	};
 	const inputSearch = (e) => {
 		setQuery(e.target.value);
-		// setKeyword(e.target.value);
 	};
 	const resetKeyWord = () => {
 		setKeyword("");
@@ -83,7 +87,7 @@ export default function Product() {
 					>
 						<Box display={"flex"} py={3} gap={3}>
 							<Input
-								placeholder="Basic Usage"
+								placeholder="Search data"
 								variant={"outline"}
 								w={"30em"}
 								size="lg"
@@ -107,7 +111,7 @@ export default function Product() {
 								Reset
 							</Button>
 						</Box>
-						<Add getData={fetchProduct} />
+						<Add getData={fetchProduct} token={token} />
 					</Box>
 					<Table variant="simple">
 						<TableCaption my={5}>
@@ -127,7 +131,7 @@ export default function Product() {
 						<Tbody>
 							{value.map((val, idx) => (
 								<Tr key={val.id}>
-									<Td>{val.id}</Td>
+									<Td>{idx + 1 + page * limit}</Td>
 									<Td>{val.title}</Td>
 									<Td>{val.language}</Td>
 									<Td>{val.author}</Td>
@@ -142,15 +146,13 @@ export default function Product() {
 											id={val.id}
 											name={val.title}
 											getData={fetchProduct}
+											token={token}
 										/>
 									</Td>
 								</Tr>
 							))}
 						</Tbody>
 					</Table>
-					{/* <p>
-						Total rows: {rows} page : {rows ? page + 1 : 0} of {pages}
-					</p> */}
 					<ReactPaginate
 						previousLabel={"< Prev"}
 						nextLabel={"Next >"}
