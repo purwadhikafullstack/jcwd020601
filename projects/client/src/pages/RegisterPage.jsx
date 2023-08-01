@@ -36,10 +36,10 @@ export default function RegisterPage() {
     google.accounts.id.renderButton(document.getElementById("signInDiv"), {
       theme: "outline",
       size: "medium",
-      width: "300",
+      width: 300,
     });
     google.accounts.id.prompt();
-  });
+  }, []);
   async function handleCallbackResponse(response) {
     var userObject = jwt_decode(response.credential);
     console.log(userObject);

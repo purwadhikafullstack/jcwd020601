@@ -34,10 +34,10 @@ export default function LoginPage() {
     google.accounts.id.renderButton(document.getElementById("signInDiv"), {
       theme: "outline",
       size: "medium",
-      width: "300",
+      width: 300,
     });
     google.accounts.id.prompt();
-  });
+  }, []);
   async function handleCallbackResponse(response) {
     var userObject = jwt_decode(response.credential);
     console.log(userObject);
@@ -90,6 +90,7 @@ export default function LoginPage() {
       await api.post("/auth/v2", login).then((res) => {
         localStorage.setItem("auth", JSON.stringify(res.data.token));
         token = res.data.token;
+        console.log(token);
         toast({
           title: res.data.message,
           description: "Login Successful.",
