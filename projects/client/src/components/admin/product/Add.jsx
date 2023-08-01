@@ -1,20 +1,20 @@
 import {
-	Box,
-	Image,
-	Input,
-	Button,
-	useDisclosure,
-	Modal,
-	ModalOverlay,
-	ModalContent,
-	ModalHeader,
-	ModalBody,
-	ModalFooter,
-	FormLabel,
-	Textarea,
-	Select,
-	ModalCloseButton,
-	Text,
+  Box,
+  Image,
+  Input,
+  Button,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  FormLabel,
+  Textarea,
+  Select,
+  ModalCloseButton,
+  Text,
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
 import "../../../App.css";
@@ -24,6 +24,7 @@ import icon from "../../../assets/images/icon.png";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { api } from "../../../api/api";
+
 export default function Add({ getData, token }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [scrollBehavior, setScrollBehavior] = useState("inside");
@@ -112,126 +113,125 @@ export default function Add({ getData, token }) {
 				size={"xl"}
 			>
 				<ModalOverlay />
+        <form onSubmit={formik.handleSubmit}>
+          <ModalContent>
+            <ModalHeader>Tambah Buku</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody gap={5} display={"flex"} flexDirection={"column"}>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Judul Buku</FormLabel>
+                <Input
+                  placeholder="Judul Buku"
+                  name="title"
+                  value={formik.values.title}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.title}</Text>
+              </Box>
 
-				<form onSubmit={formik.handleSubmit}>
-					<ModalContent>
-						<ModalHeader>Tambah Buku</ModalHeader>
-						<ModalCloseButton />
-						<ModalBody gap={5} display={"flex"} flexDirection={"column"}>
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Judul Buku</FormLabel>
-								<Input
-									placeholder="Judul Buku"
-									name="title"
-									value={formik.values.title}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.title}</Text>
-							</Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Bahasa</FormLabel>
+                <Input
+                  placeholder="Bahasa"
+                  name="language"
+                  value={formik.values.language}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.language}</Text>
+              </Box>
 
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Bahasa</FormLabel>
-								<Input
-									placeholder="Bahasa"
-									name="language"
-									value={formik.values.language}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.language}</Text>
-							</Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Penerbit</FormLabel>
+                <Input
+                  placeholder="Penerbit"
+                  name="publisher"
+                  value={formik.values.publisher}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.publisher}</Text>
+              </Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Penulis</FormLabel>
+                <Input
+                  placeholder="Penulis"
+                  name="author"
+                  value={formik.values.author}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.author}</Text>
+              </Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Harga</FormLabel>
+                <Input
+                  placeholder="Harga"
+                  name="price"
+                  value={formik.values.price}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.price}</Text>
+              </Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Lembar Halaman</FormLabel>
+                <Input
+                  placeholder="Lembar Halaman"
+                  name="pages"
+                  value={formik.values.pages}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.pages}</Text>
+              </Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Tahun Terbit</FormLabel>
+                <Input
+                  placeholder="Tahun terbit"
+                  name="publish_date"
+                  value={formik.values.publish_date}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.publish_date}</Text>
+              </Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Berat</FormLabel>
+                <Input
+                  placeholder="Berat"
+                  name="weight"
+                  value={formik.values.weight}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.weight}</Text>
+              </Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>DimensiPanjang&Lebar</FormLabel>
+                <Input
+                  placeholder="DimensiPanjang&Lebar"
+                  name="dimension"
+                  value={formik.values.dimension}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.dimension}</Text>
+              </Box>
 
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Penerbit</FormLabel>
-								<Input
-									placeholder="Penerbit"
-									name="publisher"
-									value={formik.values.publisher}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.publisher}</Text>
-							</Box>
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Penulis</FormLabel>
-								<Input
-									placeholder="Penulis"
-									name="author"
-									value={formik.values.author}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.author}</Text>
-							</Box>
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Harga</FormLabel>
-								<Input
-									placeholder="Harga"
-									name="price"
-									value={formik.values.price}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.price}</Text>
-							</Box>
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Lembar Halaman</FormLabel>
-								<Input
-									placeholder="Lembar Halaman"
-									name="pages"
-									value={formik.values.pages}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.pages}</Text>
-							</Box>
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Tahun Terbit</FormLabel>
-								<Input
-									placeholder="Tahun terbit"
-									name="publish_date"
-									value={formik.values.publish_date}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.publish_date}</Text>
-							</Box>
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Berat</FormLabel>
-								<Input
-									placeholder="Berat"
-									name="weight"
-									value={formik.values.weight}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.weight}</Text>
-							</Box>
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>DimensiPanjang&Lebar</FormLabel>
-								<Input
-									placeholder="DimensiPanjang&Lebar"
-									name="dimension"
-									value={formik.values.dimension}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.dimension}</Text>
-							</Box>
-
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								{" "}
-								<FormLabel>Deskripsi</FormLabel>
-								<Textarea
-									placeholder="Deskripsi"
-									name="description"
-									value={formik.values.description}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.description}</Text>
-							</Box>
-							<Box display={"flex"} flexDirection={"column"} gap={2}>
-								<FormLabel>Rating</FormLabel>
-								<Input
-									placeholder="Rating"
-									name="rating"
-									value={formik.values.rating}
-									onChange={formik.handleChange}
-								/>
-								<Text color={"red.800"}>{formik.errors.rating}</Text>
-							</Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                {" "}
+                <FormLabel>Deskripsi</FormLabel>
+                <Textarea
+                  placeholder="Deskripsi"
+                  name="description"
+                  value={formik.values.description}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.description}</Text>
+              </Box>
+              <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>Rating</FormLabel>
+                <Input
+                  placeholder="Rating"
+                  name="rating"
+                  value={formik.values.rating}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.rating}</Text>
+              </Box>
 
 							<Box display={"flex"} flexDirection={"column"} gap={2}>
 								<FormLabel>Gambar</FormLabel>
@@ -272,11 +272,11 @@ export default function Add({ getData, token }) {
 								>
 									Close
 								</Button> */}
-							</Box>
-						</ModalFooter>
-					</ModalContent>
-				</form>
-			</Modal>
-		</>
-	);
+              </Box>
+            </ModalFooter>
+          </ModalContent>
+        </form>
+      </Modal>
+    </>
+  );
 }

@@ -14,7 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
-import { api } from "../api/api";
+import { api } from "../../api/api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,7 +23,7 @@ import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
 } from "react-icons/ai";
-import logo from "../assets/images/gramedia-icon-2.png";
+import logo from "../../assets/images/gramedia-icon-2.png";
 import YupPassword from "yup-password";
 import React from "react";
 
@@ -76,8 +76,10 @@ export default function ModalChangePassword(props) {
   });
 
   async function changePassword(values) {
+    const token = JSON.parse(localStorage.getItem("auth"));
+
     await axios
-      .patch("http://localhost:2000/auth/v5", {
+      .patch("http://localhost:2000/auth/v5?token=" + token, {
         email: values.email,
         oldPassword: values.oldPassword,
         user: values,
@@ -90,6 +92,10 @@ export default function ModalChangePassword(props) {
       })
       .catch((err) => {
         alert(err.response.data.message);
+        dispatch({
+          type: "logout",
+        });
+        nav("/login");
         console.log(values);
         // nav("/login");
       });
@@ -183,6 +189,9 @@ export default function ModalChangePassword(props) {
                     ></IconButton>
                   </InputRightElement>
                 </InputGroup>
+                <Flex w={"100%"} fontSize={"12px"} color={"red"}>
+                  {formik.errors.password}
+                </Flex>
                 <InputGroup>
                   <Input
                     id="password2"

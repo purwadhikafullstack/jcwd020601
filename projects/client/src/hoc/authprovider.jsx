@@ -13,16 +13,28 @@ export default function AuthProvider({ children }) {
   async function fetch() {
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
-      // console.log(token);
+      const address = JSON.parse(localStorage.getItem("address"));
+
+      console.log(token);
+
       const user = await api
         .get("/auth/v3?token=" + token)
-        .then((res) => {
+        .then(async (res) => {
+          console.log(res.data);
           return res.data;
         })
         .catch((err) => {
+          console.log(err.message);
           return err.message;
         });
-
+      console.log(user?.email);
+      const userMainAddress = await api
+        .get("/address/ismain/" + user?.id)
+        .then((res) => res.data)
+        .catch((err) => {
+          return err.message;
+        });
+      console.log(user?.email);
       const admin = await api
         .get("/admin/v3?token=" + token)
         .then((res) => {
@@ -33,23 +45,29 @@ export default function AuthProvider({ children }) {
         });
 
       if (user?.email) {
+        console.log(user?.email);
         dispatch({
           type: "login",
           payload: user,
+          address: address ? address : userMainAddress,
         });
       } else if (admin?.email) {
+        console.log(admin?.email);
         dispatch({
           type: "login",
           payload: admin,
         });
       } else {
-        dispatch({
+        console.log("ksadjasjd");
+        await dispatch({
           type: "logout",
         });
       }
+      console.log("Bodh");
     } catch (err) {
       console.log(err.message);
     }
   }
+
   return children;
 }

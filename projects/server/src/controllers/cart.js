@@ -42,6 +42,10 @@ const cartController = {
                 model: db.Book,
                 required: true, // Inner join
               },
+              {
+                model: db.Branch,
+                required: true,
+              },
             ],
           },
         ],
@@ -93,7 +97,11 @@ const cartController = {
       });
       const qty = stock.stock - stock.bucket;
 
-      if (qty >= quantity) {
+      if (quantity <= 0) {
+        res
+          .status(400)
+          .send("Unable to order less than 1 product, please delete instead");
+      } else if (qty >= quantity) {
         // check to update or create cart
         const check = await db.Cart.findOne({
           where: {

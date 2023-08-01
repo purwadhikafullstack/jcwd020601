@@ -1,7 +1,6 @@
 const db = require("../models");
 const Sequelize = require("sequelize");
 const bookImage = process.env.URL_BOOK_PROD;
-console.log(bookImage);
 const { Op } = db.Sequelize;
 const moment = require("moment");
 const t = require("../helpers/transaction");

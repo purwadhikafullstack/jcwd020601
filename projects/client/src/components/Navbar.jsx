@@ -22,6 +22,13 @@ import {
   Stack,
   useDisclosure,
   Link,
+  ModalOverlay,
+  ModalContent,
+  Modal,
+  Button,
+  ModalBody,
+  ModalHeader,
+  useToast,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -33,12 +40,15 @@ import { BsChevronDown, BsCart } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
 import { api } from "../api/api";
 import logo from "../assets/images/gramedia-icon-2.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { HiOutlineLocationMarker } from "react-icons/hi";
+import { MdClose } from "react-icons/md";
+import ModalSelectAddress from "../pages/ProfilePage/ModalSelectAddress";
 export default function Navbar() {
   const [large] = useMediaQuery("(min-width: 768px)");
-
+  const nav = useNavigate();
   return (
     <>
       <Box
@@ -72,6 +82,7 @@ export default function Navbar() {
 }
 
 function MobileNav() {
+  const nav = useNavigate();
   const { isOpen, onToggle } = useDisclosure();
   return (
     <>
@@ -141,12 +152,13 @@ function MobileNav() {
           <Box>
             <Menu>
               <MenuButton>
-                <Flex alignItems={"center"} gap={"0.1rem"} cursor={"pointer"}>
+                <Flex alignItems={"center"} gap={"0.1rem"}>
                   <Icon
                     as={BsCart}
                     w={{ base: "5em", sm: "5em" }}
                     h={{ base: 8, sm: 10 }}
                     color="blue.700"
+                    cursor={"pointer"}
                   ></Icon>
                 </Flex>
               </MenuButton>
@@ -217,17 +229,29 @@ function MobileNav() {
 
 function DesktopNav() {
   const locatio = useLocation();
+  const toast = useToast();
   const location = locatio.pathname.split("/")[1];
   const userSelector = useSelector((state) => state.login.auth);
   const dispatch = useDispatch();
   const nav = useNavigate();
+  const [userAddresses, setUserAddresses] = useState([]);
+  const [userAddress, setUserAddress] = useState([]);
   const [trans, setTrans] = useState(true);
+  const modalSelectAddress = useDisclosure();
+  useEffect(() => {
+    if (userSelector.email) {
+      fetchUserAddresses();
+      setUserAddress(userSelector.address);
+      // fetchUserMainAddress();
+    }
+  }, []);
   function handleTrans() {
     setTrans(!trans);
   }
   async function logout() {
-    window.location.reload();
+    nav("/");
     localStorage.removeItem("auth");
+    localStorage.removeItem("address");
     dispatch({
       type: "logout",
     });
@@ -237,6 +261,38 @@ function DesktopNav() {
     nav("/login");
     return;
   }
+  async function fetchUserAddresses() {
+    try {
+      await api
+        .get("/address/user/" + userSelector.id)
+        .then((res) => {
+          setUserAddresses(res.data);
+          console.log(res.data);
+        })
+        .catch((err) => {
+          toast({
+            position: "top",
+            title: "Something went wrongsas",
+            description: err.response.data.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        });
+    } catch (err) {
+      alert(err.data.message);
+    }
+  }
+  // async function fetchUserMainAddress() {
+  //   try {
+  //     await api.get("/address/ismain/" + userSelector.id).then((res) => {
+  //       setUserAddress(res.data);
+  //       console.log(res.data);
+  //     });
+  //   } catch (err) {
+  //     console.log(err.data.message);
+  //   }
+  // }
 
   return (
     <>
@@ -248,7 +304,13 @@ function DesktopNav() {
         h={"60px"}
         // py={"50px"}
       >
-        <Image src={logo} />
+        <Image
+          src={logo}
+          cursor={"pointer"}
+          onClick={() => {
+            nav("/");
+          }}
+        />
       </Box>
       <Box
         display={"flex"}
@@ -382,7 +444,93 @@ function DesktopNav() {
             />
           </InputGroup>
         </Box>
+        <Center h={"60px"} ml={"30px"}>
+          <Flex
+            px={"10px"}
+            w={"150px"}
+            cursor={"pointer"}
+            h={"45px"}
+            alignItems={"center"}
+            gap={"5px"}
+            border={"#d6d6d6 solid 2px"}
+            borderRadius={"50px"}
+            onClick={() => {
+              modalSelectAddress.onOpen();
+            }}
+          >
+            <Flex>
+              <Icon
+                color={"green"}
+                fontSize={"30px"}
+                as={HiOutlineLocationMarker}
+              ></Icon>
+            </Flex>
+            <Flex fontWeight={"700"} color="#2c5282">
+              {userSelector?.address?.city
+                ? userSelector?.address.city
+                : "Location"}
+            </Flex>
+          </Flex>
+        </Center>
+        <Modal
+          closeOnOverlayClick={false}
+          scrollBehavior="inside"
+          isOpen={modalSelectAddress.isOpen}
+          onClose={modalSelectAddress.onClose}
+          isCentered
+        >
+          <ModalOverlay />
+          <ModalContent maxH={"500px"} maxW="500px">
+            <ModalHeader
+              w={"100%"}
+              px={"10px"}
+              display={"flex"}
+              flexDir={"row"}
+              justifyContent={"center"}
+            >
+              <Center fontWeight={700}>Select Address</Center>
+              <Flex w={"70%"} flexDir={"row-reverse"}>
+                <Button
+                  w={"30px"}
+                  onClick={() => {
+                    modalSelectAddress.onClose();
+                  }}
+                >
+                  <Icon fontSize={"30px"} as={MdClose}></Icon>
+                </Button>
+              </Flex>
+            </ModalHeader>
+
+            <ModalBody maxW="500px">
+              <Flex flexDir={"column"} gap={"20px"} pr={"50px"}>
+                {userAddresses.map((val) => {
+                  return (
+                    <>
+                      <ModalSelectAddress
+                        userSelector={userSelector}
+                        modalSelectAddress={modalSelectAddress}
+                        userAddress={userAddress}
+                        setUserAddress={setUserAddress}
+                        address={val}
+                        id={val.id}
+                        province={val.province}
+                        city={val.city}
+                        pos={val.pos}
+                        labelAlamat={val.labelAlamat}
+                        isMain={val.isMain}
+                        no_Handphone={val.no_Handphone}
+                        alamatLengkap={val.alamatLengkap}
+                        namaPenerima={val.namaPenerima}
+                      />
+                    </>
+                  );
+                })}
+              </Flex>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
       </Box>
+
       <Box
         display={"flex"}
         w={{ sm: "10em", md: "15em", lg: "20em" }}
@@ -406,7 +554,9 @@ function DesktopNav() {
                   alignItems={"center"}
                   flexDir={"column"}
                 >
-                  <Box>Cart</Box>
+                  <Box cursor={"pointer"} onClick={() => nav("/cart")}>
+                    Cart
+                  </Box>
                   <Box>Total</Box>
                 </Flex>
                 <Center
@@ -426,7 +576,18 @@ function DesktopNav() {
           <Menu>
             <MenuButton>
               <Flex alignItems={"center"} gap={"0.1rem"} cursor={"pointer"}>
-                <Avatar w={10} h={10}></Avatar>
+                <Image
+                  w={"50px"}
+                  h="50px"
+                  borderRadius="full"
+                  objectFit={"fill"}
+                  border={"2px #0060ae solid"}
+                  src={
+                    userSelector.avatar_url
+                      ? userSelector.avatar_url
+                      : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT19eLyqRHQDO-VnXj1HhzL_9q8yHF-3ewIhA&usqp=CAU"
+                  }
+                ></Image>
               </Flex>
             </MenuButton>
             <MenuList my={5} position={"fixed"} left={"-6em"}>
@@ -434,16 +595,8 @@ function DesktopNav() {
                 <Flex
                   px={"10px"}
                   gap={"1rem"}
-                  color={
-                    location == "profile" || location == "Profile"
-                      ? "white"
-                      : "black"
-                  }
-                  bg={
-                    location == "profile" || location == "Profile"
-                      ? "#25225a"
-                      : "white"
-                  }
+                  color={location == "profile" ? "white" : "black"}
+                  bg={location == "profile" ? "#25225a" : "white"}
                   onClick={() => nav("/profile")}
                   cursor={"pointer"}
                 >

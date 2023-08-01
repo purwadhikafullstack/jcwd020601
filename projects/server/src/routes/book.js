@@ -18,6 +18,7 @@ router.patch(
 	fileUploader({ destinationFolder: "book" }).single("book_url"),
 	validate,
 	bookController.editBook
+
 );
 router.delete("/v3/:id", validate, bookController.deleteBook);
 

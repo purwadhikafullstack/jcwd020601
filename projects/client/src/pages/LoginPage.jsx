@@ -24,93 +24,130 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useCallback } from "react";
 
 export default function LoginPage() {
-	useEffect(() => {
-		/*global google*/
-		google.accounts.id.initialize({
-			client_id:
-				"417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
-			callback: handleCallbackResponse,
-		});
-		google.accounts.id.renderButton(document.getElementById("signInDiv"), {
-			theme: "outline",
-			size: "medium",
-			width: 300,
-		});
-		google.accounts.id.prompt();
-	});
-	async function handleCallbackResponse(response) {
-		var userObject = jwt_decode(response.credential);
-		console.log(userObject);
-		try {
-			let token;
-			const loggingIn = await api
-				.post("/auth/v3", userObject)
-				.then((res) => {
-					localStorage.setItem("auth", JSON.stringify(res.data.token));
-					token = res.data.token;
-					toast({
-						title: res.data.message,
-						description: "Login Successful.",
-						status: "success",
-						duration: 5000,
-						isClosable: true,
-					});
-					return res.data.message;
-				})
-				.catch((err) => {
-					console.log(err);
-					toast({
-						position: "top",
-						title: "Login ERROR",
-						description: err.response.data.message,
-						status: "error",
-						duration: 5000,
-						isClosable: true,
-					});
-				});
-			if (loggingIn) {
-				await api.get("/auth/v3?token=" + token).then((res) => {
-					console.log(res.data);
-					dispatch({
-						type: "login",
-						payload: res.data,
-					});
-				});
-				nav("/");
-			}
-		} catch (err) {
-			console.log(err);
-			alert(err.response.data.message);
-		}
-		// document.getElementById("signInDiv").hidden = true;
-	}
-	async function submitLogin() {
-		try {
-			let token;
-			await api.post("/auth/v2", login).then((res) => {
-				localStorage.setItem("auth", JSON.stringify(res.data.token));
-				token = res.data.token;
-				toast({
-					title: res.data.message,
-					description: "Login Successful.",
-					status: "success",
-					duration: 5000,
-					isClosable: true,
-				});
-			});
-			await api.get("/auth/v3?token=" + token).then((res) => {
-				console.log(res.data);
-				dispatch({
-					type: "login",
-					payload: res.data,
-				});
-			});
-			nav("/home");
-		} catch (err) {
-			console.log(err);
-			alert(err.message);
-		}
-	}
+  useEffect(() => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id:
+        "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
+      callback: handleCallbackResponse,
+    });
+    console.log("dsao");
+    google.accounts.id.renderButton(document.getElementById("signInDiv"), {
+      theme: "outline",
+      width: 300,
+      size: "medium",
+    });
+    google.accounts.id.prompt();
+  }, []);
+  async function handleCallbackResponse(response) {
+    var userObject = jwt_decode(response.credential);
+    console.log(userObject);
+    try {
+      let token;
+      const loggingIn = await api
+        .post("/auth/v3", userObject)
+        .then((res) => {
+          localStorage.setItem("auth", JSON.stringify(res.data.token));
+          token = res.data.token;
+          toast({
+            title: res.data.message,
+            description: "Login Successful.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          return res.data.message;
+        })
+        .catch((err) => {
+          console.log(err);
+          toast({
+            position: "top",
+            title: "Login ERROR",
+            description: err.response.data.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        });
+      if (loggingIn) {
+        const user = await api
+          .get("/auth/v3?token=" + token)
+          .then(async (res) => {
+            return res.data;
+          })
+          .catch((err) => {
+            return err.message;
+          });
+        const userMainAddress = await api
+          .get("/address/ismain/" + user.id)
+          .then((res) => {
+            localStorage.setItem("address", JSON.stringify(res.data));
+
+            console.log(res.data);
+
+            return res.data;
+          })
+          .catch((err) => {
+            return err.message;
+          });
+        dispatch({
+          type: "login",
+          payload: user,
+          address: userMainAddress,
+        });
+        nav("/");
+      }
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.message);
+    }
+    // document.getElementById("signInDiv").hidden = true;
+  }
+  async function submitLogin() {
+    try {
+      let token;
+      await api.post("/auth/v2", login).then((res) => {
+        localStorage.setItem("auth", JSON.stringify(res.data.token));
+        token = res.data.token;
+        console.log(token);
+        toast({
+          title: res.data.message,
+          description: "Login Successful.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+
+      const user = await api
+        .get("/auth/v3?token=" + token)
+        .then(async (res) => {
+          return res.data;
+        })
+        .catch((err) => {
+          return err.message;
+        });
+      const userMainAddress = await api
+        .get("/address/ismain/" + user.id)
+        .then((res) => {
+          console.log(res.data);
+
+          return res.data;
+        })
+        .catch((err) => {
+          return err.message;
+        });
+      dispatch({
+        type: "login",
+        payload: user,
+        address: userMainAddress,
+      });
+      nav("/");
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.message);
+    }
+  }
 
 	const handleKeyPress = useCallback((event) => {
 		if (event.key === "Enter") {
@@ -134,110 +171,113 @@ export default function LoginPage() {
 		console.log(tempobject);
 	}
 
-	return (
-		<>
-			<Center flexDir={"column"} gap={"10px"} pt={"30px"} w={"100%"}>
-				<Center flexDir={"column"} gap={"80px"}>
-					<Center flexDir={"column"}>
-						<Center gap={"12px"} flexDir={"column"}>
-							<Center
-								className={"loginpage-container"}
-								flexDir={"column"}
-								border={"1px solid #dbdbdb"}
-							>
-								<Img src={logo} width={"300px"} py={"40px"}></Img>
-								<Center flexDir={"column"} className="loginpage-inputs">
-									<Input
-										fontSize={"12px"}
-										bgColor={"#fafafa"}
-										placeholder="Email or Phone Number"
-										pl={"15px"}
-										onChange={inputHandler}
-										id="emus"
-									></Input>
-									<InputGroup>
-										<Input
-											id="password"
-											onKeyPress={handleKeyPress}
-											onChange={inputHandler}
-											fontSize={"12px"}
-											type={seePassword ? "text" : "password"}
-											border={"1px #878787 solid"}
-											placeholder="Create your password"
-										></Input>
-										<InputRightElement width={"2.5rem"} h={"100%"}>
-											<IconButton
-												colorScheme="whiteAlpha"
-												color={"grey"}
-												as={seePassword ? AiOutlineEye : AiOutlineEyeInvisible}
-												w={"24px"}
-												h={"24px"}
-												onClick={() => setSeePassword(!seePassword)}
-												cursor={"pointer"}
-											></IconButton>
-										</InputRightElement>
-									</InputGroup>
-									<Button
-										color={"white"}
-										borderRadius={"10px"}
-										id="submit"
-										w={"100%"}
-										colorScheme="facebook"
-										onClick={() => {
-											submitLogin();
-										}}
-									>
-										Login
-									</Button>
-									<Center gap={"10px"}>
-										<Flex
-											h={"2px"}
-											w={"130px"}
-											bgColor={"blackAlpha.300"}
-										></Flex>
-										<Flex>OR</Flex>
-										<Flex
-											h={"2px"}
-											w={"130px"}
-											bgColor={"blackAlpha.300"}
-										></Flex>
-									</Center>
-									<Flex gap={"10px"}>
-										<div id="signInDiv"></div>
-									</Flex>
-									<Flex
-										pb={"24px"}
-										fontSize={"12px"}
-										className="loginpage-forgot-password"
-										onClick={() => nav("/forgot-password/request")}
-									>
-										Forgot password?
-									</Flex>
-								</Center>
-							</Center>
-							<Center
-								className="loginpage-border"
-								height={"60px"}
-								flexDir={"column"}
-								border={"1px solid #dbdbdb"}
-								paddingY={"20px"}
-							>
-								<Flex fontSize={"14px"}>
-									Don't Have An Account?{" "}
-									<Flex
-										fontSize={"14px"}
-										color={"#0060ae"}
-										cursor={"pointer"}
-										onClick={() => nav("/register")}
-									>
-										&nbsp;Sign Up
-									</Flex>
-								</Flex>
-							</Center>
-							<Center></Center>
-						</Center>
-					</Center>
 
+  return (
+    <>
+      <Center flexDir={"column"} gap={"10px"} pt={"30px"} w={"100%"}>
+        <Center flexDir={"column"} gap={"80px"}>
+          <Center flexDir={"column"}>
+            <Center gap={"12px"} flexDir={"column"}>
+              <Center
+                className={"loginpage-container"}
+                flexDir={"column"}
+                border={"1px solid #dbdbdb"}
+              >
+                <Img src={logo} width={"300px"} py={"40px"}></Img>
+                <Center flexDir={"column"} className="loginpage-inputs">
+                  <Input
+                    maxLength={32}
+                    fontSize={"12px"}
+                    bgColor={"#fafafa"}
+                    placeholder="Email or Phone Number"
+                    pl={"15px"}
+                    onChange={inputHandler}
+                    id="emus"
+                  ></Input>
+                  <InputGroup>
+                    <Input
+                      id="password"
+                      onKeyPress={handleKeyPress}
+                      maxLength={32}
+                      onChange={inputHandler}
+                      fontSize={"12px"}
+                      type={seePassword ? "text" : "password"}
+                      border={"1px #878787 solid"}
+                      placeholder="Create your password"
+                    ></Input>
+                    <InputRightElement width={"2.5rem"} h={"100%"}>
+                      <IconButton
+                        colorScheme="whiteAlpha"
+                        color={"grey"}
+                        as={seePassword ? AiOutlineEye : AiOutlineEyeInvisible}
+                        w={"24px"}
+                        h={"24px"}
+                        onClick={() => setSeePassword(!seePassword)}
+                        cursor={"pointer"}
+                      ></IconButton>
+                    </InputRightElement>
+                  </InputGroup>
+                  <Button
+                    color={"white"}
+                    borderRadius={"10px"}
+                    id="submit"
+                    w={"100%"}
+                    colorScheme="facebook"
+                    onClick={() => {
+                      submitLogin();
+                    }}
+                  >
+                    Login
+                  </Button>
+                  <Center gap={"10px"}>
+                    <Flex
+                      h={"2px"}
+                      w={"130px"}
+                      bgColor={"blackAlpha.300"}
+                    ></Flex>
+                    <Flex>OR</Flex>
+                    <Flex
+                      h={"2px"}
+                      w={"130px"}
+                      bgColor={"blackAlpha.300"}
+                    ></Flex>
+                  </Center>
+
+                  <Flex gap={"10px"}>
+                    <Box fontWeight={"700"} id="signInDiv"></Box>
+                  </Flex>
+                  <Flex
+                    pb={"24px"}
+                    fontSize={"12px"}
+                    className="loginpage-forgot-password"
+                    onClick={() => nav("/forgot-password/request")}
+                  >
+                    Forgot password?
+                  </Flex>
+                </Center>
+              </Center>
+              <Center
+                className="loginpage-border"
+                height={"60px"}
+                flexDir={"column"}
+                border={"1px solid #dbdbdb"}
+                paddingY={"20px"}
+              >
+                <Flex fontSize={"14px"}>
+                  Don't Have An Account?{" "}
+                  <Flex
+                    fontSize={"14px"}
+                    color={"#0060ae"}
+                    cursor={"pointer"}
+                    onClick={() => nav("/register")}
+                  >
+                    &nbsp;Sign Up
+                  </Flex>
+                </Flex>
+              </Center>
+              <Center></Center>
+            </Center>
+          </Center>
 					<Center
 						flexWrap={"wrap"}
 						className="loginpage-about"

@@ -6,7 +6,6 @@ const { nanoid } = require("nanoid");
 const moment = require("moment");
 const url = process.env.URL;
 const urlVerify = process.env.URLverify;
-const opencage = require("opencage-api-client");
 
 const mailer = require("../lib/mailer");
 const image_url = process.env.URL_IMAGE;
@@ -213,10 +212,10 @@ const userController = {
             },
           });
           if (findToken) {
-            console.log("skadaskk");
+
             token = await db.Token.update(
               {
-                expired: moment().add(1, "days").format(),
+                expired: moment().add(1, "d").format(),
                 token: generateToken,
               },
               {
@@ -260,7 +259,6 @@ const userController = {
   updateProfile: async (req, res) => {
     try {
       const { first_name, last_name, gender, phone, id } = req.body;
-      console.log(req.body);
       const user = await db.User.update(
         {
           first_name,
@@ -279,7 +277,6 @@ const userController = {
           },
         }
       );
-      console.log(user);
 
       return res.status(200).send({
         message: "your account has been updated",
@@ -333,11 +330,10 @@ const userController = {
           },
         });
         if (findToken) {
-          console.log("skadaskk");
           await db.Token.update(
             {
               token: generateToken,
-              expired: moment().add(1, "days").format(),
+              expired: moment().add(5, "s").format(),
             },
             {
               where: {
@@ -378,7 +374,7 @@ const userController = {
   getByToken: async (req, res, next) => {
     try {
       let { token } = req.query;
-      // console.log(token);
+      console.log(token);
       let payload = await db.Token.findOne({
         where: {
           token,
@@ -537,10 +533,8 @@ const userController = {
   },
   changePasswordNoToken: async (req, res) => {
     try {
-      console.log(req.body);
       const { password } = req.body.user;
       const { id } = req.user;
-      console.log(id);
 
       const hashPassword = await bcrypt.hash(password, 10);
 
@@ -564,11 +558,9 @@ const userController = {
   },
   changePassword: async (req, res) => {
     try {
-      console.log(req.body);
       const { token } = req.query;
       const { password } = req.body.user;
       const { id } = req.user;
-      console.log(id);
 
       const hashPassword = await bcrypt.hash(password, 10);
 
@@ -582,7 +574,6 @@ const userController = {
           },
         }
       );
-
       await db.Token.update(
         {
           valid: false,
@@ -593,7 +584,6 @@ const userController = {
           },
         }
       );
-
       res.send({
         message: "password successfully updated",
       });
@@ -603,10 +593,8 @@ const userController = {
   },
   verifyEmail: async (req, res) => {
     try {
-      console.log(req.body);
       const { token } = req.query;
       const { id } = req.user;
-      console.log(id);
       await db.User.update(
         {
           verified: true,
@@ -654,7 +642,6 @@ const userController = {
   },
   uploadAvatar: async (req, res) => {
     const { filename } = req.file;
-    console.log(req.file);
     await db.User.update(
       {
         avatar_url: image_url + filename,
@@ -672,7 +659,6 @@ const userController = {
     }).then((result) => res.send(result));
   },
   uploadAvatarv2: async (req, res) => {
-    console.log(req.file);
     const buffer = await sharp(req.file.buffer).resize(25, 25).png().toBuffer();
     var fullUrl =
       req.protocol +
@@ -680,7 +666,6 @@ const userController = {
       req.get("host") +
       "/auth/image/render/" +
       req.params.id;
-    console.log(fullUrl);
     await db.User.update(
       {
         avatar_url: fullUrl,
