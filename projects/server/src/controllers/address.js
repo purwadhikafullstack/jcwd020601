@@ -3,6 +3,7 @@ const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
 const { default: axios } = require("axios");
+const opencage = require("opencage-api-client");
 const addressController = {
   getAll: async (req, res) => {
     try {
@@ -35,6 +36,22 @@ const addressController = {
       const Address = await db.Address.findAll({
         where: {
           UserId: req.params.id,
+        },
+      });
+      return res.send(Address);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getIsMainByUserId: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const Address = await db.Address.findOne({
+        where: {
+          [Op.and]: [{ UserId: id }, { isMain: true }],
         },
       });
       return res.send(Address);
@@ -95,6 +112,7 @@ const addressController = {
   },
   insertAddress: async (req, res) => {
     try {
+      let place = {};
       const Main = await db.Address.findOne({
         where: {
           isMain: true,
@@ -114,23 +132,25 @@ const addressController = {
         longitude,
         UserId,
       } = req.body;
-      await db.Address.create({
-        labelAlamat,
-        namaPenerima,
-        no_Handphone,
-        province,
-        city,
-        isMain: Main ? false : true,
-        alamatLengkap,
-        pos,
+      await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
+        place = res.results[0].geometry;
 
-        latitude,
-        longitude,
-        UserId,
+        await db.Address.create({
+          labelAlamat,
+          namaPenerima,
+          no_Handphone,
+          province,
+          city,
+          isMain: Main ? false : true,
+          alamatLengkap,
+          pos,
+          latitude: place.lat,
+          longitude: place.lng,
+          UserId,
+        });
       });
-      return await db.Address.findAll().then((result) => {
-        res.send(result);
-      });
+      const result = await db.Address.findAll();
+      res.send(result);
     } catch (err) {
       console.log(err);
       return res.status(500).send({
@@ -140,6 +160,13 @@ const addressController = {
   },
   deleteAddress: async (req, res) => {
     try {
+      const Address = await db.Address.findOne({
+        where: {
+          id: req.params.id,
+        },
+      });
+      console.log(Address);
+      console.log(Address.isMain);
       await db.Address.destroy({
         where: {
           //  id: req.params.id
@@ -149,6 +176,27 @@ const addressController = {
           id: req.params.id,
         },
       });
+      if (Address.isMain) {
+        const Addresses = await db.Address.findAll({
+          where: {
+            UserId: req.body.UserId,
+          },
+        });
+        console.log(req.body.UserId);
+        console.log("ldsakd");
+        console.log(Addresses[0]);
+        await db.Address.update(
+          {
+            isMain: true,
+          },
+          {
+            where: {
+              id: Addresses[0].id,
+            },
+          }
+        );
+      }
+
       return await db.Address.findAll().then((result) => res.send(result));
     } catch (err) {
       console.log(err.message);
@@ -168,11 +216,11 @@ const addressController = {
         no_Handphone,
       } = req.body;
       opencage
-        .geocode({ q: "1.1388883, 104.0074718", language: "id" })
+        .geocode({ q: latitude + "," + longitude, language: "id" })
         .then(async (data) => {
           // console.log(JSON.stringify(data));
           if (data.status.code === 200 && data.results.length > 0) {
-            const place = data.results[0];
+            const place = data.results[0].geometry;
             const Main = await db.Address.findOne({
               where: {
                 isMain: true,
@@ -198,15 +246,17 @@ const addressController = {
             //   UserId,
             // });
             res.send({
-              namaPenerima,
-              no_Handphone,
-              province: place.components.state,
-              city: place.components.city,
-              alamatLengkap,
-              pos: place.components.postcode,
-              latitude,
-              longitude,
-              UserId,
+              place: data.results[0].components,
+
+              // namaPenerima,
+              // no_Handphone,
+              // province: place.components.state,
+              // city: place.components.city,
+              // alamatLengkap,
+              // pos: place.components.postcode,
+              // latitude,
+              // longitude,
+              // UserId,
             });
           } else {
             console.log("status", data.status.message);
@@ -230,14 +280,11 @@ const addressController = {
   },
   getAllProvince: async (req, res) => {
     try {
-      console.log("askda");
       const province = await axios
         .get("https://api.rajaongkir.com/starter/province", {
           headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
         })
         .then((res) => {
-          console.log("dlasdsjas");
-
           return res.data.rajaongkir.results;
         });
       // .catch((err) => {

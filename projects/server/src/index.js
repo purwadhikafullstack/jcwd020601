@@ -38,6 +38,8 @@ app.use("/stock", routes.stockRoutes);
 app.use("/stockhistory", routes.stockHistoryRoutes);
 app.use("/voucher", routes.voucherRoutes);
 
+app.use("/bookImage", express.static(`${__dirname}/public/book`));
+
 //#region API ROUTES
 
 // ===========================

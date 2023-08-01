@@ -25,16 +25,17 @@ import { useCallback } from "react";
 
 export default function LoginPage() {
   useEffect(() => {
-    /*global google*/
+    /* global google */
     google.accounts.id.initialize({
       client_id:
         "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
       callback: handleCallbackResponse,
     });
+    console.log("dsao");
     google.accounts.id.renderButton(document.getElementById("signInDiv"), {
       theme: "outline",
-      size: "medium",
       width: 300,
+      size: "medium",
     });
     google.accounts.id.prompt();
   }, []);
@@ -69,12 +70,30 @@ export default function LoginPage() {
           });
         });
       if (loggingIn) {
-        await api.get("/auth/v3?token=" + token).then((res) => {
-          console.log(res.data);
-          dispatch({
-            type: "login",
-            payload: res.data,
+        const user = await api
+          .get("/auth/v3?token=" + token)
+          .then(async (res) => {
+            return res.data;
+          })
+          .catch((err) => {
+            return err.message;
           });
+        const userMainAddress = await api
+          .get("/address/ismain/" + user.id)
+          .then((res) => {
+            localStorage.setItem("address", JSON.stringify(res.data));
+
+            console.log(res.data);
+
+            return res.data;
+          })
+          .catch((err) => {
+            return err.message;
+          });
+        dispatch({
+          type: "login",
+          payload: user,
+          address: userMainAddress,
         });
         nav("/");
       }
@@ -99,12 +118,29 @@ export default function LoginPage() {
           isClosable: true,
         });
       });
-      await api.get("/auth/v3?token=" + token).then((res) => {
-        console.log(res.data);
-        dispatch({
-          type: "login",
-          payload: res.data,
+
+      const user = await api
+        .get("/auth/v3?token=" + token)
+        .then(async (res) => {
+          return res.data;
+        })
+        .catch((err) => {
+          return err.message;
         });
+      const userMainAddress = await api
+        .get("/address/ismain/" + user.id)
+        .then((res) => {
+          console.log(res.data);
+
+          return res.data;
+        })
+        .catch((err) => {
+          return err.message;
+        });
+      dispatch({
+        type: "login",
+        payload: user,
+        address: userMainAddress,
       });
       nav("/");
     } catch (err) {
@@ -149,6 +185,7 @@ export default function LoginPage() {
                 <Img src={logo} width={"300px"} py={"40px"}></Img>
                 <Center flexDir={"column"} className="loginpage-inputs">
                   <Input
+                    maxLength={32}
                     fontSize={"12px"}
                     bgColor={"#fafafa"}
                     placeholder="Email or Phone Number"
@@ -160,6 +197,7 @@ export default function LoginPage() {
                     <Input
                       id="password"
                       onKeyPress={handleKeyPress}
+                      maxLength={32}
                       onChange={inputHandler}
                       fontSize={"12px"}
                       type={seePassword ? "text" : "password"}
@@ -203,8 +241,9 @@ export default function LoginPage() {
                       bgColor={"blackAlpha.300"}
                     ></Flex>
                   </Center>
+
                   <Flex gap={"10px"}>
-                    <div id="signInDiv"></div>
+                    <Box fontWeight={"700"} id="signInDiv"></Box>
                   </Flex>
                   <Flex
                     pb={"24px"}

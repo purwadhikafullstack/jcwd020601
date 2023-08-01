@@ -2,10 +2,11 @@ const db = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const { nanoid } = require("nanoid");
-
+const opencage = require("opencage-api-client");
 const bcrypt = require("bcrypt");
 const private_key = process.env.private_key;
 const moment = require("moment");
+
 const adminController = {
   getAll: async (req, res) => {
     try {
@@ -50,7 +51,6 @@ const adminController = {
           },
         }
       );
-
       return await db.Admin.findOne({
         where: {
           id: req.params.id,
@@ -83,14 +83,86 @@ const adminController = {
       });
     }
   },
+  insertBranchAdminAndBranch: async (req, res) => {
+    // const t = await db.sequelize.transaction();
+    try {
+      let place = {};
+      let BranchId;
+      const {
+        name,
+        email,
+        password,
+        phone,
+        branchName,
+        province,
+        city,
+        pos,
+        alamatLengkap,
+      } = req.body;
+      const hashPassword = await bcrypt.hash(password, 10);
+      await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
+        place = res.results[0].geometry;
+
+        await db.Branch.create(
+          {
+            latitude: place.lat,
+            longitude: place.lng,
+            name: branchName,
+            province,
+            city,
+            pos,
+            alamatLengkap,
+          }
+          // { transaction: t }
+        ).then(async () => {
+          const branch = await db.Branch.findOne({
+            where: {
+              latitude: place.lat,
+              longitude: place.lng,
+              name: branchName,
+              province,
+              city,
+              pos,
+              alamatLengkap,
+            },
+          });
+          console.log(branch);
+
+          console.log("ksafjsa");
+          console.log(branch.id);
+
+          BranchId = branch.id;
+        });
+      });
+      await db.Admin.create(
+        {
+          BranchId,
+          name,
+          email,
+          password: hashPassword,
+          role: "Admin-Branch",
+          phone,
+        }
+        // { transaction: t }
+      );
+
+      return await db.Admin.findAll().then((result) => {
+        // t.commit();
+        res.send("Success!");
+      });
+    } catch (err) {
+      console.log(err);
+      return res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   deleteAdmin: async (req, res) => {
     try {
       await db.Admin.destroy({
         where: {
           //  id: req.params.id
-
           //   [Op.eq]: req.params.id
-
           id: req.params.id,
         },
       });
@@ -136,7 +208,7 @@ const adminController = {
           },
         },
       });
-
+      // console.log(req.body.email);
       if (user) {
         const match = await bcrypt.compare(password, user.dataValues.password);
         if (match) {
@@ -159,14 +231,16 @@ const adminController = {
             token: token.dataValues.token,
           });
         } else {
-          throw new Error("Wrong Email or Password");
+          throw new Error("wrong password");
         }
       } else {
-        throw new Error("User not found");
+        throw new Error("user not found");
       }
     } catch (err) {
       console.log(err.message);
-      return res.status(500).send({ message: err.message });
+      return res
+        .status(500)
+        .send({ message: "Email or password is incorrect" });
     }
   },
   changePassword: async (req, res) => {
@@ -176,9 +250,6 @@ const adminController = {
       const { password } = req.body.user;
       const { id } = req.user;
       console.log(id);
-
-      const hashPassword = await bcrypt.hash(password, 10);
-
       await db.User.update(
         {
           password: hashPassword,
@@ -247,7 +318,6 @@ const adminController = {
             url + token.dataValues.token
           } \nand do not share this link to anyone else`,
         });
-
         return res.send({ message: "please check your email" });
       } else {
         throw new Error("user is not found");
@@ -279,7 +349,6 @@ const adminController = {
         },
       });
       delete admin.dataValues.password;
-
       req.admin = admin;
       next();
     } catch (err) {

@@ -36,13 +36,13 @@ export default function LoginPage() {
           isClosable: true,
         });
       });
-      await api.get("/admin/v3?token=" + token).then((res) => {
+      await api.get("/admin/v3?token=" + token).then(async (res) => {
         console.log(res.data);
-        dispatch({
+        await dispatch({
           type: "login",
           payload: res.data,
         });
-        if ((res.data.role = "Super-Admin")) {
+        if (res.data.role == "Super-Admin") {
           nav("/superadminpage");
         } else {
           nav("/adminpage");

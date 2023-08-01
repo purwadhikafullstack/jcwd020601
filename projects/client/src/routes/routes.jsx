@@ -14,14 +14,19 @@ import NotFoundPage from "../pages/NotFoundPage";
 import ProfilePage from "../pages/ProfilePage";
 import SuperAdminPage from "../pages/SuperAdminPage";
 import OrderPage from "../pages/OrderPage";
+import CategoryPage from "../pages/CategoryPage";
+import AuthProvider from "../hoc/authprovider";
+
 
 const routes = [
   <Route
     path="/login"
     element={
-      <ProtectedPage guestOnly={true}>
-        <LoginPage />
-      </ProtectedPage>
+      <AuthProvider>
+        <ProtectedPage guestOnly={true}>
+          <LoginPage />
+        </ProtectedPage>
+      </AuthProvider>
     }
   ></Route>,
   <Route
@@ -77,6 +82,14 @@ const routes = [
     element={
       <ProtectedPage needLoginAdmin={true}>
         <AdminPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/Category"
+    element={
+      <ProtectedPage needLoginAdmin={true}>
+        <CategoryPage />
       </ProtectedPage>
     }
   ></Route>,

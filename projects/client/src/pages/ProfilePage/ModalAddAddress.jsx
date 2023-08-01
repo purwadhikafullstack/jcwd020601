@@ -2,10 +2,25 @@ import { Button, Center, Flex, Icon, Input, Select } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
-import { api } from "../api/api";
+import { api } from "../../api/api";
 import axios from "axios";
 
 export default function ModalAddAddress(props) {
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await axios
+        .get("http://localhost:2000/address/province", {
+          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
+        })
+        .then((res) => {
+          props.setProvinces(res.data);
+        });
+    };
+    // call the function
+    fetchData();
+    // make sure to catch any error
+    // .catch(console.error);
+  }, []);
   return (
     <>
       <Flex
@@ -20,6 +35,7 @@ export default function ModalAddAddress(props) {
             <Flex fontWeight={"500"}>Label Alamat</Flex>
             <Flex>
               <Input
+                maxLength={32}
                 _placeholder={{ opacity: "1" }}
                 id="labelAlamat"
                 onChange={props.inputHandlerAddress}
@@ -45,6 +61,7 @@ export default function ModalAddAddress(props) {
               <Input
                 _placeholder={{ opacity: "1" }}
                 onChange={props.inputHandlerAddress}
+                maxLength={32}
                 id="namaPenerima"
                 variant={"flushed"}
                 value={props.namaPenerima}
@@ -61,6 +78,7 @@ export default function ModalAddAddress(props) {
               <Input
                 _placeholder={{ opacity: "1" }}
                 onChange={props.inputHandlerAddress}
+                maxLength={32}
                 id="no_Handphone"
                 variant={"flushed"}
                 placeholder="Receiver's Phone Number"
@@ -78,7 +96,6 @@ export default function ModalAddAddress(props) {
                 await props.inputHandlerAddress(val);
               }}
               variant="flushed"
-              placeholder="Select option"
             >
               <option display="none" disabled selected hidden>
                 Select Province
@@ -112,7 +129,6 @@ export default function ModalAddAddress(props) {
                 await props.inputHandlerAddress(val);
               }}
               variant="flushed"
-              placeholder="Select option"
             >
               <option display="none" disabled selected hidden>
                 Select City
@@ -166,6 +182,8 @@ export default function ModalAddAddress(props) {
               w={"100%"}
               borderRadius={"10px"}
               onClick={props.formikAddress.handleSubmit}
+              bgColor={"#385898"}
+              color={"white"}
             >
               Save Address
             </Button>

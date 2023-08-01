@@ -10,7 +10,7 @@ import {
 import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
-import { api } from "../api/api";
+import { api } from "../../api/api";
 import axios from "axios";
 
 export default function ModalEditAddress(props) {
@@ -183,6 +183,8 @@ export default function ModalEditAddress(props) {
               w={"100%"}
               borderRadius={"10px"}
               onClick={props.formikAddress.handleSubmit}
+              bgColor={"#385898"}
+              color={"white"}
             >
               Save Address
             </Button>
@@ -192,6 +194,8 @@ export default function ModalEditAddress(props) {
               w={"100%"}
               borderRadius={"10px"}
               onClick={props.deleteAddress}
+              bgColor={"#385898"}
+              color={"white"}
             >
               Delete Address
             </Button>
