@@ -46,6 +46,22 @@ const addressController = {
       });
     }
   },
+  getIsMainByUserId: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const Address = await db.Address.findOne({
+        where: {
+          [Op.and]: [{ UserId: id }, { isMain: true }],
+        },
+      });
+      return res.send(Address);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   editAddress: async (req, res) => {
     try {
       const {
@@ -144,6 +160,13 @@ const addressController = {
   },
   deleteAddress: async (req, res) => {
     try {
+      const Address = await db.Address.findOne({
+        where: {
+          id: req.params.id,
+        },
+      });
+      console.log(Address);
+      console.log(Address.isMain);
       await db.Address.destroy({
         where: {
           //  id: req.params.id
@@ -153,6 +176,27 @@ const addressController = {
           id: req.params.id,
         },
       });
+      if (Address.isMain) {
+        const Addresses = await db.Address.findAll({
+          where: {
+            UserId: req.body.UserId,
+          },
+        });
+        console.log(req.body.UserId);
+        console.log("ldsakd");
+        console.log(Addresses[0]);
+        await db.Address.update(
+          {
+            isMain: true,
+          },
+          {
+            where: {
+              id: Addresses[0].id,
+            },
+          }
+        );
+      }
+
       return await db.Address.findAll().then((result) => res.send(result));
     } catch (err) {
       console.log(err.message);
@@ -172,7 +216,7 @@ const addressController = {
         no_Handphone,
       } = req.body;
       opencage
-        .geocode({ q: "TanjungPinang", language: "id" })
+        .geocode({ q: latitude + "," + longitude, language: "id" })
         .then(async (data) => {
           // console.log(JSON.stringify(data));
           if (data.status.code === 200 && data.results.length > 0) {
@@ -202,7 +246,8 @@ const addressController = {
             //   UserId,
             // });
             res.send({
-              place: place,
+              place: data.results[0].components,
+
               // namaPenerima,
               // no_Handphone,
               // province: place.components.state,
@@ -235,14 +280,11 @@ const addressController = {
   },
   getAllProvince: async (req, res) => {
     try {
-      console.log("askda");
       const province = await axios
         .get("https://api.rajaongkir.com/starter/province", {
           headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
         })
         .then((res) => {
-          console.log("dlasdsjas");
-
           return res.data.rajaongkir.results;
         });
       // .catch((err) => {

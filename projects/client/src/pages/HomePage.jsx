@@ -7,8 +7,12 @@ import CarouselAll from "../components/CarouselAll";
 import Footer from "../components/Footer";
 import NavbarFooter from "../components/NavbarFooter";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { api } from "../api/api";
 
 export default function HomePage() {
+  const userSelector = useSelector((state) => state.login.auth);
+  const dispatch = useDispatch();
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
 
@@ -24,21 +28,32 @@ export default function HomePage() {
     }
   }
 
-  function showPosition(position) {
+  async function showPosition(position) {
     localStorage.setItem("Latitude", JSON.stringify(position.coords.latitude));
     localStorage.setItem(
       "Longitude",
       JSON.stringify(position.coords.longitude)
     );
-    x.innerHTML =
-      "Latitude: " +
-      position.coords.latitude +
-      "<br>Longitude: " +
-      position.coords.longitude;
+    const address = await api
+      .post("address/lat", {
+        latitude: JSON.stringify(position.coords.latitude),
+        longitude: JSON.stringify(position.coords.longitude),
+      })
+      .then((res) => {
+        return res.data;
+      });
+    console.log("safjas");
   }
   return (
     <Flex display={"columns"}>
       <Navbar />
+      <Flex
+        onClick={() => {
+          console.log(userSelector);
+        }}
+      >
+        lol
+      </Flex>
       <CarouselShow />
       <CarouselBooks />
       <BookCard />
