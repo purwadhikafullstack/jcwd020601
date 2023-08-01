@@ -1,15 +1,15 @@
 import {
-	Box,
-	Button,
-	Center,
-	Flex,
-	Icon,
-	IconButton,
-	Img,
-	Input,
-	InputGroup,
-	InputRightElement,
-	useToast,
+  Box,
+  Button,
+  Center,
+  Flex,
+  Icon,
+  IconButton,
+  Img,
+  Input,
+  InputGroup,
+  InputRightElement,
+  useToast,
 } from "@chakra-ui/react";
 import logo from "../assets/images/gramedia-icon-2.png";
 import jwt_decode from "jwt-decode";
@@ -93,123 +93,60 @@ export default function RegisterPage() {
   YupPassword(Yup);
   const [seepassword, setSeePassword] = useState(false);
   const [seepassword2, setSeePassword2] = useState(false);
-	const toast = useToast();
-	const [radioValue, setRadioValue] = useState("Male");
-	const nav = useNavigate();
+  const toast = useToast();
+  const [radioValue, setRadioValue] = useState("Male");
+  const nav = useNavigate();
 
-	const formik = useFormik({
-		initialValues: {
-			email: "",
-			password2: "",
-			password: "",
-			username: "",
-			first_name: "",
-			last_name: "",
-		},
-		validationSchema: Yup.object().shape({
-			email: Yup.string()
-				.required("You need to enter your email")
-				.email("Email is not valid"),
-			first_name: Yup.string().required("You need to enter your first name"),
-			last_name: Yup.string().required("You need to enter your last name"),
-			password2: Yup.string()
-				.required("You need to confirm your password")
-				.oneOf([Yup.ref("password")], "Passwords don't match"),
-			password: Yup.string()
-				.required("You need to enter your password")
-				.minUppercase(
-					1,
-					"Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
-				)
-				.minNumbers(
-					1,
-					"Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
-				)
-				.minSymbols(
-					1,
-					"Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
-				)
-				.min(
-					8,
-					"Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
-				),
-			username: Yup.string().required("You need to enter your username"),
-		}),
-		onSubmit: async () => {
-			const { email, password, username, first_name, last_name } =
-				formik.values;
-			const account = { email, password, username, first_name, last_name };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password2: "",
+      password: "",
+      username: "",
+      first_name: "",
+      last_name: "",
+    },
+    validationSchema: Yup.object().shape({
+      email: Yup.string()
+        .required("You need to enter your email")
+        .email("Email is not valid"),
+      first_name: Yup.string()
+        .required("You need to enter your first name")
+        .trim(),
+      last_name: Yup.string()
+        .required("You need to enter your last name")
+        .trim(),
+      password2: Yup.string()
+        .required("You need to confirm your password")
+        .trim()
+        .oneOf([Yup.ref("password")], "Passwords don't match"),
+      password: Yup.string()
+        .required("You need to enter your password")
+        .minUppercase(
+          1,
+          "Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
+        )
+        .minNumbers(
+          1,
+          "Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
+        )
+        .minSymbols(
+          1,
+          "Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
+        )
+        .min(
+          8,
+          "Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
+        )
+        .trim(),
 
-			const checkemail = await api
-				.get("/auth/email?email=" + email)
-				.then((res) => {
-					if (res.data) {
-						return true;
-					} else {
-						return false;
-					}
-				});
-			console.log(checkemail);
-			if (checkemail) {
-				alert("Email has been used");
-				formik.values.email = "";
-			} else {
-				await api
-					.post("/auth", account)
-					.then(() => {
-						toast({
-							title: "Account created.",
-							description: "We've created your account for you.",
-							status: "success",
-							duration: 5000,
-							isClosable: true,
-						});
-						nav("/login");
-					})
-					.catch((err) => {
-						alert(err.response.data.message);
-					});
-			}
-		},
-	});
-	const [register, setRegister] = useState({
-		email: "",
-		username: "",
-		first_name: "",
-		last_name: "",
-		password: "",
-	});
-	function inputHandler(input) {
-		const { value, id } = input.target;
-		const tempobject = { ...register };
-		tempobject[id] = value;
-		setRegister(tempobject);
-		formik.setFieldValue(id, value);
-		console.log(formik.values);
-	}
-	return (
-		<>
-			<Center flexDir={"column"} gap={"10px"} pt={"10px"}>
-				<Center flexDir={"column"} gap={"80px"}>
-					<Center flexDir={"column"}>
-						<Center minW={"700px"} w={"700px"} gap={"12px"} flexDir={"column"}>
-							<Center
-								minW={"500px"}
-								w={"500px"}
-								flexDir={"column"}
-								border={"1px solid #dbdbdb"}
-							>
-								<Img src={logo} width={"300px"} className="register-logo"></Img>
-								<Center
-									maxW={"300px"}
-									fontSize={"18px"}
-									color={"blackAlpha.700"}
-									textAlign={"center"}
-									fontWeight={"500"}
-									pb={"10px"}
-								>
-									Sign up to buy books from Gramedia
-								</Center>
+      username: Yup.string().required("You need to enter your username").trim(),
+    }),
+    onSubmit: async () => {
+      const { email, password, username, first_name, last_name } =
+        formik.values;
+      const account = { email, password, username, first_name, last_name };
+
       const checkemail = await api
         .get("/auth/email?email=" + email)
         .then((res) => {
@@ -444,69 +381,90 @@ export default function RegisterPage() {
                       Sign Up
                     </Button>
                   </Flex>
-							{/* <Flex gap={"10px"}>
-                <Img
-                  cursor={"pointer"}
-                  src={logo2}
-                  width={"130px"}
-                  h={"40px"}
-                ></Img>
-                <Img
-                  cursor={"pointer"}
-                  src={logo3}
-                  width={"130px"}
-                  h={"40px"}
-                ></Img>
-              </Flex> */}
-						</Center>
-					</Center>
-					<Center flexWrap={"wrap"} color={"blackAlpha.700"} gap={"16px"}>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Meta
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							About
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Blog
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Jobs
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Help
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							API
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Privacy
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Terms
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Top Accounts
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Locations
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Gramedia Lite
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Contact Uploading & Non-Users
-						</Flex>
-						<Flex fontSize={"13px"} cursor={"pointer"}>
-							Meta Verified
-						</Flex>
-					</Center>
-				</Center>
-				<Center color={"blackAlpha.700"} gap={"20px"}>
-					<Flex fontSize={"13px"}> English</Flex>
-					<Flex fontSize={"13px"}> © 2023 Gramedia from Meta</Flex>
-				</Center>
-			</Center>
-		</>
-	);
+
+                  <Flex pb={"15px"} fontSize={"12px"}>
+                    <span>
+                      Already Registered?&nbsp;
+                      <a
+                        style={{
+                          color: "#0bc5ea",
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                        }}
+                        onClick={() => {
+                          nav("/login");
+                        }}
+                      >
+                        Login{" "}
+                      </a>
+                    </span>
+                  </Flex>
+                </Center>
+              </Center>
+
+              {/* <Flex gap={"10px"}>
+                  <Img
+                    cursor={"pointer"}
+                    src={logo2}
+                    width={"130px"}
+                    h={"40px"}
+                  ></Img>
+                  <Img
+                    cursor={"pointer"}
+                    src={logo3}
+                    width={"130px"}
+                    h={"40px"}
+                  ></Img>
+                </Flex> */}
+            </Center>
+          </Center>
+          <Center flexWrap={"wrap"} color={"blackAlpha.700"} gap={"16px"}>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Meta
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              About
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Blog
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Jobs
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Help
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              API
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Privacy
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Terms
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Top Accounts
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Locations
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Gramedia Lite
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Contact Uploading & Non-Users
+            </Flex>
+            <Flex fontSize={"13px"} cursor={"pointer"}>
+              Meta Verified
+            </Flex>
+          </Center>
+        </Center>
+        <Center color={"blackAlpha.700"} gap={"20px"}>
+          <Flex fontSize={"13px"}> English</Flex>
+          <Flex fontSize={"13px"}> © 2023 Gramedia from Meta</Flex>
+        </Center>
+      </Center>
+    </>
+  );
 }
