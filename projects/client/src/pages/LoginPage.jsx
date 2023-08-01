@@ -109,6 +109,7 @@ export default function LoginPage() {
       await api.post("/auth/v2", login).then((res) => {
         localStorage.setItem("auth", JSON.stringify(res.data.token));
         token = res.data.token;
+        console.log(token);
         toast({
           title: res.data.message,
           description: "Login Successful.",

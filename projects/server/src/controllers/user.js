@@ -212,6 +212,7 @@ const userController = {
             },
           });
           if (findToken) {
+
             token = await db.Token.update(
               {
                 expired: moment().add(1, "d").format(),
@@ -373,7 +374,7 @@ const userController = {
   getByToken: async (req, res, next) => {
     try {
       let { token } = req.query;
-      // console.log(token);
+      console.log(token);
       let payload = await db.Token.findOne({
         where: {
           token,

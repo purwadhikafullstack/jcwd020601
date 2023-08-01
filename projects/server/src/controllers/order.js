@@ -64,7 +64,6 @@ const orderController = {
   insertOrder: async (req, res) => {
     try {
       const {
-        payment_url,
         status,
         total,
         UserId,
@@ -73,9 +72,11 @@ const orderController = {
         orderDetails, // [quantity, price, StockId]
       } = req.body;
 
+      // get the order from cart
+      // get middleawre
+
       // create order
       const order = await db.Order.create({
-        payment_url,
         status,
         total,
         UserId,
@@ -136,10 +137,10 @@ const orderController = {
   uploadPayment: async (req, res) => {
     try {
       const { id } = req.body;
-      console.log(req.body);
-      console.log("cek");
+      // console.log(req.body);
+      // console.log("cek");
       const { filename } = req.file;
-      console.log(req.file);
+      // console.log(req.file);
       const result = await db.Order.update(
         {
           payment_url: process.env.payment_img + filename,
@@ -175,7 +176,7 @@ const orderController = {
       // check if cancel
       if (status === "cancel") {
         // update multiple buckets on stock
-        console.log("masuk cancel");
+        // console.log("masuk cancel");
         await Promise.all(
           data.map(async (detail) => {
             const { quantity, StockId } = detail;

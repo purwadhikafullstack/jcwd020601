@@ -2,8 +2,9 @@ import { Box, Flex, Icon } from "@chakra-ui/react";
 import { useState } from "react";
 import { AiFillPlusCircle, AiFillMinusCircle } from "react-icons/ai";
 
-export default function Increment() {
+export default function Increment(props) {
   const [qty, setQty] = useState(1);
+  props.qty = { qty };
   return (
     <Flex alignItems={"center"} gap={"1rem"}>
       <Icon

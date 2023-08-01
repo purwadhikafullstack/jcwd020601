@@ -152,12 +152,13 @@ function MobileNav() {
           <Box>
             <Menu>
               <MenuButton>
-                <Flex alignItems={"center"} gap={"0.1rem"} cursor={"pointer"}>
+                <Flex alignItems={"center"} gap={"0.1rem"}>
                   <Icon
                     as={BsCart}
                     w={{ base: "5em", sm: "5em" }}
                     h={{ base: 8, sm: 10 }}
                     color="blue.700"
+                    cursor={"pointer"}
                   ></Icon>
                 </Flex>
               </MenuButton>
@@ -553,7 +554,9 @@ function DesktopNav() {
                   alignItems={"center"}
                   flexDir={"column"}
                 >
-                  <Box>Cart</Box>
+                  <Box cursor={"pointer"} onClick={() => nav("/cart")}>
+                    Cart
+                  </Box>
                   <Box>Total</Box>
                 </Flex>
                 <Center
