@@ -24,20 +24,12 @@ export default function BookCard() {
 	const [keyword, setKeyword] = useState("");
 
 	async function fetchProduct() {
-		let response = await api.get(
-			`/book?search_query=${keyword}&limit=${limit}`,
-			{
-				headers: {
-					Authorization: token,
-				},
-			}
-		);
+		let response = await api.get(`/stock?limit=${limit}`);
 		setValue(response.data.result);
 	}
-
 	useEffect(() => {
 		fetchProduct();
-	}, []);
+	}, [token]);
 	const settings = {
 		dots: true,
 		infinite: true,
@@ -95,21 +87,21 @@ export default function BookCard() {
 					<Card key={idx}>
 						<CardBody pb={0}>
 							<Image
-								src={val.book_url}
+								src={val.Book?.book_url}
 								alt="Green double couch with wooden legs"
 								borderRadius="lg"
 								w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
 								h={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
 							/>
-							<Stack mt="6" spacing="3">
-								<Heading size="sm">{val.author}</Heading>
+							<Stack mt="6" spacing="5">
+								<Heading size="sm">{val.Book?.author}</Heading>
 								<Text size={"sm"}>
-									{val.title.length > 20
-										? val.title.slice(0, 20) + "..."
-										: val.title}
+									{val.Book?.title.length > 20
+										? val.Book?.title.slice(0, 20) + "..."
+										: val.Book?.title}
 								</Text>
 								<Text color="blue.600" fontSize="xl">
-									Rp. {val.price}
+									Rp. {val.Book?.price}
 								</Text>
 							</Stack>
 						</CardBody>
