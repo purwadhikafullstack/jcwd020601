@@ -97,6 +97,59 @@ export default function RegisterPage() {
 	const toast = useToast();
 	const [radioValue, setRadioValue] = useState("Male");
 	const nav = useNavigate();
+	async function handleCallbackResponse(response) {
+		var userObject = jwt_decode(response.credential);
+		console.log(userObject);
+		try {
+			let token;
+			const loggingIn = await api
+				.post("/auth/v3", userObject)
+				.then((res) => {
+					localStorage.setItem("auth", JSON.stringify(res.data.token));
+					token = res.data.token;
+					toast({
+						title: res.data.message,
+						description: "Login Successful.",
+						status: "success",
+						duration: 5000,
+						isClosable: true,
+					});
+					return res.data.message;
+				})
+				.catch((err) => {
+					console.log(err);
+					toast({
+						position: "top",
+						title: "Login ERROR",
+						description: err.response.data.message,
+						status: "error",
+						duration: 5000,
+						isClosable: true,
+					});
+				});
+			console.log(loggingIn);
+			if (loggingIn) {
+				await api.get("/auth/v3?token=" + token).then((res) => {
+					console.log(res.data);
+					dispatch({
+						type: "login",
+						payload: res.data,
+					});
+				});
+				nav("/");
+			}
+		} catch (err) {
+			console.log(err);
+			alert(err.response.data.message);
+		}
+		// document.getElementById("signInDiv").hidden = true;
+	}
+	YupPassword(Yup);
+	const [seepassword, setSeePassword] = useState(false);
+	const [seepassword2, setSeePassword2] = useState(false);
+	const toast = useToast();
+	const [radioValue, setRadioValue] = useState("Male");
+	const nav = useNavigate();
 
 	const formik = useFormik({
 		initialValues: {
@@ -112,13 +165,18 @@ export default function RegisterPage() {
 				.required("You need to enter your email")
 				.email("Email is not valid"),
 			first_name: Yup.string()
+
 				.required("You need to enter your first name")
+				.trim()
 				.trim(),
 			last_name: Yup.string()
+
 				.required("You need to enter your last name")
+				.trim()
 				.trim(),
 			password2: Yup.string()
 				.required("You need to confirm your password")
+				.trim()
 				.trim()
 				.oneOf([Yup.ref("password")], "Passwords don't match"),
 			password: Yup.string()
@@ -139,9 +197,13 @@ export default function RegisterPage() {
 					8,
 					"Your password needs atleast 1 uppercase letter, 1 number, and 1 symbol with atleast 8 characters"
 				)
+				.trim()
 				.trim(),
 
-			username: Yup.string().required("You need to enter your username").trim(),
+			username: Yup.string()
+				.required("You need to enter your username")
+				.trim()
+				.trim(),
 		}),
 		onSubmit: async () => {
 			const { email, password, username, first_name, last_name } =
