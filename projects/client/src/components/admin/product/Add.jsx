@@ -24,11 +24,11 @@ import icon from "../../../assets/images/icon.png";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { api } from "../../../api/api";
-export default function Add({ getData }) {
+export default function Add({ getData, token }) {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [scrollBehavior, setScrollBehavior] = useState("inside");
 	const inputFileRef = useRef(null);
-	const [SelectedFile, setSelectedFile] = useState(null);
+	const [selectedFile, setSelectedFile] = useState(null);
 	const [image, setImage] = useState(icon);
 	const formik = useFormik({
 		initialValues: {
@@ -88,14 +88,18 @@ export default function Add({ getData }) {
 			formData.append("price", values.price);
 			formData.append("rating", values.rating);
 			formData.append("DiscountId", values.DiscountId);
-			await api.post("/book/v1", formData);
+			await api.post("/book/v1", formData, {
+				headers: {
+					Authorization: token,
+				},
+			});
 			onClose();
 			resetForm({ values: "" });
+			setSelectedFile(null);
 			Swal.fire("Good job!", "Your data has been Added.", "success");
 			setTimeout(getData, 1000);
 		},
 	});
-
 	return (
 		<>
 			<Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">
@@ -234,22 +238,24 @@ export default function Add({ getData }) {
 								<Input
 									type="file"
 									name="book_url"
+									display="none"
+									ref={inputFileRef}
 									onChange={(e) => {
 										formik.setFieldValue("book_url", e.target.files[0]);
 										setImage(e.target.files[0]);
 										setSelectedFile(URL.createObjectURL(e.target.files[0]));
 									}}
 								/>
-								{formik.values.book_url && (
-									<Image
-										src={SelectedFile}
-										w={"100px"}
-										h={"100px"}
-										onClick={() => {
-											inputFileRef.current.click();
-										}}
-									/>
-								)}
+								{/* {formik.values.book_url && ( */}
+								<Image
+									src={selectedFile ? selectedFile : image}
+									w={"100px"}
+									h={"100px"}
+									onClick={() => {
+										inputFileRef.current.click();
+									}}
+								/>
+								{/* )} */}
 								<Text color={"red.800"}>{formik.errors.book_url}</Text>
 							</Box>
 						</ModalBody>
