@@ -76,7 +76,7 @@ export default function LoginPage() {
 						payload: res.data,
 					});
 				});
-				nav("/home");
+				nav("/");
 			}
 		} catch (err) {
 			console.log(err);
