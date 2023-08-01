@@ -8,17 +8,46 @@ export default function ProfileSidebar() {
   return (
     <>
       <Flex
+        mb={"100px"}
         boxShadow="0 0 5px #e0e0e0"
         h={"382px"}
-        w={"320px"}
-        ml={"160px"}
+        pr={{
+          base: "20px",
+          sm: "20px",
+          md: "20px",
+          lg: "50px",
+          xl: "100px",
+          "2xl": "100px",
+        }}
+        ml={{
+          base: "20px",
+          sm: "20px",
+          md: "20px",
+          lg: "50px",
+          xl: "80px",
+          "2xl": "100px",
+        }}
         mt={"80px"}
       >
         <Flex
           w={"100%"}
-          p={"40px"}
+          p={{
+            base: "20px",
+            sm: "20px",
+            md: "20px",
+            lg: "20px",
+            xl: "20px",
+            "2xl": "20px",
+          }}
           flexDir={"column"}
-          fontSize={{ base: "1.5rem", xl: "1.5rem", lg: "1.3rem" }}
+          fontSize={{
+            base: "1rem",
+            sm: "1.2rem",
+            md: "1.5rem",
+            lg: "1.5rem",
+            xl: "1.5rem",
+            "2xl": "1.5rem",
+          }}
           fontWeight={"600"}
           gap={"30px"}
         >
@@ -37,7 +66,14 @@ export default function ProfileSidebar() {
           </Flex>
           <Flex
             _hover={{ color: "#0060ae" }}
-            mt={{ base: "20px", xl: "70px", lg: "20px" }}
+            mt={{
+              base: "20px",
+              sm: "20px",
+              md: "20px",
+              lg: "40px",
+              xl: "70px",
+              "2xl": "70px",
+            }}
             w={"100%"}
             cursor={"pointer"}
             onClick={() => nav("/")}

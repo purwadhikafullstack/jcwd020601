@@ -6,6 +6,7 @@ import { Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import Loading from "./components/Loading";
+import AuthProvider from "./hoc/authprovider";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +21,9 @@ function App() {
       {isLoading ? (
         <Loading /> // <Loading />
       ) : (
-        <Routes>{routes.map((val) => val)}</Routes>
+        <AuthProvider>
+          <Routes>{routes.map((val) => val)}</Routes>
+        </AuthProvider>
       )}
     </>
   );
