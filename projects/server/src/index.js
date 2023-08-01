@@ -9,16 +9,20 @@ const routes = require("./routes");
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(
-	cors()
-	//   {
-	//   origin: [
-	//     process.env.WHITELISTED_DOMAIN &&
-	//       process.env.WHITELISTED_DOMAIN.split(","),
-	//   ],
-	// }
+  cors({
+    credentials: true,
+    // origin: [
+    //   process.env.WHITELISTED_DOMAIN &&
+    //     process.env.WHITELISTED_DOMAIN.split(","),
+    // ],
+  })
 );
 
 app.use(express.json());
+
+app.use("/paymentImg", express.static(`${__dirname}/public/paymentImg`));
+
+app.use("/avatar", express.static(`${__dirname}/public/avatar`));
 
 app.use("/auth", routes.userRoutes);
 app.use("/address", routes.addressRoutes);
