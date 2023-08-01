@@ -47,13 +47,6 @@ export default function HomePage() {
   return (
     <Flex display={"columns"}>
       <Navbar />
-      <Flex
-        onClick={() => {
-          console.log(userSelector);
-        }}
-      >
-        lol
-      </Flex>
       <CarouselShow />
       <CarouselBooks />
       <BookCard />
