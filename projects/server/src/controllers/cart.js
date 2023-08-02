@@ -60,24 +60,52 @@ const cartController = {
   },
   editCart: async (req, res) => {
     try {
-      const { quantity, StockId } = req.body;
-      await db.Cart.update(
-        {
-          quantity,
-          StockId,
-        },
-        {
-          where: {
-            id: req.params.id,
-          },
-        }
-      );
+      const { UserId, StockId, type } = req.body;
 
-      return await db.Cart.findOne({
+      // get initial quantity from chart
+      const cart = await db.Cart.findOne({
         where: {
-          id: req.params.id,
+          UserId,
         },
-      }).then((result) => res.send(result));
+      });
+      const qty = cart.quantity;
+
+      // operation type(condition)
+      if (type === "plus") {
+        quantity = qty + 1;
+      } else if (type === "minus") {
+        quantity = qty - 1;
+      }
+
+      //condition for stocks availability
+      const stock = await db.Stock.findOne({
+        where: {
+          id: StockId,
+        },
+      });
+      const n = stock.stock - stock.bucket;
+
+      if (quantity <= 0) {
+        return res
+          .status(400)
+          .send("Unable to order less than 1 product, please delete instead");
+      } else if (n < quantity) {
+        return res.status(400).send("Stock Insufficient");
+      } else {
+        // update quantity
+        await db.Cart.update(
+          {
+            quantity,
+          },
+          {
+            where: {
+              UserId,
+              StockId,
+            },
+          }
+        );
+      }
+      return res.send(`${type} ${quantity}`);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
