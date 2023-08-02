@@ -13,40 +13,26 @@ import {
 	Divider,
 	useMediaQuery,
 } from "@chakra-ui/react";
-
-const item = [
-	{
-		pengarang: "Husna Widyani",
-		judul: "60+ Dongeng Fabel Sepanjang Masa",
-		harga: " Rp 78.400 ",
-		image:
-			"https://cdn.gramedia.com/uploads/items/9786020523835__w150_hauto.jpg",
-	},
-	{
-		pengarang: "Morten",
-		judul: "Great at Work",
-		harga: " Rp 100.000",
-		image:
-			"https://cdn.gramedia.com/uploads/items/Cover_Great_At_Work_2022_page-0001__w150_hauto.jpg",
-	},
-	{
-		pengarang: "Vita Wahid",
-		judul: "Finding Ikigai in My Journey",
-		harga: "  Rp 64.800 ",
-		image:
-			"https://cdn.gramedia.com/uploads/picture_meta/2023/4/5/ryfyia6xkccddzfirnusd7__w150_hauto.jpg",
-	},
-	{
-		pengarang: "RATIH KUMALA",
-		judul: "Saga dari Samudra",
-		harga: " Rp 74.250 ",
-		image:
-			"https://cdn.gramedia.com/uploads/picture_meta/2023/5/17/la6bjhefmuksgptcjgggbi__w150_hauto.jpg",
-	},
-];
+import { useEffect, useState } from "react";
+import { api } from "../api/api";
 
 export default function CarouselAll() {
 	const [large] = useMediaQuery("(min-width: 1280px)");
+	let t = localStorage.getItem("auth");
+	const [value, setValue] = useState([]);
+	const [token, setToken] = useState(JSON.parse(t));
+	const [limit, setLimit] = useState(4);
+	const [keyword, setKeyword] = useState("");
+
+	async function fetchProduct() {
+		let response = await api.get(`/stock/Desc?limit=${limit}`);
+		setValue(response.data.result);
+	}
+	useEffect(() => {
+		fetchProduct();
+	}, [token]);
+	console.log(value);
+	console.log(token);
 	return (
 		<Flex
 			justify={"center"}
@@ -116,25 +102,25 @@ export default function CarouselAll() {
 					flexWrap={"wrap"}
 					justifyContent={"center"}
 				>
-					{item.map((val, idx) => (
+					{value.map((val, idx) => (
 						<Card maxW="sm" key={idx}>
 							<CardBody pb={0}>
 								<Image
-									src={val.image}
+									src={val.Book?.book_url}
 									alt="Green double couch with wooden legs"
 									borderRadius="lg"
 									w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
 									h={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
 								/>
 								<Stack mt="6" spacing="3">
-									<Heading size="sm">{val.pengarang}</Heading>
+									<Heading size="sm">{val.Book?.author}</Heading>
 									<Text size={"sm"}>
-										{val.judul.length > 20
-											? val.judul.slice(0, 20) + "..."
-											: val.judul}
+										{val.Book?.title.length > 20
+											? val.Book?.title.slice(0, 20) + "..."
+											: val.Book?.title}
 									</Text>
 									<Text color="blue.600" fontSize="xl">
-										{val.harga}
+										Rp. {val.Book?.price}
 									</Text>
 								</Stack>
 							</CardBody>

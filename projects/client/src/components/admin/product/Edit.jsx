@@ -24,10 +24,10 @@ import icon from "../../../assets/images/icon.png";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { api } from "../../../api/api";
-export default function Edit({ isOpen, onClose, id, getData }) {
+export default function Edit({ isOpen, onClose, id, getData, token }) {
 	const [scrollBehavior, setScrollBehavior] = useState("inside");
 	const inputFileRef = useRef(null);
-	const [SelectedFile, setSelectedFile] = useState(null);
+	const [selectedFile, setSelectedFile] = useState(null);
 	const [image, setImage] = useState(icon);
 	const formik = useFormik({
 		initialValues: {
@@ -87,38 +87,59 @@ export default function Edit({ isOpen, onClose, id, getData }) {
 			formData.append("price", values.price);
 			formData.append("rating", values.rating);
 			formData.append("DiscountId", values.DiscountId);
-			await api.patch(`/book/v2/${id}`, formData);
+			await api.patch(`/book/v2/${id}`, formData, {
+				headers: {
+					Authorization: token,
+				},
+			});
 			onClose();
 			resetForm({ values: "" });
 			Swal.fire("Good job!", "Your data has been Updated.", "success");
 			setTimeout(getData, 1000);
 		},
 	});
-	// console.log(isOpen);
+
 	const getDataDetail = async () => {
 		let res = await api.get(`/book/${id}`);
-		formik.setValues({
-			...formik.values,
-			title: res.data.title,
-			language: res.data.language,
-			publish_date: res.data.publish_date,
-			author: res.data.author,
-			publisher: res.data.publisher,
-			description: res.data.publisher,
-			book_url: res.data.book_url,
-			pages: res.data.pages,
-			weight: res.data.weight,
-			dimension: res.data.dimension,
-			price: res.data.price,
-			rating: res.data.rating,
-			DiscountId: res.data.DiscountId,
-		});
+
+		async function getImage(a) {
+			let value = await fetch(a)
+				.then((res) => res.blob())
+				.then((blob) => {
+					return new File([blob], "image", { type: blob.type });
+				});
+			return value;
+		}
+		let imageData;
+		getImage(res.data.book_url)
+			.then((result) => {
+				imageData = result;
+				setSelectedFile(URL.createObjectURL(imageData));
+				formik.setValues({
+					...formik.values,
+					title: res.data.title,
+					language: res.data.language,
+					publish_date: new Date(res.data.publish_date).getFullYear(),
+					author: res.data.author,
+					publisher: res.data.publisher,
+					description: res.data.publisher,
+					book_url: imageData,
+					pages: res.data.pages,
+					weight: res.data.weight,
+					dimension: res.data.dimension,
+					price: res.data.price,
+					rating: res.data.rating,
+					DiscountId: res.data.DiscountId,
+				});
+			})
+			.catch((error) => {
+				console.error(error);
+			});
 	};
 
 	useEffect(() => {
 		getDataDetail();
 	}, [id]);
-	console.log(formik.values.book_url);
 	return (
 		<>
 			<Text>Edit Data</Text>
@@ -251,26 +272,23 @@ export default function Edit({ isOpen, onClose, id, getData }) {
 								<Input
 									type="file"
 									name="book_url"
+									display="none"
 									ref={inputFileRef}
-									onClick={(e) => {
+									onChange={(e) => {
 										formik.setFieldValue("book_url", e.target.files[0]);
 										setImage(e.target.files[0]);
 										setSelectedFile(URL.createObjectURL(e.target.files[0]));
 									}}
 								/>
-								{formik.values.book_url && (
-									<>
-										<Image
-											src={formik.values.book_url}
-											w={"100px"}
-											h={"100px"}
-											onClick={() => {
-												inputFileRef.current.click();
-											}}
-										/>
-										<Text color={"red.800"}>{formik.errors.book_url}</Text>
-									</>
-								)}
+								<Image
+									src={selectedFile}
+									w={"100px"}
+									h={"100px"}
+									onClick={() => {
+										inputFileRef.current.click();
+									}}
+								/>
+								<Text color={"red.800"}>{formik.errors.book_url}</Text>
 							</Box>
 						</ModalBody>
 						<ModalFooter>

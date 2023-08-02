@@ -54,10 +54,10 @@ export default function ReportChart() {
               {objects.map((val, index) => {
                 return (
                   <Flex
-                    w={"260px"}
                     p={"10px"}
                     boxShadow="0 0 5px #e0e0e0"
                     bgColor={"white"}
+                    border={"1px"}
                     h={"100px"}
                     gap={"30px"}
                   >

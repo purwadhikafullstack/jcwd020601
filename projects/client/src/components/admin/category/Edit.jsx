@@ -18,7 +18,7 @@ import * as Yup from "yup";
 import "../../../App.css";
 import { useEffect, useState, useRef } from "react";
 import { api } from "../../../api/api";
-export default function Edit({ isOpen, onClose, id, getData }) {
+export default function Edit({ isOpen, onClose, id, getData, token }) {
 	const [scrollBehavior, setScrollBehavior] = useState("inside");
 	const [disabled, setDisabled] = useState(true);
 	const formik = useFormik({
@@ -30,7 +30,11 @@ export default function Edit({ isOpen, onClose, id, getData }) {
 			category: Yup.string().required("required!").trim("Tidak boleh kosong"),
 		}),
 		onSubmit: async (values, { resetForm }) => {
-			await api.patch(`/category/v2/${id}`, values);
+			await api.patch(`/category/v2/${id}`, values, {
+				headers: {
+					Authorization: token,
+				},
+			});
 			onClose();
 			resetForm({ values: "" });
 			Swal.fire("Good job!", "Your data has been Updated.", "success");

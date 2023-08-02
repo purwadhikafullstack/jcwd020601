@@ -5,17 +5,17 @@ const cors = require("cors");
 const { join } = require("path");
 const db = require("./models");
 const routes = require("./routes");
-// db.sequelize.sync({ alter: true });
+// db.sequelize.sync({ force: true });
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(
-  cors({
-    credentials: true,
-    // origin: [
-    //   process.env.WHITELISTED_DOMAIN &&
-    //     process.env.WHITELISTED_DOMAIN.split(","),
-    // ],
-  })
+	cors({
+		credentials: true,
+		// origin: [
+		//   process.env.WHITELISTED_DOMAIN &&
+		//     process.env.WHITELISTED_DOMAIN.split(","),
+		// ],
+	})
 );
 
 app.use(express.json());
@@ -90,9 +90,9 @@ app.use("/bookImage", express.static(`${__dirname}/public/book`));
 //#endregion
 
 app.listen(PORT, (err) => {
-  if (err) {
-    console.log(`ERROR: ${err}`);
-  } else {
-    console.log(`APP RUNNING at ${PORT} ✅`);
-  }
+	if (err) {
+		console.log(`ERROR: ${err}`);
+	} else {
+		console.log(`APP RUNNING at ${PORT} ✅`);
+	}
 });

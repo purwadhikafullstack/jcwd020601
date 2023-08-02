@@ -1,7 +1,9 @@
 const db = require("../models");
 const Sequelize = require("sequelize");
-const { Op } = db.Sequelize;
+const { Op, sequelize } = db.Sequelize;
 const moment = require("moment");
+const t = require("../helpers/transaction");
+
 const categoryController = {
 	getAll: async (req, res) => {
 		try {
@@ -77,6 +79,11 @@ const categoryController = {
 	editCategory: async (req, res) => {
 		try {
 			const { category } = req.body;
+			// create transaction
+			const transaction = await t.create();
+			if (!transaction.status && transaction.error) {
+				throw transaction.error;
+			}
 			await db.Category.update(
 				{
 					category,
@@ -85,14 +92,25 @@ const categoryController = {
 					where: {
 						id: req.params.id,
 					},
+				},
+				{
+					transaction: transaction.data,
 				}
 			);
-
-			return await db.Category.findOne({
-				where: {
-					id: req.params.id,
+			const commit = await t.commit(transaction.data);
+			if (!commit.status && commit.error) {
+				throw commit.error;
+			}
+			return await db.Category.findOne(
+				{
+					where: {
+						id: req.params.id,
+					},
 				},
-			}).then((result) => res.send(result));
+				{
+					transaction: transaction.data,
+				}
+			).then((result) => res.send(result));
 		} catch (err) {
 			console.log(err.message);
 			res.status(500).send({
@@ -103,14 +121,27 @@ const categoryController = {
 	insertCategory: async (req, res) => {
 		try {
 			const { category } = req.body;
-			await db.Category.create({
-				category,
-			});
+			// transaction
+			const transaction = await t.create();
+			if (!transaction.status && transaction.error) {
+				throw transaction.error;
+			}
+			await db.Category.create(
+				{
+					category,
+				},
+				{ transaction: transaction.data }
+			);
+			const commit = await t.commit(transaction.data);
+			if (!commit.status && commit.error) {
+				throw commit.error;
+			}
 			return await db.Category.findAll().then((result) => {
 				res.send(result);
 			});
 		} catch (err) {
 			console.log(err);
+
 			return res.status(500).send({
 				message: err.message,
 			});
@@ -118,15 +149,25 @@ const categoryController = {
 	},
 	deleteCategory: async (req, res) => {
 		try {
-			await db.Category.destroy({
-				where: {
-					//  id: req.params.id
+			const transaction = await t.create();
+			await db.Category.destroy(
+				{
+					where: {
+						//  id: req.params.id
 
-					//   [Op.eq]: req.params.id
+						//   [Op.eq]: req.params.id
 
-					id: req.params.id,
+						id: req.params.id,
+					},
 				},
-			});
+				{
+					transaction: transaction.data,
+				}
+			);
+			const commit = await t.commit(transaction.data);
+			if (!commit.status && commit.error) {
+				throw commit.error;
+			}
 			return await db.Category.findAll().then((result) => res.send(result));
 		} catch (err) {
 			console.log(err.message);
