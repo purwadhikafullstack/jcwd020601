@@ -21,9 +21,7 @@ function App() {
       {isLoading ? (
         <Loading /> // <Loading />
       ) : (
-        <AuthProvider>
-          <Routes>{routes.map((val) => val)}</Routes>
-        </AuthProvider>
+        <Routes>{routes.map((val) => val)}</Routes>
       )}
     </>
   );

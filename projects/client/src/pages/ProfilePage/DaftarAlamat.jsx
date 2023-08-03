@@ -21,16 +21,18 @@ import { MdClose } from "react-icons/md";
 import EditAddress from "./EditAddress";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 export default function DaftarAlamat(props) {
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const modalAddAddress = useDisclosure();
   const dispatch = useDispatch();
+  const [selectIsMain, setSelectIsMain] = useState(false);
   const [provinces, setProvinces] = useState([]);
   const [province, setProvince] = useState();
-  const [cities, setCities] = useState([]);
+  const [cities, setCities] = useState([1, 2]);
   const [userAddresses, setUserAddresses] = useState([]);
-  const [pos, setPos] = useState([]);
+  const [pos, setPos] = useState();
   const [provinceId, setProvinceId] = useState();
   const [cityId, setCityId] = useState();
   const toast = useToast();
@@ -96,35 +98,32 @@ export default function DaftarAlamat(props) {
           });
         })
         .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login session has expired",
+          });
           dispatch({
             type: "logout",
           });
-          modalAddAddress.onClose();
           nav("/login");
-          toast({
-            position: "top",
-            title: "Something went wrong",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
+          modalAddAddress.onClose();
         });
     },
   });
   useEffect(() => {
     if (props.userSelector.email) {
-      const fetchData = async () => {
-        const data = await api
-          .get("/address/province", {
-            headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-          })
-          .then((res) => {
-            setProvinces(res.data);
-          });
-      };
-      console.log("sanfjasf");
-      fetchData();
+      // const fetchData = async () => {
+      //   const data = await api
+      //     .get("/address/province", {
+      //       headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
+      //     })
+      //     .then((res) => {
+      //       setProvinces(res.data.result);
+      //     });
+      // };
+      // console.log("sanfjasf");
+      // fetchData();
       fetchUserAddresses();
     }
   }, []);
@@ -145,30 +144,22 @@ export default function DaftarAlamat(props) {
     }
   }
   async function fetchCity() {
+    setPos();
+    setCities([]);
     await api
-      .post(
-        "/address/city",
-        { id: provinceId },
-        {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        }
-      )
+      .get("/city/v1/" + provinceId)
       .then((res) => {
-        setCities(res.data);
+        setCities(res.data.result);
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   }
   async function fetchPos() {
-    await api
-      .post(
-        "/address/pos",
-        { id: cityId },
-        {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        }
-      )
-      .then((res) => {
-        setPos(res.data);
-      });
+    setPos();
+    await api.get("/city/v2/" + cityId).then((res) => {
+      setPos(res.data.result);
+    });
   }
 
   async function inputHandlerAddress(input) {
@@ -191,19 +182,36 @@ export default function DaftarAlamat(props) {
   }, [formikAddress.values.city]);
   return (
     <Flex flexDir={"column"} gap={"20px"} pr={"50px"}>
-      <Button
-        w={"160px"}
-        onClick={() => {
-          modalAddAddress.onOpen();
-        }}
-        colorScheme="facebook"
-      >
-        Tambah Alamat
-      </Button>
+      <Flex gap={"20px"}>
+        <Button
+          w={"160px"}
+          onClick={() => {
+            modalAddAddress.onOpen();
+            console.log(pos);
+            console.log(typeof cities);
+          }}
+          colorScheme="facebook"
+        >
+          Tambah Alamat
+        </Button>
+        <Button
+          w={"160px"}
+          fontSize={"0.9rem"}
+          onClick={() => {
+            setSelectIsMain(!selectIsMain);
+          }}
+          colorScheme="facebook"
+        >
+          Change Main Address
+        </Button>
+      </Flex>
       {userAddresses.map((val) => {
         return (
           <>
             <EditAddress
+              selectIsMain={selectIsMain}
+              setSelectIsMain={setSelectIsMain}
+              phoneRegExp={phoneRegExp}
               userSelector={props.userSelector}
               useState={useState}
               fetchUserAddresses={fetchUserAddresses}
@@ -254,7 +262,6 @@ export default function DaftarAlamat(props) {
               </Button>
             </Flex>
           </ModalHeader>
-
           <ModalBody maxW="500px">
             <ModalAddAddress
               pos={pos}

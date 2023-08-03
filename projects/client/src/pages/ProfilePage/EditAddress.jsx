@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Center,
   Flex,
@@ -14,25 +15,24 @@ import {
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { api } from "../../api/api";
+import Swal from "sweetalert2";
 import * as Yup from "yup";
 import { MdClose } from "react-icons/md";
-import { GoVerified } from "react-icons/go";
 import YupPassword from "yup-password";
 import ModalEditAddress from "./ModalEditAddress";
-
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 export default function EditAddress(val) {
-  const modalAddAddress = useDisclosure();
   const toast = useToast();
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   YupPassword(Yup);
   const [provinces, setProvinces] = val.useState([]);
   const [cities, setCities] = val.useState([]);
-  const [userAddresses, setUserAddresses] = val.useState([]);
   const [posCodes, setPosCodes] = val.useState([]);
   const [provinceId, setProvinceId] = val.useState();
   const [cityId, setCityId] = val.useState();
-  const [addressId, setAddressId] = val.useState();
+  const token = JSON.parse(localStorage.getItem("auth"));
+  const nav = useNavigate();
+  const dispatch = useDispatch();
   const initialState = {
     province: val.province,
     city: val.city,
@@ -54,83 +54,80 @@ export default function EditAddress(val) {
     },
     setState,
   ] = useState(initialState);
-  async function deleteAddress() {
+  async function changeMain() {
     try {
+      console.log("sad");
       await api
-        .post("address/v4/" + val.id, { UserId: val.userSelector.id })
+        .patch("address/v3/" + val.id + "?token=" + token, {
+          UserId: val.userSelector.id,
+        })
         .then((res) => {
-          modalEditAddress.onClose();
-          formikAddress.resetForm();
+          Swal.fire("Good job!", "Main Address Changed", "success");
+          val.setSelectIsMain(false);
           val.fetchUserAddresses();
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login session has expired",
+          });
+          dispatch({
+            type: "logout",
+          });
+          nav("/login");
         });
     } catch (err) {
       alert(err.data.response.message);
     }
   }
-  async function fetchCity() {
-    console.log(provinceId);
-
-    await api
-      .post(
-        "address/city",
-        { id: provinceId },
-        {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        }
-      )
-      .then((res) => {
-        setCities(res.data);
-      });
-  }
-  async function fetchPos() {
-    console.log(cityId);
-    await api
-      .post(
-        "address/pos",
-        { id: cityId },
-        {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        }
-      )
-      .then((res) => {
-        setPosCodes(res.data);
-      });
-  }
-  async function fetchUserAddresses() {
+  async function deleteAddress() {
     try {
       await api
-        .get("/address/user/" + val.userSelector.id)
+        .post("address/v4/" + val.id + "?token=" + token, {
+          UserId: val.userSelector.id,
+        })
         .then((res) => {
-          setUserAddresses(res.data);
+          modalEditAddress.onClose();
+          formikAddress.resetForm();
+          val.fetchUserAddresses();
         })
         .catch((err) => {
-          toast({
-            position: "top",
-            title: "Something went wrong",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login session has expired",
           });
+          dispatch({
+            type: "logout",
+          });
+          nav("/login");
         });
     } catch (err) {
-      alert(err.data.message);
+      alert(err.response.data.message);
     }
+  }
+  async function fetchCity() {
+    setPosCodes([]);
+    setCities([]);
+    await api.get("/city/v1/" + provinceId).then((res) => {
+      setCities(res.data.result);
+    });
+  }
+  async function fetchPos() {
+    setPosCodes([]);
+    await api.get("/city/v2/" + cityId).then((res) => {
+      setPosCodes(res.data.result);
+    });
   }
   useEffect(() => {
     const fetchData = async () => {
-      const data = await api
-        .get("address/province", {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        })
-        .then((res) => {
-          setProvinces(res.data);
-        });
+      const data = await api.get("province").then((res) => {
+        setProvinces(res.data.result);
+      });
     };
     fetchData();
-    fetchUserAddresses();
   }, []);
-
   const formikAddress = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -145,7 +142,7 @@ export default function EditAddress(val) {
     validationSchema: Yup.object().shape({
       no_Handphone: Yup.string()
         .trim()
-        .matches(phoneRegExp, "Phone number is not valid")
+        .matches(val.phoneRegExp, "Phone number is not valid")
         .required("You need to enter a phone number"),
       namaPenerima: Yup.string()
         .required("You need to enter a receiver's name")
@@ -181,63 +178,46 @@ export default function EditAddress(val) {
         UserId: val.userSelector.id,
       };
       await api
-        .patch("/address/v2/" + val.id, address2)
+        .patch("/address/v2/" + val.id + "?token=" + token, address2)
         .then(async (res) => {
           modalEditAddress.onClose();
           formikAddress.resetForm();
           val.fetchUserAddresses();
-          toast({
-            position: "top",
-            title: res.data.message,
-            description: "Address Saved.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
+          Swal.fire("Good job!", "Main Address Changed", "success");
         })
         .catch((err) => {
-          console.log(err);
-          toast({
-            position: "top",
-            title: "Something went wrong",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login session has expired",
           });
+          dispatch({
+            type: "logout",
+          });
+          nav("/login");
         });
     },
   });
-
   async function inputHandlerAddress(input) {
     const { value, id } = input.target;
-    async function lol() {
-      console.log(value);
-      console.log(id);
-      const tempobject = {};
-      tempobject[id] = value.split("#")[0];
-      setState((prevState) => ({ ...prevState, [id]: value }));
-      console.log(tempobject);
-      if (id == "province") {
-        setProvinceId(value.split("#")[0]);
-        formikAddress.setFieldValue(id, value.split("#")[1]);
-      } else if (id == "city") {
-        setCityId(value.split("#")[0]);
-        formikAddress.setFieldValue(id, value.split("#")[1]);
-      } else formikAddress.setFieldValue(id, value);
-      console.log(formikAddress.values);
-    }
-    await lol();
+    const tempobject = {};
+    tempobject[id] = value.split("#")[0];
+    setState((prevState) => ({ ...prevState, [id]: value }));
+    console.log(tempobject);
+    if (id == "province") {
+      setProvinceId(value.split("#")[0]);
+      formikAddress.setFieldValue(id, value.split("#")[1]);
+    } else if (id == "city") {
+      setCityId(value.split("#")[0]);
+      formikAddress.setFieldValue(id, value.split("#")[1]);
+    } else formikAddress.setFieldValue(id, value);
   }
   useEffect(() => {
     fetchCity();
-    console.log(formikAddress.values.province);
   }, [formikAddress.values.province]);
   useEffect(() => {
     fetchPos();
-    console.log(formikAddress.values);
   }, [formikAddress.values.city]);
-
   const modalEditAddress = useDisclosure();
   return (
     <>
@@ -245,10 +225,12 @@ export default function EditAddress(val) {
         bg={"#f5f5f5"}
         w={"100%"}
         flexDir={"column"}
-        onClick={() => {
-          setAddressId(val.id);
-          modalEditAddress.onOpen();
-        }}
+        border={val.selectIsMain ? "2px solid #385898" : ""}
+        onClick={
+          val.selectIsMain
+            ? () => changeMain()
+            : () => modalEditAddress.onOpen()
+        }
         _hover={{ bgColor: "#c7c7c7" }}
         cursor={"pointer"}
       >
@@ -256,7 +238,13 @@ export default function EditAddress(val) {
           <Flex fontWeight={"700"} color={"#385898"}>
             {val.labelAlamat}
           </Flex>
-          {val.isMain ? <Icon as={GoVerified}></Icon> : <></>}
+          {val.isMain ? (
+            <Box border={"#385898 solid 1px"} fontSize={"0.6rem"} px={"5px"}>
+              Main
+            </Box>
+          ) : (
+            <></>
+          )}
         </Flex>
         <Flex p={"20px"} flexDir={"column"}>
           <Flex fontWeight={600}>{"Nama : " + val.namaPenerima}</Flex>
@@ -315,15 +303,9 @@ export default function EditAddress(val) {
                 posCodes={posCodes}
                 city={city}
                 province={province}
-                setState={setState}
-                fetchPos={fetchPos}
                 cities={cities}
-                setCities={setCities}
-                fetchCity={fetchCity}
-                setProvinces={setProvinces}
                 provinces={provinces}
                 formikAddress={formikAddress}
-                onClose={modalAddAddress.onClose}
                 inputHandlerAddress={inputHandlerAddress}
               ></ModalEditAddress>
             </ModalBody>

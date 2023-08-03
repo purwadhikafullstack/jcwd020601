@@ -11,42 +11,44 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-	sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
-	sequelize = new Sequelize(
-		config.database,
-		config.username,
-		config.password,
-		config
-	);
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
 }
 
 fs.readdirSync(__dirname)
-	.filter((file) => {
-		return (
-			file.indexOf(".") !== 0 &&
-			file !== basename &&
-			file.slice(-3) === ".js" &&
-			file.indexOf(".test.js") === -1
-		);
-	})
-	.forEach((file) => {
-		const model = require(path.join(__dirname, file))(
-			sequelize,
-			Sequelize.DataTypes
-		);
-		db[model.name] = model;
-	});
+  .filter((file) => {
+    return (
+      file.indexOf(".") !== 0 &&
+      file !== basename &&
+      file.slice(-3) === ".js" &&
+      file.indexOf(".test.js") === -1
+    );
+  })
+  .forEach((file) => {
+    const model = require(path.join(__dirname, file))(
+      sequelize,
+      Sequelize.DataTypes
+    );
+    db[model.name] = model;
+  });
 
 Object.keys(db).forEach((modelName) => {
-	if (db[modelName].associate) {
-		db[modelName].associate(db);
-	}
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
 });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 db.Address = require("./address")(sequelize, Sequelize);
+db.City = require("./city")(sequelize, Sequelize);
+db.Province = require("./province")(sequelize, Sequelize);
 db.BooksCategory = require("./bookCategory")(sequelize, Sequelize);
 db.Admin = require("./admin")(sequelize, Sequelize);
 db.Book = require("./book")(sequelize, Sequelize);
@@ -62,48 +64,48 @@ db.User = require("./user")(sequelize, Sequelize);
 db.Voucher = require("./voucher")(sequelize, Sequelize);
 db.Token = require("./token")(sequelize, Sequelize);
 db.Address.belongsTo(db.User, {
-	foreignKey: "UserId",
+  foreignKey: "UserId",
 });
 db.Stock.belongsTo(db.Branch, {
-	foreignKey: "BranchId",
+  foreignKey: "BranchId",
 });
 db.OrderDetail.belongsTo(db.Order, {
-	foreignKey: "OrderId",
+  foreignKey: "OrderId",
 });
 db.Category.belongsToMany(db.Book, { through: db.BooksCategory });
 db.Book.belongsToMany(db.Category, { through: db.BooksCategory });
 db.Book.belongsTo(db.Discount, {
-	foreignKey: "DiscountId",
+  foreignKey: "DiscountId",
 });
 db.Discount.belongsTo(db.Branch, {
-	foreignKey: "BranchId",
+  foreignKey: "BranchId",
 });
 db.StockHistory.belongsTo(db.Stock, {
-	foreignKey: "StockId",
+  foreignKey: "StockId",
 });
 db.User.hasOne(db.Token);
 db.Token.belongsTo(db.User);
 db.Stock.belongsTo(db.Book),
-	{
-		foreignKey: "BookId",
-	};
+  {
+    foreignKey: "BookId",
+  };
 
 db.Admin.hasOne(db.Token);
 db.Token.belongsTo(db.Admin);
 db.Cart.belongsTo(db.Stock, {
-	foreignKey: "StockId",
+  foreignKey: "StockId",
 });
 db.Branch.hasOne(db.Admin);
 db.Admin.belongsTo(db.Branch);
 db.User.hasOne(db.Cart);
 db.Cart.belongsTo(db.User);
 db.Order.belongsTo(db.User, {
-	foreignKey: "UserId",
+  foreignKey: "UserId",
 });
 db.Address.hasOne(db.Order);
 db.Order.belongsTo(db.Address);
 db.Order.belongsTo(db.Branch, {
-	foreignKey: "BranchId",
+  foreignKey: "BranchId",
 });
 db.Address.hasOne(db.Order);
 db.OrderDetail.belongsTo(db.Stock);

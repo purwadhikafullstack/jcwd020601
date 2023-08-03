@@ -5,17 +5,17 @@ const cors = require("cors");
 const { join } = require("path");
 const db = require("./models");
 const routes = require("./routes");
-// db.sequelize.sync({ alter: true });
+db.sequelize.sync({ alter: true });
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(
-	cors({
-		credentials: true,
-		// origin: [
-		//   process.env.WHITELISTED_DOMAIN &&
-		//     process.env.WHITELISTED_DOMAIN.split(","),
-		// ],
-	})
+  cors({
+    credentials: true,
+    // origin: [
+    //   process.env.WHITELISTED_DOMAIN &&
+    //     process.env.WHITELISTED_DOMAIN.split(","),
+    // ],
+  })
 );
 
 app.use(express.json());
@@ -37,6 +37,8 @@ app.use("/orderdetail", routes.orderDetailRoutes);
 app.use("/stock", routes.stockRoutes);
 app.use("/stockhistory", routes.stockHistoryRoutes);
 app.use("/voucher", routes.voucherRoutes);
+app.use("/city", routes.cityRoutes);
+app.use("/province", routes.provinceRoutes);
 
 app.use("/bookImage", express.static(`${__dirname}/public/book`));
 

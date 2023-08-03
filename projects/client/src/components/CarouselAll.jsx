@@ -1,17 +1,17 @@
 import {
-	Flex,
-	Box,
-	Card,
-	CardBody,
-	Image,
-	Stack,
-	Heading,
-	Text,
-	CardFooter,
-	ButtonGroup,
-	Button,
-	Divider,
-	useMediaQuery,
+  Flex,
+  Box,
+  Card,
+  CardBody,
+  Image,
+  Stack,
+  Heading,
+  Text,
+  CardFooter,
+  ButtonGroup,
+  Button,
+  Divider,
+  useMediaQuery,
 } from "@chakra-ui/react";
 
 // const item = [
@@ -46,77 +46,77 @@ import {
 // ];
 
 export default function CarouselAll() {
-	const [large] = useMediaQuery("(min-width: 1280px)");
-	return (
-		<Flex
-			justify={"center"}
-			flexDirection={"column"}
-			alignItems={"center"}
-			justifyContent={"center"}
-			my={"40px"}
-		>
-			<Divider w={"75%"} />
-			<Box
-				display={"flex"}
-				justifyContent={"space-between"}
-				alignItems={"center"}
-				w={{
-					base: "340px",
-					sm: "480px",
-					md: "768px",
-					lg: "992px",
-					xl: "1280px",
-				}}
-				my={"10px"}
-			>
-				<Text
-					fontSize={{ base: "lg", lg: "2xl", xl: "3xl" }}
-					color={"blue.700"}
-					fontWeight={{ base: "bold", md: "normal" }}
-				>
-					Buku - Buku Terpopuler
-				</Text>
-				<Text
-					fontSize={{ base: "sm", xl: "xl" }}
-					color={"blue.400"}
-					cursor={"pointer"}
-				>
-					Lihat Semua
-				</Text>
-			</Box>
-			<Box display={"flex"} gap={"25px"} justifyContent={"center"}>
-				{large ? (
-					<>
-						<Box
-							justifyContent={"center"}
-							bgColor={"red"}
-							h={"500px"}
-							alignItems={"center"}
-						>
-							<Card>
-								<Image
-									src={
-										"https://cdn.gramedia.com/uploads/category-list/Banner_Category_Gcom_-_April_2023_2_Novel_Terbaru_6xPgO1D__w204_hauto.png"
-									}
-									alt="Green double couch with wooden legs"
-									borderRadius="lg"
-									w={"250px"}
-									h={"500px"}
-								/>
-							</Card>
-						</Box>
-					</>
-				) : (
-					<></>
-				)}
-				<Box
-					display={"flex"}
-					gap={"25px"}
-					mb={"40px"}
-					flexWrap={"wrap"}
-					justifyContent={"center"}
-				>
-					{/* {item.map((val, idx) => (
+  const [large] = useMediaQuery("(min-width: 1280px)");
+  return (
+    <Flex
+      justify={"center"}
+      flexDirection={"column"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      my={"40px"}
+    >
+      <Divider w={"75%"} />
+      <Box
+        display={"flex"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        w={{
+          base: "340px",
+          sm: "480px",
+          md: "768px",
+          lg: "992px",
+          xl: "1280px",
+        }}
+        my={"10px"}
+      >
+        <Text
+          fontSize={{ base: "lg", lg: "2xl", xl: "3xl" }}
+          color={"blue.700"}
+          fontWeight={{ base: "bold", md: "normal" }}
+        >
+          Buku - Buku Terpopuler
+        </Text>
+        <Text
+          fontSize={{ base: "sm", xl: "xl" }}
+          color={"blue.400"}
+          cursor={"pointer"}
+        >
+          Lihat Semua
+        </Text>
+      </Box>
+      <Box display={"flex"} gap={"25px"} justifyContent={"center"}>
+        {large ? (
+          <>
+            <Box
+              justifyContent={"center"}
+              bgColor={"red"}
+              h={"500px"}
+              alignItems={"center"}
+            >
+              <Card>
+                <Image
+                  src={
+                    "https://cdn.gramedia.com/uploads/category-list/Banner_Category_Gcom_-_April_2023_2_Novel_Terbaru_6xPgO1D__w204_hauto.png"
+                  }
+                  alt="Green double couch with wooden legs"
+                  borderRadius="lg"
+                  w={"250px"}
+                  h={"500px"}
+                />
+              </Card>
+            </Box>
+          </>
+        ) : (
+          <></>
+        )}
+        <Box
+          display={"flex"}
+          gap={"25px"}
+          mb={"40px"}
+          flexWrap={"wrap"}
+          justifyContent={"center"}
+        >
+          {/* {item.map((val, idx) => (
 						<Card maxW="sm" key={idx}>
 							<CardBody pb={0}>
 								<Image
@@ -150,10 +150,10 @@ export default function CarouselAll() {
 							</CardFooter>
 						</Card>
 					))} */}
-				</Box>
-			</Box>
+        </Box>
+      </Box>
 
-			<Divider w={"75%"} />
-		</Flex>
-	);
+      <Divider w={"75%"} />
+    </Flex>
+  );
 }

@@ -17,7 +17,6 @@ import OrderPage from "../pages/OrderPage";
 import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
 
-
 const routes = [
   <Route
     path="/login"
@@ -40,7 +39,7 @@ const routes = [
   <Route
     path="/"
     element={
-      <ProtectedPage>
+      <ProtectedPage guestAndLogin={true}>
         <HomePage />
       </ProtectedPage>
     }

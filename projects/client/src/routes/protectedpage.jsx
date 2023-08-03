@@ -11,6 +11,7 @@ export default function ProtectedPage({
   needLogin = false,
   needLoginAdmin = false,
   needSuperAdminLogin = false,
+  guestAndLogin = true,
   noFooter = false,
 }) {
   const userSelector = useSelector((state) => state.login.auth);
@@ -47,7 +48,13 @@ export default function ProtectedPage({
     } else if (needLogin && userSelector?.role == "Admin-Branch") {
       setIsLoading(false);
       return nav("/adminpage");
+    } else if (guestAndLogin && userSelector?.role == "Admin-Branch") {
+      setIsLoading(false);
+      return nav("/adminpage");
     } else if (needLogin && userSelector?.role == "Super-Admin") {
+      setIsLoading(false);
+      return nav("/superadminpage");
+    } else if (guestAndLogin && userSelector?.role == "Super-Admin") {
       setIsLoading(false);
       return nav("/superadminpage");
     } else if (guestOnly && userSelector?.role == "Super-Admin") {
