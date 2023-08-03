@@ -96,7 +96,6 @@ export default function BookCard() {
           cursor={"pointer"}
         >
           <Link to="/detailBookCard">Lihat Semua</Link>
-
         </Text>
       </Box>
       <Box
@@ -129,12 +128,10 @@ export default function BookCard() {
             </CardBody>
             <CardFooter>
               <ButtonGroup spacing="2" justifyContent={"center"}>
-
                 {/* <Button variant="solid" colorScheme="blue">
                   Buy now
                 </Button> */}
                 <Button variant="solid" colorScheme="blue">
-
                   Add to cart
                 </Button>
               </ButtonGroup>
