@@ -16,6 +16,8 @@ import SuperAdminPage from "../pages/SuperAdminPage";
 import OrderPage from "../pages/OrderPage";
 import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
+import DetailBookCardPage from "../pages/DetailBookCardPage";
+import DetailBookPage from "../pages/DetailBookPage";
 
 const routes = [
   <Route
@@ -39,8 +41,24 @@ const routes = [
   <Route
     path="/"
     element={
-      <ProtectedPage guestAndLogin={true}>
+      <ProtectedPage>
         <HomePage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/detailBookCard"
+    element={
+      <ProtectedPage>
+        <DetailBookCardPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/detailBook/:id"
+    element={
+      <ProtectedPage>
+        <DetailBookPage />
       </ProtectedPage>
     }
   ></Route>,
