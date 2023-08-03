@@ -107,9 +107,7 @@ export default function BookCard() {
           <Card key={idx}>
             <CardBody pb={0}>
               <Image
-
                 src={val.Book?.book_url}
-
                 alt="Green double couch with wooden legs"
                 borderRadius="lg"
                 w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
@@ -132,7 +130,11 @@ export default function BookCard() {
                 {/* <Button variant="solid" colorScheme="blue">
                   Buy now
                 </Button> */}
-                <Button variant="solid" colorScheme="blue">
+                <Button
+                  variant="solid"
+                  colorScheme="blue"
+                  onClick={() => add(idx)}
+                >
                   Add to cart
                 </Button>
               </ButtonGroup>
