@@ -17,7 +17,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 
-export default function BookCard() {
+export default function BookCardRecomend() {
   let t = localStorage.getItem("auth");
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
@@ -48,12 +48,14 @@ export default function BookCard() {
       alignItems={"center"}
       justifyContent={"center"}
       my={"40px"}
+      // mx={"40px"}
     >
-      <Divider w={"75%"} />
+      {/* <Divider w={"75%"} /> */}
       <Box
         display={"flex"}
         justifyContent={"space-between"}
         alignItems={"center"}
+        px={20}
         w={{
           base: "340px",
           sm: "480px",
@@ -64,35 +66,43 @@ export default function BookCard() {
         my={"10px"}
       >
         <Text
-          fontSize={{ base: "lg", lg: "2xl", xl: "3xl" }}
+          fontSize={{ base: "lg", lg: "xl", xl: "2xl" }}
           color={"blue.700"}
           fontWeight={{ base: "bold", md: "normal" }}
         >
-          Rekomendasi Gramedia
+          Rekomendasi Untukmu
         </Text>
         <Text
           fontSize={{ base: "sm", xl: "xl" }}
           color={"blue.400"}
           cursor={"pointer"}
         >
-          <Link to="/detailBookCard">Lihat Semua</Link>
+          {/* <Link to="/detailBookCard">Lihat Semua</Link> */}
         </Text>
       </Box>
       <Box
         display={"flex"}
-        gap={"25px"}
+        gap={"15px"}
+        p={8}
         flexWrap={"wrap"}
-        justifyContent={"center"}
+        justifyContent={"space-evenly"}
+        bgColor={"blue.200"}
+        mx={"10px"}
+        borderRadius={"10px"}
       >
         {value.map((val, idx) => (
-          <Card key={idx}>
+          <Card
+            key={idx}
+            w={{ base: "250px", sm: "250px", md: "250px", lg: "200px" }}
+            // align={"center"}
+          >
             <CardBody pb={0}>
               <Image
                 src={val.Book?.book_url}
                 alt="Green double couch with wooden legs"
                 borderRadius="lg"
-                w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
-                h={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
+                w={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
+                h={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
               />
               <Stack mt="6" spacing="5">
                 <Heading size="sm">{val.Book?.author}</Heading>
