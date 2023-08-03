@@ -23,6 +23,8 @@ import YupPassword from "yup-password";
 import { api } from "../../api/api";
 import { useDispatch } from "react-redux";
 import ModalChangeProfile from "./ModalChangeProfile";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 export default function Biodata(props) {
   YupPassword(Yup);
   const phoneRegExp =
@@ -38,6 +40,7 @@ export default function Biodata(props) {
   const modalChangePassword = useDisclosure();
   const modalChangeProfile = useDisclosure();
   const inputFileRef = useRef(null);
+  const nav = useNavigate();
   const handleFile = async (event) => {
     setSelectedFile(event.target.files[0]);
     uploadAvatar(event.target.files[0], props.userSelector.id);
@@ -47,6 +50,8 @@ export default function Biodata(props) {
       id: props.userSelector.id,
     },
     validationSchema: Yup.object().shape({
+      last_name: Yup.string().trim().required("This form cannot be empty"),
+      first_name: Yup.string().trim().required("This form cannot be empty"),
       phone: Yup.string()
         .matches(phoneRegExp, "Phone number is not valid")
         .trim(),
@@ -73,39 +78,49 @@ export default function Biodata(props) {
               payload: user,
             });
           }
-          toast({
-            title: res.data.message,
-            description: "Login Successful.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
+          Swal.fire("Good job!", "Profile Updated", "success");
         })
         .catch((err) => {
-          toast({
-            position: "top",
-            title: "Login ERROR",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login session has expired",
           });
+          dispatch({
+            type: "logout",
+          });
+          nav("/login");
         });
     },
   });
   async function uploadAvatar(file, id) {
     try {
       let user;
+      const token = JSON.parse(localStorage.getItem("auth"));
       const formData = new FormData();
       formData.append("avatar", file);
       user = await api
         .post(
-          "http://localhost:2000/auth/image/v1/" + props.userSelector.id,
+          "http://localhost:2000/auth/image/v1/" +
+            props.userSelector.id +
+            "?token=" +
+            token,
           formData
         )
         .then((res) => {
           console.log(res.data);
           return res.data;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login session has expired",
+          });
+          dispatch({
+            type: "logout",
+          });
+          nav("/login");
         });
       await dispatch({
         type: "login",

@@ -1,15 +1,15 @@
-import { Center, Flex, Icon } from "@chakra-ui/react";
+import { Flex, Icon } from "@chakra-ui/react";
 import { AiFillHome } from "react-icons/ai";
 import { HiClipboardList } from "react-icons/hi";
 import { FaUserCircle } from "react-icons/fa";
 import { BsBasketFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 
-export default function ProfileFooter() {
+export default function ProfileFooter(props) {
   const nav = useNavigate();
   return (
     <>
-      <Center
+      <props.Center
         position={"fixed"}
         bottom={0}
         zIndex={1}
@@ -28,7 +28,7 @@ export default function ProfileFooter() {
         ></Icon>
         <Icon fontSize={"24px"} color={"white"} as={BsBasketFill}></Icon>
         <Icon fontSize={"24px"} color={"white"} as={FaUserCircle}></Icon>
-      </Center>
+      </props.Center>
     </>
   );
 }

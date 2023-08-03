@@ -37,6 +37,8 @@ app.use("/orderdetail", routes.orderDetailRoutes);
 app.use("/stock", routes.stockRoutes);
 app.use("/stockhistory", routes.stockHistoryRoutes);
 app.use("/voucher", routes.voucherRoutes);
+app.use("/city", routes.cityRoutes);
+app.use("/province", routes.provinceRoutes);
 
 app.use("/bookImage", express.static(`${__dirname}/public/book`));
 

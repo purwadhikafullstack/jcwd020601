@@ -11,6 +11,8 @@ const stockRoutes = require("./stock");
 const stockHistoryRoutes = require("./stockHistory");
 const userRoutes = require("./user");
 const voucherRoutes = require("./voucher");
+const provinceRoutes = require("./province");
+const cityRoutes = require("./city");
 
 module.exports = {
   addressRoutes,
@@ -26,4 +28,6 @@ module.exports = {
   stockHistoryRoutes,
   userRoutes,
   voucherRoutes,
+  cityRoutes,
+  provinceRoutes,
 };

@@ -95,7 +95,6 @@ export default function ModalEditAddress(props) {
                 await props.inputHandlerAddress(val);
               }}
               variant="flushed"
-              placeholder="Select option"
             >
               <option display="none" disabled selected hidden>
                 Select Province
@@ -126,7 +125,6 @@ export default function ModalEditAddress(props) {
                 await props.inputHandlerAddress(val);
               }}
               variant="flushed"
-              placeholder="Select option"
             >
               <option display="none" disabled selected hidden>
                 Select City
@@ -152,8 +150,8 @@ export default function ModalEditAddress(props) {
                 Select PosCode
               </option>
 
-              <option value={props.posCodes.postal_code}>
-                {props.posCodes.postal_code}
+              <option value={props.posCodes?.postal_code}>
+                {props.posCodes?.postal_code}
               </option>
             </Select>
             <Flex color={"red"} fontSize={"0.8rem"}>

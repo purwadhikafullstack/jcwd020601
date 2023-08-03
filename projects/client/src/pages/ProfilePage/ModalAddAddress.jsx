@@ -9,11 +9,9 @@ export default function ModalAddAddress(props) {
   useEffect(() => {
     const fetchData = async () => {
       const data = await axios
-        .get("http://localhost:2000/address/province", {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        })
+        .get("http://localhost:2000/province")
         .then((res) => {
-          props.setProvinces(res.data);
+          props.setProvinces(res.data.result);
         });
     };
     // call the function
@@ -133,7 +131,7 @@ export default function ModalAddAddress(props) {
               <option display="none" disabled selected hidden>
                 Select City
               </option>
-              {props?.cities.map((val) => (
+              {props.cities.map((val) => (
                 <option value={val.city_id + "#" + val.city_name}>
                   {val.city_name}
                 </option>
@@ -154,8 +152,8 @@ export default function ModalAddAddress(props) {
                 Select PosCode
               </option>
 
-              <option value={props.pos.postal_code}>
-                {props.pos.postal_code}
+              <option value={props.pos?.postal_code}>
+                {props.pos?.postal_code}
               </option>
             </Select>
             <Flex color={"red"} fontSize={"0.8rem"}>

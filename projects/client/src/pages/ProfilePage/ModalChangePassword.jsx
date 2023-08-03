@@ -26,6 +26,7 @@ import {
 import logo from "../../assets/images/gramedia-icon-2.png";
 import YupPassword from "yup-password";
 import React from "react";
+import Swal from "sweetalert2";
 
 export default function ModalChangePassword(props) {
   YupPassword(Yup);
@@ -91,12 +92,15 @@ export default function ModalChangePassword(props) {
         props.onClose();
       })
       .catch((err) => {
-        alert(err.response.data.message);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Login session has expired",
+        });
         dispatch({
           type: "logout",
         });
         nav("/login");
-        console.log(values);
         // nav("/login");
       });
   }
