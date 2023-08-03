@@ -8,17 +8,16 @@ const bookController = require("../controllers").bookController;
 router.get("/", validate, bookController.getAll);
 router.get("/:id", validate, bookController.getById);
 router.post(
-	"/v1",
-	fileUploader({ destinationFolder: "book" }).single("book_url"),
-	validate,
-	bookController.insertBook
+  "/v1",
+  fileUploader({ destinationFolder: "book" }).single("book_url"),
+  validate,
+  bookController.insertBook
 );
 router.patch(
-	"/v2/:id",
-	fileUploader({ destinationFolder: "book" }).single("book_url"),
-	validate,
-	bookController.editBook
-
+  "/v2/:id",
+  fileUploader({ destinationFolder: "book" }).single("book_url"),
+  validate,
+  bookController.editBook
 );
 router.delete("/v3/:id", validate, bookController.deleteBook);
 

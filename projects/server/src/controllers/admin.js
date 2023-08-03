@@ -102,48 +102,48 @@ const adminController = {
       const hashPassword = await bcrypt.hash(password, 10);
       await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
         place = res.results[0].geometry;
-				await db.Branch.create(
-					{
-						latitude: place.lat,
-						longitude: place.lng,
-						name: branchName,
-						province,
-						city,
-						pos,
-						alamatLengkap,
-					}
-					// { transaction: t }
-				).then(async () => {
-					const branch = await db.Branch.findOne({
-						where: {
-							latitude: place.lat,
-							longitude: place.lng,
-							name: branchName,
-							province,
-							city,
-							pos,
-							alamatLengkap,
-						},
-					});
-					console.log(branch);
+        await db.Branch.create(
+          {
+            latitude: place.lat,
+            longitude: place.lng,
+            name: branchName,
+            province,
+            city,
+            pos,
+            alamatLengkap,
+          }
+          // { transaction: t }
+        ).then(async () => {
+          const branch = await db.Branch.findOne({
+            where: {
+              latitude: place.lat,
+              longitude: place.lng,
+              name: branchName,
+              province,
+              city,
+              pos,
+              alamatLengkap,
+            },
+          });
+          console.log(branch);
 
-					console.log("ksafjsa");
-					console.log(branch.id);
+          console.log("ksafjsa");
+          console.log(branch.id);
 
-					BranchId = branch.id;
-				});
-			});
-			await db.Admin.create(
-				{
-					BranchId,
-					name,
-					email,
-					password: hashPassword,
-					role: "Admin-Branch",
-					phone,
-				}
-				// { transaction: t }
-			);
+          BranchId = branch.id;
+        });
+      });
+      await db.Admin.create(
+        {
+          BranchId,
+          name,
+          email,
+          password: hashPassword,
+          role: "Admin-Branch",
+          phone,
+        }
+        // { transaction: t }
+      );
 
       return await db.Admin.findAll().then((result) => {
         // t.commit();
