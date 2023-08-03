@@ -22,9 +22,12 @@ export default function CartBooks(props) {
   //PATCH
   async function edit(idx, type) {
     try {
-      const kuant = await api.patch("cart/v2", {
+      // console.log(cart[idx].StockId);
+      // console.log(cart[idx].id);
+      await api.patch("cart/v2", {
         StockId: cart[idx].StockId,
         UserId: cart[idx].UserId,
+        id: cart[idx].id,
         type: type,
       });
       await fetch();
@@ -95,7 +98,10 @@ export default function CartBooks(props) {
                     {val.Stock.Book.author} -{" "}
                     {val.Stock.Book.publish_date.slice(0, 4)}
                   </Box>
-                  <Box>{`Rp ${val.Stock?.Book?.price}`}</Box>
+                  <Box>{`Rp ${val.Stock?.Book?.price.toLocaleString(
+                    "id-ID"
+                  )},-`}</Box>
+                  <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
                 </Flex>
                 {/* seperate */}
                 {/* seperate */}

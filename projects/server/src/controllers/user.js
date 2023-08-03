@@ -212,7 +212,6 @@ const userController = {
             },
           });
           if (findToken) {
-
             token = await db.Token.update(
               {
                 expired: moment().add(1, "d").format(),
@@ -220,7 +219,7 @@ const userController = {
               },
               {
                 where: {
-                  UserId: 6,
+                  UserId: payload,
                   Status: "LOGIN",
                 },
               }
@@ -333,7 +332,7 @@ const userController = {
           await db.Token.update(
             {
               token: generateToken,
-              expired: moment().add(5, "s").format(),
+              expired: moment().add(1, "d").format(),
             },
             {
               where: {
