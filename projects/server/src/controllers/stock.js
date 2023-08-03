@@ -15,7 +15,7 @@ const stockController = {
           {
             model: db.Branch,
             required: true, // Inner join
-            where: { name: "Polonia" },
+            where: { name: "Jakarta" },
           },
         ],
         limit: limit,
@@ -44,7 +44,7 @@ const stockController = {
           {
             model: db.Branch,
             required: true, // Inner join
-            where: { name: "Polonia" },
+            where: { name: "Jakarta" },
           },
         ],
         limit: limit,
