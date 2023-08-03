@@ -67,7 +67,7 @@ export default function ReportChart() {
       No4: AiFillCalendar,
       No4Color: "#6777ef",
     },
-    ,
+
     {
       No1: "SALES (WEEKLY)",
       No2: "$40.000",
@@ -82,7 +82,7 @@ export default function ReportChart() {
       No4: BiSolidUser,
       No4Color: "#38baf4",
     },
-    ,
+
     {
       No1: "ONGOING TRANSACTION",
       No2: "$40.000",
@@ -90,7 +90,6 @@ export default function ReportChart() {
       No4: RxLoop,
       No4Color: "#ffa425",
     },
-    ,
   ];
   return (
     <>

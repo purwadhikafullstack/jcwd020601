@@ -5,7 +5,8 @@ module.exports = (sequelize, Sequelize) => {
       payment_url: Sequelize.TEXT,
       status: Sequelize.ENUM("init", "cancel", "payed", "delivery", "done"),
       total: Sequelize.INTEGER,
-      shipping: Sequelize.STRING,
+      shipping: Sequelize.INTEGER,
+      weight: Sequelize.INTEGER,
     },
     {
       paranoid: true,

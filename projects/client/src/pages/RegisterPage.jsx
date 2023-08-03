@@ -93,6 +93,7 @@ export default function RegisterPage() {
   YupPassword(Yup);
   const [seepassword, setSeePassword] = useState(false);
   const [seepassword2, setSeePassword2] = useState(false);
+
   const toast = useToast();
   const [radioValue, setRadioValue] = useState("Male");
   const nav = useNavigate();
@@ -403,19 +404,19 @@ export default function RegisterPage() {
               </Center>
 
               {/* <Flex gap={"10px"}>
-                  <Img
-                    cursor={"pointer"}
-                    src={logo2}
-                    width={"130px"}
-                    h={"40px"}
-                  ></Img>
-                  <Img
-                    cursor={"pointer"}
-                    src={logo3}
-                    width={"130px"}
-                    h={"40px"}
-                  ></Img>
-                </Flex> */}
+                <Img
+                  cursor={"pointer"}
+                  src={logo2}
+                  width={"130px"}
+                  h={"40px"}
+                ></Img>
+                <Img
+                  cursor={"pointer"}
+                  src={logo3}
+                  width={"130px"}
+                  h={"40px"}
+                ></Img>
+              </Flex> */}
             </Center>
           </Center>
           <Center flexWrap={"wrap"} color={"blackAlpha.700"} gap={"16px"}>

@@ -3,8 +3,9 @@ const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
 const stockController = {
-  getAll: async (req, res) => {
+  getAllAsc: async (req, res) => {
     try {
+      const limit = parseInt(req.query.limit) || 5;
       const Stock = await db.Stock.findAll({
         include: [
           {
@@ -14,10 +15,45 @@ const stockController = {
           {
             model: db.Branch,
             required: true, // Inner join
+            where: { name: "Polonia" },
           },
         ],
+        limit: limit,
+        order: [["id", "ASC"]],
       });
-      return res.send(Stock);
+      res.json({
+        result: Stock,
+        limit: limit,
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getAllDesc: async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit) || 4;
+      const Stock = await db.Stock.findAll({
+        include: [
+          {
+            model: db.Book,
+            required: true, // Inner join
+          },
+          {
+            model: db.Branch,
+            required: true, // Inner join
+            where: { name: "Polonia" },
+          },
+        ],
+        limit: limit,
+        order: [["id", "DESC"]],
+      });
+      res.json({
+        result: Stock,
+        limit: limit,
+      });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
