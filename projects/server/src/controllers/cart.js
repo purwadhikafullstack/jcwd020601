@@ -60,12 +60,12 @@ const cartController = {
   },
   editCart: async (req, res) => {
     try {
-      const { UserId, StockId, type } = req.body;
+      const { StockId, type, id } = req.body;
 
       // get initial quantity from chart
       const cart = await db.Cart.findOne({
         where: {
-          UserId,
+          id,
         },
       });
       const qty = cart.quantity;
@@ -99,8 +99,7 @@ const cartController = {
           },
           {
             where: {
-              UserId,
-              StockId,
+              id,
             },
           }
         );
@@ -115,7 +114,7 @@ const cartController = {
   },
   insertCart: async (req, res) => {
     try {
-      const { quantity, UserId, StockId } = req.body;
+      const { qty, UserId, StockId } = req.body;
 
       //condition for stocks availability
       const stock = await db.Stock.findOne({
@@ -123,13 +122,13 @@ const cartController = {
           id: StockId,
         },
       });
-      const qty = stock.stock - stock.bucket;
+      const avail = stock.stock - stock.bucket;
 
-      if (quantity <= 0) {
+      if (qty <= 0) {
         res
           .status(400)
           .send("Unable to order less than 1 product, please delete instead");
-      } else if (qty >= quantity) {
+      } else if (avail >= qty) {
         // check to update or create cart
         const check = await db.Cart.findOne({
           where: {
@@ -139,20 +138,25 @@ const cartController = {
         });
 
         if (check) {
-          await db.Cart.update(
-            {
-              quantity,
-            },
-            {
-              where: {
-                StockId,
-                UserId,
+          const k = check.dataValues.quantity + qty;
+          if (avail >= k) {
+            await db.Cart.update(
+              {
+                quantity: k,
               },
-            }
-          );
+              {
+                where: {
+                  StockId,
+                  UserId,
+                },
+              }
+            );
+          } else if (avail < k) {
+            return res.status(400).send("Stock Insufficient");
+          }
         } else {
           await db.Cart.create({
-            quantity,
+            quantity: qty,
             UserId,
             StockId,
           });
@@ -163,7 +167,7 @@ const cartController = {
           },
         });
         return res.send(result);
-      } else if (qty < quantity) {
+      } else if (n < qty) {
         res.send("Stock Insufficient");
       }
     } catch (err) {

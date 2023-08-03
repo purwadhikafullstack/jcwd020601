@@ -267,7 +267,8 @@ function DesktopNav() {
         .get("/address/user/" + userSelector.id)
         .then((res) => {
           setUserAddresses(res.data);
-          console.log(res.data);
+          // console.log(res.data);
+
         })
         .catch((err) => {
           toast({

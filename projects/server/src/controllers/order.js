@@ -63,25 +63,65 @@ const orderController = {
   },
   insertOrder: async (req, res) => {
     try {
-      const {
-        status,
-        total,
-        UserId,
-        BranchId,
-        AddressId,
-        orderDetails, // [quantity, price, StockId]
-      } = req.body;
+      const { UserId, BranchId, AddressId, shipping } = req.body;
 
       // get the order from cart
-      // get middleawre
+      const cart = await db.Cart.findAll({
+        where: {
+          UserId: UserId,
+        },
+        raw: true,
+        include: [
+          {
+            model: db.Stock,
+            required: true,
+            include: [
+              {
+                model: db.Book,
+                required: true,
+              },
+            ],
+          },
+        ],
+      });
+
+      // Order weight
+      const weight = cart.reduce((prev, curr) => {
+        return prev + curr["Stock.Book.weight"];
+      }, 0);
+      // console.log(cart.map((val) => val["Stock.Book.price"]));
+
+      // Total Price of Order
+      const t = cart.reduce((prev, curr) => {
+        return prev + curr.quantity * curr["Stock.Book.weight"];
+      }, 0);
+      const total = t + shipping;
+      // console.log();
+
+      // orderDetails generete
+      const orderDetails = cart.map((val) => ({
+        quantity: val.quantity,
+        price: val["Stock.Book.price"],
+        StockId: val["Stock.id"],
+      }));
+      //   [
+      //     {
+      //       "quantity": ,
+      //       "price": ,
+      //       "StockId":
+      //     },
+      //   ]
+      // console.log(orderDetails);
 
       // create order
       const order = await db.Order.create({
-        status,
+        status: "init",
         total,
         UserId,
         BranchId,
         AddressId,
+        shipping,
+        weight,
       });
 
       //post multiple orderdetails from order
@@ -123,6 +163,7 @@ const orderController = {
         })
       );
 
+      // return res.send(cart);
       return res.send("check payment");
     } catch (err) {
       console.log(err);
