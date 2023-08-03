@@ -12,7 +12,7 @@ export default function NavbarFooter() {
       alignItems={"center"}
       w="100%"
       justifyContent={"center"}
-      position={"fixed"}
+      position={"sticky"}
       bottom={0}
       bgColor={"whiteAlpha.700"}
     >

@@ -1,29 +1,7 @@
-import {
-  Box,
-  Center,
-  Flex,
-  Input,
-  Button,
-  InputGroup,
-  InputRightElement,
-  IconButton,
-  Img,
-  useToast,
-  Icon,
-} from "@chakra-ui/react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  AiOutlineClose,
-  AiOutlineEye,
-  AiOutlineEyeInvisible,
-} from "react-icons/ai";
+import { Box, Center, Flex, Button, Icon } from "@chakra-ui/react";
+import { AiOutlineClose } from "react-icons/ai";
 import React from "react";
-
 export default function ModalChangeProfile(props) {
-  const userSelector = useSelector((state) => state.login.auth);
-
-  const dispatch = useDispatch();
-
   return (
     <>
       <Box

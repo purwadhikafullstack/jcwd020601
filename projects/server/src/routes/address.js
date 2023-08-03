@@ -13,6 +13,7 @@ router.post("/lat", addressController.addAddressByLongitudeLatitude);
 router.post("/pos", addressController.getAllPosByCity);
 router.post("/v1", getUserByToken, addressController.insertAddress);
 router.patch("/v2/:id", getUserByToken, addressController.editAddress);
+router.patch("/v3/:id", getUserByToken, addressController.editMainAddress);
 router.post("/v4/:id", getUserByToken, addressController.deleteAddress);
 
 module.exports = router;

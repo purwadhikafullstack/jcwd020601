@@ -110,6 +110,42 @@ const addressController = {
       });
     }
   },
+  editMainAddress: async (req, res) => {
+    try {
+      const { UserId } = req.body;
+      const Address = await db.Address.update(
+        {
+          isMain: false,
+        },
+        {
+          where: {
+            [Op.and]: [{ UserId }, { isMain: true }],
+          },
+        }
+      );
+      await db.Address.update(
+        {
+          isMain: true,
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+        }
+      );
+
+      return await db.Address.findOne({
+        where: {
+          id: req.params.id,
+        },
+      }).then((result) => res.send(result));
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   insertAddress: async (req, res) => {
     try {
       let place = {};

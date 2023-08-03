@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 
 export default function BookCard() {
   let t = localStorage.getItem("auth");
+
   const userSelector = useSelector((state) => state.login.auth);
 
   const [value, setValue] = useState([]);
@@ -34,6 +35,7 @@ export default function BookCard() {
   useEffect(() => {
     fetchProduct();
   }, [token]);
+
   const settings = {
     dots: true,
     infinite: true,
@@ -41,10 +43,8 @@ export default function BookCard() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-
   console.log(value);
   console.log(token);
-
   // Add to Cart
   async function add(idx) {
     try {
@@ -60,7 +60,6 @@ export default function BookCard() {
       console.error(error);
     }
   }
-
   return (
     <Flex
       justify={"center"}
@@ -108,7 +107,9 @@ export default function BookCard() {
           <Card key={idx}>
             <CardBody pb={0}>
               <Image
+
                 src={val.Book?.book_url}
+
                 alt="Green double couch with wooden legs"
                 borderRadius="lg"
                 w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
@@ -128,10 +129,12 @@ export default function BookCard() {
             </CardBody>
             <CardFooter>
               <ButtonGroup spacing="2" justifyContent={"center"}>
+
                 {/* <Button variant="solid" colorScheme="blue">
                   Buy now
                 </Button> */}
                 <Button variant="solid" colorScheme="blue">
+
                   Add to cart
                 </Button>
               </ButtonGroup>

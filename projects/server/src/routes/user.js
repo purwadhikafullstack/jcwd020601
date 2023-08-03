@@ -28,12 +28,12 @@ router.post(
   }).single("avatar"),
   getUserByToken,
   userController.uploadAvatar
-); //register
-router.post(
-  "/image/v2/:id",
-  upload.single("avatar"),
-  userController.uploadAvatarv2
-); //register
+);
+// router.post(
+//   "/image/v2/:id",
+//   upload.single("avatar"),
+//   userController.uploadAvatarv2
+// );
 router.patch("/v4", getUserByToken, userController.changePassword);
 router.patch(
   "/v5",

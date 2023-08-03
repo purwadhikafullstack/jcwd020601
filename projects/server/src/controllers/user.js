@@ -176,7 +176,6 @@ const userController = {
           password: hashPassword,
           registered_by: "Register",
         });
-
         return res.send({
           message: "register berhasil",
           private_key,
@@ -224,7 +223,6 @@ const userController = {
                 },
               }
             );
-            newToken = generateToken;
           } else {
             token = await db.Token.create({
               expired: moment().add(1, "days").format(),
@@ -232,7 +230,6 @@ const userController = {
               UserId: payload,
               status: "LOGIN",
             });
-            newToken = generateToken;
           }
 
           //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6InVkaW4yIiwiYWRkcmVzcyI6ImJhdGFtIiwicGFzc3dvcmQiOiIkMmIkMTAkWUkvcTl2dVdTOXQ0R1V5a1lxRGtTdWJnTTZwckVnRm9nZzJLSi9FckFHY3NXbXBRUjFOcXEiLCJlbWFpbCI6InVkaW4yQG1haWwuY29tIiwiY3JlYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwiZGVsZXRlZEF0IjpudWxsLCJDb21wYW55SWQiOm51bGwsImlhdCI6MTY4NDQ4MzQ4NSwiZXhwIjoxNjg0NDgzNTQ1fQ.Ye5l7Yml1TBWUgV7eUnhTVQjdT3frR9E0HXNxO7bTXw;
@@ -240,7 +237,7 @@ const userController = {
           return res.send({
             message: "login berhasil",
             // value: user,
-            token: newToken,
+            token: generateToken,
           });
         } else {
           throw new Error("wrong password");
@@ -332,7 +329,7 @@ const userController = {
           await db.Token.update(
             {
               token: generateToken,
-              expired: moment().add(1, "d").format(),
+              expired: moment().add(5, "d").format(),
             },
             {
               where: {
