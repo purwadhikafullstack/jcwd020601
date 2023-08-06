@@ -4,7 +4,7 @@ import {
   Flex,
   Icon,
   useColorModeValue,
-  Link,
+  // Link,
   Image,
 } from "@chakra-ui/react";
 import {
@@ -14,6 +14,8 @@ import {
   FiStar,
   FiSettings,
 } from "react-icons/fi";
+
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const LinkItems = [
@@ -50,9 +52,9 @@ const SidebarContent = () => {
         <Image src={logo} w={{ base: "10em", sm: "12em" }} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} href={link.link}>
-          {link.name}
-        </NavItem>
+        <Link to={link.link} key={link.name}>
+          <NavItem icon={link.icon}>{link.name}</NavItem>
+        </Link>
       ))}
     </Box>
   );
