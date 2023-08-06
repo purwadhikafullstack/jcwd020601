@@ -381,6 +381,9 @@ const userController = {
   getByToken: async (req, res, next) => {
     try {
       let { token } = req.query;
+
+      // console.log(token);
+
       let payload = await db.Token.findOne({
         where: {
           token,

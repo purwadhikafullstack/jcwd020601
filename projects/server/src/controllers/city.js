@@ -65,6 +65,23 @@ const cityController = {
       });
     }
   },
+  getIdByCity: async (req, res) => {
+    try {
+      const { city_name } = req.body;
+      const result = await db.City.findOne({
+        where: {
+          city_name,
+        },
+      });
+      res.status(200).send({
+        result: result.city_id,
+      });
+    } catch (err) {
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
 };
 
 module.exports = cityController;
