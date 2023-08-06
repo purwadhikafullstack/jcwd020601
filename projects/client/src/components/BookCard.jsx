@@ -47,7 +47,7 @@ export default function BookCard() {
       flexDirection={"column"}
       alignItems={"center"}
       justifyContent={"center"}
-      my={"40px"}
+      my={"50px"}
     >
       <Divider w={"75%"} />
       <Box
@@ -75,7 +75,7 @@ export default function BookCard() {
           color={"blue.400"}
           cursor={"pointer"}
         >
-          <Link to="/detailBookCard">Lihat Semua</Link>
+          <Link to="/products">Lihat Semua</Link>
         </Text>
       </Box>
       <Box
@@ -86,7 +86,7 @@ export default function BookCard() {
       >
         {value.map((val, idx) => (
           <Card key={idx}>
-            <CardBody pb={0}>
+            <CardBody>
               <Image
                 src={val.Book?.book_url}
                 alt="Green double couch with wooden legs"
@@ -94,20 +94,23 @@ export default function BookCard() {
                 w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
                 h={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
               />
-              <Stack mt="6" spacing="5">
+              <Stack mt="6">
                 <Heading size="sm">{val.Book?.author}</Heading>
                 <Text size={"sm"}>
-                  {val.Book?.title.length > 20
-                    ? val.Book?.title.slice(0, 20) + "..."
+                  {val.Book?.title.length > 15
+                    ? val.Book?.title.slice(0, 15) + "..."
                     : val.Book?.title}
+                </Text>
+                <Text color="#A0AEC0" as="del" fontSize="xl">
+                  Rp. {val.Book?.price}
                 </Text>
                 <Text color="blue.600" fontSize="xl">
                   Rp. {val.Book?.price}
                 </Text>
               </Stack>
             </CardBody>
-            <CardFooter>
-              <ButtonGroup spacing="2" justifyContent={"center"}>
+            <CardFooter p={5}>
+              <ButtonGroup justifyContent={"center"}>
                 {/* <Button variant="solid" colorScheme="blue">
                   Buy now
                 </Button> */}

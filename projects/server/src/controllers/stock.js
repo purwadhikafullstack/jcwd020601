@@ -2,26 +2,61 @@ const db = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
+const stock = require("../models/stock");
 const stockController = {
   getAllAsc: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 5;
+      const place = req.query.place || "Polonia";
+      const search = req.query.search_book || "";
       const Stock = await db.Stock.findAll({
         include: [
           {
             model: db.Book,
             required: true, // Inner join
+            where: {
+              [Op.or]: [
+                {
+                  title: {
+                    [Op.like]: "%" + search + "%",
+                  },
+                },
+              ],
+            },
           },
           {
             model: db.Branch,
             required: true, // Inner join
-            where: { name: "Polonia" },
+            where: { name: place },
           },
         ],
         limit: limit,
         order: [["id", "ASC"]],
       });
+      // const result = await db.Stock.findAll({
+      //   include: [
+      //     {
+      //       model: db.Book,
+      //       required: true, // Inner join
+      //       where: {
+      //         [Op.or]: [
+      //           {
+      //             title: {
+      //               [Op.like]: "%" + search + "%",
+      //             },
+      //           },
+      //         ],
+      //       },
+      //     },
+      //     {
+      //       model: db.Branch,
+      //       required: true, // Inner join
+      //       where: { name: place },
+      //     },
+      //   ],
+      // });
       res.json({
+        // result: result,
         result: Stock,
         limit: limit,
       });
@@ -35,6 +70,7 @@ const stockController = {
   getAllDesc: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 4;
+      const place = req.query.place || "Polonia";
       const Stock = await db.Stock.findAll({
         include: [
           {
@@ -44,7 +80,7 @@ const stockController = {
           {
             model: db.Branch,
             required: true, // Inner join
-            where: { name: "Polonia" },
+            where: { name: place },
           },
         ],
         limit: limit,

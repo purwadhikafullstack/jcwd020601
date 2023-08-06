@@ -4,7 +4,7 @@ import {
   Flex,
   Icon,
   useColorModeValue,
-  Link,
+  // Link,
   Image,
 } from "@chakra-ui/react";
 import {
@@ -14,10 +14,11 @@ import {
   FiStar,
   FiSettings,
 } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const LinkItems = [
   { name: "Home", icon: FiHome },
-  { name: "Product", icon: FiTrendingUp, link: "/Product" },
+  { name: "Product", icon: FiTrendingUp, link: "/admin/products" },
   { name: "Category", icon: FiCompass, link: "/Category" },
   { name: "Favourites", icon: FiStar },
   { name: "Settings", icon: FiSettings },
@@ -49,9 +50,9 @@ const SidebarContent = () => {
         <Image src={logo} w={{ base: "10em", sm: "12em" }} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} href={link.link}>
-          {link.name}
-        </NavItem>
+        <Link to={link.link} key={link.name}>
+          <NavItem icon={link.icon}>{link.name}</NavItem>
+        </Link>
       ))}
     </Box>
   );
@@ -59,35 +60,35 @@ const SidebarContent = () => {
 
 const NavItem = ({ icon, children, href }) => {
   return (
-    <Link
-      href={href}
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
+    // <Link
+    //   href={href}
+    //   style={{ textDecoration: "none" }}
+    //   _focus={{ boxShadow: "none" }}
+    // >
+    <Flex
+      align="center"
+      p="4"
+      mx="4"
+      borderRadius="lg"
+      role="group"
+      cursor="pointer"
+      _hover={{
+        bg: "cyan.400",
+        color: "white",
+      }}
     >
-      <Flex
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: "cyan.400",
-          color: "white",
-        }}
-      >
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: "white",
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
-    </Link>
+      {icon && (
+        <Icon
+          mr="4"
+          fontSize="16"
+          _groupHover={{
+            color: "white",
+          }}
+          as={icon}
+        />
+      )}
+      {children}
+    </Flex>
+    // </Link>
   );
 };
