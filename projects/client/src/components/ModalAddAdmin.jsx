@@ -7,18 +7,11 @@ import axios from "axios";
 export default function ModalAddAdmin(props) {
   useEffect(() => {
     const fetchData = async () => {
-      const data = await axios
-        .get("http://localhost:2000/address/province", {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        })
-        .then((res) => {
-          props.setProvinces(res.data);
-        });
+      const data = await api.get("province").then((res) => {
+        props.setProvinces(res.data.result);
+      });
     };
-    // call the function
     fetchData();
-    // make sure to catch any error
-    // .catch(console.error);
   }, []);
   return (
     <>
@@ -147,10 +140,7 @@ export default function ModalAddAdmin(props) {
                 Select Province
               </option>
               {props.provinces.map((val) => (
-                <option
-                  value={val.province_id + "#" + val.province}
-                  clasd={val.province}
-                >
+                <option value={val.province_id + "#" + val.province}>
                   {val.province}
                 </option>
               ))}
@@ -200,8 +190,8 @@ export default function ModalAddAdmin(props) {
                 Select PosCode
               </option>
 
-              <option value={props.pos.postal_code}>
-                {props.pos.postal_code}
+              <option value={props.pos?.postal_code}>
+                {props.pos?.postal_code}
               </option>
             </Select>
             <Flex color={"red"} fontSize={"0.8rem"}>

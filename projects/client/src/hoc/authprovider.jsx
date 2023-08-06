@@ -11,31 +11,11 @@ export default function AuthProvider({ children }) {
   }, []);
 
   async function fetch() {
+    console.log("1");
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
       const address = JSON.parse(localStorage.getItem("address"));
-
-      // console.log(token);
-
-      const user = await api
-        .get("/auth/v3?token=" + token)
-        .then(async (res) => {
-          // console.log(res.data);
-          return res.data;
-        })
-        .catch((err) => {
-          console.log(err.message);
-          return err.message;
-        });
-      // console.log(user?.email);
-      const userMainAddress = await api
-        .get("/address/ismain/" + user?.id)
-        .then((res) => res.data)
-        .catch((err) => {
-          return err.message;
-        });
-      // console.log(user?.email);
-      const admin = await api
+      const auth = await api
         .get("/admin/v3?token=" + token)
         .then((res) => {
           return res.data;
@@ -43,29 +23,40 @@ export default function AuthProvider({ children }) {
         .catch((err) => {
           return err.message;
         });
+      const userMainAddress = await api.get("/address/ismain/" + auth?.id);
 
-      if (user?.email) {
-        // console.log(user?.email);
+      const closestBranch = await api
+        .post(
+          "/address/closest",
+          address
+            ? { lat: address.latitude, lon: address.longitude }
+            : { lat: userMainAddress.latitude, lon: userMainAddress.longitude }
+        )
+        .then((res) => res.data[0]);
+      if (auth?.role) {
+        console.log("login admin");
         dispatch({
           type: "login",
-          payload: user,
-          address: address ? address : userMainAddress,
+          payload: auth,
         });
-      } else if (admin?.email) {
-        // console.log(admin?.email);
+      } else if (!auth?.role) {
+        console.log("login user");
         dispatch({
           type: "login",
-          payload: admin,
+          payload: auth,
+          address: address ? address : userMainAddress,
+          closestBranch,
         });
       } else {
-        // console.log("ksadjasjd");
-        await dispatch({
+        dispatch({
           type: "logout",
         });
       }
-      // console.log("Bodh");
+      console.log(auth);
+      console.log(userMainAddress);
+      console.log("Bodh");
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
     }
   }
 

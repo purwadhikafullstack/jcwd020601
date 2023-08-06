@@ -28,7 +28,6 @@ export default function LoginPage() {
         "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
       callback: handleCallbackResponse,
     });
-    console.log("dsao");
     google.accounts.id.renderButton(document.getElementById("signInDiv"), {
       theme: "outline",
       width: 300,

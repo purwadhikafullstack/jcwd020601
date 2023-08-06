@@ -60,55 +60,60 @@ export default function DaftarAlamat(props) {
         .required("You need to enter your complete address"),
     }),
     onSubmit: async () => {
-      const {
-        id,
-        no_Handphone,
-        namaPenerima,
-        labelAlamat,
-        province,
-        city,
-        pos,
-        alamatLengkap,
-      } = formikAddress.values;
-      const address2 = {
-        id,
-        no_Handphone,
-        namaPenerima,
-        labelAlamat,
-        province,
-        city,
-        pos,
-        alamatLengkap,
-        UserId: props.userSelector.id,
-      };
-      const token = JSON.parse(localStorage.getItem("auth"));
-      await api
-        .post("/address/v1?token=" + token, address2)
-        .then(async (res) => {
-          modalAddAddress.onClose();
-          formikAddress.resetForm();
-          fetchUserAddresses();
-          toast({
-            position: "top",
-            title: res.data.message,
-            description: "Address Added.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
+      try {
+        const {
+          id,
+          no_Handphone,
+          namaPenerima,
+          labelAlamat,
+          province,
+          city,
+          pos,
+          alamatLengkap,
+        } = formikAddress.values;
+        const address2 = {
+          id,
+          no_Handphone,
+          namaPenerima,
+          labelAlamat,
+          province,
+          city,
+          pos,
+          alamatLengkap,
+          UserId: props.userSelector.id,
+        };
+        const token = JSON.parse(localStorage.getItem("auth"));
+        await api
+          .post("/address/v1?token=" + token, address2)
+          .then(async (res) => {
+            modalAddAddress.onClose();
+            formikAddress.resetForm();
+            fetchUserAddresses();
+            toast({
+              position: "top",
+              title: res.data.message,
+              description: "Address Added.",
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
           });
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Login session has expired",
-          });
-          dispatch({
-            type: "logout",
-          });
-          nav("/login");
-          modalAddAddress.onClose();
+      } catch (err) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Login session has expired",
         });
+        localStorage.removeItem("auth");
+        localStorage.removeItem("address");
+        localStorage.removeItem("Latitude");
+        localStorage.removeItem("Longitude");
+        dispatch({
+          type: "logout",
+        });
+        nav("/login");
+        modalAddAddress.onClose();
+      }
     },
   });
   useEffect(() => {

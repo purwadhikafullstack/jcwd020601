@@ -104,7 +104,7 @@ export default function ReportChart() {
             DashBoard
           </Flex>
           <Flex>
-            <Flex gap={"30px"}>
+            <Flex gap={"50px"}>
               {objects.map((val, index) => {
                 return (
                   <Flex
