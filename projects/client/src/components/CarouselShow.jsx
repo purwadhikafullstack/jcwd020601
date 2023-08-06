@@ -84,7 +84,7 @@ export default function CarouselShow() {
                 backgroundSize="cover"
                 borderRadius="10px"
                 objectFit={"contain"}
-                bgColor={"red"}
+                // bgColor={"red"}
               >
                 <Image
                   src={url}

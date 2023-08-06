@@ -38,7 +38,7 @@ export default function CarouselAll() {
       flexDirection={"column"}
       alignItems={"center"}
       justifyContent={"center"}
-      my={"40px"}
+      my={"50px"}
     >
       <Divider w={"75%"} />
       <Box
@@ -72,12 +72,7 @@ export default function CarouselAll() {
       <Box display={"flex"} gap={"25px"} justifyContent={"center"}>
         {large ? (
           <>
-            <Box
-              justifyContent={"center"}
-              bgColor={"red"}
-              h={"500px"}
-              alignItems={"center"}
-            >
+            <Box justifyContent={"center"} h={"500px"} alignItems={"center"}>
               <Card>
                 <Image
                   src={
@@ -103,7 +98,7 @@ export default function CarouselAll() {
         >
           {value.map((val, idx) => (
             <Card maxW="sm" key={idx}>
-              <CardBody pb={0}>
+              <CardBody>
                 <Image
                   src={val.Book?.book_url}
                   alt="Green double couch with wooden legs"
@@ -111,20 +106,23 @@ export default function CarouselAll() {
                   w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
                   h={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
                 />
-                <Stack mt="6" spacing="3">
+                <Stack mt="6">
                   <Heading size="sm">{val.Book?.author}</Heading>
                   <Text size={"sm"}>
-                    {val.Book?.title.length > 20
-                      ? val.Book?.title.slice(0, 20) + "..."
+                    {val.Book?.title.length > 15
+                      ? val.Book?.title.slice(0, 15) + "..."
                       : val.Book?.title}
+                  </Text>
+                  <Text color="#A0AEC0" as="del" fontSize="xl">
+                    Rp. {val.Book?.price}
                   </Text>
                   <Text color="blue.600" fontSize="xl">
                     Rp. {val.Book?.price}
                   </Text>
                 </Stack>
               </CardBody>
-              <CardFooter>
-                <ButtonGroup spacing="2" justifyContent={"center"}>
+              <CardFooter p={5}>
+                <ButtonGroup justifyContent={"center"}>
                   {/* <Button variant="solid" colorScheme="blue">
                     Buy now
                   </Button> */}

@@ -69,7 +69,7 @@ export default function Category() {
   console.log(query);
   return (
     <>
-      <Box marginLeft={60}>
+      <Box marginLeft={30}>
         <TableContainer padding={10}>
           <Box
             display={"flex"}

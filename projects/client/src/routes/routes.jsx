@@ -1,4 +1,4 @@
-import { Route } from "react-router-dom";
+import { Route, Router } from "react-router-dom";
 import AdminLogin from "../pages/AdminLogin";
 import AdminPage from "../pages/AdminPage";
 import ForgotPassword, {
@@ -48,15 +48,17 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/detailBookCard"
+    path="/products"
     element={
       <ProtectedPage>
         <DetailBookCardPage />
       </ProtectedPage>
     }
-  ></Route>,
+  >
+    {/* <Route path="/detail/:id" element={<DetailBookPage />} />,{" "} */}
+  </Route>,
   <Route
-    path="/detailBook/:id"
+    path="/products/detail/:id"
     element={
       <ProtectedPage>
         <DetailBookPage />
@@ -96,7 +98,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/adminpage"
+    path="/admin/products"
     element={
       <ProtectedPage needLoginAdmin={true}>
         <AdminPage />

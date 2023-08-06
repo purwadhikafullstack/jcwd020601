@@ -74,10 +74,9 @@ export default function OrderPage() {
                     </Center>
                   </MenuButton>
                   <MenuList>
-                    <MenuItem>GoSend</MenuItem>
                     <MenuItem>JNE</MenuItem>
-                    <MenuItem>J&T</MenuItem>
-                    <MenuItem>NinjaVan</MenuItem>
+                    <MenuItem>POS</MenuItem>
+                    <MenuItem>TIKI</MenuItem>
                   </MenuList>
                 </Menu>
               </Flex>
@@ -123,7 +122,6 @@ export default function OrderPage() {
                   colorScheme={"blue"}
                   borderRadius={"1.5rem"}
                   width={"100%"}
-                  isDisabled={true}
                 >
                   Upload Payment Proof
                 </Button>

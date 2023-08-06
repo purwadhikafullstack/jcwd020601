@@ -52,13 +52,11 @@ export default function Action({ id, name, getData, token }) {
           <MenuItem icon={<AiOutlineDelete />} onClick={handleClick}>
             Delete
           </MenuItem>
-          {/* <MenuItem icon={<GoLinkExternal />}>Detail</MenuItem> */}
           <MenuItem
             icon={<FiEdit />}
             onClick={() => {
               onOpen();
             }}
-            // bgColor={"red"}
           >
             <Edit
               isOpen={isOpen}

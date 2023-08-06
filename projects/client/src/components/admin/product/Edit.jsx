@@ -29,6 +29,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
   const inputFileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [image, setImage] = useState(icon);
+  // console.log(id);
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -100,7 +101,11 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
   });
 
   const getDataDetail = async () => {
-    let res = await api.get(`/book/${id}`);
+    let res = await api.get(`/book/${id}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
 
     async function getImage(a) {
       let value = await fetch(a)
@@ -108,6 +113,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
         .then((blob) => {
           return new File([blob], "image", { type: blob.type });
         });
+      console.log(value);
       return value;
     }
     let imageData;

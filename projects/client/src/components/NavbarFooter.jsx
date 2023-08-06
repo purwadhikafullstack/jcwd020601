@@ -11,7 +11,11 @@ export default function NavbarFooter() {
       h={{ base: "12em", sm: "12em", md: "6em" }}
       justifyContent={"space-evenly"}
       alignItems={"center"}
-      px="20px"
+      px="100px"
+      // position={"sticky"}
+      bottom={0}
+      zIndex={1000}
+      bgColor={"white"}
     >
       <Box>
         <Image src={logo} />
