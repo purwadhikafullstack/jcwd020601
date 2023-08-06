@@ -6,6 +6,7 @@ module.exports = (sequelize, Sequelize) => {
       status: Sequelize.ENUM("init", "cancel", "payed", "delivery", "done"),
       total: Sequelize.INTEGER,
       shipping: Sequelize.INTEGER,
+      courier: Sequelize.STRING,
       weight: Sequelize.INTEGER,
     },
     {

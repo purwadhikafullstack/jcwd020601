@@ -63,21 +63,31 @@ const orderController = {
   },
   insertOrder: async (req, res) => {
     try {
-      const { UserId, BranchId, AddressId, shipping } = req.body;
+      const { UserId, BranchId, AddressId, shipping, courier } = req.body;
+
+      //SEMENTARA
+      // BranchId = 2;
 
       // get the order from cart
       const cart = await db.Cart.findAll({
         where: {
-          UserId: UserId,
+          UserId,
         },
         raw: true,
         include: [
           {
             model: db.Stock,
             required: true,
+            where: {
+              BranchId,
+            },
             include: [
               {
                 model: db.Book,
+                required: true,
+              },
+              {
+                model: db.Branch,
                 required: true,
               },
             ],
@@ -85,18 +95,27 @@ const orderController = {
         ],
       });
 
+      // cityId
+      const city = await db.City.findOne({
+        where: {
+          city_name: cart[0]["Stock.Branch.city"],
+        },
+      });
+      const cityId = city.dataValues.city_id;
+
       // Order weight
       const weight = cart.reduce((prev, curr) => {
         return prev + curr["Stock.Book.weight"];
       }, 0);
-      // console.log(cart.map((val) => val["Stock.Book.price"]));
 
       // Total Price of Order
       const t = cart.reduce((prev, curr) => {
         return prev + curr.quantity * curr["Stock.Book.weight"];
       }, 0);
       const total = t + shipping;
-      // console.log();
+
+      //BranchId
+      // const BranchId = cart[0]["Stock.Branch.id"];
 
       // orderDetails generete
       const orderDetails = cart.map((val) => ({
@@ -111,7 +130,6 @@ const orderController = {
       //       "StockId":
       //     },
       //   ]
-      // console.log(orderDetails);
 
       // create order
       const order = await db.Order.create({
@@ -121,6 +139,7 @@ const orderController = {
         BranchId,
         AddressId,
         shipping,
+        courier,
         weight,
       });
 
@@ -136,13 +155,6 @@ const orderController = {
           });
         })
       );
-
-      // delete cart by UserId
-      await db.Cart.destroy({
-        where: {
-          UserId: UserId,
-        },
-      });
 
       // update multiple bucket in stocks
       await Promise.all(
@@ -163,8 +175,15 @@ const orderController = {
         })
       );
 
-      // return res.send(cart);
-      return res.send("check payment");
+      // delete cart by UserId
+      await db.Cart.destroy({
+        where: {
+          UserId,
+        },
+      });
+
+      // return res.send(cityId);
+      return res.send("continuo to payment");
     } catch (err) {
       console.log(err);
       return res.status(500).send({
@@ -192,7 +211,7 @@ const orderController = {
           },
         }
       );
-      res.send(result);
+      res.status(200).send("payment proof uploaded");
     } catch (err) {
       return res.status(500).send({
         message: err.message,
@@ -322,6 +341,27 @@ const orderController = {
       return res.status(500).send({
         error: err.message,
       });
+    }
+  },
+  getShipping: async (req, res) => {
+    try {
+      const { origin, destination, weight, courier } = req.body;
+      const response = await axios.post(
+        "https://api.rajaongkir.com/starter/cost",
+        {
+          origin,
+          destination,
+          weight,
+          courier,
+        },
+        {
+          headers: { key: process.env.RAJA_ONGKIR },
+        }
+      );
+      // await db.Province.bulkCreate(response.data.rajaongkir.results);
+      return res.status(200).send(response.data.rajaongkir.results);
+    } catch (error) {
+      return res.status(500).send({ message: error.message });
     }
   },
 };
