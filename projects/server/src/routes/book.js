@@ -5,7 +5,7 @@ const validate = require("../middlewares/validateAdmin");
 const bookController = require("../controllers").bookController;
 //get
 
-router.get("/", validate, bookController.getAll);
+router.get("/", bookController.getAll);
 router.get("/:id", validate, bookController.getById);
 router.post(
   "/v1",

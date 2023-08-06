@@ -29,6 +29,8 @@ import {
   ModalBody,
   ModalHeader,
   useToast,
+  ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -45,10 +47,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
+
 import ModalSelectAddress from "../pages/ProfilePage/ModalSelectAddress";
-export default function Navbar() {
+
+export default function Navbar({ callback, keyword }) {
+  const userSelector = useSelector((state) => state.login.auth);
   const [large] = useMediaQuery("(min-width: 768px)");
+  const [category, setCategory] = useState([]);
   const nav = useNavigate();
+  const fetchCategori = async () => {
+    let response = await api.get(`/category`);
+    setCategory(response.data.result);
+  };
+
+  useEffect(() => {
+    fetchCategori();
+  }, [keyword]);
+  console.log(category);
   return (
     <>
       <Box
@@ -75,7 +90,15 @@ export default function Navbar() {
         bg={{ base: "white", md: "white" }}
         py={large ? "0px" : "60px"}
       >
-        {large ? <DesktopNav /> : <MobileNav />}
+        {large ? (
+          <DesktopNav
+            callback={callback}
+            keyword={keyword}
+            category={category}
+          />
+        ) : (
+          <MobileNav />
+        )}
       </Box>
     </>
   );
@@ -227,7 +250,7 @@ function MobileNav() {
   );
 }
 
-function DesktopNav() {
+function DesktopNav({ callback, keyword, category }) {
   const locatio = useLocation();
   const toast = useToast();
   const location = locatio.pathname.split("/")[1];
@@ -238,6 +261,11 @@ function DesktopNav() {
   const [userAddress, setUserAddress] = useState([]);
   const [trans, setTrans] = useState(true);
   const modalSelectAddress = useDisclosure();
+  // const [keyword, setkeyword] = useState("");
+  const [value, setValue] = useState([]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState([]);
   useEffect(() => {
     if (userSelector.email) {
       fetchUserAddresses();
@@ -249,12 +277,14 @@ function DesktopNav() {
     setTrans(!trans);
   }
   async function logout() {
-    nav("/");
     localStorage.removeItem("auth");
     localStorage.removeItem("address");
-    dispatch({
+    localStorage.removeItem("Latitude");
+    localStorage.removeItem("Longitude");
+    await dispatch({
       type: "logout",
     });
+    nav("/");
     return;
   }
   async function login() {
@@ -263,12 +293,12 @@ function DesktopNav() {
   }
   async function fetchUserAddresses() {
     try {
+      console.log(userSelector);
       await api
         .get("/address/user/" + userSelector.id)
         .then((res) => {
           setUserAddresses(res.data);
           // console.log(res.data);
-
         })
         .catch((err) => {
           toast({
@@ -284,19 +314,54 @@ function DesktopNav() {
       alert(err.data.message);
     }
   }
-  // async function fetchUserMainAddress() {
-  //   try {
-  //     await api.get("/address/ismain/" + userSelector.id).then((res) => {
-  //       setUserAddress(res.data);
-  //       console.log(res.data);
-  //     });
-  //   } catch (err) {
-  //     console.log(err.data.message);
-  //   }
+  // async function fetchProduct() {
+  //   let response = await api.get(`/stock?search_book=${keyword}`);
+  //   setValue(response.data.result);
   // }
 
+  // const inputSearch = (e) => {
+  //   setkeyword(e.target.value);
+  // };
+  // useEffect(() => {
+  //   fetchProduct();
+  // }, [keyword]);
+  const fetchData = async (value) => {
+    try {
+      const response = await api.get("/book/");
+      console.log(response.data.result);
+      const json = await response.data.result;
+      console.log(json);
+
+      const result = json.filter((book) => {
+        return (
+          value &&
+          book &&
+          book.title &&
+          book.title.toLowerCase().includes(value.toLowerCase())
+        );
+      });
+
+      setResult(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const handleChange = (value) => {
+    setInput(value);
+    fetchData(value);
+  };
+  console.log(result);
   return (
     <>
+      {/* <Flex
+        onClick={() => {
+          console.log(userSelector);
+          console.log(userAddresses);
+        }}
+      >
+        lol
+      </Flex> */}
       <Box
         display={"flex"}
         w={{ sm: "10em", md: "15em", lg: "20em" }}
@@ -352,8 +417,7 @@ function DesktopNav() {
               </Flex>
             </MenuButton>
             <MenuList
-              my={5}
-              // "1500px"
+              my={"19px"}
               w={{
                 base: "0",
                 sm: "0",
@@ -362,62 +426,55 @@ function DesktopNav() {
                 xl: "93em",
               }}
               position={"fixed"}
-              // "-25em"
               left={{
                 base: "0",
                 sm: "0",
                 md: "-12em",
                 lg: "-15em",
-                xl: "-25em",
+                xl: "-20em",
               }}
-              p={"30px"}
+              boxShadow="0px 5px 10px skyblue"
             >
               <Flex justifyContent={"space-between"}>
                 <Flex
                   flexDir={"column"}
-                  fontWeight={"semibold"}
-                  gap={4}
                   fontSize={"xl"}
-                  borderRight={"1px"}
                   borderRightColor={"blue.700"}
                   pr={"20px"}
+                  maxH={"200px"}
+                  overflowY={"scroll"}
+                  sx={{
+                    "&::-webkit-scrollbar": {
+                      width: "5px",
+                      borderRadius: "8px",
+                      backgroundColor: `rgba(0, 0, 0, 0.05)`,
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: `#cce6ff`,
+                    },
+                  }}
                 >
-                  <Box cursor={"pointer"} _hover={{ color: "blue.400" }}>
-                    International
-                  </Box>
-                  <Box cursor={"pointer"} _hover={{ color: "blue.400" }}>
-                    Novel
-                  </Box>
-                  <Box cursor={"pointer"} _hover={{ color: "blue.400" }}>
-                    History
-                  </Box>
-                  <Box cursor={"pointer"} _hover={{ color: "blue.400" }}>
-                    Comic
-                  </Box>
-                  <Box cursor={"pointer"} _hover={{ color: "blue.400" }}>
-                    Self Improvement
-                  </Box>
-                  <Box cursor={"pointer"} _hover={{ color: "blue.400" }}>
-                    Engineering
-                  </Box>
+                  {category.map((val) => (
+                    <Text
+                      key={val.id}
+                      cursor={"pointer"}
+                      w={"15em"}
+                      p={"10px"}
+                      pl={"30px"}
+                      _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+                    >
+                      {val.category}
+                    </Text>
+                  ))}
                 </Flex>
                 <Box>
-                  <Grid templateColumns="repeat(2, 1fr)" gap={3}>
-                    <GridItem>category 1</GridItem>
-                    <GridItem>category 2</GridItem>
-                    <GridItem>category 3</GridItem>
-                    <GridItem>category 4</GridItem>
-                    <GridItem>category 5</GridItem>
-                    <GridItem>category 6</GridItem>
-                    <GridItem>category 7</GridItem>
-                    <GridItem>category 8</GridItem>
-                  </Grid>
+                  <Grid templateColumns="repeat(2, 1fr)" gap={3}></Grid>
                 </Box>
               </Flex>
             </MenuList>
           </Menu>
         </Box>
-        <Box>
+        <Box display={"flex"} flexDirection={"column"}>
           <InputGroup>
             <InputRightElement pointerEvents="auto">
               <Icon
@@ -434,6 +491,10 @@ function DesktopNav() {
               placeholder="Search Book or Author"
               color="blue.700"
               borderRadius={"0"}
+              // value={keyword}
+              // onChange={callback}
+              value={input}
+              onChange={(e) => handleChange(e.target.value)}
               style={{
                 placeholder: {
                   color: "red.700",
@@ -444,6 +505,40 @@ function DesktopNav() {
               _focus={{ borderBottom: "1.6px solid grey" }}
             />
           </InputGroup>
+          <Box
+            bgColor={"white"}
+            position={"absolute"}
+            top={"85px"}
+            w={{ md: "15em", lg: "30em" }}
+            boxShadow="0px 5px 10px skyblue"
+            display={"flex"}
+            flexDirection={"column"}
+            gap={3}
+            borderRadius={5}
+            maxH={"200px"}
+            overflowY={"scroll"}
+            sx={{
+              "&::-webkit-scrollbar": {
+                width: "5px",
+                borderRadius: "8px",
+                backgroundColor: `rgba(0, 0, 0, 0.05)`,
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: `#cce6ff`,
+              },
+            }}
+          >
+            {result.map((val) => (
+              <Text
+                key={val.id}
+                p={3}
+                cursor={"pointer"}
+                _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+              >
+                {val.title}
+              </Text>
+            ))}
+          </Box>
         </Box>
         <Center h={"60px"} ml={"30px"}>
           <Flex
@@ -452,7 +547,7 @@ function DesktopNav() {
             cursor={"pointer"}
             h={"45px"}
             alignItems={"center"}
-            gap={"5px"}
+            gap={"0px"}
             border={"#d6d6d6 solid 2px"}
             borderRadius={"50px"}
             onClick={() => {
@@ -466,7 +561,17 @@ function DesktopNav() {
                 as={HiOutlineLocationMarker}
               ></Icon>
             </Flex>
-            <Flex fontWeight={"700"} color="#2c5282">
+            <Flex
+              fontWeight={"700"}
+              color="#2c5282"
+              fontSize={
+                userSelector?.address?.city?.length >= 16
+                  ? "0.6rem"
+                  : userSelector?.address?.city?.length >= 12
+                  ? "0.8rem"
+                  : "1rem"
+              }
+            >
               {userSelector?.address?.city
                 ? userSelector?.address.city
                 : "Location"}
@@ -542,35 +647,11 @@ function DesktopNav() {
       >
         <Box>
           <Menu>
-            <MenuButton>
+            <MenuButton onClick={() => nav("/cart")}>
               <Flex alignItems={"center"} gap={"0.1rem"} cursor={"pointer"}>
                 <Icon as={BsCart} w={10} h={10} color="blue.700"></Icon>
               </Flex>
             </MenuButton>
-            <MenuList my={5} position={"fixed"} left={"-6em"}>
-              <Flex padding={"0 0.5rem"} flexDir={"column"} gap={"0.4rem"}>
-                <Flex
-                  gap={"1rem"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                  flexDir={"column"}
-                >
-                  <Box cursor={"pointer"} onClick={() => nav("/cart")}>
-                    Cart
-                  </Box>
-                  <Box>Total</Box>
-                </Flex>
-                <Center
-                  bgColor={"blue.400"}
-                  cursor={"pointer"}
-                  _hover={{
-                    opacity: "0.9",
-                  }}
-                >
-                  Full Profile
-                </Center>
-              </Flex>
-            </MenuList>
           </Menu>
         </Box>
         <Box>
@@ -591,23 +672,37 @@ function DesktopNav() {
                 ></Image>
               </Flex>
             </MenuButton>
-            <MenuList my={5} position={"fixed"} left={"-6em"}>
-              <Flex padding={"0 0.5rem"} flexDir={"column"} gap={"0.4rem"}>
-                <Flex
-                  px={"10px"}
-                  gap={"1rem"}
+            <MenuList
+              my={"12px"}
+              position={"fixed"}
+              left={"-6em"}
+              // bgColor={"pink.100"}
+            >
+              <Flex flexDir={"column"}>
+                <Text
                   color={location == "profile" ? "white" : "black"}
                   bg={location == "profile" ? "#25225a" : "white"}
                   onClick={() => nav("/profile")}
                   cursor={"pointer"}
+                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+                  p={3}
                 >
                   My Account
-                </Flex>
-                <Flex px={"10px"}>My Orders</Flex>
-                <Flex px={"10px"}>My Wishlist</Flex>
-                <Flex px={"10px"} onClick={userSelector.email ? logout : login}>
+                </Text>
+                <Text _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }} p={3}>
+                  My Orders
+                </Text>
+                <Text _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }} p={3}>
+                  My Wishlist
+                </Text>
+                <Text
+                  onClick={userSelector.email ? logout : login}
+                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+                  p={3}
+                  cursor={"pointer"}
+                >
                   {userSelector.email ? "Logout" : "Login"}
-                </Flex>
+                </Text>
               </Flex>
             </MenuList>
           </Menu>

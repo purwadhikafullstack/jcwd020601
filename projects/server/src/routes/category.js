@@ -4,7 +4,7 @@ const validate = require("../middlewares/validateAdmin");
 const categoryController = require("../controllers").categoryController;
 //get
 
-router.get("/", validate, categoryController.getAll);
+router.get("/", categoryController.getAll);
 router.get("/:id", validate, categoryController.getById);
 router.post("/v1", validate, categoryController.insertCategory);
 router.patch("/v2/:id", validate, categoryController.editCategory);

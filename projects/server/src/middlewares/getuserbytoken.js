@@ -16,7 +16,6 @@ async function getUserByToken(req, res, next) {
     if (!payload) {
       throw new Error("token has expired");
     }
-    console.log(payload.dataValues);
     let user = await db.User.findOne({
       where: {
         id: payload.dataValues.UserId,

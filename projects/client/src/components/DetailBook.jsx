@@ -10,27 +10,24 @@ import {
   OrderedList,
   UnorderedList,
 } from "@chakra-ui/react";
-// import {  } from "@chakra-ui/icons";
 import { MdCheckCircle, MdSettings } from "react-icons/md";
 import icon from "../assets/images/icon.png";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
-import BookCardRecomend from "./BookCardRecomend";
 
 export default function DetailBookPage() {
   const { id } = useParams();
-  const [param, useParam] = useState(parseInt(id));
   const [value, setValue] = useState([]);
   async function fetchProduct() {
-    let response = await api.get(`/stock/${param}`);
+    let response = await api.get(`/stock/${parseInt(id)}`);
     setValue(response.data);
     console.log(response);
   }
   useEffect(() => {
     fetchProduct();
-  }, [param]);
-  // console.log(value.Book?.title);
+  }, [id]);
+
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -78,7 +75,15 @@ export default function DetailBookPage() {
                 {value.Book?.title}
               </Text>
             </Box>
-            <Box display={"flex"} gap={3}>
+            <Box display={"flex"} gap={3} flexDirection={"column"}>
+              <Text
+                fontSize={"xl"}
+                as={"del"}
+                color="#A0AEC0"
+                fontWeight={"semibold"}
+              >
+                Rp. {value.Book?.price}
+              </Text>
               <Text fontSize={"xl"} color={"blue.600"} fontWeight={"semibold"}>
                 Rp. {value.Book?.price}
               </Text>

@@ -1,7 +1,30 @@
-import { Box, Center, Flex, Button, Icon } from "@chakra-ui/react";
-import { AiOutlineClose } from "react-icons/ai";
+import {
+  Box,
+  Center,
+  Flex,
+  Input,
+  Button,
+  InputGroup,
+  InputRightElement,
+  IconButton,
+  Img,
+  useToast,
+  Icon,
+} from "@chakra-ui/react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  AiOutlineClose,
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+} from "react-icons/ai";
 import React from "react";
+import Swal from "sweetalert2";
+
 export default function ModalChangeProfile(props) {
+  const userSelector = useSelector((state) => state.login.auth);
+
+  const dispatch = useDispatch();
+
   return (
     <>
       <Box
@@ -37,8 +60,18 @@ export default function ModalChangeProfile(props) {
             bgColor={"#385898"}
             color={"white"}
             onClick={() => {
-              props.onClose();
-              props.formik.handleSubmit();
+              if (Object.values(props.formik.errors)[0]) {
+                props.formik.handleSubmit();
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "Please fill the rest of the form",
+                });
+                props.onClose();
+              } else {
+                props.onClose();
+                props.formik.handleSubmit();
+              }
             }}
           >
             Save

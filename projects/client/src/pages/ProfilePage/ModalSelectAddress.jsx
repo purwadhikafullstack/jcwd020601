@@ -36,10 +36,17 @@ export default function ModalSelectAddress(val) {
               return err.message;
             });
           localStorage.setItem("address", JSON.stringify(val.address));
+          const closestBranch = await api
+            .post("/address/closest", {
+              lat: val.address.latitude,
+              lon: val.address.longitude,
+            })
+            .then((res) => res.data[0]);
           dispatch({
             type: "login",
             payload: user,
             address: val.address,
+            closestBranch,
           });
           val.modalSelectAddress.onClose();
         }}
@@ -67,7 +74,7 @@ export default function ModalSelectAddress(val) {
               <></>
             )}
           </Flex>
-          {val.userSelector.address.id == val.address.id ? (
+          {val.userSelector.address?.id == val.address?.id ? (
             <Icon
               fontSize={"30px"}
               color={"green"}

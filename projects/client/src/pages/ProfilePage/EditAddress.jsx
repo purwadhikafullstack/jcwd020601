@@ -72,6 +72,10 @@ export default function EditAddress(val) {
             title: "Oops...",
             text: "Login session has expired",
           });
+          localStorage.removeItem("auth");
+          localStorage.removeItem("address");
+          localStorage.removeItem("Latitude");
+          localStorage.removeItem("Longitude");
           dispatch({
             type: "logout",
           });
@@ -98,6 +102,10 @@ export default function EditAddress(val) {
             title: "Oops...",
             text: "Login session has expired",
           });
+          localStorage.removeItem("auth");
+          localStorage.removeItem("address");
+          localStorage.removeItem("Latitude");
+          localStorage.removeItem("Longitude");
           dispatch({
             type: "logout",
           });
@@ -191,6 +199,10 @@ export default function EditAddress(val) {
             title: "Oops...",
             text: "Login session has expired",
           });
+          localStorage.removeItem("auth");
+          localStorage.removeItem("address");
+          localStorage.removeItem("Latitude");
+          localStorage.removeItem("Longitude");
           dispatch({
             type: "logout",
           });

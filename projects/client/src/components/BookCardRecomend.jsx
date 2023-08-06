@@ -16,6 +16,7 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
+// import { Link } from "react-router-dom";
 
 export default function BookCardRecomend() {
   let t = localStorage.getItem("auth");
@@ -76,9 +77,7 @@ export default function BookCardRecomend() {
           fontSize={{ base: "sm", xl: "xl" }}
           color={"blue.400"}
           cursor={"pointer"}
-        >
-          {/* <Link to="/detailBookCard">Lihat Semua</Link> */}
-        </Text>
+        ></Text>
       </Box>
       <Box
         display={"flex"}
@@ -91,42 +90,47 @@ export default function BookCardRecomend() {
         borderRadius={"10px"}
       >
         {value.map((val, idx) => (
-          <Card
-            key={idx}
-            w={{ base: "250px", sm: "250px", md: "250px", lg: "200px" }}
-            // align={"center"}
-          >
-            <CardBody pb={0}>
-              <Image
-                src={val.Book?.book_url}
-                alt="Green double couch with wooden legs"
-                borderRadius="lg"
-                w={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
-                h={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
-              />
-              <Stack mt="6" spacing="5">
-                <Heading size="sm">{val.Book?.author}</Heading>
-                <Text size={"sm"}>
-                  {val.Book?.title.length > 20
-                    ? val.Book?.title.slice(0, 20) + "..."
-                    : val.Book?.title}
-                </Text>
-                <Text color="blue.600" fontSize="xl">
-                  Rp. {val.Book?.price}
-                </Text>
-              </Stack>
-            </CardBody>
-            <CardFooter>
-              <ButtonGroup spacing="2" justifyContent={"center"}>
-                {/* <Button variant="solid" colorScheme="blue">
+          <Link to={`/products/detail/${val.id}`} cursor={"pointer"}>
+            <Card
+              key={idx}
+              w={{ base: "250px", sm: "250px", md: "250px", lg: "200px" }}
+              // align={"center"}
+            >
+              <CardBody>
+                <Image
+                  src={val.Book?.book_url}
+                  alt="Green double couch with wooden legs"
+                  borderRadius="lg"
+                  w={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
+                  h={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
+                />
+                <Stack mt="6">
+                  <Heading size="sm">{val.Book?.author}</Heading>
+                  <Text size={"sm"}>
+                    {val.Book?.title.length > 15
+                      ? val.Book?.title.slice(0, 15) + "..."
+                      : val.Book?.title}
+                  </Text>
+                  <Text color="#A0AEC0" as="del" fontSize="xl">
+                    Rp. {val.Book?.price}
+                  </Text>
+                  <Text color="blue.600" fontSize="xl">
+                    Rp. {val.Book?.price}
+                  </Text>
+                </Stack>
+              </CardBody>
+              <CardFooter p={5}>
+                <ButtonGroup spacing="2" justifyContent={"center"}>
+                  {/* <Button variant="solid" colorScheme="blue">
                   Buy now
                 </Button> */}
-                <Button variant="solid" colorScheme="blue">
-                  Add to cart
-                </Button>
-              </ButtonGroup>
-            </CardFooter>
-          </Card>
+                  <Button variant="solid" colorScheme="blue">
+                    Add to cart
+                  </Button>
+                </ButtonGroup>
+              </CardFooter>
+            </Card>
+          </Link>
         ))}
       </Box>
     </Flex>

@@ -1,4 +1,4 @@
-import { Route } from "react-router-dom";
+import { Route, Router } from "react-router-dom";
 import AdminLogin from "../pages/AdminLogin";
 import AdminPage from "../pages/AdminPage";
 import ForgotPassword, {
@@ -18,6 +18,7 @@ import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
 import DetailBookCardPage from "../pages/DetailBookCardPage";
 import DetailBookPage from "../pages/DetailBookPage";
+import BranchAdmin from "../pages/SuperAdminPage/BranchAdmins";
 
 const routes = [
   <Route
@@ -41,21 +42,23 @@ const routes = [
   <Route
     path="/"
     element={
-      <ProtectedPage>
+      <ProtectedPage guestAndLogin={true}>
         <HomePage />
       </ProtectedPage>
     }
   ></Route>,
   <Route
-    path="/detailBookCard"
+    path="/products"
     element={
       <ProtectedPage>
         <DetailBookCardPage />
       </ProtectedPage>
     }
-  ></Route>,
+  >
+    {/* <Route path="/detail/:id" element={<DetailBookPage />} />,{" "} */}
+  </Route>,
   <Route
-    path="/detailBook/:id"
+    path="/products/detail/:id"
     element={
       <ProtectedPage>
         <DetailBookPage />
@@ -95,7 +98,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/adminpage"
+    path="/admin/products"
     element={
       <ProtectedPage needLoginAdmin={true}>
         <AdminPage />
@@ -118,7 +121,6 @@ const routes = [
       </ProtectedPage>
     }
   ></Route>,
-
   <Route
     path="/profile"
     element={

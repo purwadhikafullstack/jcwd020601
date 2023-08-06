@@ -269,11 +269,10 @@ const userController = {
         },
         {
           where: {
-            id: req.body.id,
+            id,
           },
         }
       );
-
       return res.status(200).send({
         message: "your account has been updated",
       });
@@ -312,7 +311,19 @@ const userController = {
           email,
           username: name,
           registered_by: "Google",
+          verified: true,
         });
+      } else {
+        await db.User.update(
+          {
+            verified: true,
+          },
+          {
+            where: {
+              id: user.dataValues.id,
+            },
+          }
+        );
       }
 
       if (create || user) {
@@ -370,7 +381,9 @@ const userController = {
   getByToken: async (req, res, next) => {
     try {
       let { token } = req.query;
+
       // console.log(token);
+
       let payload = await db.Token.findOne({
         where: {
           token,
@@ -380,6 +393,7 @@ const userController = {
           valid: true,
         },
       });
+
       if (!payload) {
         throw new Error("token has expired");
       }
@@ -503,17 +517,16 @@ const userController = {
       const { email, oldPassword } = req.body;
       const user = await db.User.findOne({
         where: {
-          [Op.or]: {
-            email,
-          },
+          email,
         },
       });
-
       if (user) {
-        const match = await bcrypt.compare(
-          oldPassword,
-          user.dataValues.password
-        );
+        const match = await bcrypt
+          .compare(oldPassword, user.dataValues.password)
+          .catch((err) => {
+            throw new Error("old password is incorrect");
+          });
+
         if (match) {
           req.user = user;
           next();
@@ -524,12 +537,12 @@ const userController = {
         throw new Error("user not found");
       }
     } catch (err) {
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ message: err.message, lol: "lasdosa" });
     }
   },
   changePasswordNoToken: async (req, res) => {
     try {
-      const { password } = req.body.user;
+      const { password } = req.body;
       const { id } = req.user;
 
       const hashPassword = await bcrypt.hash(password, 10);
@@ -549,7 +562,7 @@ const userController = {
         message: "password successfully updated",
       });
     } catch (err) {
-      res.status(500).send({ message: err.message });
+      res.status(500).send({ lol: "saldsa", message: err.message });
     }
   },
   changePassword: async (req, res) => {

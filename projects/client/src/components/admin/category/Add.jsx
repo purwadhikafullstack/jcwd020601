@@ -27,7 +27,9 @@ export default function Add({ getData, token }) {
       category: "",
     },
     validationSchema: Yup.object({
-      category: Yup.string().trim().required("Isi dalam bentuk karakter"),
+      category: Yup.string()
+        .trim()
+        .required("Isi dalam bentuk karakter tidak boleh kosong"),
     }),
     onSubmit: async (values, { resetForm }) => {
       await api.post("/category/v1", values, {
