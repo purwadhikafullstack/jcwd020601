@@ -42,7 +42,6 @@ export default function HomePage() {
       .then((res) => {
         return res.data;
       });
-    console.log("safjas");
   }
   return (
     <Flex display={"columns"}>

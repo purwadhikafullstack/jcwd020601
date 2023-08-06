@@ -4,6 +4,23 @@ const { Op } = db.Sequelize;
 const moment = require("moment");
 const { default: axios } = require("axios");
 const opencage = require("opencage-api-client");
+function distance(lat1, lon1, lat2, lon2, BranchId) {
+  const r = 6371; // km
+  const p = Math.PI / 180;
+
+  const a =
+    0.5 -
+    Math.cos((lat2 - lat1) * p) / 2 +
+    (Math.cos(lat1 * p) *
+      Math.cos(lat2 * p) *
+      (1 - Math.cos((lon2 - lon1) * p))) /
+      2;
+
+  return {
+    BranchId,
+    distance: 2 * r * Math.asin(Math.sqrt(a)),
+  };
+}
 const addressController = {
   getAll: async (req, res) => {
     try {
@@ -46,6 +63,20 @@ const addressController = {
       });
     }
   },
+  getLatLonByCity: async (req, res) => {
+    try {
+      const Address = await opencage.geocode({
+        q: "Bandung",
+        language: "id",
+      });
+      return res.send(Address.results);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   getIsMainByUserId: async (req, res) => {
     try {
       const { id } = req.params;
@@ -62,6 +93,25 @@ const addressController = {
       });
     }
   },
+  getClosestBranchByLatLon: async (req, res) => {
+    try {
+      const { lat, lon } = req.body;
+      const result = [];
+      const Branches = await db.Branch.findAll();
+      await Branches.map((val) => {
+        result.push(distance(lat, lon, val.latitude, val.longitude, val.id));
+      });
+      let min = Math.min(...result.map((item) => item.distance));
+      let lowest = result.filter((item) => item.distance === min);
+      return res.send(lowest);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+
   editAddress: async (req, res) => {
     try {
       const {
@@ -154,7 +204,6 @@ const addressController = {
           isMain: true,
         },
       });
-      console.log(Main);
 
       const {
         labelAlamat,
@@ -201,8 +250,6 @@ const addressController = {
           id: req.params.id,
         },
       });
-      console.log(Address);
-      console.log(Address.isMain);
       await db.Address.destroy({
         where: {
           //  id: req.params.id
@@ -218,9 +265,6 @@ const addressController = {
             UserId: req.body.UserId,
           },
         });
-        console.log(req.body.UserId);
-        console.log("ldsakd");
-        console.log(Addresses[0]);
         await db.Address.update(
           {
             isMain: true,
@@ -338,7 +382,6 @@ const addressController = {
   getAllCityByProvince: async (req, res) => {
     try {
       const { id } = req.body;
-      console.log(req.body);
       const province = await axios
         .get("https://api.rajaongkir.com/starter/city?&province=" + id, {
           headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
@@ -357,7 +400,6 @@ const addressController = {
   getAllPosByCity: async (req, res) => {
     try {
       const { id } = req.body;
-      console.log(req.body);
       const province = await axios
         .get("https://api.rajaongkir.com/starter/city?id=" + id, {
           headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },

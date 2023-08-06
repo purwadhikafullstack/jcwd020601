@@ -14,16 +14,16 @@ import {
 } from "@chakra-ui/react";
 import YupPassword from "yup-password";
 
-import ModalAddAdmin from "../../components/ModalAddAdmin.jsx";
+import ModalAddAdmin from "../../../components/ModalAddAdmin.jsx";
 import { MdClose } from "react-icons/md";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { api } from "../../api/api.js";
+import { api } from "../../../api/api.js";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function SuperAdminPage() {
+export default function AddAdminButton() {
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const userSelector = useSelector((state) => state.login.auth);
@@ -151,34 +151,25 @@ export default function SuperAdminPage() {
     fetchPos();
     console.log(formikAddress.values);
   }, [formikAddress.values.city]);
-  async function fetchCity() {
-    console.log(provinceId);
 
-    await axios
-      .post(
-        "http://localhost:2000/address/city",
-        { id: provinceId },
-        {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        }
-      )
+  async function fetchCity() {
+    setPos();
+    setCities([]);
+    await api
+      .get("/city/v1/" + provinceId)
       .then((res) => {
-        setCities(res.data);
+        setCities(res.data.result);
+      })
+      .catch((err) => {
+        console.log(err.message);
       });
   }
+
   async function fetchPos() {
-    console.log(cityId);
-    await axios
-      .post(
-        "http://localhost:2000/address/pos",
-        { id: cityId },
-        {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        }
-      )
-      .then((res) => {
-        setPos(res.data);
-      });
+    setPos();
+    await api.get("/city/v2/" + cityId).then((res) => {
+      setPos(res.data.result);
+    });
   }
 
   const modalAddAdmin = useDisclosure();
@@ -186,6 +177,8 @@ export default function SuperAdminPage() {
     <>
       <Flex>
         <Button
+          color={"white"}
+          bgColor={"#2c5282"}
           onClick={() => {
             modalAddAdmin.onOpen();
           }}

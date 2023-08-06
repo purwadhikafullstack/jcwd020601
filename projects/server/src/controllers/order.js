@@ -29,6 +29,167 @@ const orderController = {
       });
     }
   },
+  getSalesOnAllTime: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const Order = await db.Order.findAll({
+        where: {
+          status: "done",
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From All Of Time",
+        TotalSales: JSON.stringify(sales),
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesOnLastMonth: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { Status: "done" },
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "month")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From Last Month",
+        TotalSales: JSON.stringify(sales),
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesFromBranchIdOnLastMonth: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const { BranchId } = req.params;
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { BranchId },
+            { Status: "done" },
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "month")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From Last Month",
+        TotalSales: JSON.stringify(sales),
+        BranchId,
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesOnLastWeek: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { Status: "done" },
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "week")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From Last Week",
+        TotalSales: JSON.stringify(sales),
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesFromBranchIdOnLastWeek: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const { BranchId } = req.params;
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { BranchId },
+            { Status: "done" },
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "week")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From Last Week",
+        TotalSales: JSON.stringify(sales),
+        BranchId,
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   editOrder: async (req, res) => {
     try {
       const { payment_url, status, total, UserId, BranchId, AddressId } =
