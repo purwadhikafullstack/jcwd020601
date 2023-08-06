@@ -26,6 +26,7 @@ import {
 import logo from "../../assets/images/gramedia-icon-2.png";
 import YupPassword from "yup-password";
 import React from "react";
+import Swal from "sweetalert2";
 
 export default function ModalChangePassword(props) {
   YupPassword(Yup);
@@ -76,29 +77,47 @@ export default function ModalChangePassword(props) {
   });
 
   async function changePassword(values) {
-    const token = JSON.parse(localStorage.getItem("auth"));
+    try {
+      const token = JSON.parse(localStorage.getItem("auth"));
 
-    await axios
-      .patch("http://localhost:2000/auth/v5?token=" + token, {
-        email: values.email,
-        oldPassword: values.oldPassword,
-        user: values,
-      })
-      .then((res) => {
-        console.log(res.data);
-        alert(res.data.message);
-        // window.location.reload(false);
-        props.onClose();
-      })
-      .catch((err) => {
-        alert(err.response.data.message);
-        dispatch({
-          type: "logout",
+      await axios
+        .patch("http://localhost:2000/auth/v5?token=" + token, {
+          email: values.email,
+          oldPassword: values.oldPassword,
+          user: values,
+        })
+        .then((res) => {
+          console.log(res.data);
+          alert(res.data.message);
+          // window.location.reload(false);
+          props.onClose();
+        })
+        .catch((err) => {
+          console.log(err);
+          props.onClose();
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: err.response.data.message,
+          });
+          // nav("/login");
         });
-        nav("/login");
-        console.log(values);
-        // nav("/login");
+    } catch (err) {
+      console.log(err);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Login session has expired",
       });
+      localStorage.removeItem("auth");
+      localStorage.removeItem("address");
+      localStorage.removeItem("Latitude");
+      localStorage.removeItem("Longitude");
+      dispatch({
+        type: "logout",
+      });
+      nav("/login");
+    }
   }
   const dispatch = useDispatch();
 

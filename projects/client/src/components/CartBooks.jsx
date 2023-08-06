@@ -10,7 +10,6 @@ import { useSelector } from "react-redux";
 export default function CartBooks(props) {
   const userSelector = useSelector((state) => state.login.auth);
   const [cart, setCart] = useState([]);
-  const [qty, setQty] = useState(1);
   const [total, setTotal] = useState(0);
   const [hapus, setHapus] = useState();
 
@@ -21,28 +20,19 @@ export default function CartBooks(props) {
   }
 
   //PATCH
-  async function edit(idx, param) {
+  async function edit(idx, type) {
     try {
-      const stock = await api.get("stock/" + cart[idx].StockId);
-
-      if (stock.stock < param) {
-        setQty(param - 1);
-        return alert("Insufficient");
-      } else if (param <= 0) {
-        setQty(param + 1);
-        return alert(
-          "Unable to order less than 1 product, please delete instead"
-        );
-      } else {
-        const kuant = await api.post("cart/v1", {
-          StockId: cart[idx].StockId,
-          UserId: cart[idx].UserId,
-          quantity: param,
-        });
-        await fetch();
-        return console.log(kuant.data);
-      }
+      // console.log(cart[idx].StockId);
+      // console.log(cart[idx].id);
+      await api.patch("cart/v2", {
+        StockId: cart[idx].StockId,
+        UserId: cart[idx].UserId,
+        id: cart[idx].id,
+        type: type,
+      });
+      await fetch();
     } catch (error) {
+      alert(error.response.data);
       console.error("Error in edit():", error);
     }
   }
@@ -108,7 +98,10 @@ export default function CartBooks(props) {
                     {val.Stock.Book.author} -{" "}
                     {val.Stock.Book.publish_date.slice(0, 4)}
                   </Box>
-                  <Box>{`Rp ${val.Stock?.Book?.price}`}</Box>
+                  <Box>{`Rp ${val.Stock?.Book?.price.toLocaleString(
+                    "id-ID"
+                  )},-`}</Box>
+                  <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
                 </Flex>
                 {/* seperate */}
                 {/* seperate */}
@@ -118,9 +111,8 @@ export default function CartBooks(props) {
                     color={"blue.400"}
                     as={AiFillMinusCircle}
                     cursor={"pointer"}
-                    onClick={async () => {
-                      setQty(qty - 1);
-                      await edit(idx, qty);
+                    onClick={() => {
+                      edit(idx, "minus");
                     }}
                   ></Icon>
                   <Box fontSize={"1rem"}>
@@ -132,9 +124,8 @@ export default function CartBooks(props) {
                     color={"blue.400"}
                     as={AiFillPlusCircle}
                     cursor={"pointer"}
-                    onClick={async () => {
-                      setQty(qty + 1);
-                      await edit(idx, qty);
+                    onClick={() => {
+                      edit(idx, "plus");
                     }}
                   ></Icon>
                 </Flex>

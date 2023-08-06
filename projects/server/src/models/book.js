@@ -10,7 +10,7 @@ module.exports = (sequelize, Sequelize) => {
       description: Sequelize.TEXT,
       book_url: Sequelize.TEXT,
       pages: Sequelize.INTEGER,
-      weight: Sequelize.STRING,
+      weight: Sequelize.INTEGER,
       dimension: Sequelize.STRING,
       price: Sequelize.INTEGER,
       rating: Sequelize.STRING,

@@ -123,6 +123,7 @@ export default function OrderPage() {
                   colorScheme={"blue"}
                   borderRadius={"1.5rem"}
                   width={"100%"}
+                  isDisabled={true}
                 >
                   Upload Payment Proof
                 </Button>

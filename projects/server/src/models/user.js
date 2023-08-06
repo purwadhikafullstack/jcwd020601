@@ -13,7 +13,6 @@ module.exports = (sequelize, Sequelize) => {
       verified: Sequelize.BOOLEAN(false, true),
       registered_by: Sequelize.ENUM("Google", "Register"),
       avatar: Sequelize.BLOB("long"),
-
       avatar_url: Sequelize.TEXT,
     },
     {

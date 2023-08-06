@@ -14,12 +14,14 @@ import {
   FiStar,
   FiSettings,
 } from "react-icons/fi";
+
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const LinkItems = [
-  { name: "Home", icon: FiHome },
-  { name: "Product", icon: FiTrendingUp, link: "/admin/products" },
-  { name: "Category", icon: FiCompass, link: "/Category" },
+  { name: "Home", icon: FiHome, link: "/adminpage" },
+  { name: "Product", icon: FiTrendingUp, link: "/product" },
+  { name: "Category", icon: FiCompass, link: "/category" },
   { name: "Favourites", icon: FiStar },
   { name: "Settings", icon: FiSettings },
 ];
@@ -59,36 +61,36 @@ const SidebarContent = () => {
 };
 
 const NavItem = ({ icon, children, href }) => {
+  const nav = useNavigate();
   return (
-    // <Link
-    //   href={href}
-    //   style={{ textDecoration: "none" }}
-    //   _focus={{ boxShadow: "none" }}
-    // >
-    <Flex
-      align="center"
-      p="4"
-      mx="4"
-      borderRadius="lg"
-      role="group"
-      cursor="pointer"
-      _hover={{
-        bg: "cyan.400",
-        color: "white",
-      }}
-    >
-      {icon && (
-        <Icon
-          mr="4"
-          fontSize="16"
-          _groupHover={{
-            color: "white",
-          }}
-          as={icon}
-        />
-      )}
-      {children}
-    </Flex>
-    // </Link>
+    <Link style={{ textDecoration: "none" }} _focus={{ boxShadow: "none" }}>
+      <Flex
+        onClick={() => {
+          nav(href);
+        }}
+        align="center"
+        p="4"
+        mx="4"
+        borderRadius="lg"
+        role="group"
+        cursor="pointer"
+        _hover={{
+          bg: "#2c5282",
+          color: "white",
+        }}
+      >
+        {icon && (
+          <Icon
+            mr="4"
+            fontSize="16"
+            _groupHover={{
+              color: "white",
+            }}
+            as={icon}
+          />
+        )}
+        {children}
+      </Flex>
+    </Link>
   );
 };

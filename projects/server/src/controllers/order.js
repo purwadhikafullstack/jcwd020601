@@ -29,6 +29,167 @@ const orderController = {
       });
     }
   },
+  getSalesOnAllTime: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const Order = await db.Order.findAll({
+        where: {
+          status: "done",
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From All Of Time",
+        TotalSales: JSON.stringify(sales),
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesOnLastMonth: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { Status: "done" },
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "month")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From Last Month",
+        TotalSales: JSON.stringify(sales),
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesFromBranchIdOnLastMonth: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const { BranchId } = req.params;
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { BranchId },
+            { Status: "done" },
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "month")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From Last Month",
+        TotalSales: JSON.stringify(sales),
+        BranchId,
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesOnLastWeek: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { Status: "done" },
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "week")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From Last Week",
+        TotalSales: JSON.stringify(sales),
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesFromBranchIdOnLastWeek: async (req, res) => {
+    //INCOMPLETE
+    try {
+      let sales = 0;
+      const { BranchId } = req.params;
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { BranchId },
+            { Status: "done" },
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "week")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      return res.send({
+        Date: "From Last Week",
+        TotalSales: JSON.stringify(sales),
+        BranchId,
+      });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   editOrder: async (req, res) => {
     try {
       const { payment_url, status, total, UserId, BranchId, AddressId } =
@@ -63,25 +224,65 @@ const orderController = {
   },
   insertOrder: async (req, res) => {
     try {
-      const {
-        status,
-        total,
-        UserId,
-        BranchId,
-        AddressId,
-        orderDetails, // [quantity, price, StockId]
-      } = req.body;
+      const { UserId, BranchId, AddressId, shipping } = req.body;
 
       // get the order from cart
-      // get middleawre
+      const cart = await db.Cart.findAll({
+        where: {
+          UserId: UserId,
+        },
+        raw: true,
+        include: [
+          {
+            model: db.Stock,
+            required: true,
+            include: [
+              {
+                model: db.Book,
+                required: true,
+              },
+            ],
+          },
+        ],
+      });
+
+      // Order weight
+      const weight = cart.reduce((prev, curr) => {
+        return prev + curr["Stock.Book.weight"];
+      }, 0);
+      // console.log(cart.map((val) => val["Stock.Book.price"]));
+
+      // Total Price of Order
+      const t = cart.reduce((prev, curr) => {
+        return prev + curr.quantity * curr["Stock.Book.weight"];
+      }, 0);
+      const total = t + shipping;
+      // console.log();
+
+      // orderDetails generete
+      const orderDetails = cart.map((val) => ({
+        quantity: val.quantity,
+        price: val["Stock.Book.price"],
+        StockId: val["Stock.id"],
+      }));
+      //   [
+      //     {
+      //       "quantity": ,
+      //       "price": ,
+      //       "StockId":
+      //     },
+      //   ]
+      // console.log(orderDetails);
 
       // create order
       const order = await db.Order.create({
-        status,
+        status: "init",
         total,
         UserId,
         BranchId,
         AddressId,
+        shipping,
+        weight,
       });
 
       //post multiple orderdetails from order
@@ -123,6 +324,7 @@ const orderController = {
         })
       );
 
+      // return res.send(cart);
       return res.send("check payment");
     } catch (err) {
       console.log(err);

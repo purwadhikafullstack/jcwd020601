@@ -63,15 +63,16 @@ const adminController = {
       });
     }
   },
-  insertAdmin: async (req, res) => {
+  insertSuperAdmin: async (req, res) => {
     try {
-      const { role, email, phone, password, BranchId } = req.body;
+      const { name, email, phone, password } = req.body;
+      const hashPassword = await bcrypt.hash(password, 10);
       await db.Admin.create({
-        role,
+        name,
+        role: "Super-Admin",
         email,
         phone,
-        password,
-        BranchId,
+        password: hashPassword,
       });
       return await db.Admin.findAll().then((result) => {
         res.send(result);
@@ -113,25 +114,19 @@ const adminController = {
             alamatLengkap,
           }
           // { transaction: t }
-        ).then(async () => {
-          const branch = await db.Branch.findOne({
-            where: {
-              latitude: place.lat,
-              longitude: place.lng,
-              name: branchName,
-              province,
-              city,
-              pos,
-              alamatLengkap,
-            },
-          });
-          console.log(branch);
-
-          console.log("ksafjsa");
-          console.log(branch.id);
-
-          BranchId = branch.id;
+        );
+        const branch = await db.Branch.findOne({
+          where: {
+            latitude: place.lat,
+            longitude: place.lng,
+            name: branchName,
+            province,
+            city,
+            pos,
+            alamatLengkap,
+          },
         });
+        BranchId = branch.id;
       });
       await db.Admin.create(
         {
@@ -177,7 +172,7 @@ const adminController = {
     try {
       const { name, role, email, phone, password, BranchId } = req.body;
       const hashPassword = await bcrypt.hash(password, 10);
-      console.log(hashPassword);
+
       await db.Admin.create({
         name,
         role: "Admin-Branch",
@@ -212,7 +207,6 @@ const adminController = {
         if (match) {
           const payload = user.dataValues.id;
           const generateToken = nanoid();
-          console.log(nanoid());
           const token = await db.Token.create({
             expired: moment().add(1, "days").format(),
             token: generateToken,
@@ -220,8 +214,8 @@ const adminController = {
             status: "LOGIN",
           });
 
-          console.log(token);
           //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6InVkaW4yIiwiYWRkcmVzcyI6ImJhdGFtIiwicGFzc3dvcmQiOiIkMmIkMTAkWUkvcTl2dVdTOXQ0R1V5a1lxRGtTdWJnTTZwckVnRm9nZzJLSi9FckFHY3NXbXBRUjFOcXEiLCJlbWFpbCI6InVkaW4yQG1haWwuY29tIiwiY3JlYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwiZGVsZXRlZEF0IjpudWxsLCJDb21wYW55SWQiOm51bGwsImlhdCI6MTY4NDQ4MzQ4NSwiZXhwIjoxNjg0NDgzNTQ1fQ.Ye5l7Yml1TBWUgV7eUnhTVQjdT3frR9E0HXNxO7bTXw;
+
           return res.send({
             message: "login berhasil",
             // value: user,
@@ -242,11 +236,10 @@ const adminController = {
   },
   changePassword: async (req, res) => {
     try {
-      console.log(req.body);
       const { token } = req.query;
       const { password } = req.body.user;
       const { id } = req.user;
-      console.log(id);
+      const hashPassword = await bcrypt.hash(password, 10);
       await db.User.update(
         {
           password: hashPassword,
@@ -326,7 +319,6 @@ const adminController = {
   getByToken: async (req, res, next) => {
     try {
       let { token } = req.query;
-      console.log(token);
       let payload = await db.Token.findOne({
         where: {
           token,
@@ -339,22 +331,32 @@ const adminController = {
       if (!payload) {
         throw new Error("token has expired");
       }
-      console.log(payload);
       let admin = await db.Admin.findOne({
         where: {
           id: payload.dataValues.AdminId,
         },
       });
-      delete admin.dataValues.password;
-      req.admin = admin;
-      next();
+      let user = await db.User.findOne({
+        where: {
+          id: payload.dataValues.UserId,
+        },
+      });
+      if (admin) {
+        delete admin.dataValues.password;
+        req.user = admin;
+        next();
+      } else {
+        delete user?.dataValues.password;
+        req.user = user;
+        next();
+      }
     } catch (err) {
       console.log(err);
-      return res.status(500).send({ message: err.message });
+      return res.status(400).send({ message: err.message });
     }
   },
-  getAdminByToken: async (req, res) => {
-    res.status(200).send(req.admin);
+  getAdminOrUserByToken: async (req, res) => {
+    res.status(200).send(req.user);
   },
 };
 

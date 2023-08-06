@@ -16,9 +16,13 @@ import {
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
+import { useSelector } from "react-redux";
 
 export default function BookCard() {
   let t = localStorage.getItem("auth");
+
+  const userSelector = useSelector((state) => state.login.auth);
+
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(5);
@@ -31,6 +35,7 @@ export default function BookCard() {
   useEffect(() => {
     fetchProduct();
   }, [token]);
+
   const settings = {
     dots: true,
     infinite: true,
@@ -38,9 +43,23 @@ export default function BookCard() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-
   console.log(value);
   console.log(token);
+  // Add to Cart
+  async function add(idx) {
+    try {
+      // console.log(value[idx]);
+      // console.log(userSelector.id);
+      await api.post("cart/v1", {
+        qty: 1,
+        UserId: userSelector.id,
+        StockId: value[idx].id,
+      });
+    } catch (error) {
+      alert(error.response.data);
+      console.error(error);
+    }
+  }
   return (
     <Flex
       justify={"center"}
@@ -114,7 +133,11 @@ export default function BookCard() {
                 {/* <Button variant="solid" colorScheme="blue">
                   Buy now
                 </Button> */}
-                <Button variant="solid" colorScheme="blue">
+                <Button
+                  variant="solid"
+                  colorScheme="blue"
+                  onClick={() => add(idx)}
+                >
                   Add to cart
                 </Button>
               </ButtonGroup>

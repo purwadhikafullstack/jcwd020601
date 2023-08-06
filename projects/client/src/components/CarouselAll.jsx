@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
-
 export default function CarouselAll() {
   const [large] = useMediaQuery("(min-width: 1280px)");
   let t = localStorage.getItem("auth");
@@ -23,7 +22,6 @@ export default function CarouselAll() {
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(4);
   const [keyword, setKeyword] = useState("");
-
   async function fetchProduct() {
     let response = await api.get(`/stock/Desc?limit=${limit}`);
     setValue(response.data.result);
@@ -33,6 +31,7 @@ export default function CarouselAll() {
   }, [token]);
   console.log(value);
   console.log(token);
+
   return (
     <Flex
       justify={"center"}

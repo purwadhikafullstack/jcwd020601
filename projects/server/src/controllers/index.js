@@ -11,6 +11,8 @@ const stockController = require("./stock");
 const stockHistoryController = require("./stockHistory");
 const userController = require("./user");
 const voucherController = require("./voucher");
+const provinceController = require("./province");
+const cityController = require("./city");
 
 module.exports = {
   addressController,
@@ -26,4 +28,6 @@ module.exports = {
   stockHistoryController,
   userController,
   voucherController,
+  cityController,
+  provinceController,
 };

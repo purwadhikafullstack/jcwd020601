@@ -15,16 +15,17 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import * as Yup from "yup";
 import ModalChangePassword from "./ModalChangePassword";
 import { useRef, useState } from "react";
 import { useFormik } from "formik";
 import YupPassword from "yup-password";
+import * as Yup from "yup";
 import { api } from "../../api/api";
 import { useDispatch } from "react-redux";
 import ModalChangeProfile from "./ModalChangeProfile";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 export default function Biodata(props) {
-  YupPassword(Yup);
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const [gender, setGender] = useState(props.userSelector.gender);
@@ -38,27 +39,37 @@ export default function Biodata(props) {
   const modalChangePassword = useDisclosure();
   const modalChangeProfile = useDisclosure();
   const inputFileRef = useRef(null);
+  const nav = useNavigate();
   const handleFile = async (event) => {
     setSelectedFile(event.target.files[0]);
     uploadAvatar(event.target.files[0], props.userSelector.id);
   };
+  YupPassword(Yup);
+
   const formik = useFormik({
     initialValues: {
+      last_name: props.userSelector.last_name,
+      first_name: props.userSelector.first_name,
       id: props.userSelector.id,
+      phone: props.userSelector?.phone || "029",
     },
     validationSchema: Yup.object().shape({
       phone: Yup.string()
         .matches(phoneRegExp, "Phone number is not valid")
-        .trim(),
+        .trim()
+        .required("Phone number is required"),
+      last_name: Yup.string().trim().required("Phone number is required"),
+      first_name: Yup.string().trim().required("Phone number is required"),
     }),
     onSubmit: async () => {
+      console.log("sakdsakd");
       const { id, first_name, last_name, gender, phone } = formik.values;
       const account = {
         id,
         first_name,
         last_name,
         gender,
-        phone: phone ? "0" + phone : undefined,
+        phone,
       };
       await api
         .patch("/auth/update", account)
@@ -73,39 +84,54 @@ export default function Biodata(props) {
               payload: user,
             });
           }
-          toast({
-            title: res.data.message,
-            description: "Login Successful.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
+          Swal.fire("Good job!", "Profile Updated", "success");
         })
         .catch((err) => {
-          toast({
-            position: "top",
-            title: "Login ERROR",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login session has expired",
           });
+          dispatch({
+            type: "logout",
+          });
+          localStorage.removeItem("address");
+          nav("/login");
         });
     },
   });
   async function uploadAvatar(file, id) {
     try {
       let user;
+      const token = JSON.parse(localStorage.getItem("auth"));
       const formData = new FormData();
       formData.append("avatar", file);
       user = await api
         .post(
-          "http://localhost:2000/auth/image/v1/" + props.userSelector.id,
+          "http://localhost:2000/auth/image/v1/" +
+            props.userSelector.id +
+            "?token=" +
+            token,
           formData
         )
         .then((res) => {
           console.log(res.data);
           return res.data;
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login session has expired",
+          });
+          localStorage.removeItem("auth");
+          localStorage.removeItem("address");
+          localStorage.removeItem("Latitude");
+          localStorage.removeItem("Longitude");
+          dispatch({
+            type: "logout",
+          });
+          nav("/login");
         });
       await dispatch({
         type: "login",
@@ -230,6 +256,7 @@ export default function Biodata(props) {
           placeholder={props.userSelector.last_name}
           value={last_name}
         ></Input>
+        <Flex>{formik.errors.last_name}</Flex>
       </Flex>
       <Flex flexDir={"column"}>
         <Flex color={"grey"} fontSize={"0.8rem"}>
@@ -271,8 +298,21 @@ export default function Biodata(props) {
         </RadioGroup>
       </Flex>
       <Flex flexDir={"column"}>
-        <Flex color={"grey"} fontSize={"0.8rem"}>
+        <Flex
+          color={"grey"}
+          fontSize={"0.8rem"}
+          onClick={() => {
+            console.log(formik.errors);
+          }}
+        >
           No. Telp
+        </Flex>
+        <Flex
+          color={"red"}
+          fontSize={"0.9rem"}
+          display={props.userSelector.phone ? "none" : "block"}
+        >
+          Your Phone Number is not yet Registered
         </Flex>
         <InputGroup w={"260px"} variant={"flushed"} gap={"10px"}>
           <InputLeftAddon children="+62" />
@@ -287,7 +327,9 @@ export default function Biodata(props) {
             value={phone}
           />
         </InputGroup>
-        <Flex color={"red"}>{formik.errors.phone}</Flex>
+        <Flex color={"red"} fontSize={"0.9rem"}>
+          {formik.errors.phone}
+        </Flex>
       </Flex>
       <Flex flexDir={"column"}>
         <Flex color={"grey"} fontSize={"0.8rem"}>
@@ -308,7 +350,6 @@ export default function Biodata(props) {
         mb={"40px"}
         w={"200px"}
         onClick={() => {
-          console.log("yes");
           modalChangePassword.onOpen();
         }}
       >

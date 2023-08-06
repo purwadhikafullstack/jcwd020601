@@ -49,7 +49,9 @@ import { HiOutlineLocationMarker } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 
 import ModalSelectAddress from "../pages/ProfilePage/ModalSelectAddress";
+
 export default function Navbar({ callback, keyword }) {
+  const userSelector = useSelector((state) => state.login.auth);
   const [large] = useMediaQuery("(min-width: 768px)");
   const [category, setCategory] = useState([]);
   const nav = useNavigate();
@@ -275,12 +277,14 @@ function DesktopNav({ callback, keyword, category }) {
     setTrans(!trans);
   }
   async function logout() {
-    nav("/");
     localStorage.removeItem("auth");
     localStorage.removeItem("address");
-    dispatch({
+    localStorage.removeItem("Latitude");
+    localStorage.removeItem("Longitude");
+    await dispatch({
       type: "logout",
     });
+    nav("/");
     return;
   }
   async function login() {
@@ -289,6 +293,7 @@ function DesktopNav({ callback, keyword, category }) {
   }
   async function fetchUserAddresses() {
     try {
+      console.log(userSelector);
       await api
         .get("/address/user/" + userSelector.id)
         .then((res) => {
@@ -349,6 +354,14 @@ function DesktopNav({ callback, keyword, category }) {
   console.log(result);
   return (
     <>
+      {/* <Flex
+        onClick={() => {
+          console.log(userSelector);
+          console.log(userAddresses);
+        }}
+      >
+        lol
+      </Flex> */}
       <Box
         display={"flex"}
         w={{ sm: "10em", md: "15em", lg: "20em" }}
@@ -534,7 +547,7 @@ function DesktopNav({ callback, keyword, category }) {
             cursor={"pointer"}
             h={"45px"}
             alignItems={"center"}
-            gap={"5px"}
+            gap={"0px"}
             border={"#d6d6d6 solid 2px"}
             borderRadius={"50px"}
             onClick={() => {
@@ -548,7 +561,17 @@ function DesktopNav({ callback, keyword, category }) {
                 as={HiOutlineLocationMarker}
               ></Icon>
             </Flex>
-            <Flex fontWeight={"700"} color="#2c5282">
+            <Flex
+              fontWeight={"700"}
+              color="#2c5282"
+              fontSize={
+                userSelector?.address?.city?.length >= 16
+                  ? "0.6rem"
+                  : userSelector?.address?.city?.length >= 12
+                  ? "0.8rem"
+                  : "1rem"
+              }
+            >
               {userSelector?.address?.city
                 ? userSelector?.address.city
                 : "Location"}

@@ -25,7 +25,7 @@ export default function ProfilePage() {
             sm: "none",
           }}
         >
-          <ProfileFooter />
+          <ProfileFooter Center={Center} />
         </Flex>
         <Navbar />
         <Center>
@@ -38,7 +38,7 @@ export default function ProfilePage() {
             >
               <ProfileSidebar />
             </Flex>
-            <Flex flexDir={"column"} gap={"20px"} justifyContent={"center"}>
+            <Flex flexDir={"column"} gap={"20px"}>
               <TabBar setTab={setTab} tab={tab} />
               {tab == "biodata" ? (
                 <Biodata userSelector={userSelector} />

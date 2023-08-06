@@ -18,6 +18,7 @@ import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
 import DetailBookCardPage from "../pages/DetailBookCardPage";
 import DetailBookPage from "../pages/DetailBookPage";
+import BranchAdmin from "../pages/SuperAdminPage/BranchAdmins";
 
 const routes = [
   <Route
@@ -41,7 +42,7 @@ const routes = [
   <Route
     path="/"
     element={
-      <ProtectedPage>
+      <ProtectedPage guestAndLogin={true}>
         <HomePage />
       </ProtectedPage>
     }
@@ -120,7 +121,6 @@ const routes = [
       </ProtectedPage>
     }
   ></Route>,
-
   <Route
     path="/profile"
     element={
