@@ -22,9 +22,9 @@ const validationSchemaAddress = Yup.object().shape({
     .trim()
     .required("You need to enter your complete address"),
 });
-async function submit({ val, token, Swal, dispatch, formikAddress }) {
+async function submit({ val, token, Swal, dispatch, data }) {
   await api
-    .patch("/address/v2/" + val.id + "?token=", formikAddress.values)
+    .patch("/address/v2/" + val.id + "?token=", data)
     .then(async (res) => {
       val.fetchUserAddresses();
       Swal.fire("Good job!", "Main Address Changed", "success");
