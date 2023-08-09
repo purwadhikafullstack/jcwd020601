@@ -111,6 +111,7 @@ export default function Add({ getData, token }) {
     fetchDiskon();
   }, [token]);
   console.log(formik.values);
+  console.log(token);
   return (
     <>
       <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">

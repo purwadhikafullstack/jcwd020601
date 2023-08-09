@@ -76,6 +76,7 @@ db.Category.belongsToMany(db.Book, { through: db.BooksCategory });
 db.Book.belongsToMany(db.Category, { through: db.BooksCategory });
 db.Book.belongsTo(db.Discount, {
   foreignKey: "DiscountId",
+  allowNull: true,
 });
 db.Discount.hasOne(db.Book);
 db.Discount.belongsTo(db.Branch, {

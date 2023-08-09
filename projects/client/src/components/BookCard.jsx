@@ -29,14 +29,18 @@ export default function BookCard() {
   const [limit, setLimit] = useState(5);
   const [keyword, setKeyword] = useState("");
 
+  const orderSelector = useSelector((state) => state.login.order);
+
+  console.log(orderSelector);
   async function fetchProduct() {
     let response = await api.get(`/stock?limit=${limit}`);
     setValue(response.data.result);
+    // console.log(response);
   }
   useEffect(() => {
     fetchProduct();
   }, [token]);
-
+  console.log(value);
   const settings = {
     dots: true,
     infinite: true,
@@ -59,8 +63,6 @@ export default function BookCard() {
         Swal.fire("You need to login first?", "", "question");
         nav("/login");
       }
-      // console.log(value[idx]);
-      // console.log(userSelector.id);
     } catch (error) {
       alert(error.response.data);
       console.error(error);

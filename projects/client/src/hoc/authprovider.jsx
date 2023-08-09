@@ -47,14 +47,14 @@ export default function AuthProvider({ children }) {
             address: address || userMainAddress,
             closestBranch,
           });
-          dispatch({
-            type: "order",
-            payload: {
-              BranchId: closestBranch.BranchId,
-              AddressId: address.id || userMainAddress.id,
-              shipping: 200,
-            },
-          });
+          // dispatch({
+          //   type: "order",
+          //   payload: {
+          //     BranchId: closestBranch.BranchId,
+          //     AddressId: address.id || userMainAddress.id,
+          //     shipping: 200,
+          //   },
+          // });
         } else {
           dispatch({
             type: "logout",
@@ -68,14 +68,14 @@ export default function AuthProvider({ children }) {
           .post("/address/closest", { lat: latitude, lon: longitude })
           .then((res) => res.data[0]);
         setIsLoading(false);
-        if (closestBranch) {
-          dispatch({
-            type: "order",
-            payload: {
-              BranchId: closestBranch.BranchId,
-            },
-          });
-        }
+        // if (closestBranch) {
+        //   dispatch({
+        //     type: "order",
+        //     payload: {
+        //       BranchId: closestBranch.BranchId,
+        //     },
+        //   });
+        // }
       }
     } catch (err) {
       console.log(err);
