@@ -1,29 +1,25 @@
 import {
+  Box,
+  TableContainer,
+  Input,
+  Button,
+  TableCaption,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
-  TableContainer,
-  Box,
-  Image,
-  Input,
-  Button,
 } from "@chakra-ui/react";
-import { useEffect, useState, useRef } from "react";
-import { api } from "../../api/api";
 import ReactPaginate from "react-paginate";
-import "../../App.css";
 import { BiSearchAlt } from "react-icons/bi";
 import { GrFormAdd, GrPowerReset } from "react-icons/gr";
-import Add from "./product/Add";
-import Action from "./product/Action";
-
-export default function Product() {
-  let t = localStorage.getItem("auth");
+import moment from "moment";
+import { api } from "../../../../api/api";
+import { useEffect, useState } from "react";
+import Action from "./Action";
+import Add from "./Add";
+export default function Discount() {
   const [value, setValue] = useState([]);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -31,26 +27,19 @@ export default function Product() {
   const [pages, setPages] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [query, setQuery] = useState("");
-  const [token, setToken] = useState(JSON.parse(t));
-
-  async function fetchProduct() {
+  async function fetchDiscount() {
     let response = await api.get(
-      `/book?search_query=${keyword}&page=${page}&limit=${limit}`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
+      `/discount?search_query=${keyword}&page=${page}&limit=${limit}`
     );
-    // setToken(JSON.parse(t));
     setValue(response.data.result);
     setPage(response.data.page);
     setRows(response.data.totalRows);
     setPages(response.data.totalPage);
   }
+
   useEffect(() => {
-    fetchProduct();
-  }, [page, keyword]);
+    fetchDiscount();
+  }, [pages, keyword]);
 
   const changePage = ({ selected }) => {
     setPage(selected);
@@ -65,17 +54,17 @@ export default function Product() {
   };
   const resetKeyWord = () => {
     setKeyword("");
-    fetchProduct();
+    fetchDiscount();
     setQuery("");
   };
+
+  console.log(value);
   const rupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
       currency: "IDR",
     }).format(number);
   };
-  console.log(value);
-
   return (
     <>
       <Box marginLeft={30}>
@@ -88,12 +77,12 @@ export default function Product() {
           >
             <Box display={"flex"} py={3} gap={3}>
               <Input
-                placeholder="Search data"
+                placeholder="Search Discount"
                 variant={"outline"}
                 w={"30em"}
                 size="lg"
-                value={query}
                 onChange={inputSearch}
+                value={query}
               />
               <Button
                 leftIcon={<BiSearchAlt />}
@@ -112,7 +101,7 @@ export default function Product() {
                 Reset
               </Button>
             </Box>
-            <Add getData={fetchProduct} token={token} />
+            <Add getData={fetchDiscount} />
           </Box>
           <Table variant="simple">
             <TableCaption my={5}>
@@ -121,35 +110,37 @@ export default function Product() {
             <Thead>
               <Tr>
                 <Th fontSize={18}>No</Th>
-                <Th fontSize={18}>Judul</Th>
-                <Th fontSize={18}>Bahasa</Th>
-                <Th fontSize={18}>Penulis</Th>
-                <Th fontSize={18}>DiskonId</Th>
-                <Th fontSize={18}>Lembar</Th>
-                <Th fontSize={18}>Harga</Th>
-                <Th fontSize={18}>Gambar</Th>
+                <Th fontSize={18}>Nama</Th>
+                <Th fontSize={18}>Diskon</Th>
+                {/* <Th fontSize={18}>Persen</Th> */}
+                <Th fontSize={18}>Mulai</Th>
+                <Th fontSize={18}>Berakhir</Th>
+                <Th fontSize={18}>BranchId</Th>
               </Tr>
             </Thead>
             <Tbody>
               {value.map((val, idx) => (
                 <Tr key={val.id}>
-                  <Td>{idx + 1 + page * limit}</Td>
+                  <Td>{idx + 1}</Td>
                   <Td>{val.title}</Td>
-                  <Td>{val.language}</Td>
-                  <Td>{val.author}</Td>
-                  <Td>{val.Discount?.discount}</Td>
-                  <Td>{val.pages}</Td>
-                  <Td>{rupiah(val.price)}</Td>
-
                   <Td>
-                    <Image src={val.book_url} w={50} h={50} />
+                    {val.isPercent ? (
+                      <>
+                        {val.discount} {" %"}
+                      </>
+                    ) : (
+                      <>{rupiah(val.discount)} </>
+                    )}
                   </Td>
+                  <Td>{moment(val.start).format("L")}</Td>
+                  <Td>{moment(val.end).format("L")}</Td>
+                  <Td>{val.BranchId}</Td>
                   <Td>
                     <Action
                       id={val.id}
                       name={val.title}
-                      getData={fetchProduct}
-                      token={token}
+                      getData={fetchDiscount}
+                      // token={token}
                     />
                   </Td>
                 </Tr>

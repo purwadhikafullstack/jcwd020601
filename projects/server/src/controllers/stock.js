@@ -13,6 +13,7 @@ const stockController = {
         include: [
           {
             model: db.Book,
+            include: [db.Discount],
             required: true, // Inner join
             where: {
               [Op.or]: [
@@ -70,7 +71,7 @@ const stockController = {
   getAllDesc: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 4;
-      const place = req.query.place || "Polonia";
+      const place = req.query.place || "Jakarta";
       const Stock = await db.Stock.findAll({
         include: [
           {

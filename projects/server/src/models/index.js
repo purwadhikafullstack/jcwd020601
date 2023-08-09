@@ -77,6 +77,7 @@ db.Book.belongsToMany(db.Category, { through: db.BooksCategory });
 db.Book.belongsTo(db.Discount, {
   foreignKey: "DiscountId",
 });
+db.Discount.hasOne(db.Book);
 db.Discount.belongsTo(db.Branch, {
   foreignKey: "BranchId",
 });
@@ -85,12 +86,7 @@ db.StockHistory.belongsTo(db.Stock, {
 });
 db.User.hasOne(db.Token);
 db.Token.belongsTo(db.User);
-db.Stock.belongsTo(db.Book),
-  {
-    foreignKey: "BookId",
-  };
-
-db.Admin.hasOne(db.Token);
+db.Stock.belongsTo(db.Book), db.Admin.hasOne(db.Token);
 db.Token.belongsTo(db.Admin);
 db.Cart.belongsTo(db.Stock, {
   foreignKey: "StockId",

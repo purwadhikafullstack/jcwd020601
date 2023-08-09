@@ -195,6 +195,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
               </Box>
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 <FormLabel>Penulis</FormLabel>
+                {formik.values.DiscountId}
                 <Input
                   placeholder="Penulis"
                   name="author"

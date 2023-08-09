@@ -1,6 +1,6 @@
 import { Route, Router } from "react-router-dom";
 import AdminLogin from "../pages/AdminLogin";
-import AdminPage from "../pages/AdminPage";
+import ProductPage from "../pages/ProductPage";
 import ForgotPassword, {
   RequestForgotPassword,
 } from "../pages/ForgetPassword.jsx";
@@ -18,6 +18,8 @@ import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
 import DetailBookCardPage from "../pages/DetailBookCardPage";
 import DetailBookPage from "../pages/DetailBookPage";
+
+import DiscountProductPage from "../pages/SuperAdminPage/BranchAdmins/DiscountProductPage";
 import BranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
 import Product from "../pages/SuperAdminPage/Product";
 import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
@@ -93,7 +95,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/admin"
+    path="/adminlogin"
     element={
       <ProtectedPage guestOnly={true}>
         <AdminLogin />
@@ -101,15 +103,23 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/admin/products"
+    path="/admin/product"
     element={
       <ProtectedPage needLoginAdmin={true}>
-        <AdminPage />
+        <ProductPage />
       </ProtectedPage>
     }
   ></Route>,
   <Route
-    path="/Category"
+    path="/admin/diskon"
+    element={
+      <ProtectedPage needLoginAdmin={true}>
+        <DiscountProductPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/admin/category"
     element={
       <ProtectedPage needLoginAdmin={true}>
         <CategoryPage />
