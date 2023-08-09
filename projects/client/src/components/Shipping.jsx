@@ -27,21 +27,13 @@ export default function Shipping(props) {
   // setMethod()
   function fungsi() {
     try {
-      dispatch({
-        type: "order",
-        payload: {
-          BranchId: 2,
-          AddressId: 1,
-          shipping: 200,
-        },
-      });
     } catch (error) {
       console.log(error);
     }
   }
-  useEffect(() => {
-    fungsi();
-  }, []);
+  // useEffect(() => {
+  //   fungsi();
+  // }, []);
   return (
     <Flex
       boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}

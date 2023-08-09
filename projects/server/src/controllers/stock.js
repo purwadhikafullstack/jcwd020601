@@ -7,7 +7,7 @@ const stockController = {
   getAllAsc: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 5;
-      const place = req.query.place || "Polonia";
+      const place = req.query.place || "Jakarta";
       const search = req.query.search_book || "";
       const Stock = await db.Stock.findAll({
         include: [

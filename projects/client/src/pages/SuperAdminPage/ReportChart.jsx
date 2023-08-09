@@ -144,33 +144,54 @@ export default function ReportChart() {
             </Flex>
           </Flex>
           <Flex mt={"30px"} bgColor={"#f2f2f2"} gap={"20px"} mb={"200px"}>
-            <Flex backgroundColor={"white"}>
-              <AreaChart
-                width={600}
-                height={250}
-                data={data}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            <Flex gap={"10px"} backgroundColor={"white"} flexDir={"column"}>
+              <Flex
+                pl={"10px"}
+                fontSize={"1.2rem"}
+                textDecor={"underline"}
+                color={"#2c5282"}
+                fontWeight={"600"}
               >
-                <defs>
-                  <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8884d8" stopOpacity={1} />
-                    <stop offset="95%" stopColor="8884d8" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="name" />
-                <YAxis />
-                <CartesianGrid strokeDasharray="3 3" />
-                <Tooltip />
-                <Area
-                  type="monotone"
-                  dataKey="uv"
-                  stroke="#8884d8"
-                  fillOpacity={1}
-                  fill="url(#colorUv)"
-                />
-              </AreaChart>
+                Sales from last month
+              </Flex>
+              <Flex>
+                <AreaChart
+                  width={600}
+                  height={250}
+                  data={data}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={1} />
+                      <stop offset="95%" stopColor="8884d8" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="uv"
+                    stroke="#8884d8"
+                    fillOpacity={1}
+                    fill="url(#colorUv)"
+                  />
+                </AreaChart>
+              </Flex>
             </Flex>
-            <Flex bgColor={"white"}>
+
+            <Flex gap={"10px"} backgroundColor={"white"} flexDir={"column"}>
+              <Flex
+                pl={"10px"}
+                fontSize={"1.2rem"}
+                textDecor={"underline"}
+                color={"#2c5282"}
+                fontWeight={"600"}
+              >
+                Sales from last month
+              </Flex>
               <BarChart width={500} height={300} data={data}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
