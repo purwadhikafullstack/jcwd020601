@@ -4,7 +4,7 @@ import Sidebar from "../components/admin/Sidebar";
 import Navbar from "../components/admin/Admin";
 import Product from "../components/admin/Product";
 
-export default function AdminPage() {
+export default function ProductPage() {
   return (
     <>
       <Flex>

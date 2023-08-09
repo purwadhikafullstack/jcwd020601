@@ -6,6 +6,7 @@ const { join } = require("path");
 const db = require("./models");
 const routes = require("./routes");
 // db.sequelize.sync({ alter: true });
+
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(
