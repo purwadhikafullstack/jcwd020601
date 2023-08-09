@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export default function ProfileSidebar() {
+export default function ProfileSidebar(props) {
   const locatio = useLocation();
   const location = locatio.pathname.split("/")[1];
   const nav = useNavigate();
@@ -51,28 +51,32 @@ export default function ProfileSidebar() {
           fontWeight={"600"}
           gap={"30px"}
         >
-          <Flex _hover={{ color: "#0060ae" }} cursor={"pointer"}>
+          <Flex
+            _hover={{ color: "#0060ae" }}
+            color={props.sideTab == "myOrders" ? "#0060ae" : "black"}
+            cursor={"pointer"}
+            onClick={() => props.setSideTab("myOrders")}
+          >
             Pesanan Saya
           </Flex>
           <Flex
-            color={location == "profile" ? "#0060ae" : "black"}
+            color={props.sideTab == "myAccount" ? "#0060ae" : "black"}
             _hover={{ color: "#0060ae" }}
             cursor={"pointer"}
+            onClick={() => props.setSideTab("myAccount")}
           >
             Akun Saya
           </Flex>
-          <Flex _hover={{ color: "#0060ae" }} cursor={"pointer"}>
-            WishList Saya
-          </Flex>
+
           <Flex
             _hover={{ color: "#0060ae" }}
             mt={{
-              base: "20px",
-              sm: "20px",
-              md: "20px",
-              lg: "40px",
-              xl: "70px",
-              "2xl": "70px",
+              base: "40px",
+              sm: "40px",
+              md: "40px",
+              lg: "70px",
+              xl: "100px",
+              "2xl": "100px",
             }}
             w={"100%"}
             cursor={"pointer"}

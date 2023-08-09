@@ -287,46 +287,16 @@ const addressController = {
   },
   addAddressByLongitudeLatitude: async (req, res) => {
     try {
-      const {
-        latitude,
-        longitude,
-        UserId,
-        alamatLengkap,
-        namaPenerima,
-        no_Handphone,
-      } = req.body;
+      const { latitude, longitude } = req.body;
       opencage
         .geocode({ q: latitude + "," + longitude, language: "id" })
         .then(async (data) => {
           // console.log(JSON.stringify(data));
           if (data.status.code === 200 && data.results.length > 0) {
             const place = data.results[0].geometry;
-            const Main = await db.Address.findOne({
-              where: {
-                isMain: true,
-              },
-            });
-            // await db.Address.create({
-            //   // province: place.components.state,
-            //   // city: place.components.city,
-            //   // address,
-            //   // pos: place.components.postcode,
-            //   // isMain: Main ? false : true,
-            //   // latitude,
-            //   // longitude,
-            //   // UserId,labelAlamat,
-            //   namaPenerima,
-            //   no_Handphone,
-            //   province: place.components.state,
-            //   city: place.components.city,
-            //   alamatLengkap,
-            //   pos: place.components.postcode,
-            //   latitude,
-            //   longitude,
-            //   UserId,
-            // });
+
             res.send({
-              place: data.results[0].components,
+              place: data.results[0].components.city,
 
               // namaPenerima,
               // no_Handphone,
