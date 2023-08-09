@@ -13,10 +13,12 @@ import Biodata from "./Biodata";
 import DaftarAlamat from "./DaftarAlamat";
 import ProfileFooter from "./ProfileFooter";
 import { api } from "../../api/api";
+import MyOrders from "./MyOrders";
 export default function ProfilePage() {
   const [userAddresses, setUserAddresses] = useState([]);
   const userSelector = useSelector((state) => state.login.auth);
   const [tab, setTab] = useState("biodata");
+  const [sideTab, setSideTab] = useState("myAccount");
   const toast = useToast();
   async function fetchUserAddresses() {
     try {
@@ -55,26 +57,33 @@ export default function ProfilePage() {
                 sm: "block",
               }}
             >
-              <ProfileSidebar />
+              <ProfileSidebar setSideTab={setSideTab} sideTab={sideTab} />
             </Flex>
-            <Flex flexDir={"column"} gap={"20px"}>
-              <TabBar setTab={setTab} tab={tab} />
-              {tab == "biodata" ? (
-                <Biodata userSelector={userSelector} />
-              ) : tab == "daftarAlamat" ? (
-                <DaftarAlamat
-                  setUserAddresses={setUserAddresses}
-                  userAddresses={userAddresses}
-                  fetchUserAddresses={fetchUserAddresses}
-                  userSelector={userSelector}
-                />
-              ) : (
-                <Flex>djas</Flex>
-              )}
-            </Flex>
+            {sideTab == "myAccount" ? (
+              <Flex flexDir={"column"} gap={"20px"}>
+                <TabBar setTab={setTab} tab={tab} />
+                {tab == "biodata" ? (
+                  <Biodata userSelector={userSelector} />
+                ) : tab == "daftarAlamat" ? (
+                  <DaftarAlamat
+                    setUserAddresses={setUserAddresses}
+                    userAddresses={userAddresses}
+                    fetchUserAddresses={fetchUserAddresses}
+                    userSelector={userSelector}
+                  />
+                ) : (
+                  <Flex>djas</Flex>
+                )}
+              </Flex>
+            ) : sideTab == "myOrders" ? (
+              <>
+                <MyOrders />
+              </>
+            ) : (
+              <></>
+            )}
           </Flex>
         </Center>
-
         <Footer />
         <NavbarFooter />
       </Flex>
