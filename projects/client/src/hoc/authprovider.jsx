@@ -73,6 +73,7 @@ export default function AuthProvider({ children }) {
             type: "order",
             payload: {
               BranchId: closestBranch.BranchId,
+              shipping: 200,
             },
           });
         }

@@ -1,7 +1,6 @@
 import { api } from "../../../api/api";
 
 async function submit({
-  formikAddress,
   Swal,
   modalAddAddress,
   dispatch,
@@ -9,15 +8,9 @@ async function submit({
   fetchUserAddresses,
 }) {
   try {
-    const token = JSON.parse(localStorage.getItem("auth"));
-    await api
-      .post("/address/v1?token=" + token, formikAddress.values)
-      .then(async (res) => {
-        modalAddAddress.onClose();
-        formikAddress.resetForm();
-        fetchUserAddresses();
-        Swal.fire("Good job!", "Address Added", "success");
-      });
+    modalAddAddress.onClose();
+    fetchUserAddresses();
+    Swal.fire("Good job!", "Address Added", "success");
   } catch (err) {
     Swal.fire({
       icon: "error",
