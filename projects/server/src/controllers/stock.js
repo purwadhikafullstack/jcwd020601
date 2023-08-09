@@ -13,6 +13,7 @@ const stockController = {
         include: [
           {
             model: db.Book,
+            include: [db.Discount],
             required: true, // Inner join
             where: {
               [Op.or]: [

@@ -31,6 +31,7 @@ export default function Add({ getData, token }) {
   const inputFileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [image, setImage] = useState(icon);
+  const [diskon, setDiskon] = useState([]);
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -45,7 +46,7 @@ export default function Add({ getData, token }) {
       dimension: "",
       price: "",
       rating: "",
-      DiscountId: 1,
+      DiscountId: null,
     },
     validationSchema: Yup.object({
       title: Yup.string().required("Tidak Boleh Kosong!"),
@@ -101,6 +102,15 @@ export default function Add({ getData, token }) {
       setTimeout(getData, 1000);
     },
   });
+  const fetchDiskon = async () => {
+    let response = await api.get("/discount");
+    setDiskon(response.data.result);
+  };
+
+  useEffect(() => {
+    fetchDiskon();
+  }, [token]);
+  console.log(formik.values);
   return (
     <>
       <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">
@@ -160,6 +170,17 @@ export default function Add({ getData, token }) {
                 />
                 <Text color={"red.800"}>{formik.errors.author}</Text>
               </Box>
+              {/* <Box display={"flex"} flexDirection={"column"} gap={2}>
+                <FormLabel>DiscountId</FormLabel>
+                <Input
+                  placeholder="DiscountId"
+                  name="DiscountId"
+                  type="number"
+                  value={formik.values.DiscountId}
+                  onChange={formik.handleChange}
+                />
+                <Text color={"red.800"}>{formik.errors.DiscountId}</Text>
+              </Box> */}
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 <FormLabel>Harga</FormLabel>
                 <Input
@@ -210,7 +231,22 @@ export default function Add({ getData, token }) {
                 />
                 <Text color={"red.800"}>{formik.errors.dimension}</Text>
               </Box>
-
+              <Box>
+                <FormLabel>Discount</FormLabel>
+                <Select
+                  placeholder="Select Discount"
+                  id="DiscountId"
+                  name="DiscountId"
+                  onChange={formik.handleChange}
+                  value={formik.values.dimension}
+                >
+                  {diskon.map((val, idx) => (
+                    <option key={val.id} value={val.id}>
+                      {val.title}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 {" "}
                 <FormLabel>Deskripsi</FormLabel>

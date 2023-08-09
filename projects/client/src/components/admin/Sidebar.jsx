@@ -4,7 +4,7 @@ import {
   Flex,
   Icon,
   useColorModeValue,
-  // Link,
+  Text,
   Image,
 } from "@chakra-ui/react";
 import {
@@ -19,11 +19,11 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const LinkItems = [
-  { name: "Home", icon: FiHome, link: "/adminpage" },
-  { name: "Product", icon: FiTrendingUp, link: "/product" },
-  { name: "Category", icon: FiCompass, link: "/category" },
-  { name: "Favourites", icon: FiStar },
-  { name: "Settings", icon: FiSettings },
+  { name: "Home", icon: FiHome, address: "/admin" },
+  { name: "Product", icon: FiTrendingUp, address: "/admin/product" },
+  { name: "Category", icon: FiCompass, address: "/admin/category" },
+  { name: "Favourites", icon: FiStar, address: "/favorites" },
+  { name: "Settings", icon: FiSettings, address: "/settings" },
 ];
 
 export default function Sidebar() {
@@ -33,12 +33,13 @@ export default function Sidebar() {
       bg={useColorModeValue("gray.100", "gray.900")}
       zIndex={10}
     >
-      <SidebarContent />
+      <SidebarContent LinkItems={LinkItems} />
     </Box>
   );
 }
 
-const SidebarContent = () => {
+const SidebarContent = ({ LinkItems }) => {
+  console.log(LinkItems);
   return (
     <Box
       bg={useColorModeValue("white", "gray.900")}
@@ -52,45 +53,52 @@ const SidebarContent = () => {
         <Image src={logo} w={{ base: "10em", sm: "12em" }} />
       </Flex>
       {LinkItems.map((link) => (
-        <Link to={link.link} key={link.name}>
-          <NavItem icon={link.icon}>{link.name}</NavItem>
-        </Link>
+        <NavItem icon={link.icon} key={link.name}>
+          <Link to={link.address}>
+            {link.name}
+            {/* {link.address}{" "} */}
+          </Link>
+          {/* asdasd */}
+        </NavItem>
+        // {/* </Link> */}
       ))}
     </Box>
   );
 };
 
-const NavItem = ({ icon, children, href }) => {
-  const nav = useNavigate();
+const NavItem = ({ icon, children, address }) => {
+  // const nav = useNavigate();
   return (
-    <Link style={{ textDecoration: "none" }} _focus={{ boxShadow: "none" }}>
-      <Flex
-        onClick={() => {
-          nav(href);
-        }}
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: "#2c5282",
-          color: "white",
-        }}
-      >
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: "white",
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
-    </Link>
+    // <Link
+    //   to={address}
+    // style={{ textDecoration: "none" }}
+    // _focus={{ boxShadow: "none" }}
+    // bgColor={"red"}
+    // >
+    <Flex
+      align="center"
+      p="4"
+      mx="4"
+      borderRadius="lg"
+      role="group"
+      cursor="pointer"
+      _hover={{
+        bg: "#2c5282",
+        color: "white",
+      }}
+    >
+      {icon && (
+        <Icon
+          mr="4"
+          fontSize="16"
+          _groupHover={{
+            color: "white",
+          }}
+          as={icon}
+        />
+      )}
+      {children}
+    </Flex>
+    // </Link>
   );
 };

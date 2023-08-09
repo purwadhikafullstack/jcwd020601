@@ -126,6 +126,13 @@ export default function BookCard() {
                 <Text color="blue.600" fontSize="xl">
                   Rp. {val.Book?.price}
                 </Text>
+                <Text color="blue.600" fontSize="xl">
+                  {val.Book?.Discount?.discount ? (
+                    <>Diskon {val.Book?.Discount?.discount} %</>
+                  ) : (
+                    <></>
+                  )}
+                </Text>
               </Stack>
             </CardBody>
             <CardFooter p={5}>
