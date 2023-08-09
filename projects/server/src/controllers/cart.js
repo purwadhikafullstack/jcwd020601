@@ -58,7 +58,16 @@ const cartController = {
           },
         ],
       });
-      return res.send(Cart);
+      // Sum Weight
+      const weight = Cart.reduce((prev, curr) => {
+        return (
+          prev +
+          curr.dataValues.quantity *
+            curr.dataValues.Stock.dataValues.Book.weight
+        );
+      }, 0);
+      // console.log(weight);
+      return res.send({ Cart, weight });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({

@@ -7,6 +7,7 @@ import { BsCartX } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useSelector } from "react-redux";
+import Shipping from "./Shipping";
 
 export default function CartBooks(props) {
   const userSelector = useSelector((state) => state.login.auth);
@@ -23,7 +24,9 @@ export default function CartBooks(props) {
       BranchId: 2,
       // SEMENTARA----------------------
     });
-    return setCart(data.data);
+    // console.log(data.data.Cart);
+    props.setWeight(data.data.weight);
+    return setCart(data.data.Cart);
   }
 
   //PATCH
@@ -62,13 +65,22 @@ export default function CartBooks(props) {
   }, 0);
   // console.log(total);
 
-  useEffect(() => {
-    fetch();
-  }, []);
+  // Total Order Weight
+  // const weight = cart.reduce((prev, curr) => {
+  //   const w = curr.Stock.Book.weight;
+  //   const { quantity } = curr;
+  //   const total = w * quantity;
+  //   return prev + total;
+  // }, 0);
+  // console.log(weight);
 
   useEffect(() => {
     fetch();
   }, [hapus]);
+
+  useEffect(() => {
+    fetch();
+  }, []);
 
   useEffect(() => {
     setTotal(totalPrice);

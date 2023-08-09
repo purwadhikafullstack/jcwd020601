@@ -6,9 +6,22 @@ import {
   Icon,
   Image,
   useDisclosure,
+  TableContainer,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+  Th,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogCloseButton,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../api/api";
 import CartBooks from "../components/CartBooks";
 import { useNavigate } from "react-router-dom";
@@ -20,8 +33,29 @@ export default function CartPage() {
   // const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
-  const [edit, setEdit] = useState(false);
+  // const [edit, setEdit] = useState(false);
+  const [origin, setOrigin] = useState();
+  const [destination, setDestination] = useState();
   const [total, setTotal] = useState(0);
+  const [weight, setWeight] = useState();
+  const [courier, setCourier] = useState();
+  const [shipping, setShipping] = useState(0);
+  const [totalOr, setTotalOr] = useState(0);
+
+  useEffect(() => {
+    setTotalOr(Number(total) + Number(shipping));
+  }, [shipping]);
+
+  async function create() {
+    await api.post("order/v1", {
+      UserId: 2,
+      BranchId: 2,
+      AddressId: 5,
+      shipping: Number(shipping),
+      courier,
+    });
+    return nav("/order");
+  }
 
   return (
     <Container maxW={"size.lg"}>
@@ -37,7 +71,7 @@ export default function CartPage() {
             gap={"1rem"}
             padding={" 1rem 2rem"}
           >
-            <CartBooks setTotal={setTotal}></CartBooks>
+            <CartBooks setWeight={setWeight} setTotal={setTotal}></CartBooks>
           </Flex>
           <Flex
             width={"35%"}
@@ -46,7 +80,14 @@ export default function CartPage() {
             padding={"1rem 2rem"}
           >
             {/* Shipping */}
-            <Shipping total={total}></Shipping>
+            <Shipping
+              setShipping={setShipping}
+              shipping={shipping}
+              weight={weight}
+              total={total}
+              setCourier={setCourier}
+              courier={courier}
+            ></Shipping>
             {/* Shipping */}
             <Flex
               flexDir={"column"}
@@ -65,27 +106,93 @@ export default function CartPage() {
                 fontWeight={"semibold"}
               >
                 <Flex gap={"1rem"}>
-                  <Box>Payment Summary</Box>
+                  {/* <Box>Payment Summary</Box>
                   <Box color={"blue.500"} fontWeight={"bold"}>
                     Rp {total.toLocaleString("id-ID")},-
-                  </Box>
+                  </Box> */}
+                  <TableContainer>
+                    <Table variant="simple">
+                      <Tbody>
+                        <Th>Payment Summary</Th>
+                        <Tr>
+                          <Td>Price</Td>
+                          <Td>Rp {total.toLocaleString("id-ID")},-</Td>
+                        </Tr>
+                        <Tr>
+                          <Td>Shipping</Td>
+                          <Td>
+                            Rp {Number(shipping).toLocaleString("id-ID")},-
+                          </Td>
+                        </Tr>
+                        <Tr>
+                          <Td>Total</Td>
+                          <Td>Rp {totalOr.toLocaleString("id-ID")},-</Td>
+                        </Tr>
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
                 </Flex>
-                <Button
+                <AlertOrder create={create} />
+                {/* <Button
                   colorScheme={"blue"}
                   borderRadius={"1.5rem"}
                   width={"100%"}
-                  onClick={() => nav("/order")}
-                  isDisabled={true}
-                  // onClick={() => console.log(orderSelector)}
+                  // isDisabled={true}
+                  onClick={create}
                 >
                   Create Order
-                </Button>
+                </Button> */}
               </Flex>
             </Flex>
           </Flex>
         </Flex>
       </Box>
     </Container>
+  );
+}
+
+function AlertOrder(props) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef();
+
+  return (
+    <>
+      <Button
+        colorScheme={"blue"}
+        borderRadius={"1.5rem"}
+        width={"100%"}
+        // isDisabled={true}
+
+        onClick={onOpen}
+      >
+        Create Order
+      </Button>
+
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Create Order
+            </AlertDialogHeader>
+
+            <AlertDialogBody>Are you sure?</AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Check
+              </Button>
+              <Button colorScheme="blue" onClick={props.create} ml={3}>
+                Create
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
   );
 }
 
