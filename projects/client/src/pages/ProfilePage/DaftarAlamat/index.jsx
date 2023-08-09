@@ -16,12 +16,14 @@ import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import YupPassword from "yup-password";
 import * as Yup from "yup";
-import { api } from "../../api/api";
+import { api } from "../../../api/api";
 import { MdClose } from "react-icons/md";
 import EditAddress from "./EditAddress";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import Helpers from "./EditAddressHelper";
+import AddAddressHelpers from "./AddAddressHelper";
 export default function DaftarAlamat(props) {
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -31,123 +33,28 @@ export default function DaftarAlamat(props) {
   const [provinces, setProvinces] = useState([]);
   const [province, setProvince] = useState();
   const [cities, setCities] = useState([1, 2]);
-  const [userAddresses, setUserAddresses] = useState([]);
   const [pos, setPos] = useState();
   const [provinceId, setProvinceId] = useState();
   const [cityId, setCityId] = useState();
-  const toast = useToast();
   const nav = useNavigate();
-
   YupPassword(Yup);
   const formikAddress = useFormik({
     initialValues: {},
-    validationSchema: Yup.object().shape({
-      no_Handphone: Yup.string()
-        .trim()
-        .matches(phoneRegExp, "Phone number is not valid")
-        .required("You need to enter a phone number"),
-      namaPenerima: Yup.string()
-        .required("You need to enter a receiver's name")
-        .trim(),
-      labelAlamat: Yup.string()
-        .required("You need to enter your address labels")
-        .trim(),
-      province: Yup.string().trim().required("You need to enter your province"),
-      city: Yup.string().trim().required("You need to enter your city"),
-      pos: Yup.string().trim().required("You need to enter your poscode"),
-      alamatLengkap: Yup.string()
-        .trim()
-        .required("You need to enter your complete address"),
+    validationSchema: Helpers.validationSchemaAddress,
+    onSubmit: AddAddressHelpers.submit({
+      formikAddress,
+      Swal,
+      modalAddAddress,
+      dispatch,
+      nav,
+      fetchUserAddresses: props.fetchUserAddresses,
     }),
-    onSubmit: async () => {
-      try {
-        const {
-          id,
-          no_Handphone,
-          namaPenerima,
-          labelAlamat,
-          province,
-          city,
-          pos,
-          alamatLengkap,
-        } = formikAddress.values;
-        const address2 = {
-          id,
-          no_Handphone,
-          namaPenerima,
-          labelAlamat,
-          province,
-          city,
-          pos,
-          alamatLengkap,
-          UserId: props.userSelector.id,
-        };
-        const token = JSON.parse(localStorage.getItem("auth"));
-        await api
-          .post("/address/v1?token=" + token, address2)
-          .then(async (res) => {
-            modalAddAddress.onClose();
-            formikAddress.resetForm();
-            fetchUserAddresses();
-            toast({
-              position: "top",
-              title: res.data.message,
-              description: "Address Added.",
-              status: "success",
-              duration: 5000,
-              isClosable: true,
-            });
-          });
-      } catch (err) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Login session has expired",
-        });
-        localStorage.removeItem("auth");
-        localStorage.removeItem("address");
-        localStorage.removeItem("Latitude");
-        localStorage.removeItem("Longitude");
-        dispatch({
-          type: "logout",
-        });
-        nav("/login");
-        modalAddAddress.onClose();
-      }
-    },
   });
   useEffect(() => {
     if (props.userSelector.email) {
-      // const fetchData = async () => {
-      //   const data = await api
-      //     .get("/address/province", {
-      //       headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-      //     })
-      //     .then((res) => {
-      //       setProvinces(res.data.result);
-      //     });
-      // };
-      // console.log("sanfjasf");
-      // fetchData();
-      fetchUserAddresses();
+      props.fetchUserAddresses();
     }
   }, []);
-  async function fetchUserAddresses() {
-    try {
-      await api.get("/address/user/" + props.userSelector.id).then((res) => {
-        setUserAddresses(res.data);
-      });
-    } catch (err) {
-      toast({
-        position: "top",
-        title: "Something went wrong",
-        description: err.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  }
   async function fetchCity() {
     setPos();
     setCities([]);
@@ -166,7 +73,6 @@ export default function DaftarAlamat(props) {
       setPos(res.data.result);
     });
   }
-
   async function inputHandlerAddress(input) {
     const { value, id } = input.target;
     const tempobject = {};
@@ -192,8 +98,6 @@ export default function DaftarAlamat(props) {
           w={"160px"}
           onClick={() => {
             modalAddAddress.onOpen();
-            console.log(pos);
-            console.log(typeof cities);
           }}
           colorScheme="facebook"
         >
@@ -210,7 +114,7 @@ export default function DaftarAlamat(props) {
           Change Main Address
         </Button>
       </Flex>
-      {userAddresses.map((val) => {
+      {props.userAddresses.map((val) => {
         return (
           <>
             <EditAddress
@@ -219,12 +123,13 @@ export default function DaftarAlamat(props) {
               phoneRegExp={phoneRegExp}
               userSelector={props.userSelector}
               useState={useState}
-              fetchUserAddresses={fetchUserAddresses}
+              fetchUserAddresses={props.fetchUserAddresses}
               inputHandlerAddress={inputHandlerAddress}
               id={val.id}
               province={val.province}
               city={val.city}
               pos={val.pos}
+              nav={nav}
               labelAlamat={val.labelAlamat}
               isMain={val.isMain}
               no_Handphone={val.no_Handphone}
@@ -234,7 +139,6 @@ export default function DaftarAlamat(props) {
           </>
         );
       })}
-
       <Modal
         closeOnOverlayClick={false}
         scrollBehavior="inside"

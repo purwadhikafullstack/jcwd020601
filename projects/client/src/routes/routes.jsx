@@ -18,8 +18,12 @@ import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
 import DetailBookCardPage from "../pages/DetailBookCardPage";
 import DetailBookPage from "../pages/DetailBookPage";
-import BranchAdmin from "../pages/SuperAdminPage/BranchAdmins";
+
 import DiscountProductPage from "../pages/SuperAdminPage/BranchAdmins/DiscountProductPage";
+import BranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
+import Product from "../pages/SuperAdminPage/Product";
+import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
+import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
 
 const routes = [
   <Route
@@ -127,6 +131,22 @@ const routes = [
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/superadminpage/products"
+    element={
+      <ProtectedPage needSuperAdminLogin={true}>
+        <SuperAdminPageProduct />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/superadminpage/branchadmins"
+    element={
+      <ProtectedPage needSuperAdminLogin={true}>
+        <SuperAdminPageBranchAdmin />
       </ProtectedPage>
     }
   ></Route>,

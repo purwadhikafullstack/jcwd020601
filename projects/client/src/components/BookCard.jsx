@@ -13,16 +13,17 @@ import {
   Divider,
   useMediaQuery,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 export default function BookCard() {
   let t = localStorage.getItem("auth");
 
   const userSelector = useSelector((state) => state.login.auth);
-
+  const nav = useNavigate();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(5);
@@ -48,13 +49,18 @@ export default function BookCard() {
   // Add to Cart
   async function add(idx) {
     try {
+      if (userSelector.username) {
+        await api.post("cart/v1", {
+          qty: 1,
+          UserId: userSelector.id,
+          StockId: value[idx].id,
+        });
+      } else {
+        Swal.fire("You need to login first?", "", "question");
+        nav("/login");
+      }
       // console.log(value[idx]);
       // console.log(userSelector.id);
-      await api.post("cart/v1", {
-        qty: 1,
-        UserId: userSelector.id,
-        StockId: value[idx].id,
-      });
     } catch (error) {
       alert(error.response.data);
       console.error(error);

@@ -1,22 +1,32 @@
-import { Box, Flex, Icon, Image, propNames } from "@chakra-ui/react";
+import { Box, Flex, Icon, Image, useToast } from "@chakra-ui/react";
 import Increment from "./Increment";
 import DeleteModal from "../components/DeleteCart";
 import { AiFillPlusCircle, AiFillMinusCircle } from "react-icons/ai";
 import { IoStorefrontSharp } from "react-icons/io5";
+import { BsCartX } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useSelector } from "react-redux";
+import Shipping from "./Shipping";
 
 export default function CartBooks(props) {
   const userSelector = useSelector((state) => state.login.auth);
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
   const [hapus, setHapus] = useState();
+  const toast = useToast();
 
   //GET
   async function fetch() {
-    const data = await api.get("cart/" + userSelector.id);
-    return setCart(data.data);
+    const data = await api.post("/cart/id", {
+      UserId: userSelector.id,
+      // SEMENTARA----------------------
+      BranchId: 2,
+      // SEMENTARA----------------------
+    });
+    // console.log(data.data.Cart);
+    props.setWeight(data.data.weight);
+    return setCart(data.data.Cart);
   }
 
   //PATCH
@@ -32,7 +42,16 @@ export default function CartBooks(props) {
       });
       await fetch();
     } catch (error) {
-      alert(error.response.data);
+      toast({
+        title: error.response.data,
+        position: "top",
+        containerStyle: {
+          maxWidth: "30%",
+        },
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      });
       console.error("Error in edit():", error);
     }
   }
@@ -46,13 +65,22 @@ export default function CartBooks(props) {
   }, 0);
   // console.log(total);
 
-  useEffect(() => {
-    fetch();
-  }, []);
+  // Total Order Weight
+  // const weight = cart.reduce((prev, curr) => {
+  //   const w = curr.Stock.Book.weight;
+  //   const { quantity } = curr;
+  //   const total = w * quantity;
+  //   return prev + total;
+  // }, 0);
+  // console.log(weight);
 
   useEffect(() => {
     fetch();
   }, [hapus]);
+
+  useEffect(() => {
+    fetch();
+  }, []);
 
   useEffect(() => {
     setTotal(totalPrice);
@@ -66,8 +94,9 @@ export default function CartBooks(props) {
         boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
         borderRadius={"0.7rem"}
       >
-        {cart.map((val, idx) => {
-          return (
+        {/* {console.log(cart[0])} */}
+        {cart[0] ? (
+          cart.map((val, idx) => (
             <>
               <Flex padding={"1rem"}>
                 <Box textAlign={"center"} width={"20%"} fontWeight={"semibold"}>
@@ -129,9 +158,6 @@ export default function CartBooks(props) {
                     }}
                   ></Icon>
                 </Flex>
-                {/* {cart.quantity} */}
-                {/* seperate */}
-                {/* seperate */}
                 <Flex flexDir={"column"} gap={"8px"}>
                   {/* <Box>Rp 180.000</Box> */}
                   <Box>
@@ -148,8 +174,19 @@ export default function CartBooks(props) {
                 </Flex>
               </Flex>
             </>
-          );
-        })}
+          ))
+        ) : (
+          <Flex
+            height={"300px"}
+            flexDir={"column"}
+            gap={"1rem"}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Icon fontSize={"6xl"} as={BsCartX}></Icon>
+            <Box>The Cart is Empty</Box>
+          </Flex>
+        )}
         <Flex
           textAlign={"center"}
           padding={"1rem 2rem"}

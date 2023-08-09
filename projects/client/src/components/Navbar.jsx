@@ -51,6 +51,7 @@ import { MdClose } from "react-icons/md";
 import ModalSelectAddress from "../pages/ProfilePage/ModalSelectAddress";
 
 export default function Navbar({ callback, keyword }) {
+  const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   const [large] = useMediaQuery("(min-width: 768px)");
   const [category, setCategory] = useState([]);
@@ -63,7 +64,6 @@ export default function Navbar({ callback, keyword }) {
   useEffect(() => {
     fetchCategori();
   }, [keyword]);
-  console.log(category);
   return (
     <>
       <Box
@@ -293,7 +293,6 @@ function DesktopNav({ callback, keyword, category }) {
   }
   async function fetchUserAddresses() {
     try {
-      console.log(userSelector);
       await api
         .get("/address/user/" + userSelector.id)
         .then((res) => {
@@ -328,9 +327,7 @@ function DesktopNav({ callback, keyword, category }) {
   const fetchData = async (value) => {
     try {
       const response = await api.get("/book/");
-      console.log(response.data.result);
       const json = await response.data.result;
-      console.log(json);
 
       const result = json.filter((book) => {
         return (
@@ -351,7 +348,6 @@ function DesktopNav({ callback, keyword, category }) {
     setInput(value);
     fetchData(value);
   };
-  console.log(result);
   return (
     <>
       {/* <Flex

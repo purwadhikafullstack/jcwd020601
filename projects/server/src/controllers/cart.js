@@ -15,6 +15,10 @@ const cartController = {
                 model: db.Book,
                 required: true, // Inner join
               },
+              {
+                model: db.Branch,
+                required: true,
+              },
             ],
           },
         ],
@@ -29,18 +33,22 @@ const cartController = {
   },
   getById: async (req, res) => {
     try {
+      const { UserId, BranchId } = req.body;
       const Cart = await db.Cart.findAll({
         where: {
-          UserId: req.params.id,
+          UserId,
         },
         include: [
           {
             model: db.Stock,
-            required: true, // Inner join
+            required: true,
+            where: {
+              BranchId,
+            },
             include: [
               {
                 model: db.Book,
-                required: true, // Inner join
+                required: true,
               },
               {
                 model: db.Branch,
@@ -50,7 +58,16 @@ const cartController = {
           },
         ],
       });
-      return res.send(Cart);
+      // Sum Weight
+      const weight = Cart.reduce((prev, curr) => {
+        return (
+          prev +
+          curr.dataValues.quantity *
+            curr.dataValues.Stock.dataValues.Book.weight
+        );
+      }, 0);
+      // console.log(weight);
+      return res.send({ Cart, weight });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
