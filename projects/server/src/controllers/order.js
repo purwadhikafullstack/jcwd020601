@@ -2,6 +2,8 @@ const db = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
+const { default: axios } = require("axios");
+
 const orderController = {
   getAll: async (req, res) => {
     try {
@@ -507,22 +509,23 @@ const orderController = {
   getShipping: async (req, res) => {
     try {
       const { origin, destination, weight, courier } = req.body;
+      const form = new FormData();
+      form.append("origin", origin);
+      form.append("destination", destination);
+      form.append("weight", weight);
+      form.append("courier", courier);
+
       const response = await axios.post(
         "https://api.rajaongkir.com/starter/cost",
-        {
-          origin,
-          destination,
-          weight,
-          courier,
-        },
+        form,
         {
           headers: { key: process.env.RAJA_ONGKIR },
         }
       );
       // await db.Province.bulkCreate(response.data.rajaongkir.results);
-      return res.status(200).send(response.data.rajaongkir.results);
+      return res.status(200).send(response.data.rajaongkir.results[0].costs);
     } catch (error) {
-      return res.status(500).send({ message: error.message });
+      return res.status(500).send({ message: error });
     }
   },
 };

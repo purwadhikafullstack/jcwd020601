@@ -45,6 +45,7 @@ export default function DeleteModal(props) {
               colorScheme={"red"}
               onClick={() => {
                 hapus();
+                onClose();
               }}
             >
               Delete
