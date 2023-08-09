@@ -20,6 +20,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useCallback } from "react";
 import Options from "./Options";
 import Inputs from "./Inputs";
+import Swal from "sweetalert2";
 export default function LoginPage() {
   useEffect(() => {
     /* global google */
@@ -44,24 +45,16 @@ export default function LoginPage() {
         .then((res) => {
           localStorage.setItem("auth", JSON.stringify(res.data.token));
           token = res.data.token;
-          toast({
-            title: res.data.message,
-            description: "Login Successful.",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
+          Swal.fire("Good job!", "Login succesful", "success");
+
           return res.data.message;
         })
         .catch((err) => {
           console.log(err);
-          toast({
-            position: "top",
-            title: "Login ERROR",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Login unsuccessful",
           });
         });
       if (loggingIn) {
@@ -92,6 +85,7 @@ export default function LoginPage() {
             payload: user,
             address: userMainAddress,
           });
+
           nav("/");
         }
       }

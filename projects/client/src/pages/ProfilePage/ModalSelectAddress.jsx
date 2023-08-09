@@ -48,6 +48,14 @@ export default function ModalSelectAddress(val) {
             address: val.address,
             closestBranch,
           });
+          dispatch({
+            type: "order",
+            payload: {
+              BranchId: closestBranch.BranchId,
+              AddressId: val.address.id,
+              shipping: 200,
+            },
+          });
           val.modalSelectAddress.onClose();
         }}
       >

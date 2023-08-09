@@ -20,7 +20,7 @@ import { useRef, useState } from "react";
 import { useFormik } from "formik";
 import YupPassword from "yup-password";
 import * as Yup from "yup";
-import { api } from "../../api/api";
+import { api } from "../../../api/api";
 import { useDispatch } from "react-redux";
 import ModalChangeProfile from "./ModalChangeProfile";
 import Swal from "sweetalert2";

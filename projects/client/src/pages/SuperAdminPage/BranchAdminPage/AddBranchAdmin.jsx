@@ -23,7 +23,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function AddAdminButton() {
+export default function AddAdminButton(props) {
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const userSelector = useSelector((state) => state.login.auth);
@@ -128,6 +128,7 @@ export default function AddAdminButton() {
             duration: 5000,
             isClosable: true,
           });
+          props.getAllAdminBranch();
         })
         .catch((err) => {
           console.log(err);

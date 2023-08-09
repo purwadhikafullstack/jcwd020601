@@ -1,18 +1,17 @@
 import { Box, Flex } from "@chakra-ui/react";
-import NavbarFooter from "./NavbarFooter";
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
-import Product from "./Product";
-import ReportChart from "./ReportChart";
+import NavbarFooter from "../NavbarFooter";
+import Sidebar from "../Sidebar";
+import Navbar from "../Navbar";
+import Product from "../Product";
 import { useState } from "react";
-export default function SuperAdminPage() {
+export default function SuperAdminPageProduct() {
   return (
     <>
       <Flex>
         <Sidebar />
         <Box display={"flex"} flexDirection={"column"} width={"100%"}>
           <Navbar />
-          <ReportChart />
+          <Product />
           <NavbarFooter />
         </Box>
       </Flex>

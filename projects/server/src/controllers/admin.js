@@ -19,11 +19,14 @@ const adminController = {
       });
     }
   },
-  getById: async (req, res) => {
+  getAllAdminBranch: async (req, res) => {
     try {
-      const Admin = await db.Admin.findOne({
+      const Admin = await db.Admin.findAll({
+        include: {
+          model: db.Branch,
+        },
         where: {
-          id: req.params.id,
+          role: "Admin-Branch",
         },
       });
       return res.send(Admin);
