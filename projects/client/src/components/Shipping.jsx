@@ -37,6 +37,7 @@ export default function Shipping(props) {
       console.log(error);
     }
   }
+
   // console.log(service.costs[0].cost[0].values);
   // console.log(service[0].cost[0].value);
 
@@ -62,6 +63,7 @@ export default function Shipping(props) {
   //     console.log(error);
   //   }
   // }
+
   // useEffect(() => {
   //   fungsi();
   // }, []);

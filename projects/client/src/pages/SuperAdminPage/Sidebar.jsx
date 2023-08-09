@@ -18,15 +18,15 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 const LinkItems = [
-  { name: "Home", icon: FiHome, link2: "Report" },
-  { name: "Product", icon: FiTrendingUp, link: "/product" },
-  { name: "Category", icon: FiCompass, link: "/category" },
+  { name: "Home", icon: FiHome, link: "/superadminpage" },
+  { name: "Product", icon: FiTrendingUp, link: "/superadminpage/products" },
+  { name: "Category", icon: FiCompass, link: "/superadminpage/category" },
   { name: "Favourites", icon: FiStar },
   { name: "Settings", icon: FiSettings },
   {
     name: "Branch-Admins",
     icon: AiOutlineUsergroupAdd,
-    link2: "BranchAdmins",
+    link: "/superadminpage/branchadmins",
   },
 ];
 
@@ -60,19 +60,6 @@ const SidebarContent = (props) => {
           key={link.name}
           icon={link.icon}
           href={link.link ? link.link : ""}
-          tab={props.tab}
-          setTab={props.setTab}
-          link2={link.link2}
-          onClick={
-            link.link2
-              ? () => {
-                  console.log("sadksadk");
-                  props.setTab(link.link2);
-                }
-              : () => {
-                  console.log("sadksadk");
-                }
-          }
         >
           {link.name}
         </NavItem>
@@ -88,7 +75,7 @@ const NavItem = ({ icon, children, href, setTab, tab, link2 }) => {
       <Flex
         onClick={() => {
           {
-            href ? nav(href) : setTab(link2);
+            nav(href);
           }
         }}
         align="center"

@@ -9,6 +9,7 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import { api } from "../../api/api";
+import Swal from "sweetalert2";
 
 export default function Inputs(props) {
   async function submitLogin() {
@@ -18,13 +19,7 @@ export default function Inputs(props) {
         localStorage.setItem("auth", JSON.stringify(res.data.token));
         token = res.data.token;
         console.log(token);
-        props.toast({
-          title: res.data.message,
-          description: "Login Successful.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
+        Swal.fire("Good job!", "Login succesful", "success");
       });
       const user = await api
         .get("/auth/v3?token=" + token)
@@ -54,7 +49,11 @@ export default function Inputs(props) {
       props.nav("/");
     } catch (err) {
       console.log(err);
-      alert(err.response.data.message);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.response.data.message,
+      });
     }
   }
   return (

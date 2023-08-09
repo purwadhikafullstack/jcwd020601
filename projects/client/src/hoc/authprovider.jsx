@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { api } from "../api/api";
+import Loading from "../components/Loading";
 
 export default function AuthProvider({ children }) {
   const dispatch = useDispatch();
   const userSelector = useSelector((state) => state.login.auth);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch();
@@ -17,14 +19,8 @@ export default function AuthProvider({ children }) {
       const address = JSON.parse(localStorage.getItem("address"));
       const auth = await api
         .get("/admin/v3?token=" + token)
-        .then((res) => {
-          return res.data;
-        })
-        .catch((err) => {
-          return err.message;
-        });
+        .then((res) => res.data);
       const userMainAddress = await api.get("/address/ismain/" + auth?.id);
-
       const closestBranch = await api
         .post(
           "/address/closest",
@@ -44,8 +40,16 @@ export default function AuthProvider({ children }) {
         dispatch({
           type: "login",
           payload: auth,
-          address: address ? address : userMainAddress,
+          address: address || userMainAddress,
           closestBranch,
+        });
+        dispatch({
+          type: "order",
+          payload: {
+            BranchId: closestBranch.BranchId,
+            AddressId: address.id || userMainAddress.id,
+            shipping: 200,
+          },
         });
       } else {
         dispatch({
@@ -55,10 +59,16 @@ export default function AuthProvider({ children }) {
       console.log(auth);
       console.log(userMainAddress);
       console.log("Bodh");
+      setIsLoading(false);
     } catch (err) {
       console.log(err);
+      setIsLoading(false);
     }
   }
 
-  return children;
+  return (
+    <>
+      <>{isLoading ? <Loading /> : children}</>
+    </>
+  );
 }

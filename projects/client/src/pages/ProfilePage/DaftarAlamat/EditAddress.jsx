@@ -10,20 +10,18 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
-import { api } from "../../api/api";
+import { api } from "../../../api/api";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
 import { MdClose } from "react-icons/md";
 import YupPassword from "yup-password";
 import ModalEditAddress from "./ModalEditAddress";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import Helpers from "./EditAddressHelper";
 export default function EditAddress(val) {
-  const toast = useToast();
   YupPassword(Yup);
   const [provinces, setProvinces] = val.useState([]);
   const [cities, setCities] = val.useState([]);
@@ -31,7 +29,6 @@ export default function EditAddress(val) {
   const [provinceId, setProvinceId] = val.useState();
   const [cityId, setCityId] = val.useState();
   const token = JSON.parse(localStorage.getItem("auth"));
-  const nav = useNavigate();
   const dispatch = useDispatch();
   const initialState = {
     province: val.province,
@@ -55,75 +52,18 @@ export default function EditAddress(val) {
     setState,
   ] = useState(initialState);
   async function changeMain() {
-    try {
-      console.log("sad");
-      await api
-        .patch("address/v3/" + val.id + "?token=" + token, {
-          UserId: val.userSelector.id,
-        })
-        .then((res) => {
-          Swal.fire("Good job!", "Main Address Changed", "success");
-          val.setSelectIsMain(false);
-          val.fetchUserAddresses();
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Login session has expired",
-          });
-          localStorage.removeItem("auth");
-          localStorage.removeItem("address");
-          localStorage.removeItem("Latitude");
-          localStorage.removeItem("Longitude");
-          dispatch({
-            type: "logout",
-          });
-          nav("/login");
-        });
-    } catch (err) {
-      alert(err.data.response.message);
-    }
+    await Helpers.changeMain({ val, token, Swal, api, dispatch });
   }
   async function deleteAddress() {
-    try {
-      await api
-        .post("address/v4/" + val.id + "?token=" + token, {
-          UserId: val.userSelector.id,
-        })
-        .then((res) => {
-          modalEditAddress.onClose();
-          formikAddress.resetForm();
-          val.fetchUserAddresses();
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Login session has expired",
-          });
-          localStorage.removeItem("auth");
-          localStorage.removeItem("address");
-          localStorage.removeItem("Latitude");
-          localStorage.removeItem("Longitude");
-          dispatch({
-            type: "logout",
-          });
-          nav("/login");
-        });
-    } catch (err) {
-      alert(err.response.data.message);
-    }
+    await Helpers.delAddress({ val, token, dispatch, Swal, modalEditAddress });
+    formikAddress.resetForm();
   }
   async function fetchCity() {
-    setPosCodes([]);
-    setCities([]);
     await api.get("/city/v1/" + provinceId).then((res) => {
       setCities(res.data.result);
     });
   }
   async function fetchPos() {
-    setPosCodes([]);
     await api.get("/city/v2/" + cityId).then((res) => {
       setPosCodes(res.data.result);
     });
@@ -147,75 +87,15 @@ export default function EditAddress(val) {
       pos: val.pos,
       alamatLengkap: val.alamatLengkap,
     },
-    validationSchema: Yup.object().shape({
-      no_Handphone: Yup.string()
-        .trim()
-        .matches(val.phoneRegExp, "Phone number is not valid")
-        .required("You need to enter a phone number"),
-      namaPenerima: Yup.string()
-        .required("You need to enter a receiver's name")
-        .trim(),
-      labelAlamat: Yup.string()
-        .required("You need to enter your address labels")
-        .trim(),
-      province: Yup.string().trim().required("You need to enter your province"),
-      city: Yup.string().trim().required("You need to enter your city"),
-      pos: Yup.string().trim().required("You need to enter your poscode"),
-      alamatLengkap: Yup.string()
-        .trim()
-        .required("You need to enter your complete address"),
-    }),
+    validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
-      const {
-        no_Handphone,
-        namaPenerima,
-        labelAlamat,
-        province,
-        city,
-        pos,
-        alamatLengkap,
-      } = formikAddress.values;
-      const address2 = {
-        no_Handphone,
-        namaPenerima,
-        labelAlamat,
-        province,
-        city,
-        pos,
-        alamatLengkap,
-        UserId: val.userSelector.id,
-      };
-      await api
-        .patch("/address/v2/" + val.id + "?token=" + token, address2)
-        .then(async (res) => {
-          modalEditAddress.onClose();
-          formikAddress.resetForm();
-          val.fetchUserAddresses();
-          Swal.fire("Good job!", "Main Address Changed", "success");
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Login session has expired",
-          });
-          localStorage.removeItem("auth");
-          localStorage.removeItem("address");
-          localStorage.removeItem("Latitude");
-          localStorage.removeItem("Longitude");
-          dispatch({
-            type: "logout",
-          });
-          nav("/login");
-        });
+      await Helpers.submit({ val, token, Swal, dispatch, formikAddress });
+      modalEditAddress.onClose();
     },
   });
   async function inputHandlerAddress(input) {
     const { value, id } = input.target;
-    const tempobject = {};
-    tempobject[id] = value.split("#")[0];
     setState((prevState) => ({ ...prevState, [id]: value }));
-    console.log(tempobject);
     if (id == "province") {
       setProvinceId(value.split("#")[0]);
       formikAddress.setFieldValue(id, value.split("#")[1]);
@@ -243,8 +123,7 @@ export default function EditAddress(val) {
             ? () => changeMain()
             : () => modalEditAddress.onOpen()
         }
-        _hover={{ bgColor: "#c7c7c7" }}
-        cursor={"pointer"}
+        _hover={{ bgColor: "#c7c7c7", cursor: "pointer" }}
       >
         <Flex px={"20px"} pt={"10px"} alignItems={"center"} gap={"10px"}>
           <Flex fontWeight={"700"} color={"#385898"}>
@@ -276,20 +155,10 @@ export default function EditAddress(val) {
             <ModalHeader
               bgColor={"#385898"}
               color={"white"}
-              px={"10px"}
               display={"flex"}
-              flexDir={"row"}
               justifyContent={"center"}
             >
-              <Center
-                onClick={() => {
-                  console.log(val.id);
-                  console.log(formikAddress.values);
-                }}
-                fontWeight={700}
-              >
-                Edit Address
-              </Center>
+              <Center fontWeight={700}>Edit Address</Center>
               <Flex w={"70%"} flexDir={"row-reverse"}>
                 <Button
                   w={"30px"}
