@@ -48,7 +48,6 @@ export default function AuthProvider({ children }) {
           payload: {
             BranchId: closestBranch.BranchId,
             AddressId: address.id || userMainAddress.id,
-            shipping: 200,
           },
         });
       } else {
