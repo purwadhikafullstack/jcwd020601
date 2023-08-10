@@ -6,9 +6,12 @@ const stock = require("../models/stock");
 const stockController = {
   getAllAsc: async (req, res) => {
     try {
-      const limit = parseInt(req.query.limit) || 5;
-      const place = req.query.place || "Jakarta";
+      const l = parseInt(req.query.limit);
+      console.log(typeof l);
+      const limit = l || null;
+      const place = req.query.place || 1;
       const search = req.query.search_book || "";
+      console.log(place);
       const Stock = await db.Stock.findAll({
         include: [
           {
@@ -28,7 +31,7 @@ const stockController = {
           {
             model: db.Branch,
             required: true, // Inner join
-            where: { name: place },
+            where: { id: place },
           },
         ],
         limit: limit,
@@ -59,7 +62,7 @@ const stockController = {
       res.json({
         // result: result,
         result: Stock,
-        limit: limit,
+        // limit: limit,
       });
     } catch (err) {
       console.log(err.message);
@@ -71,7 +74,7 @@ const stockController = {
   getAllDesc: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 4;
-      const place = req.query.place || "Jakarta";
+      const place = req.query.branchId || 1;
       const Stock = await db.Stock.findAll({
         include: [
           {
@@ -81,7 +84,7 @@ const stockController = {
           {
             model: db.Branch,
             required: true, // Inner join
-            where: { name: place },
+            where: { id: place },
           },
         ],
         limit: limit,
@@ -107,6 +110,7 @@ const stockController = {
         include: [
           {
             model: db.Book,
+            include: [db.Discount],
             required: true, // Inner join
           },
           {

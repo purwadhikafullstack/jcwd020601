@@ -40,7 +40,7 @@ export default function DaftarAlamat(props) {
   const nav = useNavigate();
   YupPassword(Yup);
   const formikAddress = useFormik({
-    initialValues: {},
+    initialValues: { UserId: props.userSelector.id },
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
       await api.post("/address/v1?token=" + token, formikAddress.values);

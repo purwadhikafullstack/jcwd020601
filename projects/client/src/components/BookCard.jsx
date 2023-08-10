@@ -23,19 +23,23 @@ export default function BookCard() {
   let t = localStorage.getItem("auth");
 
   const userSelector = useSelector((state) => state.login.auth);
+  const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(5);
   const [keyword, setKeyword] = useState("");
-
+  const [place, setPlace] = useState(orderSelector.BranchId);
+  console.log(typeof place);
+  console.log(value);
+  // console.log(orderSelector.);
   async function fetchProduct() {
-    let response = await api.get(`/stock?limit=${limit}`);
+    let response = await api.get(`/stock?limit=${limit}&place=${place}`);
     setValue(response.data.result);
   }
   useEffect(() => {
     fetchProduct();
-  }, [token]);
+  }, [token, orderSelector]);
 
   const settings = {
     dots: true,
@@ -112,13 +116,35 @@ export default function BookCard() {
         {value.map((val, idx) => (
           <Card key={idx}>
             <CardBody>
-              <Image
-                src={val.Book?.book_url}
-                alt="Green double couch with wooden legs"
-                borderRadius="lg"
-                w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
-                h={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
-              />
+              <Box>
+                {val.Book?.Discount?.discount ? (
+                  <>
+                    <Box
+                      w={10}
+                      h={8}
+                      // bgColor={"blue"}
+                      position={"absolute"}
+                      left={"200px"}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                    >
+                      <Text fontWeight={"bold"} color={"red.400"}>
+                        {val.Book?.Discount?.discount}%
+                      </Text>
+                    </Box>
+                  </>
+                ) : (
+                  <></>
+                )}
+                <Image
+                  src={val.Book?.book_url}
+                  alt="Green double couch with wooden legs"
+                  borderRadius="lg"
+                  w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
+                  h={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
+                />
+              </Box>
               <Stack mt="6">
                 <Heading size="sm">{val.Book?.author}</Heading>
                 <Text size={"sm"}>
@@ -132,13 +158,13 @@ export default function BookCard() {
                 <Text color="blue.600" fontSize="xl">
                   Rp. {val.Book?.price}
                 </Text>
-                <Text color="blue.600" fontSize="xl">
+                {/* <Text color="blue.600" fontSize="xl">
                   {val.Book?.Discount?.discount ? (
                     <>Diskon {val.Book?.Discount?.discount} %</>
                   ) : (
                     <></>
                   )}
-                </Text>
+                </Text> */}
               </Stack>
             </CardBody>
             <CardFooter p={5}>
