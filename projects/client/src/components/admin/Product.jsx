@@ -74,6 +74,7 @@ export default function Product() {
       currency: "IDR",
     }).format(number);
   };
+  console.log(value);
 
   return (
     <>
@@ -123,6 +124,7 @@ export default function Product() {
                 <Th fontSize={18}>Judul</Th>
                 <Th fontSize={18}>Bahasa</Th>
                 <Th fontSize={18}>Penulis</Th>
+                <Th fontSize={18}>DiskonId</Th>
                 <Th fontSize={18}>Lembar</Th>
                 <Th fontSize={18}>Harga</Th>
                 <Th fontSize={18}>Gambar</Th>
@@ -135,6 +137,7 @@ export default function Product() {
                   <Td>{val.title}</Td>
                   <Td>{val.language}</Td>
                   <Td>{val.author}</Td>
+                  <Td>{val.Discount?.discount}</Td>
                   <Td>{val.pages}</Td>
                   <Td>{rupiah(val.price)}</Td>
 

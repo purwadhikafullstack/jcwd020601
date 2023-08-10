@@ -17,48 +17,67 @@ export default function AuthProvider({ children }) {
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
       const address = JSON.parse(localStorage.getItem("address"));
-      const auth = await api
-        .get("/admin/v3?token=" + token)
-        .then((res) => res.data);
-      const userMainAddress = await api.get("/address/ismain/" + auth?.id);
-      const closestBranch = await api
-        .post(
-          "/address/closest",
-          address
-            ? { lat: address.latitude, lon: address.longitude }
-            : { lat: userMainAddress.latitude, lon: userMainAddress.longitude }
-        )
-        .then((res) => res.data[0]);
-      if (auth?.role) {
-        console.log("login admin");
-        dispatch({
-          type: "login",
-          payload: auth,
-        });
-      } else if (!auth?.role) {
-        console.log("login user");
-        dispatch({
-          type: "login",
-          payload: auth,
-          address: address || userMainAddress,
-          closestBranch,
-        });
-        dispatch({
-          type: "order",
-          payload: {
-            BranchId: closestBranch.BranchId,
-            AddressId: address.id || userMainAddress.id,
-          },
-        });
+      if (token) {
+        const auth = await api
+          .get("/admin/v3?token=" + token)
+          .then((res) => res.data);
+        const userMainAddress = await api.get("/address/ismain/" + auth?.id);
+        const closestBranch = await api
+          .post(
+            "/address/closest",
+            address
+              ? { lat: address.latitude, lon: address.longitude }
+              : {
+                  lat: userMainAddress.latitude,
+                  lon: userMainAddress.longitude,
+                }
+          )
+          .then((res) => res.data[0]);
+        if (auth?.role) {
+          console.log("login admin");
+          dispatch({
+            type: "login",
+            payload: auth,
+          });
+        } else if (!auth?.role) {
+          console.log("login user");
+          dispatch({
+            type: "login",
+            payload: auth,
+            address: address || userMainAddress,
+            closestBranch,
+          });
+          dispatch({
+            type: "order",
+            payload: {
+              BranchId: closestBranch.BranchId,
+              AddressId: address.id || userMainAddress.id,
+            },
+          });
+        } else {
+          dispatch({
+            type: "logout",
+          });
+        }
+        setIsLoading(false);
+
       } else {
-        dispatch({
-          type: "logout",
-        });
+        const latitude = JSON.parse(localStorage.getItem("Latitude"));
+        const longitude = JSON.parse(localStorage.getItem("Longitude"));
+        const closestBranch = await api
+          .post("/address/closest", { lat: latitude, lon: longitude })
+          .then((res) => res.data[0]);
+        setIsLoading(false);
+        if (closestBranch) {
+          dispatch({
+            type: "order",
+            payload: {
+              BranchId: closestBranch.BranchId,
+              shipping: 200,
+            },
+          });
+        }
       }
-      console.log(auth);
-      console.log(userMainAddress);
-      console.log("Bodh");
-      setIsLoading(false);
     } catch (err) {
       console.log(err);
       setIsLoading(false);

@@ -14,6 +14,9 @@ module.exports = (sequelize, Sequelize) => {
       dimension: Sequelize.STRING,
       price: Sequelize.INTEGER,
       rating: Sequelize.STRING,
+      DiscountId: {
+        type: Sequelize.INTEGER,
+      },
     },
     {
       paranoid: true,

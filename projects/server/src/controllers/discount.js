@@ -5,8 +5,43 @@ const moment = require("moment");
 const discountController = {
   getAll: async (req, res) => {
     try {
-      const Discount = await db.Discount.findAll();
-      return res.send(Discount);
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.search_query || "";
+      const offset = limit * page;
+      const totalRows = await db.Discount.count({
+        where: {
+          [Op.or]: [
+            {
+              title: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+          ],
+        },
+      });
+      const totalPage = Math.ceil(totalRows / limit);
+      const Discount = await db.Discount.findAll({
+        where: {
+          [Op.or]: [
+            {
+              title: {
+                [Op.like]: "%" + search + "%",
+              },
+            },
+          ],
+        },
+        offset: offset,
+        limit: limit,
+        order: [["id"]],
+      });
+      res.json({
+        result: Discount,
+        page: page,
+        limit: limit,
+        totalRows: totalRows,
+        totalPage: totalPage,
+      });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({

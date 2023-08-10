@@ -25,6 +25,7 @@ import Swal from "sweetalert2";
 import Helpers from "./EditAddressHelper";
 import AddAddressHelpers from "./AddAddressHelper";
 export default function DaftarAlamat(props) {
+  const token = JSON.parse(localStorage.getItem("auth"));
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const modalAddAddress = useDisclosure();
@@ -39,16 +40,19 @@ export default function DaftarAlamat(props) {
   const nav = useNavigate();
   YupPassword(Yup);
   const formikAddress = useFormik({
-    initialValues: {},
+    initialValues: { UserId: props.userSelector.id },
     validationSchema: Helpers.validationSchemaAddress,
-    onSubmit: AddAddressHelpers.submit({
-      formikAddress,
-      Swal,
-      modalAddAddress,
-      dispatch,
-      nav,
-      fetchUserAddresses: props.fetchUserAddresses,
-    }),
+    onSubmit: async () => {
+      await api.post("/address/v1?token=" + token, formikAddress.values);
+      AddAddressHelpers.submit({
+        Swal,
+        modalAddAddress,
+        dispatch,
+        nav,
+        fetchUserAddresses: props.fetchUserAddresses,
+      });
+      formikAddress.resetForm();
+    },
   });
   useEffect(() => {
     if (props.userSelector.email) {

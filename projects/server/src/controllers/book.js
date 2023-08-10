@@ -29,6 +29,7 @@ const bookController = {
       });
       const totalPage = Math.ceil(totalRows / limit);
       const result = await db.Book.findAll({
+        include: [{ model: db.Discount }],
         where: {
           [Op.or]: [
             {
@@ -47,8 +48,32 @@ const bookController = {
         limit: limit,
         order: [["id"]],
       });
+      // const result2 = await db.Discount.findAll({
+      //   include: [{ model: db.Book }],
+      // where: {
+      //   [Op.or]: [
+      //     {
+      //       title: {
+      //         [Op.like]: "%" + search + "%",
+      //       },
+      //     },
+      //     {
+      //       language: {
+      //         [Op.like]: "%" + search + "%",
+      //       },
+      //     },
+      //   ],
+      // },
+      // offset: offset,
+      // limit: limit,
+      // order: [["id"]],
+      // });
+
+      // const AllResult = [...result, ...result2];
+
       res.json({
         result: result,
+        // result3: AllResult,
         page: page,
         limit: limit,
         totalRows: totalRows,
@@ -64,6 +89,7 @@ const bookController = {
   getById: async (req, res) => {
     try {
       const Book = await db.Book.findOne({
+        include: [{ model: db.Discount }],
         where: {
           id: req.params.id,
         },

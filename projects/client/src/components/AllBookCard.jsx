@@ -14,17 +14,22 @@ import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { Link } from "react-router-dom";
 import { MdSettings } from "react-icons/md";
+import { useSelector } from "react-redux";
 export default function AllBookCard({ keyword }) {
+  const orderSelector = useSelector((state) => state.login.order);
   let t = localStorage.getItem("auth");
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
+  const [place, setPlace] = useState(orderSelector.BranchId);
+  const [limit, setLimit] = useState(0);
+
   // const [keyword, setKeyword] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-
+  console.log(value);
   async function fetchProduct() {
     try {
       setIsLoading(true);
-      let response = await api.get(`/stock?search_book=${keyword}`);
+      let response = await api.get(`/stock?limit=${limit}&place=${place}`);
       setValue(response.data.result);
       setTimeout(() => {
         setIsLoading(false); // Set isLoading to false after 2 seconds
@@ -35,7 +40,9 @@ export default function AllBookCard({ keyword }) {
   }
   useEffect(() => {
     fetchProduct();
-  }, [token, keyword]);
+  }, [token, keyword, place]);
+  console.log(value);
+  console.log(place);
   return (
     <>
       <Center
@@ -86,23 +93,46 @@ export default function AllBookCard({ keyword }) {
                     h={"400px"}
                   >
                     <CardBody>
-                      <Image
-                        src={val.Book?.book_url}
-                        alt="Green double couch with wooden legs"
-                        borderRadius="lg"
-                        w={{
-                          base: "300px",
-                          sm: "280px",
-                          md: "260px",
-                          lg: "220px",
-                        }}
-                        h={{
-                          base: "300px",
-                          sm: "280px",
-                          md: "260px",
-                          lg: "220px",
-                        }}
-                      />
+                      <Box>
+                        {val.Book?.Discount?.discount ? (
+                          <>
+                            <Box
+                              w={10}
+                              h={8}
+                              // bgColor={"blue"}
+                              position={"absolute"}
+                              left={"140px"}
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                            >
+                              <Text fontWeight={"bold"}>
+                                {val.Book?.Discount?.discount}%
+                              </Text>
+                            </Box>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+
+                        <Image
+                          src={val.Book?.book_url}
+                          alt="Green double couch with wooden legs"
+                          borderRadius="lg"
+                          w={{
+                            base: "300px",
+                            sm: "280px",
+                            md: "260px",
+                            lg: "220px",
+                          }}
+                          h={{
+                            base: "300px",
+                            sm: "280px",
+                            md: "260px",
+                            lg: "220px",
+                          }}
+                        />
+                      </Box>
                       <Stack mt="6">
                         <Heading size="sm">{val.Book?.author}</Heading>
                         <Text size={"sm"}>
@@ -113,9 +143,10 @@ export default function AllBookCard({ keyword }) {
                         <Text color="blue.600" fontSize="xl">
                           Rp. {val.Book?.price}
                         </Text>
-                        <Text color="#A0AEC0" as="del" fontSize="xl">
+                        {/* <Text color="#A0AEC0" as="del" fontSize="xl">
                           Rp. {val.Book?.price}
-                        </Text>
+                        </Text> */}
+                        <Text color="blue.600" fontSize="xl"></Text>
                       </Stack>
                     </CardBody>
                     <CardFooter>
