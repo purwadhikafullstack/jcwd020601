@@ -11,6 +11,7 @@ import Shipping from "./Shipping";
 
 export default function CartBooks(props) {
   const userSelector = useSelector((state) => state.login.auth);
+  const orderSelector = useSelector((state) => state.login.order);
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
   const [hapus, setHapus] = useState();
@@ -20,9 +21,7 @@ export default function CartBooks(props) {
   async function fetch() {
     const data = await api.post("/cart/id", {
       UserId: userSelector.id,
-      // SEMENTARA----------------------
-      BranchId: 2,
-      // SEMENTARA----------------------
+      BranchId: orderSelector.BranchId,
     });
     // console.log(data.data.Cart);
     props.setWeight(data.data.weight);
