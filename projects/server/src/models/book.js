@@ -16,7 +16,6 @@ module.exports = (sequelize, Sequelize) => {
       rating: Sequelize.STRING,
       DiscountId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
       },
     },
     {

@@ -89,6 +89,7 @@ const bookController = {
   getById: async (req, res) => {
     try {
       const Book = await db.Book.findOne({
+        include: [{ model: db.Discount }],
         where: {
           id: req.params.id,
         },

@@ -17,16 +17,18 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 // import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 export default function BookCardRecomend() {
+  const orderSelector = useSelector((state) => state.login.order);
   let t = localStorage.getItem("auth");
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(5);
   const [keyword, setKeyword] = useState("");
+  const [place, setPlace] = useState(orderSelector.BranchId);
 
   async function fetchProduct() {
-    let response = await api.get(`/stock?limit=${limit}`);
+    let response = await api.get(`/stock?limit=${limit}&place=${place}`);
     setValue(response.data.result);
   }
   useEffect(() => {

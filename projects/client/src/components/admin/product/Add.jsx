@@ -46,7 +46,7 @@ export default function Add({ getData, token }) {
       dimension: "",
       price: "",
       rating: "",
-      DiscountId: null,
+      DiscountId: 1,
     },
     validationSchema: Yup.object({
       title: Yup.string().required("Tidak Boleh Kosong!"),
@@ -235,10 +235,10 @@ export default function Add({ getData, token }) {
                 <FormLabel>Discount</FormLabel>
                 <Select
                   placeholder="Select Discount"
-                  id="DiscountId"
+                  // id="DiscountId"
                   name="DiscountId"
                   onChange={formik.handleChange}
-                  value={formik.values.dimension}
+                  value={formik.values.DiscountId}
                 >
                   {diskon.map((val, idx) => (
                     <option key={val.id} value={val.id}>
