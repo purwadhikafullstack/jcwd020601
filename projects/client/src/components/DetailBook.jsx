@@ -28,6 +28,7 @@ export default function DetailBookPage() {
     fetchProduct();
   }, [id]);
 
+  console.log(value.Book);
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -58,7 +59,31 @@ export default function DetailBookPage() {
             px={10}
             py={3}
           >
-            <Image src={value.Book?.book_url} width={"200"} height={"200px"} />
+            <Box>
+              {value.Book?.Discount?.discount ? (
+                <>
+                  <Box
+                    w={10}
+                    h={8}
+                    position={"absolute"}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Text fontWeight={"bold"} color={"red.400"}>
+                      {value.Book?.Discount?.discount}%
+                    </Text>
+                  </Box>
+                </>
+              ) : (
+                <></>
+              )}
+              <Image
+                src={value.Book?.book_url}
+                width={"200"}
+                height={"200px"}
+              />
+            </Box>
           </Box>
           <Box
             maxW={"600px"}
