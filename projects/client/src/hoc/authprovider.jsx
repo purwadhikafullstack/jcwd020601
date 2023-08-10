@@ -52,7 +52,6 @@ export default function AuthProvider({ children }) {
             payload: {
               BranchId: closestBranch.BranchId,
               AddressId: address.id || userMainAddress.id,
-              shipping: 200,
             },
           });
         } else {
@@ -61,6 +60,7 @@ export default function AuthProvider({ children }) {
           });
         }
         setIsLoading(false);
+
       } else {
         const latitude = JSON.parse(localStorage.getItem("Latitude"));
         const longitude = JSON.parse(localStorage.getItem("Longitude"));
