@@ -9,8 +9,10 @@ import NavbarFooter from "../components/NavbarFooter";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { api } from "../api/api";
+import { logDOM } from "@testing-library/react";
 
 export default function HomePage() {
+  const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   const dispatch = useDispatch();
   const [latitude, setLatitude] = useState("");
@@ -45,6 +47,13 @@ export default function HomePage() {
   }
   return (
     <Flex display={"columns"}>
+      <Flex
+        onClick={() => {
+          console.log(orderSelector);
+        }}
+      >
+        lol
+      </Flex>
       <Navbar />
       <CarouselShow />
       <CarouselBooks />

@@ -40,7 +40,9 @@ export default function DaftarAlamat(props) {
   const nav = useNavigate();
   YupPassword(Yup);
   const formikAddress = useFormik({
-    initialValues: {},
+    initialValues: {
+      UserId: props.userSelector.id,
+    },
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
       await api.post("/address/v1?token=" + token, formikAddress.values);
@@ -83,10 +85,10 @@ export default function DaftarAlamat(props) {
     tempobject[id] = value.split("#")[0];
     if (id == "province") {
       setProvinceId(value.split("#")[0]);
-      formikAddress.setFieldValue(id, value.split("#")[1]);
+      formikAddress.setFieldValue(id, value);
     } else if (id == "city") {
       setCityId(value.split("#")[0]);
-      formikAddress.setFieldValue(id, value.split("#")[1]);
+      formikAddress.setFieldValue(id, value);
     } else formikAddress.setFieldValue(id, value);
   }
   useEffect(() => {
@@ -129,16 +131,8 @@ export default function DaftarAlamat(props) {
               useState={useState}
               fetchUserAddresses={props.fetchUserAddresses}
               inputHandlerAddress={inputHandlerAddress}
-              id={val.id}
-              province={val.province}
-              city={val.city}
-              pos={val.pos}
               nav={nav}
-              labelAlamat={val.labelAlamat}
-              isMain={val.isMain}
-              no_Handphone={val.no_Handphone}
-              alamatLengkap={val.alamatLengkap}
-              namaPenerima={val.namaPenerima}
+              addressUser={val}
             />
           </>
         );

@@ -16,7 +16,10 @@ router.get(
   "/sales/month/:BranchId",
   orderController.getSalesFromBranchIdOnLastMonth
 );
-router.get("/:id", orderController.getById);
+router.get("/pending/:UserId", orderController.getPendingByUserId);
+router.get("/history/:UserId", orderController.getHistoryByUserId);
+
+router.get("/:id", orderController.getByUserId);
 
 router.post("/v1", orderController.insertOrder);
 router.post(

@@ -22,18 +22,21 @@ const validationSchemaAddress = Yup.object().shape({
     .trim()
     .required("You need to enter your complete address"),
 });
-async function submit({ val, token, Swal, dispatch, data }) {
+async function submit({ val, token, Swal, dispatch, formikAddress }) {
   await api
-    .patch("/address/v2/" + val.id + "?token=", data)
+    .patch(
+      "/address/v2/" + val.addressUser.id + "?token=" + token,
+      formikAddress.values
+    )
     .then(async (res) => {
-      val.fetchUserAddresses();
-      Swal.fire("Good job!", "Main Address Changed", "success");
+      await val.fetchUserAddresses();
+      Swal.fire("Good job!", "Address Changed", "success");
     })
     .catch((err) => {
       Swal.fire({
         icon: "error",
         title: "Oops...",
-        text: "Login session has expired",
+        text: err.message,
       });
       localStorage.removeItem("auth");
       localStorage.removeItem("address");
