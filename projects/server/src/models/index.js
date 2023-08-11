@@ -66,6 +66,12 @@ db.Token = require("./token")(sequelize, Sequelize);
 db.Address.belongsTo(db.User, {
   foreignKey: "UserId",
 });
+db.Address.belongsTo(db.City, {
+  foreignKey: "CityId",
+});
+db.Address.belongsTo(db.Province, {
+  foreignKey: "ProvinceId",
+});
 db.Stock.belongsTo(db.Branch, {
   foreignKey: "BranchId",
 });

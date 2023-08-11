@@ -66,7 +66,7 @@ const addressController = {
   getLatLonByCity: async (req, res) => {
     try {
       const Address = await opencage.geocode({
-        q: "Bandung",
+        q: "Kabupaten Bandung",
         language: "id",
       });
       return res.send(Address.results);
@@ -103,7 +103,11 @@ const addressController = {
       });
       let min = Math.min(...result.map((item) => item.distance));
       let lowest = result.filter((item) => item.distance === min);
-      return res.send(lowest);
+      console.log(lowest.distance);
+      if (lowest[0].distance >= 50) {
+        return res.send(...lowest);
+      }
+      return res.send({ message: "Branch Terdekat Melebihi 50km" });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -114,6 +118,8 @@ const addressController = {
 
   editAddress: async (req, res) => {
     try {
+      let place = {};
+      console.log("sakdsakd");
       const {
         labelAlamat,
         namaPenerima,
@@ -127,19 +133,26 @@ const addressController = {
         longitude,
         UserId,
       } = req.body;
+      await opencage
+        .geocode({ q: city?.split("#")[1], language: "id" })
+        .then(async (res) => {
+          place = res?.results[0].geometry;
+        });
       await db.Address.update(
         {
           labelAlamat,
           namaPenerima,
           no_Handphone,
-          province,
-          city,
+          province: province?.split("#")[1],
+          city: city?.split("#")[1],
+          isMain,
           alamatLengkap,
           pos,
-          isMain,
-          latitude,
-          longitude,
+          latitude: place.lat,
+          longitude: place.lng,
           UserId,
+          ProvinceId: province?.split("#")[0],
+          CityId: city?.split("#")[0],
         },
         {
           where: {
@@ -148,12 +161,14 @@ const addressController = {
         }
       );
 
-      return await db.Address.findOne({
+      const result = await db.Address.findOne({
         where: {
           id: req.params.id,
         },
-      }).then((result) => res.send(result));
+      });
+      res.status(200).send(result);
     } catch (err) {
+      console.log("sadkaskd");
       console.log(err.message);
       res.status(500).send({
         message: err.message,
@@ -198,13 +213,6 @@ const addressController = {
   },
   insertAddress: async (req, res) => {
     try {
-      let place = {};
-      const Main = await db.Address.findOne({
-        where: {
-          isMain: true,
-        },
-      });
-
       const {
         labelAlamat,
         namaPenerima,
@@ -217,6 +225,14 @@ const addressController = {
         longitude,
         UserId,
       } = req.body;
+      let place = {};
+      const Main = await db.Address.findOne({
+        where: {
+          UserId,
+          isMain: true,
+        },
+      });
+
       await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
         place = res.results[0].geometry;
 
@@ -224,14 +240,16 @@ const addressController = {
           labelAlamat,
           namaPenerima,
           no_Handphone,
-          province,
-          city,
+          province: province.split("#")[1],
+          city: city.split("#")[1],
           isMain: Main ? false : true,
           alamatLengkap,
           pos,
           latitude: place.lat,
           longitude: place.lng,
           UserId,
+          ProvinceId: province.split("#")[0],
+          CityId: city.split("#")[0],
         });
       });
       const result = await db.Address.findAll();

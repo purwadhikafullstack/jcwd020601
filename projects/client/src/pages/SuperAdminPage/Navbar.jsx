@@ -67,7 +67,7 @@ function DesktopNav() {
     dispatch({
       type: "logout",
     });
-    nav("/admin");
+    nav("/adminlogin");
     return;
   }
   async function verify() {

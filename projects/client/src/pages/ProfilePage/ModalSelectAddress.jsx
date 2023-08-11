@@ -19,7 +19,7 @@ export default function ModalSelectAddress(val) {
         lol
       </Flex> */}
       <Flex
-        bg={"#f5f5f5"}
+        bg={"#e8e8e8"}
         w={"100%"}
         flexDir={"column"}
         _hover={{ bgColor: "#c7c7c7" }}

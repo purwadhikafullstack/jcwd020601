@@ -81,10 +81,18 @@ export default function ModalEditAddress(props) {
                 await props.inputHandlerAddress(val);
               }}
               variant="flushed"
+              value={
+                props.province.ProvinceId
+                  ? props.province.ProvinceId +
+                    "#" +
+                    props.province.provinceName
+                  : props.province
+              }
             >
               <option display="none" disabled selected hidden>
                 Select Province
               </option>
+              <option></option>
               {props.provinces.map((val) => (
                 <option value={val.province_id + "#" + val.province}>
                   {val.province}
@@ -103,7 +111,14 @@ export default function ModalEditAddress(props) {
                 await props.inputHandlerAddress(val);
               }}
               variant="flushed"
+              value={
+                props.city.CityId
+                  ? props.city.CityId + "#" + props.city.cityName
+                  : props.city
+              }
             >
+              <option></option>
+
               <option display="none" disabled selected hidden>
                 Select City
               </option>
@@ -123,11 +138,12 @@ export default function ModalEditAddress(props) {
               id="pos"
               onChange={props.inputHandlerAddress}
               variant="flushed"
+              value={props.pos}
             >
               <option display="none" disabled selected hidden>
                 Select PosCode
               </option>
-
+              <option></option>
               <option value={props.posCodes?.postal_code}>
                 {props.posCodes?.postal_code}
               </option>
