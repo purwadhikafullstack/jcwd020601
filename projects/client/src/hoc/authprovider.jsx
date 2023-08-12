@@ -66,6 +66,7 @@ export default function AuthProvider({ children }) {
           });
         }
         setIsLoading(false);
+
       } else {
         const latitude = JSON.parse(localStorage.getItem("Latitude"));
         const longitude = JSON.parse(localStorage.getItem("Longitude"));
