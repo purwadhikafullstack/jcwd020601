@@ -49,12 +49,15 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
         Authorization: token,
       },
     });
-    formik.setValues({ ...formik.values, category: res.data.category });
+    console.log(res);
+    formik.setValues({ ...formik.values, category: res.data.result.category });
   };
   useEffect(() => {
     getDataDetail();
   }, [id]);
 
+  console.log(formik.values);
+  console.log(id);
   return (
     <>
       <Text>Edit Data</Text>
