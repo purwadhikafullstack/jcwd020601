@@ -94,7 +94,7 @@ export default function AllBookCard({ keyword }) {
                   >
                     <CardBody>
                       <Box>
-                        {val.Book?.Discount?.discount ? (
+                        {val.Book?.Discount?.isPercent ? (
                           <>
                             <Box
                               w={10}
@@ -141,11 +141,31 @@ export default function AllBookCard({ keyword }) {
                             : val.Book?.title}
                         </Text>
                         <Text color="blue.600" fontSize="xl">
-                          Rp. {val.Book?.price}
+                          {val.Book?.Discount?.discount ? (
+                            <>
+                              {val.Book?.Discount?.isPercent ? (
+                                <>
+                                  <Text>Rp.{val.Book?.price}</Text>
+                                </>
+                              ) : (
+                                <>
+                                  <Text color="red.600" as="del" fontSize="xl">
+                                    Rp. {val.Book?.price}
+                                  </Text>
+                                  <Text>
+                                    Rp.{" "}
+                                    {val.Book?.price -
+                                      val.Book?.Discount?.discount}
+                                  </Text>
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <Text>Rp.{val.Book?.price}</Text>
+                            </>
+                          )}
                         </Text>
-                        {/* <Text color="#A0AEC0" as="del" fontSize="xl">
-                          Rp. {val.Book?.price}
-                        </Text> */}
                         <Text color="blue.600" fontSize="xl"></Text>
                       </Stack>
                     </CardBody>

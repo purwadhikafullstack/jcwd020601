@@ -62,11 +62,12 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       //   Authorization: token,
       // },
     });
+    console.log(res);
     formik.setValues({
       ...formik.values,
-      title: res.data.title,
-      discount: res.data.discount,
-      isPercent: res.data.isPercent,
+      title: res.data.result.title,
+      discount: res.data.result.discount,
+      isPercent: res.data.result.isPercent,
       start: moment(res.data.start).format("YYYY-MM-DD"),
       end: moment(res.data.end).format("YYYY-MM-DD"),
     });
@@ -75,7 +76,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     getDataDetail();
   }, [id, getData]);
 
-  console.log(formik.values.start);
+  // console.log(formik.values.start);
   return (
     <>
       <Text>Edit Data</Text>

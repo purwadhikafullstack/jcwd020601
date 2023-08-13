@@ -66,7 +66,7 @@ export default function Category() {
     fetchCategori();
     setQuery("");
   };
-  console.log(query);
+  console.log(value);
   return (
     <>
       <Box marginLeft={30}>
