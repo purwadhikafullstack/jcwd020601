@@ -41,7 +41,7 @@ export default function ModalSelectAddress(val) {
               lat: val.address.latitude,
               lon: val.address.longitude,
             })
-            .then((res) => res.data[0]);
+            .then((res) => res.data);
           dispatch({
             type: "login",
             payload: user,

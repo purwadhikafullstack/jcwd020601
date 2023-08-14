@@ -19,9 +19,10 @@ import * as Yup from "yup";
 import { MdClose } from "react-icons/md";
 import YupPassword from "yup-password";
 import ModalEditAddress from "./ModalEditAddress";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Helpers from "./EditAddressHelper";
 export default function EditAddress(val) {
+  const userSelector = useSelector((state) => state.login.auth);
   YupPassword(Yup);
   const [block, setBlock] = val.useState();
   const [fetchBoth, setFetchBoth] = val.useState(true);
@@ -65,7 +66,14 @@ export default function EditAddress(val) {
     await Helpers.changeMain({ val, token, Swal, api, dispatch });
   }
   async function deleteAddress() {
-    await Helpers.delAddress({ val, token, dispatch, Swal, modalEditAddress });
+    await Helpers.delAddress({
+      val,
+      token,
+      dispatch,
+      Swal,
+      modalEditAddress,
+      userSelector,
+    });
     formikAddress.resetForm();
   }
   async function fetchCity() {
@@ -213,18 +221,6 @@ export default function EditAddress(val) {
             </ModalHeader>
             <ModalBody maxH="500px" h={"500px"} maxW="500px">
               <ModalEditAddress
-                val={val}
-                fetchBoth={fetchBoth}
-                reset={reset}
-                setFetchBoth={setFetchBoth}
-                setReset={setReset}
-                setProvinceId={setProvinceId}
-                setCityId={setCityId}
-                fetchCity={fetchCity}
-                fetchPos={fetchPos}
-                setState={setState}
-                initialState={initialState}
-                id={val.addressUser.id}
                 alamatLengkap={alamatLengkap}
                 no_Handphone={no_Handphone}
                 labelAlamat={labelAlamat}
