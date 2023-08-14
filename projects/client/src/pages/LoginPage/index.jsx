@@ -37,16 +37,17 @@ export default function LoginPage() {
     google.accounts.id.prompt();
   }, []);
   async function handleCallbackResponse(response) {
+    const latitude = JSON.parse(localStorage.getItem("Latitude"));
+    const longitude = JSON.parse(localStorage.getItem("Longitude"));
     var userObject = jwt_decode(response.credential);
     try {
       let token;
       const loggingIn = await api
         .post("/auth/v3", userObject)
-        .then((res) => {
-          localStorage.setItem("auth", JSON.stringify(res.data.token));
+        .then(async (res) => {
+          await localStorage.setItem("auth", JSON.stringify(res.data.token));
           token = res.data.token;
           Swal.fire("Good job!", "Login succesful", "success");
-
           return res.data.message;
         })
         .catch((err) => {
@@ -58,6 +59,8 @@ export default function LoginPage() {
           });
         });
       if (loggingIn) {
+        const token = JSON.parse(localStorage.getItem("auth"));
+        console.log(token);
         const user = await api
           .get("/auth/v3?token=" + token)
           .then(async (res) => {
@@ -71,21 +74,41 @@ export default function LoginPage() {
           .get("/address/ismain/" + user.id)
           .then((res) => {
             localStorage.setItem("address", JSON.stringify(res.data));
-
-            console.log(res.data);
-
             return res.data;
           })
           .catch((err) => {
             return err.message;
           });
+        const closestBranch = await api
+          .post(
+            "/address/closest",
+            userMainAddress
+              ? {
+                  lat: userMainAddress.latitude,
+                  lon: userMainAddress.longitude,
+                }
+              : {
+                  lat: latitude,
+                  lon: longitude,
+                }
+          )
+          .then((res) => res.data)
+          .catch((err) => console.log(err));
+
         if (user.email) {
           dispatch({
             type: "login",
             payload: user,
             address: userMainAddress,
           });
-
+          dispatch({
+            type: "order",
+            payload: {
+              BranchId: closestBranch.BranchId,
+              AddressId: userMainAddress?.id,
+            },
+          });
+          console.log(closestBranch);
           nav("/");
         }
       }

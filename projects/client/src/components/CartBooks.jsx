@@ -11,6 +11,7 @@ import Shipping from "./Shipping";
 
 export default function CartBooks(props) {
   const userSelector = useSelector((state) => state.login.auth);
+  const orderSelector = useSelector((state) => state.login.order);
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
   const [hapus, setHapus] = useState();
@@ -20,9 +21,7 @@ export default function CartBooks(props) {
   async function fetch() {
     const data = await api.post("/cart/id", {
       UserId: userSelector.id,
-      // SEMENTARA----------------------
-      BranchId: 2,
-      // SEMENTARA----------------------
+      BranchId: orderSelector.BranchId,
     });
     // console.log(data.data.Cart);
     props.setWeight(data.data.weight);
@@ -56,23 +55,32 @@ export default function CartBooks(props) {
     }
   }
 
-  // Total Order Price
-  const totalPrice = cart.reduce((prev, curr) => {
-    const { price } = curr.Stock.Book;
-    const { quantity } = curr;
-    const total = price * quantity;
-    return prev + total;
-  }, 0);
-  // console.log(total);
+  // Price maping (discount)
+  const list = cart.map((val) => {
+    if (val.Stock?.Book?.DiscountId) {
+      if (val.Stock?.Book?.Discount?.isPercent) {
+        return (
+          (val.Stock?.Book?.price -
+            val.Stock?.Book?.price *
+              val.Stock?.Book?.Discount?.discount *
+              0.01) *
+          val.quantity
+        );
+      } else {
+        return (
+          (val.Stock?.Book?.price - val.Stock?.Book?.Discount?.discount) *
+          val.quantity
+        );
+      }
+    } else {
+      return val.Stock?.Book?.price * val.quantity;
+    }
+  });
 
-  // Total Order Weight
-  // const weight = cart.reduce((prev, curr) => {
-  //   const w = curr.Stock.Book.weight;
-  //   const { quantity } = curr;
-  //   const total = w * quantity;
-  //   return prev + total;
-  // }, 0);
-  // console.log(weight);
+  // Total Order Price
+  const totalPrice = list.reduce((prev, curr) => {
+    return prev + curr;
+  }, 0);
 
   useEffect(() => {
     fetch();
@@ -158,15 +166,38 @@ export default function CartBooks(props) {
                     }}
                   ></Icon>
                 </Flex>
-                <Flex flexDir={"column"} gap={"8px"}>
-                  {/* <Box>Rp 180.000</Box> */}
-                  <Box>
-                    Rp{" "}
-                    {(val.Stock?.Book?.price * val.quantity).toLocaleString(
-                      "id-ID"
-                    )}
-                    ,-
-                  </Box>
+                <Flex
+                  flexDir={"column"}
+                  gap={"8px"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                >
+                  {val.Stock?.Book?.DiscountId ? (
+                    <Box>
+                      {val.Stock?.Book?.Discount?.isPercent
+                        ? `Rp ${(
+                            (val.Stock?.Book?.price -
+                              val.Stock?.Book?.price *
+                                val.Stock?.Book?.Discount?.discount *
+                                0.01) *
+                            val.quantity
+                          ).toLocaleString("id-ID")} ,-`
+                        : `Rp ${(
+                            (val.Stock?.Book?.price -
+                              val.Stock?.Book?.Discount?.discount) *
+                            val.quantity
+                          ).toLocaleString("id-ID")} ,-`}
+                    </Box>
+                  ) : (
+                    <Box>
+                      Rp{" "}
+                      {(val.Stock?.Book?.price * val.quantity).toLocaleString(
+                        "id-ID"
+                      )}{" "}
+                      ,-
+                    </Box>
+                  )}
+
                   <Flex alignItems={"center"}>
                     {/* Delete */}
                     <DeleteModal setHapus={setHapus} cartId={val.id} />
@@ -192,6 +223,12 @@ export default function CartBooks(props) {
           padding={"1rem 2rem"}
           fontWeight={"semibold"}
         >
+          {/* <Box
+            // onClick={() => console.log(cart[0].Stock.Book.Discount.discount)}
+            onClick={() => console.log(list)}
+          >
+            KLIK
+          </Box> */}
           <Box w={"50%"}>total</Box>
           <Box w={"50%"}>RP {total.toLocaleString("id-ID")},-</Box>
         </Flex>

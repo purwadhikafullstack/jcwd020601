@@ -12,6 +12,7 @@ import {
   ButtonGroup,
   Divider,
   useMediaQuery,
+  useToast,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -25,6 +26,7 @@ export default function BookCard() {
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
+  const toast = useToast();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(5);
@@ -64,7 +66,16 @@ export default function BookCard() {
         nav("/login");
       }
     } catch (error) {
-      alert(error.response.data);
+      toast({
+        title: error.response.data,
+        position: "top",
+        containerStyle: {
+          maxWidth: "30%",
+        },
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      });
       console.error(error);
     }
   }

@@ -56,6 +56,7 @@ export default function Navbar({ callback, keyword }) {
   const [large] = useMediaQuery("(min-width: 768px)");
   const [category, setCategory] = useState([]);
   const nav = useNavigate();
+
   const fetchCategori = async () => {
     let response = await api.get(`/category`);
     setCategory(response.data.result);
@@ -284,7 +285,7 @@ function DesktopNav({ callback, keyword, category }) {
     await dispatch({
       type: "logout",
     });
-    nav("/");
+    nav("/login");
     return;
   }
   async function login() {
@@ -302,7 +303,7 @@ function DesktopNav({ callback, keyword, category }) {
         .catch((err) => {
           toast({
             position: "top",
-            title: "Something went wrongsas",
+            title: "Something went a",
             description: err.response.data.message,
             status: "error",
             duration: 5000,
@@ -546,6 +547,7 @@ function DesktopNav({ callback, keyword, category }) {
             gap={"0px"}
             border={"#d6d6d6 solid 2px"}
             borderRadius={"50px"}
+            display={location == "profile" ? "none" : "inline-flex"}
             onClick={() => {
               modalSelectAddress.onOpen();
             }}
@@ -568,9 +570,7 @@ function DesktopNav({ callback, keyword, category }) {
                   : "1rem"
               }
             >
-              {userSelector?.address?.city
-                ? userSelector?.address.city
-                : "Location"}
+              {userSelector?.address?.city || "Location"}
             </Flex>
           </Flex>
         </Center>
@@ -584,6 +584,8 @@ function DesktopNav({ callback, keyword, category }) {
           <ModalOverlay />
           <ModalContent maxH={"500px"} maxW="500px">
             <ModalHeader
+              bgColor={"#385898"}
+              color={"white"}
               w={"100%"}
               px={"10px"}
               display={"flex"}
@@ -603,31 +605,72 @@ function DesktopNav({ callback, keyword, category }) {
               </Flex>
             </ModalHeader>
 
-            <ModalBody maxW="500px">
-              <Flex flexDir={"column"} gap={"20px"} pr={"50px"}>
-                {userAddresses.map((val) => {
-                  return (
-                    <>
-                      <ModalSelectAddress
-                        userSelector={userSelector}
-                        modalSelectAddress={modalSelectAddress}
-                        userAddress={userAddress}
-                        setUserAddress={setUserAddress}
-                        address={val}
-                        id={val.id}
-                        province={val.province}
-                        city={val.city}
-                        pos={val.pos}
-                        labelAlamat={val.labelAlamat}
-                        isMain={val.isMain}
-                        no_Handphone={val.no_Handphone}
-                        alamatLengkap={val.alamatLengkap}
-                        namaPenerima={val.namaPenerima}
-                      />
-                    </>
-                  );
-                })}
-              </Flex>
+            <ModalBody maxW="500px" py={"20px"}>
+              {userAddresses[0] ? (
+                <Flex flexDir={"column"} gap={"20px"} pr={"50px"}>
+                  {userAddresses.map((val) => {
+                    return (
+                      <>
+                        <ModalSelectAddress
+                          userSelector={userSelector}
+                          modalSelectAddress={modalSelectAddress}
+                          userAddress={userAddress}
+                          setUserAddress={setUserAddress}
+                          address={val}
+                          id={val.id}
+                          province={val.province}
+                          city={val.city}
+                          pos={val.pos}
+                          labelAlamat={val.labelAlamat}
+                          isMain={val.isMain}
+                          no_Handphone={val.no_Handphone}
+                          alamatLengkap={val.alamatLengkap}
+                          namaPenerima={val.namaPenerima}
+                        />
+                      </>
+                    );
+                  })}
+                </Flex>
+              ) : (
+                <Center
+                  flexDir={"column"}
+                  w={"100%"}
+                  pt={"20px"}
+                  pb={"40px"}
+                  gap={"30px"}
+                >
+                  <Flex
+                    color={"#b3b4ba"}
+                    fontSize={"1.4rem"}
+                    fontWeight={"600"}
+                  >
+                    You Have No Addresses To Pick From
+                  </Flex>
+                  {userSelector.username ? (
+                    <Button
+                      bgColor={"#385898"}
+                      color={"white"}
+                      _hover={{ cursor: "pointer", color: "#32aced" }}
+                      onClick={() => nav("/profile")}
+                      fontSize={"1.4rem"}
+                      fontWeight={"600"}
+                    >
+                      Create One
+                    </Button>
+                  ) : (
+                    <Button
+                      bgColor={"#385898"}
+                      color={"white"}
+                      _hover={{ cursor: "pointer", color: "#32aced" }}
+                      onClick={() => nav("/login")}
+                      fontSize={"1.4rem"}
+                      fontWeight={"600"}
+                    >
+                      Require Login
+                    </Button>
+                  )}
+                </Center>
+              )}
             </ModalBody>
           </ModalContent>
         </Modal>

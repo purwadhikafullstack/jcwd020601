@@ -18,10 +18,9 @@ import { api } from "../api/api";
 
 export default function Shipping(props) {
   const dispatch = useDispatch();
-  // const [courier, setCourier] = useState();
   const [service, setService] = useState([]);
   const [etd, setEtd] = useState();
-  console.log(etd);
+  // console.log(etd);
 
   async function fetch() {
     try {
@@ -45,28 +44,6 @@ export default function Shipping(props) {
     fetch();
   }, [props.courier]);
 
-  // useEffect(() => {
-  //   fetch();
-  // }, []);
-
-  // function fungsi() {
-  //   try {
-  //     dispatch({
-  //       type: "order",
-  //       payload: {
-  //         BranchId: 2,
-  //         AddressId: 1,
-  //         shipping: 200,
-  //       },
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fungsi();
-  // }, []);
   return (
     <Flex
       boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
