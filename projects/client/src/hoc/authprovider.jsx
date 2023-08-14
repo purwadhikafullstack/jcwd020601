@@ -49,6 +49,17 @@ export default function AuthProvider({ children }) {
           });
         } else if (!auth?.role) {
           console.log("login user");
+          const closestBranch = await api
+            .post(
+              "/address/closest",
+              address
+                ? { lat: address.latitude, lon: address.longitude }
+                : {
+                    lat: userMainAddress.latitude,
+                    lon: userMainAddress.longitude,
+                  }
+            )
+            .then((res) => res.data);
           dispatch({
             type: "login",
             payload: auth,
