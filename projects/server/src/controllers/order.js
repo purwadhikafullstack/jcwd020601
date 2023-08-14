@@ -31,6 +31,24 @@ const orderController = {
       });
     }
   },
+  getBranchOrder: async (req, res) => {
+    try {
+      const { BranchId } = req.body;
+      const Order = await db.Order.findAll({
+        where: {
+          BranchId,
+        },
+      });
+
+      return res.send(Order);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+
   getSalesOnAllTime: async (req, res) => {
     //INCOMPLETE
     try {
@@ -228,9 +246,6 @@ const orderController = {
     try {
       const { UserId, BranchId, AddressId, shipping, courier } = req.body;
 
-      //SEMENTARA
-      // BranchId = 2;
-
       // get the order from cart
       const cart = await db.Cart.findAll({
         where: {
@@ -248,6 +263,12 @@ const orderController = {
               {
                 model: db.Book,
                 required: true,
+                include: [
+                  {
+                    model: db.Discount,
+                    required: false,
+                  },
+                ],
               },
               {
                 model: db.Branch,
@@ -271,19 +292,41 @@ const orderController = {
         return prev + curr["Stock.Book.weight"];
       }, 0);
 
-      // Total Price of Order
-      const t = cart.reduce((prev, curr) => {
-        return prev + curr.quantity * curr["Stock.Book.weight"];
-      }, 0);
-      const total = t + shipping;
+      // Price maping (discount)
+      const list = cart.map((val) => {
+        if (val["Stock.Book.DiscountId"]) {
+          if (val["Stock.Book.Discount.isPercent"]) {
+            // "percent discount"
+            return (
+              (val["Stock.Book.price"] -
+                val["Stock.Book.price"] *
+                  val["Stock.Book.Discount.discount"] *
+                  0.01) *
+              val["quantity"]
+            );
+          } else {
+            // "minus discount"
+            return (
+              (val["Stock.Book.price"] - val["Stock.Book.Discount.discount"]) *
+              val["quantity"]
+            );
+          }
+        } else {
+          // "no discount";
+          return val["Stock.Book.price"] * val["quantity"];
+        }
+      });
 
-      //BranchId
-      // const BranchId = cart[0]["Stock.Branch.id"];
+      // Total Price of Order
+      const t = list.reduce((prev, curr) => {
+        return prev + curr;
+      }, 0);
+      const total = Number(t) + Number(shipping);
 
       // orderDetails generete
-      const orderDetails = cart.map((val) => ({
+      const orderDetails = cart.map((val, idx) => ({
         quantity: val.quantity,
-        price: val["Stock.Book.price"],
+        price: list[idx], // price with discount
         StockId: val["Stock.id"],
       }));
       //   [
@@ -294,7 +337,7 @@ const orderController = {
       //     },
       //   ]
 
-      // create order
+      // Create Order
       const order = await db.Order.create({
         status: "init",
         total,
@@ -306,7 +349,7 @@ const orderController = {
         weight,
       });
 
-      //post multiple orderdetails from order
+      // post multiple orderdetails from order
       await Promise.all(
         orderDetails.map(async (detail) => {
           const { quantity, price, StockId } = detail;
@@ -345,8 +388,7 @@ const orderController = {
         },
       });
 
-      // return res.send(cityId);
-      return res.send("continuo to payment");
+      return res.send("continue to payment");
     } catch (err) {
       console.log(err);
       return res.status(500).send({
@@ -359,6 +401,7 @@ const orderController = {
   //
   uploadPayment: async (req, res) => {
     try {
+      console.log("masuk");
       const { id } = req.body;
       // console.log(req.body);
       // console.log("cek");

@@ -27,10 +27,9 @@ import CartBooks from "../components/CartBooks";
 import { useNavigate } from "react-router-dom";
 import Shipping from "../components/Shipping";
 import { useSelector } from "react-redux";
-// import { useSelector } from "react-redux";
 
 export default function CartPage() {
-  // const userSelector = useSelector((state) => state.login.auth);
+  const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
   // const [edit, setEdit] = useState(false);
@@ -48,9 +47,9 @@ export default function CartPage() {
 
   async function create() {
     await api.post("order/v1", {
-      UserId: 2,
-      BranchId: 2,
-      AddressId: 5,
+      UserId: userSelector.id,
+      BranchId: orderSelector.BranchId,
+      AddressId: orderSelector.AddressId,
       shipping: Number(shipping),
       courier,
     });

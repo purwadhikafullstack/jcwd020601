@@ -18,6 +18,7 @@ router.get(
 );
 router.get("/:id", orderController.getById);
 
+router.post("/branch", orderController.getBranchOrder);
 router.post("/v1", orderController.insertOrder);
 router.post(
   "/",
