@@ -17,8 +17,9 @@ export default function AuthProvider({ children }) {
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
       const address = JSON.parse(localStorage.getItem("address"));
+      console.log(token);
+
       if (token) {
-        console.log("Addresssess");
         const auth = await api
           .get("/admin/v3?token=" + token)
           .then((res) => res.data);
@@ -26,10 +27,20 @@ export default function AuthProvider({ children }) {
           .get("/address/ismain/" + auth?.id)
           .then((res) => res.data);
         console.log(Boolean(address));
-        console.log(userMainAddress);
         console.log(address);
-
-        // console.log(closestBranch);
+        console.log(userMainAddress);
+        const closestBranch = await api
+          .post(
+            "/address/closest",
+            address
+              ? { lat: address.latitude, lon: address.longitude }
+              : {
+                  lat: userMainAddress.latitude,
+                  lon: userMainAddress.longitude,
+                }
+          )
+          .then((res) => res.data);
+        console.log(closestBranch);
         if (auth?.role) {
           console.log("login admin");
           dispatch({
@@ -77,6 +88,7 @@ export default function AuthProvider({ children }) {
             lon: longitude,
           })
           .then((res) => res.data);
+        console.log(closestBranch);
 
         setIsLoading(false);
         if (closestBranch?.BranchId) {

@@ -547,6 +547,7 @@ function DesktopNav({ callback, keyword, category }) {
             gap={"0px"}
             border={"#d6d6d6 solid 2px"}
             borderRadius={"50px"}
+            display={location == "profile" ? "none" : "inline-flex"}
             onClick={() => {
               modalSelectAddress.onOpen();
             }}

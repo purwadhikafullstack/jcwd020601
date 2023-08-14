@@ -49,16 +49,40 @@ async function submit({ val, token, Swal, dispatch, formikAddress }) {
     });
 }
 
-async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
+async function delAddress({
+  val,
+  token,
+  dispatch,
+  Swal,
+  modalEditAddress,
+  userSelector,
+}) {
+  const address = JSON.parse(localStorage.getItem("address"));
+
   try {
     await api
-      .post("address/v4/" + val.id + "?token=" + token, {
+      .post("address/v4/" + val.addressUser.id + "?token=" + token, {
         UserId: val.userSelector.id,
       })
       .then((res) => {
         modalEditAddress.onClose();
         val.fetchUserAddresses();
       });
+    console.log(val.addressUser.id);
+    console.log(address.id);
+    console.log(val.addressUser.id == address.id);
+    if (val.addressUser.id == address.id) {
+      console.log("sadkkk");
+      const userMainAddress = await api
+        .get("/address/ismain/" + userSelector.id)
+        .then((res) => {
+          localStorage.setItem("address", JSON.stringify(res.data));
+          return res.data;
+        })
+        .catch((err) => {
+          return err.message;
+        });
+    }
   } catch (err) {
     Swal.fire({
       icon: "error",
@@ -79,7 +103,7 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
 async function changeMain({ val, token, Swal, api, dispatch }) {
   try {
     await api
-      .patch("address/v3/" + val.id + "?token=" + token, {
+      .patch("address/v3/" + val.addressUser.id + "?token=" + token, {
         UserId: val.userSelector.id,
       })
       .then((res) => {
