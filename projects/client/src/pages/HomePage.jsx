@@ -17,6 +17,7 @@ export default function HomePage() {
   const dispatch = useDispatch();
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const token = JSON.parse(localStorage.getItem("auth"));
 
   var x = document.getElementById("demo");
   useEffect(() => {
@@ -47,13 +48,14 @@ export default function HomePage() {
   }
   return (
     <Flex display={"columns"}>
-      <Flex
+      {/* <Flex
         onClick={() => {
           console.log(orderSelector);
+          console.log(token);
         }}
       >
         lol
-      </Flex>
+      </Flex> */}
       <Navbar />
       <CarouselShow />
       <CarouselBooks />

@@ -104,10 +104,15 @@ const addressController = {
       let min = Math.min(...result.map((item) => item.distance));
       let lowest = result.filter((item) => item.distance === min);
       console.log(lowest.distance);
-      if (lowest[0].distance >= 50) {
+      if (lowest[0].distance <= 50) {
         return res.send(...lowest);
       }
-      return res.send({ message: "Branch Terdekat Melebihi 50km" });
+      return res.send({
+        message: "Branch Terdekat Melebihi 50km",
+        BranchId: 2,
+        ClosestBranchId: lowest[0].BranchId,
+        distance: lowest[0].distance,
+      });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -263,6 +268,7 @@ const addressController = {
   },
   deleteAddress: async (req, res) => {
     try {
+      console.log(req.params.id);
       const Address = await db.Address.findOne({
         where: {
           id: req.params.id,
@@ -270,29 +276,30 @@ const addressController = {
       });
       await db.Address.destroy({
         where: {
-          //  id: req.params.id
-
-          //   [Op.eq]: req.params.id
-
           id: req.params.id,
         },
       });
+      console.log(Address.isMain);
+      console.log("sadas");
       if (Address.isMain) {
+        console.log(req.body.UserId);
         const Addresses = await db.Address.findAll({
           where: {
             UserId: req.body.UserId,
           },
         });
-        await db.Address.update(
-          {
-            isMain: true,
-          },
-          {
-            where: {
-              id: Addresses[0].id,
+        if (Addresses[0]) {
+          await db.Address.update(
+            {
+              isMain: true,
             },
-          }
-        );
+            {
+              where: {
+                id: Addresses[0].id,
+              },
+            }
+          );
+        }
       }
 
       return await db.Address.findAll().then((result) => res.send(result));
