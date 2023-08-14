@@ -16,7 +16,6 @@ import { BiSearchAlt } from "react-icons/bi";
 import { GrFormAdd, GrPowerReset } from "react-icons/gr";
 import { useEffect, useState } from "react";
 import Action from "./Action";
-// import Add from "./Add";
 import Add from "./Add";
 import { api } from "../../../../api/api";
 export default function Stock() {
