@@ -18,25 +18,20 @@ import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
 import DetailBookCardPage from "../pages/DetailBookCardPage";
 import DetailBookPage from "../pages/DetailBookPage";
-// <<<<<<< stock2
-
-// import DiscountProduct from "../pages/SuperAdminPage/BranchAdminPage/DiscountProduct";
+import DiscountProduct from "../pages/SuperAdminPage/BranchAdminPage/DiscountProduct";
 // import BranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
 // import Product from "../pages/SuperAdminPage/Product";
 // import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 // import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
 // // import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
-
-import DiscountProductPage from "../pages/SuperAdminPage/BranchAdmins/DiscountProductPage";
+// import DiscountProductPage from "../pages/SuperAdminPage/BranchAdmins/DiscountProductPage";
 import BranchAdmin from "../pages/SuperAdminPage/LandingPage";
 import Product from "../pages/SuperAdminPage/Product";
 import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/LandingPage";
 import BranchOrder from "../pages/SuperAdminPage/BranchOrder";
-import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
+// import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
 // >>>>>>> develop
-
-
 
 const routes = [
   <Route
@@ -145,16 +140,16 @@ const routes = [
       <ProtectedPage needLoginAdmin={true}>
         <BranchOrder />
       </ProtectedPage>
-}
-  ></Route>,
-<Route
-    path="/admin/stock"
-    element={
-      <ProtectedPage needLoginAdmin={true}>
-        <StockProductPage />
-      </ProtectedPage>
     }
   ></Route>,
+  // <Route
+  //   path="/admin/stock"
+  //   element={
+  //     <ProtectedPage needLoginAdmin={true}>
+  //       <StockProductPage />
+  //     </ProtectedPage>
+  //   }
+  // ></Route>,
   <Route
     path="/superadminpage"
     element={

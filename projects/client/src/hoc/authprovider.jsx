@@ -29,18 +29,6 @@ export default function AuthProvider({ children }) {
         console.log(Boolean(address));
         console.log(address);
         console.log(userMainAddress);
-        const closestBranch = await api
-          .post(
-            "/address/closest",
-            address
-              ? { lat: address.latitude, lon: address.longitude }
-              : {
-                  lat: userMainAddress.latitude,
-                  lon: userMainAddress.longitude,
-                }
-          )
-          .then((res) => res.data);
-        console.log(closestBranch);
         if (auth?.role) {
           console.log("login admin");
           dispatch({
