@@ -32,7 +32,7 @@ export default function BookCard() {
   const [limit, setLimit] = useState(5);
   const [keyword, setKeyword] = useState("");
   const [place, setPlace] = useState(orderSelector.BranchId);
-  console.log(typeof place);
+  console.log(place);
   console.log(value);
   // console.log(orderSelector.);
   async function fetchProduct() {
@@ -41,7 +41,7 @@ export default function BookCard() {
   }
   useEffect(() => {
     fetchProduct();
-  }, [token, orderSelector]);
+  }, [token, orderSelector, place]);
 
   const settings = {
     dots: true,
@@ -65,8 +65,6 @@ export default function BookCard() {
         Swal.fire("You need to login first?", "", "question");
         nav("/login");
       }
-      // console.log(value[idx]);
-      // console.log(userSelector.id);
     } catch (error) {
       toast({
         title: error.response.data,
@@ -128,7 +126,7 @@ export default function BookCard() {
           <Card key={idx}>
             <CardBody>
               <Box>
-                {val.Book?.Discount?.discount ? (
+                {val.Book?.Discount?.isPercent ? (
                   <>
                     <Box
                       w={10}
@@ -140,7 +138,7 @@ export default function BookCard() {
                       alignItems="center"
                       justifyContent="center"
                     >
-                      <Text fontWeight={"bold"} color={"red.400"}>
+                      <Text fontWeight={"bold"}>
                         {val.Book?.Discount?.discount}%
                       </Text>
                     </Box>
@@ -163,26 +161,34 @@ export default function BookCard() {
                     ? val.Book?.title.slice(0, 15) + "..."
                     : val.Book?.title}
                 </Text>
-                <Text color="#A0AEC0" as="del" fontSize="xl">
-                  Rp. {val.Book?.price}
-                </Text>
                 <Text color="blue.600" fontSize="xl">
-                  Rp. {val.Book?.price}
-                </Text>
-                {/* <Text color="blue.600" fontSize="xl">
                   {val.Book?.Discount?.discount ? (
-                    <>Diskon {val.Book?.Discount?.discount} %</>
+                    <>
+                      {val.Book?.Discount?.isPercent ? (
+                        <>
+                          <Text>Rp.{val.Book?.price}</Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text color="red.600" as="del" fontSize="xl">
+                            Rp. {val.Book?.price}
+                          </Text>
+                          <Text>
+                            Rp. {val.Book?.price - val.Book?.Discount?.discount}
+                          </Text>
+                        </>
+                      )}
+                    </>
                   ) : (
-                    <></>
+                    <>
+                      <Text>Rp.{val.Book?.price}</Text>
+                    </>
                   )}
-                </Text> */}
+                </Text>
               </Stack>
             </CardBody>
             <CardFooter p={5}>
               <ButtonGroup justifyContent={"center"}>
-                {/* <Button variant="solid" colorScheme="blue">
-                  Buy now
-                </Button> */}
                 <Button
                   variant="solid"
                   colorScheme="blue"

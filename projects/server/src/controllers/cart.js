@@ -49,6 +49,12 @@ const cartController = {
               {
                 model: db.Book,
                 required: true,
+                include: [
+                  {
+                    model: db.Discount,
+                    required: false,
+                  },
+                ],
               },
               {
                 model: db.Branch,
@@ -58,6 +64,7 @@ const cartController = {
           },
         ],
       });
+
       // Sum Weight
       const weight = Cart.reduce((prev, curr) => {
         return (

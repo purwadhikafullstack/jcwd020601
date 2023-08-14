@@ -23,6 +23,10 @@ import BranchAdmin from "../pages/SuperAdminPage/LandingPage";
 import Product from "../pages/SuperAdminPage/Product";
 import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/LandingPage";
+import BranchOrder from "../pages/SuperAdminPage/BranchOrder";
+import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
+
+
 
 const routes = [
   <Route
@@ -126,6 +130,22 @@ const routes = [
     }
   ></Route>,
   <Route
+    path="/admin/order"
+    element={
+      <ProtectedPage needLoginAdmin={true}>
+        <BranchOrder />
+      </ProtectedPage>
+}
+  ></Route>,
+<Route
+    path="/admin/stock"
+    element={
+      <ProtectedPage needLoginAdmin={true}>
+        <StockProductPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
     path="/superadminpage"
     element={
       <ProtectedPage needSuperAdminLogin={true}>
@@ -173,6 +193,7 @@ const routes = [
       </ProtectedPage>
     }
   ></Route>,
+
   <Route
     path="/:notfound"
     element={

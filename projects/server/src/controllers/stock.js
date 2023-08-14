@@ -2,67 +2,21 @@ const db = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
-const stock = require("../models/stock");
+const t = require("../helpers/transaction");
+// const stock = require("../models/stock");
+const stockServices = require("../services").stockServices;
 const stockController = {
   getAllAsc: async (req, res) => {
     try {
       const l = parseInt(req.query.limit);
-      console.log(typeof l);
       const limit = l || null;
       const place = req.query.place || 1;
       const search = req.query.search_book || "";
-      console.log(place);
-      const Stock = await db.Stock.findAll({
-        include: [
-          {
-            model: db.Book,
-            include: [db.Discount],
-            required: true, // Inner join
-            where: {
-              [Op.or]: [
-                {
-                  title: {
-                    [Op.like]: "%" + search + "%",
-                  },
-                },
-              ],
-            },
-          },
-          {
-            model: db.Branch,
-            required: true, // Inner join
-            where: { id: place },
-          },
-        ],
-        limit: limit,
-        order: [["id", "ASC"]],
-      });
-      // const result = await db.Stock.findAll({
-      //   include: [
-      //     {
-      //       model: db.Book,
-      //       required: true, // Inner join
-      //       where: {
-      //         [Op.or]: [
-      //           {
-      //             title: {
-      //               [Op.like]: "%" + search + "%",
-      //             },
-      //           },
-      //         ],
-      //       },
-      //     },
-      //     {
-      //       model: db.Branch,
-      //       required: true, // Inner join
-      //       where: { name: place },
-      //     },
-      //   ],
-      // });
+
+      const stockData = await stockServices.getAllAsc(limit, place, search);
       res.json({
-        // result: result,
-        result: Stock,
-        // limit: limit,
+        result: stockData,
+        message: "success get stock /",
       });
     } catch (err) {
       console.log(err.message);
@@ -75,25 +29,68 @@ const stockController = {
     try {
       const limit = parseInt(req.query.limit) || 4;
       const place = req.query.branchId || 1;
-      const Stock = await db.Stock.findAll({
-        include: [
-          {
-            model: db.Book,
-            required: true, // Inner join
-          },
-          {
-            model: db.Branch,
-            required: true, // Inner join
-            where: { id: place },
-          },
-        ],
-        limit: limit,
-        order: [["id", "DESC"]],
-      });
+      const stockData = await stockServices.getAllDesc(place, limit);
       res.json({
-        result: Stock,
+        result: stockData,
         limit: limit,
+        message: "success get stock /Desc",
       });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getAll: async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const search = req.query.search_query || "";
+      const stockData = await stockServices.getAll(page, limit, search);
+
+      // const offset = limit * page;
+      // const totalRows = await db.Stock.count({
+      //   // search: req.query.search_stock || "Demotivasi",
+      //   include: [
+      //     {
+      //       model: db.Book,
+      //       where: {
+      //         title: {
+      //           [Op.like]: "%" + search + "%",
+      //         },
+      //       },
+      //     },
+      //   ],
+      // });
+      // const totalPage = Math.ceil(totalRows / limit);
+      // const result = await db.Stock.findAll({
+      //   include: [
+      //     {
+      //       model: db.Book,
+      //       where: {
+      //         title: {
+      //           [Op.like]: "%" + search + "%",
+      //         },
+      //       },
+      //     },
+      //     {
+      //       model: db.Branch,
+      //     },
+      //   ],
+      //   offset: offset,
+      //   limit: limit,
+      //   order: [["id"]],
+      // });
+
+      // return res.json({
+      //   result: result,
+      //   limit: limit,
+      //   page: page,
+      //   totalRows: totalRows,
+      //   totalPage: totalPage,
+      // });
+      res.send(stockData);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -103,23 +100,8 @@ const stockController = {
   },
   getById: async (req, res) => {
     try {
-      const Stock = await db.Stock.findOne({
-        where: {
-          id: req.params.id,
-        },
-        include: [
-          {
-            model: db.Book,
-            include: [db.Discount],
-            required: true, // Inner join
-          },
-          {
-            model: db.Branch,
-            required: true, // Inner join
-          },
-        ],
-      });
-      return res.send(Stock);
+      const stockData = await stockServices.getById(req.params.id);
+      return res.send(stockData);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -128,57 +110,58 @@ const stockController = {
     }
   },
   editStock: async (req, res) => {
+    const transaction = await t.create();
     try {
-      // const { stock, BranchId, BookId } = req.body;
-      // await db.Stock.update(
-      //   {
-      //     stock,
-      //     BranchId,
-      //     BookId,
-      //   },
-      //   {
-      //     where: {
-      //       id: req.params.id,
-      //     },
-      //   }
+      const stockData = await stockServices.editStock(
+        req.params.id,
+        req.body,
+        transaction.data
+      );
+      const commit = await t.commit(transaction.data);
+      if (!commit.status && commit.error) {
+        throw commit.error;
+      }
+
+      // const stockUpdates = req.body.stockUpdates;
+
+      // const updatedStocks = await Promise.all(
+      //   stockUpdates.map(async (update) => {
+      //     const { stock, BranchId, BookId, ...updateData } = update;
+
+      //     // Find the existing stock
+      //     const existingStock = await db.Stock.findOne({
+      //       where: {
+      //         BranchId,
+      //         BookId,
+      //       },
+      //     });
+
+      //     if (existingStock) {
+      //       // Update the stock with the values from the update
+      //       return existingStock.update(updateData);
+      //     } else {
+      //       // Create a new stock entry
+      //       return db.Stock.create({
+      //         stock,
+      //         BranchId,
+      //         BookId,
+      //         ...updateData,
+      //       });
+      //     }
+      //   })
       // );
 
-      const stockUpdates = req.body.stockUpdates;
+      // res.send(updatedStocks);
 
-      const updatedStocks = await Promise.all(
-        stockUpdates.map(async (update) => {
-          const { stock, BranchId, BookId, ...updateData } = update;
-
-          // Find the existing stock
-          const existingStock = await db.Stock.findOne({
-            where: {
-              BranchId,
-              BookId,
-            },
-          });
-
-          if (existingStock) {
-            // Update the stock with the values from the update
-            return existingStock.update(updateData);
-          } else {
-            // Create a new stock entry
-            return db.Stock.create({
-              stock,
-              BranchId,
-              BookId,
-              ...updateData,
-            });
-          }
-        })
-      );
-
-      res.send(updatedStocks);
-
-      // return await db.Stock.findOne({
+      // let result = await db.Stock.findOne({
       //   where: {
       //     id: req.params.id,
       //   },
-      // }).then((result) => res.send(result));
+      // });
+      res.json({
+        result: stockData,
+        message: "success updated",
+      });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -187,20 +170,17 @@ const stockController = {
     }
   },
   insertStock: async (req, res) => {
+    const transaction = await t.create();
     try {
-      const { stock, BranchId, BookId } = req.body;
-      const data = await db.Stock.create({
-        stock,
-        BranchId,
-        BookId,
-      });
-      // add to stockHistory
-      await db.StockHistory.create({
-        StockId: data.id,
-      });
-      return await db.Stock.findAll().then((result) => {
-        res.send(result);
-      });
+      const stockData = await stockServices.insertStock(
+        req.body,
+        transaction.data
+      );
+      const commit = await t.commit(transaction.data);
+      if (!commit.status && commit.error) {
+        throw commit.error;
+      }
+      res.send(stockData);
     } catch (err) {
       console.log(err);
       return res.status(500).send({
@@ -209,17 +189,17 @@ const stockController = {
     }
   },
   deleteStock: async (req, res) => {
+    const transaction = await t.create();
     try {
-      await db.Stock.destroy({
-        where: {
-          //  id: req.params.id
-
-          //   [Op.eq]: req.params.id
-
-          id: req.params.id,
-        },
-      });
-      return await db.Stock.findAll().then((result) => res.send(result));
+      const stockData = await stockServices.deleteStock(
+        req.params.id,
+        transaction.data
+      );
+      const commit = await t.commit(transaction.data);
+      if (!commit.status && commit.error) {
+        throw commit.error;
+      }
+      res.send(stockData);
     } catch (err) {
       console.log(err.message);
       return res.status(500).send({

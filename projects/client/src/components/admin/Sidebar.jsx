@@ -15,6 +15,8 @@ import {
   FiSettings,
 } from "react-icons/fi";
 
+import { GrTransaction } from "react-icons/gr";
+
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -22,6 +24,7 @@ const LinkItems = [
   { name: "Home", icon: FiHome, address: "/admin" },
   { name: "Product", icon: FiTrendingUp, address: "/admin/product" },
   { name: "Category", icon: FiCompass, address: "/admin/category" },
+  { name: "Transaction", icon: GrTransaction, address: "/admin/order" },
   { name: "Favourites", icon: FiStar, address: "/favorites" },
   { name: "Settings", icon: FiSettings, address: "/settings" },
 ];

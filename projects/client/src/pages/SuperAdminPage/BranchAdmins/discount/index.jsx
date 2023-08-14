@@ -31,10 +31,11 @@ export default function Discount() {
     let response = await api.get(
       `/discount?search_query=${keyword}&page=${page}&limit=${limit}`
     );
-    setValue(response.data.result);
+    setValue(response.data.Discount);
     setPage(response.data.page);
     setRows(response.data.totalRows);
     setPages(response.data.totalPage);
+    // console.log(response.data);
   }
 
   useEffect(() => {
@@ -58,7 +59,7 @@ export default function Discount() {
     setQuery("");
   };
 
-  console.log(value);
+  // console.log(value);
   const rupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",

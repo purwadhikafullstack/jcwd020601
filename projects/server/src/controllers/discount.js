@@ -2,46 +2,16 @@ const db = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
+const t = require("../helpers/transaction");
+const discountServices = require("../services").discountServices;
 const discountController = {
   getAll: async (req, res) => {
     try {
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       const search = req.query.search_query || "";
-      const offset = limit * page;
-      const totalRows = await db.Discount.count({
-        where: {
-          [Op.or]: [
-            {
-              title: {
-                [Op.like]: "%" + search + "%",
-              },
-            },
-          ],
-        },
-      });
-      const totalPage = Math.ceil(totalRows / limit);
-      const Discount = await db.Discount.findAll({
-        where: {
-          [Op.or]: [
-            {
-              title: {
-                [Op.like]: "%" + search + "%",
-              },
-            },
-          ],
-        },
-        offset: offset,
-        limit: limit,
-        order: [["id"]],
-      });
-      res.json({
-        result: Discount,
-        page: page,
-        limit: limit,
-        totalRows: totalRows,
-        totalPage: totalPage,
-      });
+      const discountData = await discountServices.getAll(page, limit, search);
+      res.send(discountData);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -51,12 +21,12 @@ const discountController = {
   },
   getById: async (req, res) => {
     try {
-      const Discount = await db.Discount.findOne({
-        where: {
-          id: req.params.id,
-        },
+      let id = req.params.id;
+      const discountData = await discountServices.getById(id);
+      res.json({
+        result: discountData,
+        message: "success get detail",
       });
-      return res.send(Discount);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -65,29 +35,22 @@ const discountController = {
     }
   },
   editDiscount: async (req, res) => {
+    const transaction = await t.create();
     try {
-      const { title, discount, isPercent, start, end, BranchId } = req.body;
-      await db.Discount.update(
-        {
-          title,
-          discount,
-          isPercent,
-          start,
-          end,
-          BranchId,
-        },
-        {
-          where: {
-            id: req.params.id,
-          },
-        }
+      const discountData = await discountServices.editDiscount(
+        req.params.id,
+        req.body,
+        transaction.data
       );
 
-      return await db.Discount.findOne({
-        where: {
-          id: req.params.id,
-        },
-      }).then((result) => res.send(result));
+      const commit = await t.commit(transaction.data);
+      if (!commit.status && commit.error) {
+        throw commit.error;
+      }
+      res.json({
+        result: discountData,
+        message: "success update data",
+      });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -96,18 +59,19 @@ const discountController = {
     }
   },
   insertDiscount: async (req, res) => {
+    const transaction = await t.create();
     try {
-      const { title, discount, isPercent, start, end, BranchId } = req.body;
-      await db.Discount.create({
-        title,
-        discount,
-        isPercent,
-        start,
-        end,
-        BranchId,
-      });
-      return await db.Discount.findAll().then((result) => {
-        res.send(result);
+      const discountData = await discountServices.insertDiscount(
+        req.body,
+        transaction.data
+      );
+      const commit = await t.commit(transaction.data);
+      if (!commit.status && commit.error) {
+        throw commit.error;
+      }
+      res.json({
+        result: discountData,
+        message: "Success Added",
       });
     } catch (err) {
       console.log(err);
@@ -117,17 +81,20 @@ const discountController = {
     }
   },
   deleteDiscount: async (req, res) => {
+    const transaction = await t.create();
     try {
-      await db.Discount.destroy({
-        where: {
-          //  id: req.params.id
-
-          //   [Op.eq]: req.params.id
-
-          id: req.params.id,
-        },
+      const discountData = await discountServices.deleteDiscount(
+        req.params.id,
+        transaction.data
+      );
+      const commit = await t.commit(transaction.data);
+      if (!commit.status && commit.error) {
+        throw commit.error;
+      }
+      res.json({
+        result: discountData,
+        message: "Success deleted",
       });
-      return await db.Discount.findAll().then((result) => res.send(result));
     } catch (err) {
       console.log(err.message);
       return res.status(500).send({

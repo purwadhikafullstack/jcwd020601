@@ -60,7 +60,7 @@ export default function DetailBookPage() {
             py={3}
           >
             <Box>
-              {value.Book?.Discount?.discount ? (
+              {value.Book?.Discount?.isPercent ? (
                 <>
                   <Box
                     w={10}
@@ -70,7 +70,7 @@ export default function DetailBookPage() {
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <Text fontWeight={"bold"} color={"red.400"}>
+                    <Text fontWeight={"bold"}>
                       {value.Book?.Discount?.discount}%
                     </Text>
                   </Box>

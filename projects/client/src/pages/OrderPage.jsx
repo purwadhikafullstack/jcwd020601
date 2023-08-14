@@ -6,6 +6,7 @@ import {
   Icon,
   Center,
   Image,
+  Input,
   useDisclosure,
   Menu,
   MenuButton,
@@ -19,15 +20,54 @@ import {
 import Navbar from "../components/Navbar";
 import { MdLocationOn } from "react-icons/md";
 import { AiOutlineDown, AiOutlineBank } from "react-icons/ai";
-// import { useEffect, useState } from "react";
+import { FcAddImage } from "react-icons/fc";
 import { api } from "../api/api";
-// import CartBooks from "../components/CartBooks";
+import { useEffect, useRef, useState } from "react";
 // import { useSelector } from "react-redux";
 
 export default function OrderPage() {
-  // const userSelector = useSelector((state) => state.login.auth);
-  // const [edit, setEdit] = useState(false);
-  // const [total, setTotal] = useState(0);
+  const [order, setOrder] = useState();
+  const inputFileRef = useRef(null);
+
+  const [link, setLink] = useState();
+  // const [selectFile, setSelectFile] = useState();
+
+  // GET
+  async function fetch() {
+    try {
+      const result = await api.post("orderdetail/id", {
+        OrderId: 20,
+      });
+      setLink(result.data[0].Order.payment_url);
+      return setOrder(result.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // POST Payment
+  const handleFile = async (event) => post(event.target.files[0]);
+  async function post(file) {
+    try {
+      const formData = new FormData();
+      formData.append("paymentImg", file);
+      formData.append("id", 20);
+      const pay = await api.post("/order", formData);
+
+      return fetch();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // useEffect(async () => {
+  //   const get = await api.get("/order/20");
+  //   return setUpload(get.data.payment_url);
+  // }, []);
+
+  useEffect(() => {
+    fetch();
+  }, []);
 
   return (
     <Container maxW={"size.lg"}>
@@ -51,48 +91,69 @@ export default function OrderPage() {
               justifyContent={"center"}
               gap={"1rem"}
             >
-              <Flex alignItems={"center"}>
-                <Icon as={MdLocationOn}></Icon>
-                Alamat Tujuan Pengiriman
-              </Flex>
-              <Flex flexDir={"column"}>
-                <Box>
-                  As a user, I want to select or change shipping method based on
-                  my address
-                </Box>
-                <Menu>
-                  <MenuButton
-                    width={"-webkit-fit-content"}
-                    // borderBottom={"1px solid"}
-                    as={Button}
-                    variant={"ghost"}
-                    colorScheme="blue"
+              {order?.map((val) => {
+                return (
+                  <Flex
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                    padding={"1rem 2rem"}
                   >
-                    <Center>
-                      <Icon as={AiOutlineDown}></Icon>
-                      Select shipping method
-                    </Center>
-                  </MenuButton>
-                  <MenuList>
-                    <MenuItem>JNE</MenuItem>
-                    <MenuItem>POS</MenuItem>
-                    <MenuItem>TIKI</MenuItem>
-                  </MenuList>
-                </Menu>
-              </Flex>
+                    <Image
+                      maxHeight={"100px"}
+                      src={val.Stock.Book.book_url}
+                    ></Image>
+                    <Flex
+                      w={"45%"}
+                      flexDir={"column"}
+                      justifyContent={"space-evenly"}
+                    >
+                      <Box>{val.Stock.Book.title}</Box>
+                      <Box>
+                        {val.Stock.Book.author} -{" "}
+                        {val.Stock.Book.publish_date.slice(0, 4)}
+                      </Box>
+                      <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
+                      <Box fontWeight={"semibold"}>{`X ${val.quantity}`}</Box>
+                    </Flex>
+                    {/* seperate */}
+                    {/* seperate */}
+
+                    <Flex
+                      flexDir={"column"}
+                      gap={"8px"}
+                      justifyContent={"center"}
+                      alignItems={"center"}
+                    >
+                      {`Rp ${val.price.toLocaleString("id-ID")},-`}
+                    </Flex>
+                  </Flex>
+                );
+              })}
             </Flex>
-            {/* <CartBooks setTotal={setTotal}></CartBooks> */}
           </Flex>
-          <Flex width={"35%"} padding={"1rem 2rem"} flexDir={"column"}>
+          <Flex
+            width={"35%"}
+            padding={"1rem 2rem"}
+            flexDir={"column"}
+            gap={"1rem"}
+          >
             <Flex
               boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
               padding={"1rem 2rem"}
               borderRadius={"0.7rem"}
-              // justifyContent={"end"}
               flexDir={"column"}
+              gap={"1rem"}
             >
-              <Flex>Complete the payment and uploud the payment proof</Flex>
-              <Box>
+              <Flex fontWeight={"bold"} gap={"0.5rem"}>
+                <Box>Total Order Payment</Box>
+                <Box color={"blue.500"}>
+                  {order ? order[0].Order.total.toLocaleString("id-ID") : null}
+                </Box>
+              </Flex>
+              <Flex fontStyle={"italic"}>
+                Complete the payment and upload the payment proof
+              </Flex>
+              <Box fontWeight={"semibold"}>
                 <Icon as={AiOutlineBank}></Icon> BCA 11223456789
               </Box>
             </Flex>
@@ -102,7 +163,7 @@ export default function OrderPage() {
               borderRadius={"0.7rem"}
             >
               <Box padding={"2rem"} fontSize={"xl"} fontWeight={"semibold"}>
-                Order Details
+                Upload Payment Proof
               </Box>
               <Flex
                 flexDir={"column"}
@@ -112,16 +173,32 @@ export default function OrderPage() {
                 gap={"2rem"}
                 fontWeight={"semibold"}
               >
-                <Flex gap={"1rem"}>
-                  <Box>Payment Summary</Box>
-                  <Box color={"blue.500"} fontWeight={"bold"}>
-                    {/* {total.toLocaleString("id-ID")} */}
-                  </Box>
-                </Flex>
+                {link ? (
+                  <Image
+                    // height={"200px"}
+                    maxH={"200px"}
+                    // onClick={() => inputFileRef.current.click()}
+                    src={link}
+                  ></Image>
+                ) : (
+                  <Icon
+                    fontSize={"8xl"}
+                    as={FcAddImage}
+                    cursor={"pointer"}
+                  ></Icon>
+                )}
+
+                <Input
+                  display={"none"}
+                  ref={inputFileRef}
+                  type="file"
+                  onChange={handleFile}
+                ></Input>
                 <Button
                   colorScheme={"blue"}
                   borderRadius={"1.5rem"}
                   width={"100%"}
+                  onClick={() => inputFileRef.current.click()}
                 >
                   Upload Payment Proof
                 </Button>

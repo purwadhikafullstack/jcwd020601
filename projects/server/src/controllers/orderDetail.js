@@ -16,10 +16,25 @@ const orderDetailController = {
   },
   getById: async (req, res) => {
     try {
-      const OrderDetail = await db.OrderDetail.findOne({
+      const { OrderId } = req.body;
+      const OrderDetail = await db.OrderDetail.findAll({
         where: {
-          id: req.params.id,
+          OrderId,
         },
+        include: [
+          {
+            model: db.Order,
+            required: true,
+          },
+          {
+            model: db.Stock,
+            include: [
+              {
+                model: db.Book,
+              },
+            ],
+          },
+        ],
       });
       return res.send(OrderDetail);
     } catch (err) {
@@ -31,6 +46,7 @@ const orderDetailController = {
   },
   editOrderDetail: async (req, res) => {
     try {
+      console.log("test");
       const { quantity, price, OrderId, StockId } = req.body;
       await db.OrderDetail.update(
         { quantity, price, OrderId, StockId },

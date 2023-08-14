@@ -38,7 +38,9 @@ export default function Add({ getData, token }) {
       title: Yup.string()
         .trim()
         .required("Isi dalam bentuk karakter tidak boleh kosong"),
-      discount: Yup.number().required("Required!"),
+      discount: Yup.number()
+        .required("Tidak boleh kosong!")
+        .typeError("Isi dengan angka"),
       isPercent: Yup.string().required("Required!"),
       start: Yup.string().required("Required!"),
       end: Yup.string().required("Required!"),
@@ -91,6 +93,7 @@ export default function Add({ getData, token }) {
                 <Input
                   placeholder="Jumlah Diskon"
                   name="discount"
+                  type="number"
                   value={formik.values.discount}
                   onChange={formik.handleChange}
                 />
