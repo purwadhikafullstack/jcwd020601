@@ -25,6 +25,12 @@ export default function ProfilePage() {
       await api.get("/address/user/" + userSelector.id).then((res) => {
         setUserAddresses(res.data);
       });
+      const pendingOrder = await api
+        .get("/order/pending/" + userSelector.id)
+        .then((res) => res.data);
+      const historyOrder = await api
+        .get("/order/history/" + userSelector.id)
+        .then((res) => res.data);
     } catch (err) {
       toast({
         position: "top",

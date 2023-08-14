@@ -3,10 +3,12 @@ module.exports = (sequelize, Sequelize) => {
     "BooksCategories",
     {
       CategoryId: {
+        // type: Sequelize.STRING,
         type: Sequelize.INTEGER,
         allowNull: false,
       },
       BookId: {
+        // type: Sequelize.STRING,
         type: Sequelize.INTEGER,
         allowNull: false,
       },

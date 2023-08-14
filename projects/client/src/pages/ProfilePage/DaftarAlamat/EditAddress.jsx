@@ -23,21 +23,31 @@ import { useDispatch } from "react-redux";
 import Helpers from "./EditAddressHelper";
 export default function EditAddress(val) {
   YupPassword(Yup);
+  const [block, setBlock] = val.useState();
+  const [fetchBoth, setFetchBoth] = val.useState(true);
+  const [reset, setReset] = val.useState(true);
+  const [block2, setBlock2] = val.useState();
   const [provinces, setProvinces] = val.useState([]);
   const [cities, setCities] = val.useState([]);
-  const [posCodes, setPosCodes] = val.useState([]);
-  const [provinceId, setProvinceId] = val.useState();
-  const [cityId, setCityId] = val.useState();
+  const [posCodes, setPosCodes] = val.useState(val.addressUser.pos);
+  const [provinceId, setProvinceId] = val.useState(val.addressUser.ProvinceId);
+  const [cityId, setCityId] = val.useState(val.addressUser.CityId);
   const token = JSON.parse(localStorage.getItem("auth"));
   const dispatch = useDispatch();
   const initialState = {
-    province: val.province,
-    city: val.city,
-    pos: val.pos,
-    labelAlamat: val.labelAlamat,
-    namaPenerima: val.namaPenerima,
-    no_Handphone: val.no_Handphone,
-    alamatLengkap: val.alamatLengkap,
+    province: {
+      provinceName: val.addressUser.province,
+      ProvinceId: val.addressUser.ProvinceId,
+    },
+    city: {
+      cityName: val.addressUser.city,
+      CityId: val.addressUser.CityId,
+    },
+    pos: val.addressUser.pos,
+    labelAlamat: val.addressUser.labelAlamat,
+    namaPenerima: val.addressUser.namaPenerima,
+    no_Handphone: val.addressUser.no_Handphone,
+    alamatLengkap: val.addressUser.alamatLengkap,
   };
   const [
     {
@@ -59,13 +69,17 @@ export default function EditAddress(val) {
     formikAddress.resetForm();
   }
   async function fetchCity() {
+    console.log(provinceId);
     await api.get("/city/v1/" + provinceId).then((res) => {
+      console.log(res.data.result);
       setCities(res.data.result);
     });
   }
   async function fetchPos() {
+    console.log(cityId);
     await api.get("/city/v2/" + cityId).then((res) => {
       setPosCodes(res.data.result);
+      console.log(res.data.result);
     });
   }
   useEffect(() => {
@@ -79,36 +93,55 @@ export default function EditAddress(val) {
   const formikAddress = useFormik({
     enableReinitialize: true,
     initialValues: {
-      no_Handphone: val.no_Handphone,
-      namaPenerima: val.namaPenerima,
-      labelAlamat: val.labelAlamat,
-      province: val.province,
-      city: val.city,
-      pos: val.pos,
-      alamatLengkap: val.alamatLengkap,
+      no_Handphone: val.addressUser.no_Handphone,
+      namaPenerima: val.addressUser.namaPenerima,
+      labelAlamat: val.addressUser.labelAlamat,
+      province: val.addressUser.province,
+      city: val.addressUser.city,
+      pos: val.addressUser.pos,
+      alamatLengkap: val.addressUser.alamatLengkap,
     },
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
+      setReset(false);
       await Helpers.submit({ val, token, Swal, dispatch, formikAddress });
       modalEditAddress.onClose();
     },
   });
   async function inputHandlerAddress(input) {
+    setReset(true);
     const { value, id } = input.target;
     setState((prevState) => ({ ...prevState, [id]: value }));
     if (id == "province") {
       setProvinceId(value.split("#")[0]);
-      formikAddress.setFieldValue(id, value.split("#")[1]);
+      formikAddress.setFieldValue(id, value);
     } else if (id == "city") {
       setCityId(value.split("#")[0]);
-      formikAddress.setFieldValue(id, value.split("#")[1]);
-    } else formikAddress.setFieldValue(id, value);
+      formikAddress.setFieldValue(id, value);
+    } else {
+      formikAddress.setFieldValue(id, value);
+    }
+    console.log(formikAddress.values);
   }
   useEffect(() => {
     fetchCity();
+    fetchPos();
+  }, [fetchBoth]);
+  useEffect(() => {
+    fetchCity();
+    if (block && reset) {
+      formikAddress.setFieldValue("city", "");
+      setState((prevState) => ({ ...prevState, ["city"]: "" }));
+    }
+    setBlock(true);
   }, [formikAddress.values.province]);
   useEffect(() => {
     fetchPos();
+    if (block2 && reset) {
+      formikAddress.setFieldValue("pos", "");
+      setState((prevState) => ({ ...prevState, ["pos"]: "" }));
+    }
+    setBlock2(true);
   }, [formikAddress.values.city]);
   const modalEditAddress = useDisclosure();
   return (
@@ -127,9 +160,9 @@ export default function EditAddress(val) {
       >
         <Flex px={"20px"} pt={"10px"} alignItems={"center"} gap={"10px"}>
           <Flex fontWeight={"700"} color={"#385898"}>
-            {val.labelAlamat}
+            {val.addressUser.labelAlamat}
           </Flex>
-          {val.isMain ? (
+          {val.addressUser.isMain ? (
             <Box border={"#385898 solid 1px"} fontSize={"0.6rem"} px={"5px"}>
               Main
             </Box>
@@ -138,10 +171,12 @@ export default function EditAddress(val) {
           )}
         </Flex>
         <Flex p={"20px"} flexDir={"column"}>
-          <Flex fontWeight={600}>{"Nama : " + val.namaPenerima}</Flex>
-          <Flex>{"Poscode : " + val.pos}</Flex>
-          <Flex>{val.city + " - " + val.province}</Flex>
-          <Flex>{"No. Telp : " + val.no_Handphone}</Flex>
+          <Flex fontWeight={600}>
+            {"Nama : " + val.addressUser.namaPenerima}
+          </Flex>
+          <Flex>{"Poscode : " + val.addressUser.pos}</Flex>
+          <Flex>{val.addressUser.city + " - " + val.addressUser.province}</Flex>
+          <Flex>{"No. Telp : " + val.addressUser.no_Handphone}</Flex>
         </Flex>
         <Modal
           closeOnOverlayClick={false}
@@ -163,9 +198,13 @@ export default function EditAddress(val) {
                 <Button
                   w={"30px"}
                   onClick={() => {
+                    setReset(false);
+                    formikAddress.resetForm();
                     modalEditAddress.onClose();
                     setState({ ...initialState });
-                    formikAddress.resetForm();
+                    setProvinceId(val.addressUser.ProvinceId);
+                    setCityId(val.addressUser.CityId);
+                    setFetchBoth(!fetchBoth);
                   }}
                 >
                   <Icon fontSize={"30px"} as={MdClose}></Icon>
@@ -174,7 +213,18 @@ export default function EditAddress(val) {
             </ModalHeader>
             <ModalBody maxH="500px" h={"500px"} maxW="500px">
               <ModalEditAddress
-                id={val.id}
+                val={val}
+                fetchBoth={fetchBoth}
+                reset={reset}
+                setFetchBoth={setFetchBoth}
+                setReset={setReset}
+                setProvinceId={setProvinceId}
+                setCityId={setCityId}
+                fetchCity={fetchCity}
+                fetchPos={fetchPos}
+                setState={setState}
+                initialState={initialState}
+                id={val.addressUser.id}
                 alamatLengkap={alamatLengkap}
                 no_Handphone={no_Handphone}
                 labelAlamat={labelAlamat}

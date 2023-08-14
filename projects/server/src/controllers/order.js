@@ -16,11 +16,47 @@ const orderController = {
       });
     }
   },
-  getById: async (req, res) => {
+  getByUserId: async (req, res) => {
     try {
-      const Order = await db.Order.findOne({
+      const Order = await db.Order.findAll({
         where: {
-          id: req.params.id,
+          UserId: req.params.UserId,
+        },
+      });
+      return res.send(Order);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getPendingByUserId: async (req, res) => {
+    try {
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { UserId: req.params.UserId },
+            { status: { [Op.or]: ["init", "payed", "delivery"] } },
+          ],
+        },
+      });
+      return res.send(Order);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getHistoryByUserId: async (req, res) => {
+    try {
+      const Order = await db.Order.findAll({
+        where: {
+          [Op.and]: [
+            { UserId: req.params.UserId },
+            { status: { [Op.or]: ["done", "cancel"] } },
+          ],
         },
       });
       return res.send(Order);

@@ -6,6 +6,7 @@ const bookController = require("../controllers").bookController;
 //get
 
 router.get("/", bookController.getAll);
+router.get("/all", bookController.getAllBook);
 router.get("/:id", validate, bookController.getById);
 router.post(
   "/v1",

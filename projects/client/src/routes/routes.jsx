@@ -25,6 +25,8 @@ import Product from "../pages/SuperAdminPage/Product";
 import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
 import BranchOrder from "../pages/SuperAdminPage/BranchOrder";
+import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
+
 
 const routes = [
   <Route
@@ -132,6 +134,14 @@ const routes = [
     element={
       <ProtectedPage needLoginAdmin={true}>
         <BranchOrder />
+      </ProtectedPage>
+}
+  ></Route>,
+<Route
+    path="/admin/stock"
+    element={
+      <ProtectedPage needLoginAdmin={true}>
+        <StockProductPage />
       </ProtectedPage>
     }
   ></Route>,

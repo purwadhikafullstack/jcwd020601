@@ -23,7 +23,7 @@ function userReducer(state = init, action) {
       role: action.payload.role,
       status: action.payload.status,
       address: action.address,
-      branch: action.payload.branch,
+      branchId: action.payload.BranchId,
       closestBranch: action.closestBranch,
     };
   } else if (action.type === "logout") {

@@ -66,9 +66,16 @@ db.Token = require("./token")(sequelize, Sequelize);
 db.Address.belongsTo(db.User, {
   foreignKey: "UserId",
 });
+db.Address.belongsTo(db.City, {
+  foreignKey: "CityId",
+});
+db.Address.belongsTo(db.Province, {
+  foreignKey: "ProvinceId",
+});
 db.Stock.belongsTo(db.Branch, {
   foreignKey: "BranchId",
 });
+
 db.OrderDetail.belongsTo(db.Order, {
   foreignKey: "OrderId",
 });
@@ -78,6 +85,10 @@ db.Book.belongsTo(db.Discount, {
   foreignKey: "DiscountId",
 });
 db.Discount.hasOne(db.Book);
+db.Book.belongsTo(db.Category, {
+  foreignKey: "CategoryId",
+});
+// db.Category.hasOne(db.Book);
 db.Discount.belongsTo(db.Branch, {
   foreignKey: "BranchId",
 });
@@ -97,6 +108,13 @@ db.User.hasOne(db.Cart);
 db.Cart.belongsTo(db.User);
 db.Order.belongsTo(db.User, {
   foreignKey: "UserId",
+});
+
+db.Address.belongsTo(db.City, {
+  foreignKey: "CityId",
+});
+db.Address.belongsTo(db.Province, {
+  foreignKey: "ProvinceId",
 });
 db.Address.hasOne(db.Order);
 db.Order.belongsTo(db.Address);

@@ -249,7 +249,6 @@ function DesktopNav() {
     setTrans(!trans);
   }
   async function logout() {
-    nav("/");
     localStorage.removeItem("auth");
     dispatch({
       type: "logout",

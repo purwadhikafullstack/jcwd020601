@@ -32,6 +32,7 @@ export default function Add({ getData, token }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [image, setImage] = useState(icon);
   const [diskon, setDiskon] = useState([]);
+  const [category, setCategory] = useState([]);
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -46,12 +47,13 @@ export default function Add({ getData, token }) {
       dimension: "",
       price: "",
       rating: "",
-      DiscountId: 1,
+      // DiscountId: 1,
+      CategoryId: null,
     },
     validationSchema: Yup.object({
       title: Yup.string().required("Tidak Boleh Kosong!"),
       language: Yup.string().required("Tidak Boleh Kosong!"),
-      publish_date: Yup.number().required("Tidak Boleh Kosong!"),
+      publish_date: Yup.string().required("Tidak Boleh Kosong!"),
       author: Yup.string().required("Tidak Boleh Kosong!"),
       publisher: Yup.string().required("Tidak Boleh Kosong!"),
       description: Yup.string().required("Tidak Boleh Kosong!"),
@@ -74,6 +76,9 @@ export default function Add({ getData, token }) {
       dimension: Yup.string().required("Tidak Boleh Kosong!"),
       price: Yup.number().required("Tidak Boleh Kosong!"),
       rating: Yup.string().required("Tidak Boleh Kosong!"),
+      CategoryId: Yup.number()
+        .required("Tidak Boleh Kosong!")
+        .typeError("Category Tidak Boleh Kosong"),
     }),
     onSubmit: async (values, { resetForm }) => {
       const formData = new FormData();
@@ -89,7 +94,8 @@ export default function Add({ getData, token }) {
       formData.append("dimension", values.dimension);
       formData.append("price", values.price);
       formData.append("rating", values.rating);
-      formData.append("DiscountId", values.DiscountId);
+      // formData.append("DiscountId", values.DiscountId);
+      formData.append("CategoryId", values.CategoryId);
       await api.post("/book/v1", formData, {
         headers: {
           Authorization: token,
@@ -104,13 +110,16 @@ export default function Add({ getData, token }) {
   });
   const fetchDiskon = async () => {
     let response = await api.get("/discount");
+    let response2 = await api.get("/category");
     setDiskon(response.data.result);
+    setCategory(response2.data.result);
   };
 
   useEffect(() => {
     fetchDiskon();
   }, [token]);
-  console.log(formik.values);
+  // console.log(formik.values);
+  // console.log(category);
   return (
     <>
       <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">
@@ -170,17 +179,6 @@ export default function Add({ getData, token }) {
                 />
                 <Text color={"red.800"}>{formik.errors.author}</Text>
               </Box>
-              {/* <Box display={"flex"} flexDirection={"column"} gap={2}>
-                <FormLabel>DiscountId</FormLabel>
-                <Input
-                  placeholder="DiscountId"
-                  name="DiscountId"
-                  type="number"
-                  value={formik.values.DiscountId}
-                  onChange={formik.handleChange}
-                />
-                <Text color={"red.800"}>{formik.errors.DiscountId}</Text>
-              </Box> */}
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 <FormLabel>Harga</FormLabel>
                 <Input
@@ -203,11 +201,12 @@ export default function Add({ getData, token }) {
               </Box>
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 <FormLabel>Tahun Terbit</FormLabel>
-                <Input
+                <input
                   placeholder="Tahun terbit"
                   name="publish_date"
                   value={formik.values.publish_date}
                   onChange={formik.handleChange}
+                  type="date"
                 />
                 <Text color={"red.800"}>{formik.errors.publish_date}</Text>
               </Box>
@@ -232,20 +231,23 @@ export default function Add({ getData, token }) {
                 <Text color={"red.800"}>{formik.errors.dimension}</Text>
               </Box>
               <Box>
-                <FormLabel>Discount</FormLabel>
+                <FormLabel>Category</FormLabel>
                 <Select
-                  placeholder="Select Discount"
-                  // id="DiscountId"
-                  name="DiscountId"
-                  onChange={formik.handleChange}
-                  value={formik.values.DiscountId}
+                  placeholder="Select Category"
+                  name="CategoryId"
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    const categoryId = parseInt(e.target.value);
+                    formik.setFieldValue("CategoryId", categoryId);
+                  }}
                 >
-                  {diskon.map((val, idx) => (
+                  {category.map((val, idx) => (
                     <option key={val.id} value={val.id}>
-                      {val.title}
+                      {val.category}
                     </option>
                   ))}
                 </Select>
+                <Text color={"red.800"}>{formik.errors.CategoryId}</Text>
               </Box>
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 {" "}
@@ -282,7 +284,6 @@ export default function Add({ getData, token }) {
                     setSelectedFile(URL.createObjectURL(e.target.files[0]));
                   }}
                 />
-                {/* {formik.values.book_url && ( */}
                 <Image
                   src={selectedFile ? selectedFile : image}
                   w={"100px"}

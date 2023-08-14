@@ -3,6 +3,7 @@ const Sequelize = require("sequelize");
 const { Op, sequelize } = db.Sequelize;
 const moment = require("moment");
 const t = require("../helpers/transaction");
+const categoryServices = require("../services").categoryServices;
 
 const categoryController = {
   getAll: async (req, res) => {
@@ -10,50 +11,8 @@ const categoryController = {
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       const search = req.query.search_query || "";
-      const offset = limit * page;
-      const totalRows = await db.Category.count({
-        where: {
-          [Op.or]: [
-            {
-              Category: {
-                [Op.like]: "%" + search + "%",
-              },
-            },
-            // {
-            // 	language: {
-            // 		[Op.like]: "%" + search + "%",
-            // 	},
-            // },
-          ],
-        },
-      });
-      const totalPage = Math.ceil(totalRows / limit);
-      const result = await db.Category.findAll({
-        where: {
-          [Op.or]: [
-            {
-              Category: {
-                [Op.like]: "%" + search + "%",
-              },
-            },
-            // {
-            // 	language: {
-            // 		[Op.like]: "%" + search + "%",
-            // 	},
-            // },
-          ],
-        },
-        offset: offset,
-        limit: limit,
-        order: [["id"]],
-      });
-      res.json({
-        result: result,
-        page: page,
-        limit: limit,
-        totalRows: totalRows,
-        totalPage: totalPage,
-      });
+      const categoryData = await categoryServices.getAll(page, limit, search);
+      res.json(categoryData);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -63,12 +22,12 @@ const categoryController = {
   },
   getById: async (req, res) => {
     try {
-      const Category = await db.Category.findOne({
-        where: {
-          id: req.params.id,
-        },
+      let id = req.params.id;
+      const categoryData = await categoryServices.getById(id);
+      return res.json({
+        result: categoryData,
+        message: "success get detail",
       });
-      return res.send(Category);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -77,40 +36,22 @@ const categoryController = {
     }
   },
   editCategory: async (req, res) => {
+    const transaction = await t.create();
     try {
-      const { category } = req.body;
-      // create transaction
-      const transaction = await t.create();
-      if (!transaction.status && transaction.error) {
-        throw transaction.error;
-      }
-      await db.Category.update(
-        {
-          category,
-        },
-        {
-          where: {
-            id: req.params.id,
-          },
-        },
-        {
-          transaction: transaction.data,
-        }
+      const id = req.params.id;
+      const categoryData = await categoryServices.editCategory(
+        id,
+        req.body,
+        transaction.data
       );
       const commit = await t.commit(transaction.data);
       if (!commit.status && commit.error) {
         throw commit.error;
       }
-      return await db.Category.findOne(
-        {
-          where: {
-            id: req.params.id,
-          },
-        },
-        {
-          transaction: transaction.data,
-        }
-      ).then((result) => res.send(result));
+      res.json({
+        result: categoryData,
+        message: "success updated",
+      });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -119,28 +60,38 @@ const categoryController = {
     }
   },
   insertCategory: async (req, res) => {
+    const transaction = await t.create();
     try {
-      const { category } = req.body;
+      // const { category } = req.body;
       // transaction
-      const transaction = await t.create();
-      if (!transaction.status && transaction.error) {
-        throw transaction.error;
-      }
-      await db.Category.create(
-        {
-          category,
-        },
-        { transaction: transaction.data }
+
+      const categoryData = await categoryServices.insertCategory(
+        req.body,
+        transaction.data
       );
       const commit = await t.commit(transaction.data);
       if (!commit.status && commit.error) {
         throw commit.error;
       }
-      return await db.Category.findAll().then((result) => {
-        res.send(result);
+      // if (!transaction.status && transaction.error) {
+      //   throw transaction.error;
+      // }
+      // await db.Category.create(
+      //   {
+      //     category,
+      //   },
+      //   { transaction: transaction.data }
+      // );
+
+      // return await db.Category.findAll().then((result) => {
+      //   res.send(result);
+      // });
+      res.json({
+        result: categoryData,
+        message: "success added data",
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
 
       return res.status(500).send({
         message: err.message,
@@ -148,27 +99,21 @@ const categoryController = {
     }
   },
   deleteCategory: async (req, res) => {
+    const transaction = await t.create();
     try {
-      const transaction = await t.create();
-      await db.Category.destroy(
-        {
-          where: {
-            //  id: req.params.id
-
-            //   [Op.eq]: req.params.id
-
-            id: req.params.id,
-          },
-        },
-        {
-          transaction: transaction.data,
-        }
+      let id = req.params.id;
+      const categoryData = await categoryServices.deleteCategory(
+        id,
+        transaction.data
       );
       const commit = await t.commit(transaction.data);
       if (!commit.status && commit.error) {
         throw commit.error;
       }
-      return await db.Category.findAll().then((result) => res.send(result));
+      res.json({
+        result: categoryData,
+        message: "success Deleted",
+      });
     } catch (err) {
       console.log(err.message);
       return res.status(500).send({
