@@ -31,6 +31,7 @@ export default function AuthProvider({ children }) {
         console.log(Boolean(address));
         console.log(address);
         console.log(userMainAddress);
+        console.log(latitude);
         if (auth?.role) {
           console.log("login admin");
           dispatch({
@@ -52,19 +53,34 @@ export default function AuthProvider({ children }) {
                 : { lat: latitude, lon: longitude }
             )
             .then((res) => res.data);
-          dispatch({
-            type: "login",
-            payload: auth,
-            address: address || userMainAddress,
-            closestBranch,
-          });
-          dispatch({
-            type: "order",
-            payload: {
-              BranchId: closestBranch.BranchId,
-              AddressId: address.id || userMainAddress.id,
-            },
-          });
+          if (closestBranch.message) {
+            dispatch({
+              type: "login",
+              payload: auth,
+              address: address || userMainAddress,
+            });
+            dispatch({
+              type: "order",
+              payload: {
+                BranchId: closestBranch.BranchId,
+                TooFar: true,
+                AddressId: address.id || userMainAddress.id,
+              },
+            });
+          } else {
+            dispatch({
+              type: "login",
+              payload: auth,
+              address: address || userMainAddress,
+            });
+            dispatch({
+              type: "order",
+              payload: {
+                BranchId: closestBranch.BranchId,
+                AddressId: address.id || userMainAddress.id,
+              },
+            });
+          }
         } else {
           dispatch({
             type: "logout",

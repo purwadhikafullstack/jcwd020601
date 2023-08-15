@@ -10,6 +10,7 @@ function transactionReducer(state = init, action) {
     return {
       ...state,
       BranchId: action.payload.BranchId,
+      TooFar: action.payload.TooFar,
       origin: action.payload.origin,
       AddressId: action.payload.AddressId,
       destination: action.payload.destination,

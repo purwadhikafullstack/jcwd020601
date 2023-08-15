@@ -17,11 +17,7 @@ export default function ProtectedPage({
   const userSelector = useSelector((state) => state.login.auth);
   const nav = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setIsLoading(false);
-  //   }, 500);
-  // }, [isLoading]);
+
   useEffect(() => {
     console.log("2");
     if (redirect) {
@@ -39,6 +35,7 @@ export default function ProtectedPage({
       return nav("/");
     } else if (needLoginAdmin && userSelector?.role != "Admin-Branch") {
       console.log("d");
+      console.log(userSelector);
       setIsLoading(false);
       return nav("/notfound");
     } else if (needSuperAdminLogin && userSelector?.role != "Super-Admin") {

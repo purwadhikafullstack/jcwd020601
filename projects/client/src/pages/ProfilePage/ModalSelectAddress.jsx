@@ -42,20 +42,35 @@ export default function ModalSelectAddress(val) {
               lon: val.address.longitude,
             })
             .then((res) => res.data);
-          dispatch({
-            type: "login",
-            payload: user,
-            address: val.address,
-            closestBranch,
-          });
-          dispatch({
-            type: "order",
-            payload: {
-              BranchId: closestBranch.BranchId,
-              AddressId: val.address.id,
-              shipping: 200,
-            },
-          });
+
+          if (closestBranch.message) {
+            dispatch({
+              type: "login",
+              payload: user,
+              address: val.address,
+            });
+            dispatch({
+              type: "order",
+              payload: {
+                BranchId: closestBranch.BranchId,
+                AddressId: val.address.id,
+                TooFar: true,
+              },
+            });
+          } else {
+            dispatch({
+              type: "login",
+              payload: user,
+              address: val.address,
+            });
+            dispatch({
+              type: "order",
+              payload: {
+                BranchId: closestBranch.BranchId,
+                AddressId: val.address.id,
+              },
+            });
+          }
           val.modalSelectAddress.onClose();
         }}
       >
