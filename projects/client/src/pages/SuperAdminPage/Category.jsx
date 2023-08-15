@@ -1,25 +1,27 @@
 import {
-  Box,
-  TableContainer,
-  Input,
-  Button,
-  TableCaption,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
+  TableCaption,
+  TableContainer,
+  Box,
+  Input,
+  Button,
 } from "@chakra-ui/react";
+
 import ReactPaginate from "react-paginate";
 import { BiSearchAlt } from "react-icons/bi";
-import { GrFormAdd, GrPowerReset } from "react-icons/gr";
-import moment from "moment";
-import { api } from "../../../../api/api";
+import { GrPowerReset } from "react-icons/gr";
 import { useEffect, useState } from "react";
-import Action from "./Action";
-import Add from "./Add";
-export default function Discount() {
+import Add from "./CategoryPage/Add";
+import Action from "./CategoryPage/Action";
+import "../../App.css";
+import { api } from "../../api/api";
+export default function Category() {
+  let t = localStorage.getItem("auth");
   const [value, setValue] = useState([]);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -27,21 +29,25 @@ export default function Discount() {
   const [pages, setPages] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [query, setQuery] = useState("");
-  async function fetchDiscount() {
+  const [token, setToken] = useState(JSON.parse(t));
+
+  async function fetchCategori() {
     let response = await api.get(
-      `/discount?search_query=${keyword}&page=${page}&limit=${limit}`
+      `/category?search_query=${keyword}&page=${page}&limit=${limit}`,
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
     );
-    setValue(response.data.Discount);
+    setValue(response.data.result);
     setPage(response.data.page);
     setRows(response.data.totalRows);
     setPages(response.data.totalPage);
-    // console.log(response.data);
   }
-
-  useEffect(() => {
-    fetchDiscount();
-  }, [pages, keyword]);
-
+  const inputSearch = (e) => {
+    setQuery(e.target.value);
+  };
   const changePage = ({ selected }) => {
     setPage(selected);
   };
@@ -50,22 +56,16 @@ export default function Discount() {
     setPage(0);
     setKeyword(query);
   };
-  const inputSearch = (e) => {
-    setQuery(e.target.value);
-  };
+  useEffect(() => {
+    fetchCategori();
+  }, [page, keyword]);
+
   const resetKeyWord = () => {
     setKeyword("");
-    fetchDiscount();
+    fetchCategori();
     setQuery("");
   };
-
-  // console.log(value);
-  const rupiah = (number) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-    }).format(number);
-  };
+  console.log(value);
   return (
     <>
       <Box marginLeft={30}>
@@ -78,7 +78,7 @@ export default function Discount() {
           >
             <Box display={"flex"} py={3} gap={3}>
               <Input
-                placeholder="Search Discount"
+                placeholder="Basic Usage"
                 variant={"outline"}
                 w={"30em"}
                 size="lg"
@@ -102,7 +102,7 @@ export default function Discount() {
                 Reset
               </Button>
             </Box>
-            <Add getData={fetchDiscount} />
+            <Add getData={fetchCategori} token={token} />
           </Box>
           <Table variant="simple">
             <TableCaption my={5}>
@@ -111,37 +111,21 @@ export default function Discount() {
             <Thead>
               <Tr>
                 <Th fontSize={18}>No</Th>
-                <Th fontSize={18}>Nama</Th>
-                <Th fontSize={18}>Diskon</Th>
-                {/* <Th fontSize={18}>Persen</Th> */}
-                <Th fontSize={18}>Mulai</Th>
-                <Th fontSize={18}>Berakhir</Th>
-                <Th fontSize={18}>BranchId</Th>
+                <Th fontSize={18}>Categori</Th>
+                <Th fontSize={18}></Th>
               </Tr>
             </Thead>
             <Tbody>
               {value.map((val, idx) => (
                 <Tr key={val.id}>
                   <Td>{idx + 1}</Td>
-                  <Td>{val.title}</Td>
-                  <Td>
-                    {val.isPercent ? (
-                      <>
-                        {val.discount} {" %"}
-                      </>
-                    ) : (
-                      <>{rupiah(val.discount)} </>
-                    )}
-                  </Td>
-                  <Td>{moment(val.start).format("L")}</Td>
-                  <Td>{moment(val.end).format("L")}</Td>
-                  <Td>{val.BranchId}</Td>
+                  <Td>{val.category}</Td>
                   <Td>
                     <Action
                       id={val.id}
-                      name={val.title}
-                      getData={fetchDiscount}
-                      // token={token}
+                      name={val.category}
+                      getData={fetchCategori}
+                      token={token}
                     />
                   </Td>
                 </Tr>

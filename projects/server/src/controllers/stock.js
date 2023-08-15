@@ -13,7 +13,6 @@ const stockController = {
       const limit = l || null;
       const place = req.query.place || 1;
       const search = req.query.search_book || "";
-
       const stockData = await stockServices.getAllAsc(limit, place, search);
       res.json({
         result: stockData,
@@ -48,7 +47,8 @@ const stockController = {
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       const search = req.query.search_query || "";
-      const stockData = await stockServices.getAll(page, limit, search);
+      const place = req.query.place;
+      const stockData = await stockServices.getAll(page, limit, search, place);
 
       // const offset = limit * page;
       // const totalRows = await db.Stock.count({
