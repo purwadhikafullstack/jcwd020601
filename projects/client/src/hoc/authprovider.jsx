@@ -17,6 +17,8 @@ export default function AuthProvider({ children }) {
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
       const address = JSON.parse(localStorage.getItem("address"));
+      const latitude = JSON.parse(localStorage.getItem("Latitude"));
+      const longitude = JSON.parse(localStorage.getItem("Longitude"));
       console.log(token);
 
       if (token) {
@@ -42,10 +44,12 @@ export default function AuthProvider({ children }) {
               "/address/closest",
               address
                 ? { lat: address.latitude, lon: address.longitude }
-                : {
+                : userMainAddress
+                ? {
                     lat: userMainAddress.latitude,
                     lon: userMainAddress.longitude,
                   }
+                : { lat: latitude, lon: longitude }
             )
             .then((res) => res.data);
           dispatch({

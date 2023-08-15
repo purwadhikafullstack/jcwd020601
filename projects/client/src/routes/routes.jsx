@@ -18,18 +18,19 @@ import CategoryPage from "../pages/CategoryPage";
 import AuthProvider from "../hoc/authprovider";
 import DetailBookCardPage from "../pages/DetailBookCardPage";
 import DetailBookPage from "../pages/DetailBookPage";
-import DiscountProduct from "../pages/SuperAdminPage/BranchAdminPage/DiscountProduct";
+import DiscountProduct from "../pages/BranchAdminPage/DiscountProduct";
 // import BranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
 // import Product from "../pages/SuperAdminPage/Product";
 // import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 // import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
-// // import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
-// import DiscountProductPage from "../pages/SuperAdminPage/BranchAdmins/DiscountProductPage";
+import StockProduct from "../pages/BranchAdminPage/StockProduct";
 import BranchAdmin from "../pages/SuperAdminPage/LandingPage";
 import Product from "../pages/SuperAdminPage/Product";
 import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/LandingPage";
-import BranchOrder from "../pages/SuperAdminPage/BranchOrder";
+import BranchOrderPage from "../pages/BranchAdminPage/BranchOrderPage";
+import AdminPage from "../pages/BranchAdminPage";
+import SuperAdminPageCategory from "../pages/SuperAdminPage/CategoryPage";
 // import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
 // >>>>>>> develop
 
@@ -67,9 +68,7 @@ const routes = [
         <DetailBookCardPage />
       </ProtectedPage>
     }
-  >
-    {/* <Route path="/detail/:id" element={<DetailBookPage />} />,{" "} */}
-  </Route>,
+  ></Route>,
   <Route
     path="/products/detail/:id"
     element={
@@ -111,13 +110,21 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/admin/product"
+    path="/admin/"
     element={
-      <ProtectedPage needLoginAdmin={true}>
-        <ProductPage />
+      <ProtectedPage>
+        <AdminPage />
       </ProtectedPage>
     }
   ></Route>,
+  // <Route
+  //   path="/admin/product"
+  //   element={
+  //     <ProtectedPage needLoginAdmin={true}>
+  //       <ProductPage />
+  //     </ProtectedPage>
+  //   }
+  // ></Route>,
   <Route
     path="/admin/discount"
     element={
@@ -126,30 +133,30 @@ const routes = [
       </ProtectedPage>
     }
   ></Route>,
-  <Route
-    path="/admin/category"
-    element={
-      <ProtectedPage needLoginAdmin={true}>
-        <CategoryPage />
-      </ProtectedPage>
-    }
-  ></Route>,
+  // <Route
+  //   path="/admin/category"
+  //   element={
+  //     <ProtectedPage needLoginAdmin={true}>
+  //       <CategoryPage />
+  //     </ProtectedPage>
+  //   }
+  // ></Route>,
   <Route
     path="/admin/order"
     element={
       <ProtectedPage needLoginAdmin={true}>
-        <BranchOrder />
+        <BranchOrderPage />
       </ProtectedPage>
     }
   ></Route>,
-  // <Route
-  //   path="/admin/stock"
-  //   element={
-  //     <ProtectedPage needLoginAdmin={true}>
-  //       <StockProductPage />
-  //     </ProtectedPage>
-  //   }
-  // ></Route>,
+  <Route
+    path="/admin/stock"
+    element={
+      <ProtectedPage needLoginAdmin={true}>
+        <StockProduct />
+      </ProtectedPage>
+    }
+  ></Route>,
   <Route
     path="/superadminpage"
     element={
@@ -171,6 +178,14 @@ const routes = [
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPageBranchAdmin />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/superadminpage/categorys"
+    element={
+      <ProtectedPage needSuperAdminLogin={true}>
+        <SuperAdminPageCategory />
       </ProtectedPage>
     }
   ></Route>,

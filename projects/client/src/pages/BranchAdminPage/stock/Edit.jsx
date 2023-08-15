@@ -21,19 +21,23 @@ import {
 import { useFormik, Field } from "formik";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
-import "../../../../App.css";
 import { useEffect, useState, useRef } from "react";
-import { api } from "../../../../api/api";
 import moment from "moment";
+import { api } from "../../../api/api";
+import "../../../App.css";
+import { useSelector } from "react-redux";
 
 export default function Edit({ isOpen, onClose, id, getData, token }) {
+  // useSelector
+  const userSelector = useSelector((state) => state.login.auth);
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const [book, setBook] = useState([]);
   const formik = useFormik({
     initialValues: {
-      stock: 0,
+      stock: "",
+      bucket: 0,
+      BranchId: userSelector.branchId,
       BookId: null,
-      BranchId: 2,
     },
     validationSchema: Yup.object({
       stock: Yup.number().typeError("Isi dengan angka"),
@@ -93,7 +97,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
               <Box>
                 <FormLabel>Stock</FormLabel>
                 {/* <NumberInput max={50} min={10}> */}
-                <Input
+                {/* <Input
                   placeholder="Jumlah Stock"
                   name="stock"
                   value={formik.values.stock}
@@ -103,6 +107,18 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
                     // const stock = parseInt(e.target.value);
                     formik.setFieldValue("stock", parseInt(e.target.value));
                   }}
+                /> */}
+                <Input
+                  placeholder="Jumlah Stock"
+                  name="stock"
+                  type="number"
+                  value={formik.values.stock}
+                  // onChange={(e) => {
+                  //   formik.handleChange(e);
+                  //   const stock = parseInt(e.target.value);
+                  //   formik.setFieldValue("stock", stock);
+                  // }}
+                  onChange={formik.handleChange}
                 />
                 {/* </NumberInput> */}
                 <Text color={"red.800"}>{formik.errors.stock}</Text>

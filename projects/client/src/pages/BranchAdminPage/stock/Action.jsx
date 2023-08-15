@@ -7,17 +7,17 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import Swal from "sweetalert2";
-import "../../../../App.css";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
-import { api } from "../../../../api/api";
 import Edit from "./Edit";
+import { api } from "../../../api/api";
+import "../../../App.css";
 
 export default function Action({ id, name, getData }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deleteData = async () => {
-    await api.delete(`/discount/v3/${id}`, {
+    await api.delete(`/stock/v3/${id}`, {
       // headers: {
       //   Authorization: token,
       // },
@@ -25,7 +25,7 @@ export default function Action({ id, name, getData }) {
   };
   const handleClick = () => {
     Swal.fire({
-      title: `Are you sure delete discount with name ${name}?`,
+      title: `Are you sure delete stock with name ${name}?`,
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
