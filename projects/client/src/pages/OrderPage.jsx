@@ -23,24 +23,34 @@ import { AiOutlineDown, AiOutlineBank } from "react-icons/ai";
 import { FcAddImage } from "react-icons/fc";
 import { api } from "../api/api";
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import Loading from "../components/Loading";
+import NotFoundPage from "./NotFoundPage";
 // import { useSelector } from "react-redux";
 
 export default function OrderPage() {
   const [order, setOrder] = useState();
   const inputFileRef = useRef(null);
-
+  const [isLoading, setIsLoading] = useState(true);
   const [link, setLink] = useState();
+  const locatio = useLocation();
+  const location = locatio.pathname.split("/")[2];
+  const token = JSON.parse(localStorage.getItem("auth"));
   // const [selectFile, setSelectFile] = useState();
 
   // GET
   async function fetch() {
     try {
-      const result = await api.post("orderdetail/id", {
-        OrderId: 32,
+
+      const result = await api.post("orderdetail/id" + "?token=" + token, {
+        OrderId: location,
+
       });
       setLink(result.data[0].Order.payment_url);
+      setIsLoading(false);
       return setOrder(result.data);
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
     }
   }
@@ -51,12 +61,14 @@ export default function OrderPage() {
     try {
       const formData = new FormData();
       formData.append("paymentImg", file);
-      formData.append("id", 32); // TEMBAK
-      await api.post("/order", formData);
+
+      formData.append("id", location);
+      const pay = await api.post("/order", formData);
       await api.patch("/order/v2/status", {
-        OrderId: 32,
+        OrderId: location,
         status: "waiting for payment confirmation",
       });
+
       return fetch();
     } catch (error) {
       console.log(error);
@@ -76,139 +88,152 @@ export default function OrderPage() {
     <Container maxW={"size.lg"}>
       <Navbar></Navbar>
       <Box>
-        <Box padding={"1rem 2rem"} fontSize={"2xl"} fontWeight={"semibold"}>
+        <Box
+          onClick={() => console.log(order)}
+          padding={"1rem 2rem"}
+          fontSize={"2xl"}
+          fontWeight={"semibold"}
+        >
           OrderID: onfd8762cv
         </Box>
-        <Flex>
-          <Flex
-            width={"65%"}
-            flexDir={"column"}
-            gap={"1rem"}
-            padding={" 1rem 2rem"}
-          >
+        {isLoading ? (
+          <Loading />
+        ) : order ? (
+          <Flex>
             <Flex
-              boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-              padding={"1rem 2rem"}
-              borderRadius={"0.7rem"}
+              width={"65%"}
               flexDir={"column"}
-              justifyContent={"center"}
               gap={"1rem"}
+              padding={" 1rem 2rem"}
             >
-              {order?.map((val) => {
-                return (
-                  <Flex
-                    justifyContent={"space-between"}
-                    alignItems={"center"}
-                    padding={"1rem 2rem"}
-                  >
-                    <Image
-                      maxHeight={"100px"}
-                      src={val.Stock.Book.book_url}
-                    ></Image>
+              <Flex
+                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                padding={"1rem 2rem"}
+                borderRadius={"0.7rem"}
+                flexDir={"column"}
+                justifyContent={"center"}
+                gap={"1rem"}
+              >
+                {order?.map((val) => {
+                  return (
                     <Flex
-                      w={"45%"}
-                      flexDir={"column"}
-                      justifyContent={"space-evenly"}
-                    >
-                      <Box>{val.Stock.Book.title}</Box>
-                      <Box>
-                        {val.Stock.Book.author} -{" "}
-                        {val.Stock.Book.publish_date.slice(0, 4)}
-                      </Box>
-                      <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
-                      <Box fontWeight={"semibold"}>{`X ${val.quantity}`}</Box>
-                    </Flex>
-                    {/* seperate */}
-                    {/* seperate */}
-
-                    <Flex
-                      flexDir={"column"}
-                      gap={"8px"}
-                      justifyContent={"center"}
+                      justifyContent={"space-between"}
                       alignItems={"center"}
+                      padding={"1rem 2rem"}
                     >
-                      {`Rp ${val.price.toLocaleString("id-ID")},-`}
+                      <Image
+                        maxHeight={"100px"}
+                        src={val.Stock.Book.book_url}
+                      ></Image>
+                      <Flex
+                        w={"45%"}
+                        flexDir={"column"}
+                        justifyContent={"space-evenly"}
+                      >
+                        <Box>{val.Stock.Book.title}</Box>
+                        <Box>
+                          {val.Stock.Book.author} -{" "}
+                          {val.Stock.Book.publish_date.slice(0, 4)}
+                        </Box>
+                        <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
+                        <Box fontWeight={"semibold"}>{`X ${val.quantity}`}</Box>
+                      </Flex>
+                      {/* seperate */}
+                      {/* seperate */}
+
+                      <Flex
+                        flexDir={"column"}
+                        gap={"8px"}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                      >
+                        {`Rp ${val.price.toLocaleString("id-ID")},-`}
+                      </Flex>
                     </Flex>
-                  </Flex>
-                );
-              })}
+                  );
+                })}
+              </Flex>
             </Flex>
-          </Flex>
-          <Flex
-            width={"35%"}
-            padding={"1rem 2rem"}
-            flexDir={"column"}
-            gap={"1rem"}
-          >
             <Flex
-              boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+              width={"35%"}
               padding={"1rem 2rem"}
-              borderRadius={"0.7rem"}
               flexDir={"column"}
               gap={"1rem"}
             >
-              <Flex fontWeight={"bold"} gap={"0.5rem"}>
-                <Box>Total Order Payment</Box>
-                <Box color={"blue.500"}>
-                  {order ? order[0].Order.total.toLocaleString("id-ID") : null}
+              <Flex
+                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                padding={"1rem 2rem"}
+                borderRadius={"0.7rem"}
+                flexDir={"column"}
+                gap={"1rem"}
+              >
+                <Flex fontWeight={"bold"} gap={"0.5rem"}>
+                  <Box>Total Order Payment</Box>
+                  <Box color={"blue.500"}>
+                    {order
+                      ? order[0].Order.total.toLocaleString("id-ID")
+                      : null}
+                  </Box>
+                </Flex>
+                <Flex fontStyle={"italic"}>
+                  Complete the payment and upload the payment proof
+                </Flex>
+                <Box fontWeight={"semibold"}>
+                  <Icon as={AiOutlineBank}></Icon> BCA 11223456789
                 </Box>
               </Flex>
-              <Flex fontStyle={"italic"}>
-                Complete the payment and upload the payment proof
-              </Flex>
-              <Box fontWeight={"semibold"}>
-                <Icon as={AiOutlineBank}></Icon> BCA 11223456789
-              </Box>
-            </Flex>
-            <Flex
-              flexDir={"column"}
-              boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-              borderRadius={"0.7rem"}
-            >
-              <Box padding={"2rem"} fontSize={"xl"} fontWeight={"semibold"}>
-                Upload Payment Proof
-              </Box>
               <Flex
                 flexDir={"column"}
-                // justifyContent={"center"}
-                alignItems={"center"}
-                padding={"2rem"}
-                gap={"2rem"}
-                fontWeight={"semibold"}
+                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                borderRadius={"0.7rem"}
               >
-                {link ? (
-                  <Image
-                    // height={"200px"}
-                    maxH={"200px"}
-                    // onClick={() => inputFileRef.current.click()}
-                    src={link}
-                  ></Image>
-                ) : (
-                  <Icon
-                    fontSize={"8xl"}
-                    as={FcAddImage}
-                    cursor={"pointer"}
-                  ></Icon>
-                )}
-
-                <Input
-                  display={"none"}
-                  ref={inputFileRef}
-                  type="file"
-                  onChange={handleFile}
-                ></Input>
-                <Button
-                  colorScheme={"blue"}
-                  borderRadius={"1.5rem"}
-                  width={"100%"}
-                  onClick={() => inputFileRef.current.click()}
-                >
+                <Box padding={"2rem"} fontSize={"xl"} fontWeight={"semibold"}>
                   Upload Payment Proof
-                </Button>
+                </Box>
+                <Flex
+                  flexDir={"column"}
+                  // justifyContent={"center"}
+                  alignItems={"center"}
+                  padding={"2rem"}
+                  gap={"2rem"}
+                  fontWeight={"semibold"}
+                >
+                  {link ? (
+                    <Image
+                      // height={"200px"}
+                      maxH={"200px"}
+                      // onClick={() => inputFileRef.current.click()}
+                      src={link}
+                    ></Image>
+                  ) : (
+                    <Icon
+                      fontSize={"8xl"}
+                      as={FcAddImage}
+                      cursor={"pointer"}
+                    ></Icon>
+                  )}
+
+                  <Input
+                    display={"none"}
+                    ref={inputFileRef}
+                    type="file"
+                    onChange={handleFile}
+                  ></Input>
+                  <Button
+                    colorScheme={"blue"}
+                    borderRadius={"1.5rem"}
+                    width={"100%"}
+                    onClick={() => inputFileRef.current.click()}
+                  >
+                    Upload Payment Proof
+                  </Button>
+                </Flex>
               </Flex>
             </Flex>
           </Flex>
-        </Flex>
+        ) : (
+          <NotFoundPage />
+        )}
       </Box>
     </Container>
   );

@@ -351,14 +351,6 @@ function DesktopNav({ callback, keyword, category }) {
   };
   return (
     <>
-      {/* <Flex
-        onClick={() => {
-          console.log(userSelector);
-          console.log(userAddresses);
-        }}
-      >
-        lol
-      </Flex> */}
       <Box
         display={"flex"}
         w={{ sm: "10em", md: "15em", lg: "20em" }}
@@ -719,8 +711,6 @@ function DesktopNav({ callback, keyword, category }) {
             >
               <Flex flexDir={"column"}>
                 <Text
-                  color={location == "profile" ? "white" : "black"}
-                  bg={location == "profile" ? "#25225a" : "white"}
                   onClick={() => nav("/profile")}
                   cursor={"pointer"}
                   _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
@@ -728,7 +718,12 @@ function DesktopNav({ callback, keyword, category }) {
                 >
                   My Account
                 </Text>
-                <Text _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }} p={3}>
+                <Text
+                  onClick={() => nav("/profile")}
+                  cursor={"pointer"}
+                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+                  p={3}
+                >
                   My Orders
                 </Text>
                 <Text _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }} p={3}>

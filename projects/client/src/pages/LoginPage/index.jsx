@@ -51,11 +51,10 @@ export default function LoginPage() {
           return res.data.message;
         })
         .catch((err) => {
-          console.log(err);
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "Login unsuccessful",
+            text: err.data.message,
           });
         });
       if (loggingIn) {
@@ -63,12 +62,9 @@ export default function LoginPage() {
         console.log(token);
         const user = await api
           .get("/auth/v3?token=" + token)
-          .then(async (res) => {
-            return res.data;
-          })
+          .then((res) => res.data)
           .catch((err) => {
             console.log(err.message);
-            return err.message;
           });
         const userMainAddress = await api
           .get("/address/ismain/" + user.id)
@@ -76,9 +72,7 @@ export default function LoginPage() {
             localStorage.setItem("address", JSON.stringify(res.data));
             return res.data;
           })
-          .catch((err) => {
-            return err.message;
-          });
+          .catch((err) => err.message);
         const closestBranch = await api
           .post(
             "/address/closest",
@@ -94,21 +88,35 @@ export default function LoginPage() {
           )
           .then((res) => res.data)
           .catch((err) => console.log(err));
-
         if (user.email) {
-          dispatch({
-            type: "login",
-            payload: user,
-            address: userMainAddress,
-          });
-          dispatch({
-            type: "order",
-            payload: {
-              BranchId: closestBranch.BranchId,
-              AddressId: userMainAddress?.id,
-            },
-          });
-          console.log(closestBranch);
+          if (closestBranch.message) {
+            dispatch({
+              type: "login",
+              payload: user,
+              address: userMainAddress,
+            });
+            dispatch({
+              type: "order",
+              payload: {
+                BranchId: closestBranch.BranchId,
+                AddressId: userMainAddress?.id,
+                TooFar: true,
+              },
+            });
+          } else {
+            dispatch({
+              type: "login",
+              payload: user,
+              address: userMainAddress,
+            });
+            dispatch({
+              type: "order",
+              payload: {
+                BranchId: closestBranch.BranchId,
+                AddressId: userMainAddress?.id,
+              },
+            });
+          }
           nav("/");
         }
       }
@@ -125,17 +133,13 @@ export default function LoginPage() {
   const [seePassword, setSeePassword] = useState(false);
   const toast = useToast();
   const dispatch = useDispatch();
-  const [login, setLogin] = useState({
-    emus: "",
-    password: "",
-  });
+  const [login, setLogin] = useState({});
   const nav = useNavigate();
   function inputHandler(input) {
     const { value, id } = input.target;
     const tempobject = { ...login };
     tempobject[id] = value;
     setLogin(tempobject);
-    console.log(tempobject);
   }
   return (
     <>
