@@ -3,7 +3,7 @@ const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 
 const discountServices = {
-  getAll: async (page, limit, search) => {
+  getAll: async (page, limit, search, place) => {
     try {
       const offset = limit * page;
       const totalRows = await db.Discount.count({
@@ -16,6 +16,7 @@ const discountServices = {
             },
           ],
         },
+        BranchId: place,
       });
       const totalPage = Math.ceil(totalRows / limit);
       const Discount = await db.Discount.findAll({
@@ -27,6 +28,7 @@ const discountServices = {
               },
             },
           ],
+          BranchId: place,
         },
         offset: offset,
         limit: limit,

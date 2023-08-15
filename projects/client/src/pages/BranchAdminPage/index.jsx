@@ -1,19 +1,19 @@
-import Navbar from "../Navbar";
-import Sidebar from "../Sidebar";
-// import NavbarFooter from "../../../components/admin/NavbarFooter";
+import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
+import NavbarFooter from "./NavbarFooter";
 // import Discount from "./discount";
-import Stock from "./stock";
+import ReportChart from "./ReportChart";
 import { Box, Flex } from "@chakra-ui/react";
 
-export default function StockProduct() {
+export default function AdminPage() {
   return (
     <>
       <Flex>
         <Sidebar />
         <Box display={"flex"} flexDirection={"column"} width={"100%"}>
           <Navbar />
-          <Stock />
-          {/* <NavbarFooter /> */}
+          <ReportChart />
+          <NavbarFooter />
         </Box>
       </Flex>
     </>

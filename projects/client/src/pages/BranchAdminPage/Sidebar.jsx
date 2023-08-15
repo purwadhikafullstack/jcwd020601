@@ -16,18 +16,22 @@ import {
   FiStar,
   FiSettings,
 } from "react-icons/fi";
+import { TbDiscount } from "react-icons/tb";
+import { BiArchiveIn } from "react-icons/bi";
+import { GrTransaction } from "react-icons/gr";
+
 import { useNavigate } from "react-router-dom";
 const LinkItems = [
-  { name: "Home", icon: FiHome, link: "/superadminpage" },
-  { name: "Product", icon: FiTrendingUp, link: "/superadminpage/products" },
-  { name: "Category", icon: FiCompass, link: "/superadminpage/categorys" },
-  { name: "Favourites", icon: FiStar },
-  { name: "Settings", icon: FiSettings },
-  {
-    name: "Branch-Admins",
-    icon: AiOutlineUsergroupAdd,
-    link: "/superadminpage/branchadmins",
-  },
+  { name: "Home", icon: FiHome, link: "/admin/" },
+  { name: "Stock", icon: BiArchiveIn, link: "/admin/stock" },
+  { name: "Discount", icon: TbDiscount, link: "/admin/discount" },
+  { name: "Transaction", icon: GrTransaction, link: "/admin/order" },
+  // { name: "Settings", icon: FiSettings },
+  // {
+  //   name: "Branch-Admins",
+  //   icon: AiOutlineUsergroupAdd,
+  //   link: "/superadminpage/branchadmins",
+  // },
 ];
 
 export default function Sidebar(props) {
@@ -49,8 +53,12 @@ const SidebarContent = (props) => {
       borderRight="1px"
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={60}
-      pos="sticky"
-      h="full"
+      // pos="sticky"
+      // position={"absolute"}
+      // overflow={"hidden"}
+      position={"fixed"}
+      zIndex={100}
+      h="100vh"
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Image src={logo} w={{ base: "10em", sm: "12em" }} />

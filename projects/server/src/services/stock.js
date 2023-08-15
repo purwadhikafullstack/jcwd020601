@@ -53,7 +53,7 @@ const stockServices = {
     });
     return Stock;
   },
-  getAll: async (page, limit, search) => {
+  getAll: async (page, limit, search, place) => {
     try {
       const offset = limit * page;
       const totalRows = await db.Stock.count({
@@ -68,6 +68,9 @@ const stockServices = {
             },
           },
         ],
+        where: {
+          BranchId: place,
+        },
       });
       const totalPage = Math.ceil(totalRows / limit);
       const result = await db.Stock.findAll({
@@ -84,6 +87,9 @@ const stockServices = {
             model: db.Branch,
           },
         ],
+        where: {
+          BranchId: place,
+        },
         offset: offset,
         limit: limit,
         order: [["id"]],
@@ -125,7 +131,8 @@ const stockServices = {
   },
   insertStock: async ({ stock, BranchId, BookId }, transaction) => {
     try {
-      const data = await db.Stock.create(
+      // const data =
+      await db.Stock.create(
         {
           stock,
           BranchId,
@@ -136,9 +143,9 @@ const stockServices = {
         }
       );
       // add to stockHistory
-      await db.StockHistory.create({
-        StockId: data.id,
-      });
+      // await db.StockHistory.create({
+      //   StockId: data.id,
+      // });
       let result = await db.Stock.findAll();
       return result;
     } catch (err) {

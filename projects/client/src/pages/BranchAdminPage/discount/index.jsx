@@ -14,11 +14,15 @@ import {
 import ReactPaginate from "react-paginate";
 import { BiSearchAlt } from "react-icons/bi";
 import { GrFormAdd, GrPowerReset } from "react-icons/gr";
+import moment from "moment";
+import { api } from "../../../api/api";
 import { useEffect, useState } from "react";
 import Action from "./Action";
 import Add from "./Add";
-import { api } from "../../../../api/api";
-export default function Stock() {
+import { useSelector } from "react-redux";
+
+export default function Discount() {
+  const userSelector = useSelector((state) => state.login.auth);
   const [value, setValue] = useState([]);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
@@ -26,23 +30,22 @@ export default function Stock() {
   const [pages, setPages] = useState(0);
   const [keyword, setKeyword] = useState("");
   const [query, setQuery] = useState("");
-  async function fetchStock() {
+  async function fetchDiscount() {
     let response = await api.get(
-      `/stock/all?search_query=${keyword}&page=${page}&limit=${limit}`
+      `/discount?search_query=${keyword}&page=${page}&limit=${limit}&place=${userSelector.branchId}`
     );
-    setValue(response.data.result);
+    setValue(response.data.Discount);
     setPage(response.data.page);
     setRows(response.data.totalRows);
     setPages(response.data.totalPage);
-    // console.log(response.data.result);
+    // console.log(response.data);
   }
 
   useEffect(() => {
-    fetchStock();
-  }, [keyword, page]);
+    fetchDiscount();
+  }, [pages, keyword]);
 
   const changePage = ({ selected }) => {
-    // console.log(selected);
     setPage(selected);
   };
 
@@ -55,15 +58,26 @@ export default function Stock() {
   };
   const resetKeyWord = () => {
     setKeyword("");
-    fetchStock();
+    fetchDiscount();
     setQuery("");
   };
 
   // console.log(value);
-  // console.log(page);
+  const rupiah = (number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(number);
+  };
   return (
     <>
-      <Box marginLeft={30}>
+      <Box
+        marginLeft={60}
+        marginTop={"6em"}
+        h={"80vh"}
+        // bgColor={"red"}
+        overflow={"auto"}
+      >
         <TableContainer padding={10}>
           <Box
             display={"flex"}
@@ -73,7 +87,7 @@ export default function Stock() {
           >
             <Box display={"flex"} py={3} gap={3}>
               <Input
-                placeholder="Search Stock Book By Name"
+                placeholder="Search Discount"
                 variant={"outline"}
                 w={"30em"}
                 size="lg"
@@ -97,8 +111,7 @@ export default function Stock() {
                 Reset
               </Button>
             </Box>
-            {/* getData={fetchStock} */}
-            <Add getData={fetchStock} />
+            <Add getData={fetchDiscount} />
           </Box>
           <Table variant="simple">
             <TableCaption my={5}>
@@ -107,23 +120,35 @@ export default function Stock() {
             <Thead>
               <Tr>
                 <Th fontSize={18}>No</Th>
-                <Th fontSize={18}>Nama Buku</Th>
-                <Th fontSize={18}>Branch </Th>
-                <Th fontSize={18}>Stock</Th>
+                <Th fontSize={18}>Nama</Th>
+                <Th fontSize={18}>Diskon</Th>
+                {/* <Th fontSize={18}>Persen</Th> */}
+                <Th fontSize={18}>Mulai</Th>
+                <Th fontSize={18}>Berakhir</Th>
               </Tr>
             </Thead>
             <Tbody>
               {value.map((val, idx) => (
                 <Tr key={val.id}>
                   <Td>{idx + 1}</Td>
-                  <Td>{val.Book?.title}</Td>
-                  <Td>{val.Branch?.name}</Td>
-                  <Td>{val.stock}</Td>
+                  <Td>{val.title}</Td>
+                  <Td>
+                    {val.isPercent ? (
+                      <>
+                        {val.discount} {" %"}
+                      </>
+                    ) : (
+                      <>{rupiah(val.discount)} </>
+                    )}
+                  </Td>
+                  <Td>{moment(val.start).format("L")}</Td>
+                  <Td>{moment(val.end).format("L")}</Td>
                   <Td>
                     <Action
                       id={val.id}
-                      name={val.Book?.title}
-                      getData={fetchStock}
+                      name={val.title}
+                      getData={fetchDiscount}
+                      // token={token}
                     />
                   </Td>
                 </Tr>
