@@ -41,8 +41,10 @@ export default function OrderPage() {
   // GET
   async function fetch() {
     try {
+
       const result = await api.post("orderdetail/id" + "?token=" + token, {
         OrderId: location,
+
       });
       setLink(result.data[0].Order.payment_url);
       setIsLoading(false);
@@ -59,8 +61,14 @@ export default function OrderPage() {
     try {
       const formData = new FormData();
       formData.append("paymentImg", file);
+
       formData.append("id", location);
       const pay = await api.post("/order", formData);
+      await api.patch("/order/v2/status", {
+        OrderId: location,
+        status: "waiting for payment confirmation",
+      });
+
       return fetch();
     } catch (error) {
       console.log(error);

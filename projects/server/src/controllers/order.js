@@ -452,6 +452,7 @@ const orderController = {
       // console.log("cek");
       const { filename } = req.file;
       // console.log(req.file);
+      console.log(filename);
       const result = await db.Order.update(
         {
           payment_url: process.env.payment_img + filename,
@@ -473,99 +474,230 @@ const orderController = {
   //
   // ------------ confirm payment by OrderId ---------- //
   //
-  confirmPayment: async (req, res) => {
+  updateStatus: async (req, res) => {
     try {
-      const { status } = req.body;
+      const { status, OrderId } = req.body;
+      console.log(status);
 
       const data = await db.OrderDetail.findAll({
         where: {
-          OrderId: req.params.id,
+          OrderId,
         },
       });
-      // console.log(data);
 
-      // check if cancel
-      if (status === "cancel") {
-        // update multiple buckets on stock
-        // console.log("masuk cancel");
-        await Promise.all(
-          data.map(async (detail) => {
-            const { quantity, StockId } = detail;
-            const stock = await db.Stock.findByPk(StockId);
-            const updatedStock = stock.bucket - quantity;
-            return db.Stock.update(
-              {
-                bucket: updatedStock,
-              },
-              {
-                where: {
-                  id: StockId,
-                },
-              }
-            );
-          })
-        );
-        await db.Order.update(
-          {
-            status,
-          },
-          {
-            where: {
-              id: req.params.id,
+      const data2 = await db.Order.findOne({
+        where: {
+          id: OrderId,
+        },
+      });
+
+      console.log(data2.status);
+      if (data2.status === "delivery confirm") {
+        return res.status(400).send("The order has completed");
+      } else if (data2.status === "canceled") {
+        return res.status(400).send("The order has been permanently canceled");
+      } else if (data2.status === "sending") {
+        if (status === "delivery confirm") {
+          await db.Order.update(
+            {
+              status,
             },
-          }
-        );
-      } else if (status === "payed") {
-        // update multiple stocks
-        // update multiple stocksHistory
-        await Promise.all(
-          data.map(async (detail) => {
-            const { quantity, StockId } = detail;
-            const stock = await db.Stock.findByPk(StockId);
-            const updatedStock = stock.stock - quantity;
-            const updatedBucket = stock.bucket - quantity;
-            const sH = await db.StockHistory.findByPk(StockId);
-            console.log(sH);
-            return Promise.all([
-              db.Stock.update(
+            {
+              where: {
+                id: OrderId,
+              },
+            }
+          );
+        } else {
+          return res.status(400).send("The order has been send");
+        }
+      } else {
+        // check if cancel
+        if (status === "canceled") {
+          // update multiple buckets on stock
+          // console.log("masuk cancel");
+          await Promise.all(
+            data.map(async (detail) => {
+              const { quantity, StockId } = detail;
+              const stock = await db.Stock.findByPk(StockId);
+              const updatedStock = stock.bucket - quantity;
+              return db.Stock.update(
                 {
-                  stock: updatedStock,
-                  bucket: updatedBucket,
-                  quantity: quantity,
+                  bucket: updatedStock,
                 },
                 {
                   where: {
                     id: StockId,
                   },
                 }
-              ),
-              db.StockHistory.create({
-                StockId,
-                totalBefore: sH.totalAfter,
-                totalAfter: updatedStock,
-                quantity: quantity,
-                type: "minus",
-                subject: "transaction",
-              }),
-            ]);
-          })
-        );
-        //
-        await db.Order.update(
-          {
-            status,
-          },
-          {
-            where: {
-              id: req.params.id,
+              );
+            })
+          );
+          await db.Order.update(
+            {
+              status,
             },
-          }
-        );
+            {
+              where: {
+                id: OrderId,
+              },
+            }
+          );
+        } else if (status === "sending") {
+          // update multiple stocks
+          // update multiple stocksHistory
+          await Promise.all(
+            data.map(async (detail) => {
+              const { quantity, StockId } = detail;
+              console.log({ quantity, StockId });
+              const stock = await db.Stock.findByPk(StockId);
+              const updatedStock = stock.stock - quantity;
+              const updatedBucket = stock.bucket - quantity;
+              const sH = await db.StockHistory.findByPk(StockId);
+              console.log(sH);
+              return Promise.all([
+                db.Stock.update(
+                  {
+                    stock: updatedStock,
+                    bucket: updatedBucket,
+                    quantity: quantity,
+                  },
+                  {
+                    where: {
+                      id: StockId,
+                    },
+                  }
+                ),
+                db.StockHistory.create({
+                  StockId,
+                  totalBefore: sH.totalAfter,
+                  totalAfter: updatedStock,
+                  quantity: quantity,
+                  type: "minus",
+                  subject: "transaction",
+                }),
+              ]);
+            })
+          );
+          //
+          await db.Order.update(
+            {
+              status,
+            },
+            {
+              where: {
+                id: OrderId,
+              },
+            }
+          );
+        } else {
+          await db.Order.update(
+            {
+              status,
+            },
+            {
+              where: {
+                id: OrderId,
+              },
+            }
+          );
+        }
       }
+      // // check if cancel
+      // if (status === "canceled") {
+      //   // update multiple buckets on stock
+      //   // console.log("masuk cancel");
+      //   await Promise.all(
+      //     data.map(async (detail) => {
+      //       const { quantity, StockId } = detail;
+      //       const stock = await db.Stock.findByPk(StockId);
+      //       const updatedStock = stock.bucket - quantity;
+      //       return db.Stock.update(
+      //         {
+      //           bucket: updatedStock,
+      //         },
+      //         {
+      //           where: {
+      //             id: StockId,
+      //           },
+      //         }
+      //       );
+      //     })
+      //   );
+      //   await db.Order.update(
+      //     {
+      //       status,
+      //     },
+      //     {
+      //       where: {
+      //         id: OrderId,
+      //       },
+      //     }
+      //   );
+      // } else if (status === "sending") {
+      //   // update multiple stocks
+      //   // update multiple stocksHistory
+      //   await Promise.all(
+      //     data.map(async (detail) => {
+      //       const { quantity, StockId } = detail;
+      //       console.log({ quantity, StockId });
+      //       const stock = await db.Stock.findByPk(StockId);
+      //       const updatedStock = stock.stock - quantity;
+      //       const updatedBucket = stock.bucket - quantity;
+      //       const sH = await db.StockHistory.findByPk(StockId);
+      //       console.log(sH);
+      //       return Promise.all([
+      //         db.Stock.update(
+      //           {
+      //             stock: updatedStock,
+      //             bucket: updatedBucket,
+      //             quantity: quantity,
+      //           },
+      //           {
+      //             where: {
+      //               id: StockId,
+      //             },
+      //           }
+      //         ),
+      //         db.StockHistory.create({
+      //           StockId,
+      //           totalBefore: sH.totalAfter,
+      //           totalAfter: updatedStock,
+      //           quantity: quantity,
+      //           type: "minus",
+      //           subject: "transaction",
+      //         }),
+      //       ]);
+      //     })
+      //   );
+      //   //
+      //   await db.Order.update(
+      //     {
+      //       status,
+      //     },
+      //     {
+      //       where: {
+      //         id: OrderId,
+      //       },
+      //     }
+      //   );
+      // } else {
+      //   await db.Order.update(
+      //     {
+      //       status,
+      //     },
+      //     {
+      //       where: {
+      //         id: OrderId,
+      //       },
+      //     }
+      //   );
+      // }
 
+      // res.send(data2);
       return await db.Order.findOne({
         where: {
-          id: req.params.id,
+          id: OrderId,
         },
       }).then((result) => res.send(result));
     } catch (err) {
