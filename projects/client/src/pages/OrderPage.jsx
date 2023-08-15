@@ -36,7 +36,7 @@ export default function OrderPage() {
   async function fetch() {
     try {
       const result = await api.post("orderdetail/id", {
-        OrderId: 20,
+        OrderId: 32,
       });
       setLink(result.data[0].Order.payment_url);
       return setOrder(result.data);
@@ -51,9 +51,12 @@ export default function OrderPage() {
     try {
       const formData = new FormData();
       formData.append("paymentImg", file);
-      formData.append("id", 20);
-      const pay = await api.post("/order", formData);
-
+      formData.append("id", 32); // TEMBAK
+      await api.post("/order", formData);
+      await api.patch("/order/v2/status", {
+        OrderId: 32,
+        status: "waiting for payment confirmation",
+      });
       return fetch();
     } catch (error) {
       console.log(error);
