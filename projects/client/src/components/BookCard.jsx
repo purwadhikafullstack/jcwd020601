@@ -13,18 +13,19 @@ import {
   Divider,
   useMediaQuery,
   useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
-
+import TooFarModal from "./TooFarModal";
 export default function BookCard() {
   let t = localStorage.getItem("auth");
-
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
+  const tooFarModal = useDisclosure();
   const nav = useNavigate();
   const toast = useToast();
   const [value, setValue] = useState([]);
@@ -192,12 +193,17 @@ export default function BookCard() {
                 <Button
                   variant="solid"
                   colorScheme="blue"
-                  onClick={() => add(idx)}
+                  onClick={
+                    orderSelector.TooFar
+                      ? () => tooFarModal.onOpen()
+                      : () => add(idx)
+                  }
                 >
                   Add to cart
                 </Button>
               </ButtonGroup>
             </CardFooter>
+            <TooFarModal tooFarModal={tooFarModal} />
           </Card>
         ))}
       </Box>

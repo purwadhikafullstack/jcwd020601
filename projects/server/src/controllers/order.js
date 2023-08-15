@@ -37,7 +37,16 @@ const orderController = {
         where: {
           [Op.and]: [
             { UserId: req.params.UserId },
-            { status: { [Op.or]: ["init", "payed", "delivery"] } },
+            {
+              status: {
+                [Op.or]: [
+                  "waiting for payment",
+                  "waiting for payment confirmation",
+                  "process",
+                  "sending",
+                ],
+              },
+            },
           ],
         },
       });
@@ -55,7 +64,7 @@ const orderController = {
         where: {
           [Op.and]: [
             { UserId: req.params.UserId },
-            { status: { [Op.or]: ["done", "cancel"] } },
+            { status: { [Op.or]: ["delivery confirm", "canceled"] } },
           ],
         },
       });

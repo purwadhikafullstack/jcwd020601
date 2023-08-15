@@ -1,24 +1,14 @@
-import { Button, Center, Flex, Icon, Input, Select } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { AiOutlineClose } from "react-icons/ai";
-
-import { api } from "../../../api/api";
-import axios from "axios";
-
-export default function ModalAddAddress(props) {
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await axios
-        .get("http://localhost:2000/province")
-        .then((res) => {
-          props.setProvinces(res.data.result);
-        });
-    };
-    // call the function
-    fetchData();
-    // make sure to catch any error
-    // .catch(console.error);
-  }, []);
+import {
+  Button,
+  Center,
+  Flex,
+  Icon,
+  Input,
+  Select,
+  useDisclosure,
+} from "@chakra-ui/react";
+export default function ModalEditAddressContent(props) {
+  const modalEditAddress = useDisclosure();
   return (
     <>
       <Flex
@@ -33,10 +23,12 @@ export default function ModalAddAddress(props) {
             <Flex fontWeight={"500"}>Label Alamat</Flex>
             <Flex>
               <Input
-                maxLength={32}
                 _placeholder={{ opacity: "1" }}
                 id="labelAlamat"
-                onChange={props.inputHandlerAddress}
+                onChange={(val) => {
+                  props.inputHandlerAddress(val);
+                }}
+                value={props.labelAlamat}
                 variant={"flushed"}
                 placeholder="Contoh : (Rumah,Kantor)"
               ></Input>
@@ -46,23 +38,16 @@ export default function ModalAddAddress(props) {
             </Flex>
           </Flex>
           <Flex flexDir={"column"}>
-            <Flex
-              fontWeight={"500"}
-              onClick={() => {
-                console.log(props.val);
-                console.log(props.id);
-              }}
-            >
-              Nama Penerima
-            </Flex>
+            <Flex fontWeight={"500"}>Nama Penerima</Flex>
             <Flex>
               <Input
                 _placeholder={{ opacity: "1" }}
-                onChange={props.inputHandlerAddress}
-                maxLength={32}
+                onChange={(val) => {
+                  props.inputHandlerAddress(val);
+                }}
+                value={props.namaPenerima}
                 id="namaPenerima"
                 variant={"flushed"}
-                value={props.namaPenerima}
                 placeholder="Receiver's Name"
               ></Input>
             </Flex>
@@ -75,8 +60,10 @@ export default function ModalAddAddress(props) {
             <Flex>
               <Input
                 _placeholder={{ opacity: "1" }}
-                onChange={props.inputHandlerAddress}
-                maxLength={32}
+                onChange={(val) => {
+                  props.inputHandlerAddress(val);
+                }}
+                value={props.no_Handphone}
                 id="no_Handphone"
                 variant={"flushed"}
                 placeholder="Receiver's Phone Number"
@@ -94,15 +81,20 @@ export default function ModalAddAddress(props) {
                 await props.inputHandlerAddress(val);
               }}
               variant="flushed"
+              value={
+                props.province.ProvinceId
+                  ? props.province.ProvinceId +
+                    "#" +
+                    props.province.provinceName
+                  : props.province
+              }
             >
               <option display="none" disabled selected hidden>
                 Select Province
               </option>
+              <option></option>
               {props.provinces.map((val) => (
-                <option
-                  value={val.province_id + "#" + val.province}
-                  clasd={val.province}
-                >
+                <option value={val.province_id + "#" + val.province}>
                   {val.province}
                 </option>
               ))}
@@ -112,26 +104,25 @@ export default function ModalAddAddress(props) {
             </Flex>
           </Flex>
           <Flex flexDir={"column"}>
-            <Flex
-              fontWeight={"500"}
-              onClick={() => {
-                console.log(props.formikAddress.values);
-                console.log(props.pos);
-              }}
-            >
-              City
-            </Flex>
+            <Flex fontWeight={"500"}>City</Flex>
             <Select
               id="city"
               onChange={async (val) => {
                 await props.inputHandlerAddress(val);
               }}
               variant="flushed"
+              value={
+                props.city.CityId
+                  ? props.city.CityId + "#" + props.city.cityName
+                  : props.city
+              }
             >
+              <option></option>
+
               <option display="none" disabled selected hidden>
                 Select City
               </option>
-              {props.cities.map((val) => (
+              {props?.cities.map((val) => (
                 <option value={val.city_id + "#" + val.city_name}>
                   {val.city_name}
                 </option>
@@ -147,13 +138,14 @@ export default function ModalAddAddress(props) {
               id="pos"
               onChange={props.inputHandlerAddress}
               variant="flushed"
+              value={props.pos}
             >
               <option display="none" disabled selected hidden>
                 Select PosCode
               </option>
-
-              <option value={props.pos?.postal_code}>
-                {props.pos?.postal_code}
+              <option></option>
+              <option value={props.posCodes?.postal_code}>
+                {props.posCodes?.postal_code}
               </option>
             </Select>
             <Flex color={"red"} fontSize={"0.8rem"}>
@@ -165,7 +157,10 @@ export default function ModalAddAddress(props) {
             <Flex>
               <Input
                 _placeholder={{ opacity: "1" }}
-                onChange={props.inputHandlerAddress}
+                onChange={(val) => {
+                  props.inputHandlerAddress(val);
+                }}
+                value={props.alamatLengkap}
                 id="alamatLengkap"
                 variant={"flushed"}
                 placeholder="Contoh : (Rumah,Kantor)"
@@ -179,11 +174,22 @@ export default function ModalAddAddress(props) {
             <Button
               w={"100%"}
               borderRadius={"10px"}
-              onClick={props.coolDown ? "" : props.formikAddress.handleSubmit}
+              onClick={props.formikAddress.handleSubmit}
               bgColor={"#385898"}
               color={"white"}
             >
               Save Address
+            </Button>
+          </Flex>
+          <Flex pb={"20px"} w={"100%"}>
+            <Button
+              w={"100%"}
+              borderRadius={"10px"}
+              onClick={props.deleteAddress}
+              bgColor={"#385898"}
+              color={"white"}
+            >
+              Delete Address
             </Button>
           </Flex>
         </Flex>

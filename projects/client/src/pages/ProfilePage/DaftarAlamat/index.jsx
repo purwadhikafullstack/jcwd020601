@@ -36,6 +36,7 @@ export default function DaftarAlamat(props) {
   const [cities, setCities] = useState([1, 2]);
   const [pos, setPos] = useState();
   const [provinceId, setProvinceId] = useState();
+  const [coolDown, setCoolDown] = useState(false);
   const [cityId, setCityId] = useState();
   const nav = useNavigate();
   YupPassword(Yup);
@@ -43,6 +44,7 @@ export default function DaftarAlamat(props) {
     initialValues: { UserId: props.userSelector.id },
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
+      setCoolDown(true);
       await api.post("/address/v1?token=" + token, formikAddress.values);
       AddAddressHelpers.submit({
         Swal,
@@ -52,6 +54,7 @@ export default function DaftarAlamat(props) {
         fetchUserAddresses: props.fetchUserAddresses,
       });
       formikAddress.resetForm();
+      setCoolDown(false);
     },
   });
   useEffect(() => {
@@ -169,6 +172,7 @@ export default function DaftarAlamat(props) {
           </ModalHeader>
           <ModalBody maxW="500px">
             <ModalAddAddress
+              coolDown={coolDown}
               pos={pos}
               setPos={setPos}
               fetchPos={fetchPos}

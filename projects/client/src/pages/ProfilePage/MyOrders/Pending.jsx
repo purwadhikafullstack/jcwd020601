@@ -3,9 +3,11 @@ import { useSelector } from "react-redux";
 import { api } from "../../../api/api";
 import { useEffect, useState } from "react";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 export default function Pending() {
   const [pending, setPending] = useState([]);
+  const nav = useNavigate();
   const userSelector = useSelector((state) => state.login.auth);
   async function fetchPending() {
     await api
@@ -25,7 +27,12 @@ export default function Pending() {
       <Flex w={"100%"} mt={"20px"} gap={"30px"} flexDir={"column"}>
         {pending[0] ? (
           pending.map((val) => (
-            <Flex gap={"30px"} flexDir={"column"} w={"100%"}>
+            <Flex
+              gap={"30px"}
+              flexDir={"column"}
+              w={"100%"}
+              onClick={() => nav("/order/" + val.id)}
+            >
               <Flex
                 _hover={{ bgColor: "#c7c7c7", cursor: "pointer" }}
                 bgColor={"#f5f5f5"}
@@ -54,10 +61,7 @@ export default function Pending() {
                           UUID
                         </Flex>
 
-                        <Flex mt={"30px"} color={"#8f8d8d"}>
-                          Rp.30.000
-                        </Flex>
-                        <Flex justifyContent={"space-between"}>
+                        <Flex justifyContent={"space-between"} mt={"25px"}>
                           <Flex fontWeight={"600"} color={"#ffb405"}>
                             {val.status}
                           </Flex>

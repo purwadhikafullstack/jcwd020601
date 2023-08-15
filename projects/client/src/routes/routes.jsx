@@ -206,7 +206,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/order"
+    path="/order/:id"
     element={
       <ProtectedPage needLogin={true}>
         <OrderPage />

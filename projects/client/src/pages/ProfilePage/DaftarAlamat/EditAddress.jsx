@@ -1,28 +1,14 @@
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Icon,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Flex, useDisclosure } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { api } from "../../../api/api";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
-import { MdClose } from "react-icons/md";
 import YupPassword from "yup-password";
 import ModalEditAddress from "./ModalEditAddress";
 import { useDispatch, useSelector } from "react-redux";
 import Helpers from "./EditAddressHelper";
 export default function EditAddress(val) {
-  const userSelector = useSelector((state) => state.login.auth);
   YupPassword(Yup);
   const [block, setBlock] = val.useState();
   const [fetchBoth, setFetchBoth] = val.useState(true);
@@ -66,20 +52,12 @@ export default function EditAddress(val) {
     await Helpers.changeMain({ val, token, Swal, api, dispatch });
   }
   async function deleteAddress() {
-    await Helpers.delAddress({
-      val,
-      token,
-      dispatch,
-      Swal,
-      modalEditAddress,
-      userSelector,
-    });
+    await Helpers.delAddress({ val, token, dispatch, Swal, modalEditAddress });
     formikAddress.resetForm();
   }
   async function fetchCity() {
     console.log(provinceId);
     await api.get("/city/v1/" + provinceId).then((res) => {
-      console.log(res.data.result);
       setCities(res.data.result);
     });
   }
@@ -87,7 +65,6 @@ export default function EditAddress(val) {
     console.log(cityId);
     await api.get("/city/v2/" + cityId).then((res) => {
       setPosCodes(res.data.result);
-      console.log(res.data.result);
     });
   }
   useEffect(() => {
@@ -126,10 +103,7 @@ export default function EditAddress(val) {
     } else if (id == "city") {
       setCityId(value.split("#")[0]);
       formikAddress.setFieldValue(id, value);
-    } else {
-      formikAddress.setFieldValue(id, value);
-    }
-    console.log(formikAddress.values);
+    } else formikAddress.setFieldValue(id, value);
   }
   useEffect(() => {
     fetchCity();
@@ -186,58 +160,30 @@ export default function EditAddress(val) {
           <Flex>{val.addressUser.city + " - " + val.addressUser.province}</Flex>
           <Flex>{"No. Telp : " + val.addressUser.no_Handphone}</Flex>
         </Flex>
-        <Modal
-          closeOnOverlayClick={false}
-          scrollBehavior="inside"
-          isOpen={modalEditAddress.isOpen}
-          onClose={modalEditAddress.onClose}
-          isCentered
-        >
-          <ModalOverlay />
-          <ModalContent maxH="500px" h={"500px"} maxW="500px">
-            <ModalHeader
-              bgColor={"#385898"}
-              color={"white"}
-              display={"flex"}
-              justifyContent={"center"}
-            >
-              <Center fontWeight={700}>Edit Address</Center>
-              <Flex w={"70%"} flexDir={"row-reverse"}>
-                <Button
-                  w={"30px"}
-                  onClick={() => {
-                    setReset(false);
-                    formikAddress.resetForm();
-                    modalEditAddress.onClose();
-                    setState({ ...initialState });
-                    setProvinceId(val.addressUser.ProvinceId);
-                    setCityId(val.addressUser.CityId);
-                    setFetchBoth(!fetchBoth);
-                  }}
-                >
-                  <Icon fontSize={"30px"} as={MdClose}></Icon>
-                </Button>
-              </Flex>
-            </ModalHeader>
-            <ModalBody maxH="500px" h={"500px"} maxW="500px">
-              <ModalEditAddress
-                alamatLengkap={alamatLengkap}
-                no_Handphone={no_Handphone}
-                labelAlamat={labelAlamat}
-                deleteAddress={deleteAddress}
-                namaPenerima={namaPenerima}
-                pos={pos}
-                posCodes={posCodes}
-                city={city}
-                province={province}
-                cities={cities}
-                provinces={provinces}
-                formikAddress={formikAddress}
-                inputHandlerAddress={inputHandlerAddress}
-              ></ModalEditAddress>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+        <ModalEditAddress
+          modalEditAddress={modalEditAddress}
+          setReset={setReset}
+          setState={setState}
+          setProvinceId={setProvinceId}
+          setCityId={setCityId}
+          alamatLengkap={alamatLengkap}
+          no_Handphone={no_Handphone}
+          labelAlamat={labelAlamat}
+          deleteAddress={deleteAddress}
+          namaPenerima={namaPenerima}
+          pos={pos}
+          posCodes={posCodes}
+          city={city}
+          province={province}
+          cities={cities}
+          provinces={provinces}
+          formikAddress={formikAddress}
+          inputHandlerAddress={inputHandlerAddress}
+          val={val}
+          initialState={initialState}
+          fetchBoth={fetchBoth}
+          setFetchBoth={setFetchBoth}
+        />
       </Flex>
     </>
   );

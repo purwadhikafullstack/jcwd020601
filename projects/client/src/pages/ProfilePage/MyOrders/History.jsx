@@ -12,7 +12,7 @@ export default function Pending() {
             p={"10px"}
             border={"#c4c4c4 2px solid"}
           >
-            <Flex w={"100%"} bgColor={"#f5f5f5"}>
+            <Flex w={"100%"} bgColor={"white"}>
               <Flex flexDir={"column"} w={"100%"} p={"10px"} gap={"10px"}>
                 <Flex gap={"10px"}>
                   <Flex border={"3px solid #385898"}>
@@ -56,6 +56,12 @@ export default function Pending() {
             </Flex>
           </Flex>
         </Flex>
+        {/* <Center w={"100%"} flexDir={"column"}>
+          <Center fontSize={"1.2rem"} color={"#0060ae"} fontWeight={600}>
+            There Are No Orders Here
+          </Center>
+          <Center color={"#0095d8"}>Your Orders Would Go Here</Center>
+        </Center> */}
       </Flex>
     </>
   );
