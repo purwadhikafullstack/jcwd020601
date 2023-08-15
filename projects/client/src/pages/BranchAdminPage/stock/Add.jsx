@@ -19,29 +19,31 @@ import {
 import { useFormik } from "formik";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
-import "../../../../App.css";
 import { GrFormAdd } from "react-icons/gr";
 import { useEffect, useState } from "react";
-import { api } from "../../../../api/api";
+import { api } from "../../../api/api";
+import "../../../App.css";
+import { useSelector } from "react-redux";
 
 export default function Add({ getData }) {
   // export default function Stock
   // { getData, token }
+
+  const userSelector = useSelector((state) => state.login.auth);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const [book, setBook] = useState([]);
   const formik = useFormik({
     initialValues: {
-      stock: null,
+      stock: "",
+      bucket: 0,
+      BranchId: userSelector.branchId,
       BookId: null,
-      BranchId: 2,
     },
     validationSchema: Yup.object({
-      stock: Yup.string()
-        .trim()
-        .typeError("Isi dengan angka")
-        .required("Isi dalam bentuk angka & tidak boleh kosong"),
-      BookId: Yup.number().required("Required!"),
+      stock: Yup.number().typeError("Isi dengan angka"),
+      BookId: Yup.number().required("Pilih buku"),
+      // BookId: Yup.number().required("Required!"),
     }),
     onSubmit: async (values, { resetForm }) => {
       await api.post("/stock/v1", values, {
@@ -86,7 +88,7 @@ export default function Add({ getData }) {
             <ModalBody gap={5} display={"flex"} flexDirection={"column"}>
               <Box>
                 <FormLabel>Stock</FormLabel>
-                <NumberInput max={50} min={10}>
+                {/* <NumberInput max={50} min={10}>
                   <NumberInputField
                     placeholder="Jumlah Stock"
                     name="stock"
@@ -98,7 +100,19 @@ export default function Add({ getData }) {
                       formik.setFieldValue("stock", stock);
                     }}
                   />
-                </NumberInput>
+                </NumberInput> */}
+                <Input
+                  placeholder="Jumlah Stock"
+                  name="stock"
+                  type="number"
+                  value={formik.values.stock}
+                  // onChange={(e) => {
+                  //   formik.handleChange(e);
+                  //   const stock = parseInt(e.target.value);
+                  //   formik.setFieldValue("stock", stock);
+                  // }}
+                  onChange={formik.handleChange}
+                />
                 <Text color={"red.800"}>{formik.errors.stock}</Text>
               </Box>
 

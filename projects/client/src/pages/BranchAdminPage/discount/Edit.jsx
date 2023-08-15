@@ -19,12 +19,15 @@ import {
 import { useFormik } from "formik";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
-import "../../../../App.css";
 import { useEffect, useState, useRef } from "react";
-import { api } from "../../../../api/api";
+
 import moment from "moment";
+import { api } from "../../../api/api";
+import "../../../App.css";
+import { useSelector } from "react-redux";
 
 export default function Edit({ isOpen, onClose, id, getData, token }) {
+  const userSelector = useSelector((state) => state.login.auth);
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const formik = useFormik({
     initialValues: {
@@ -33,7 +36,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       isPercent: null,
       start: "",
       end: "",
-      BranchId: 2,
+      BranchId: userSelector.branchId,
     },
     validationSchema: Yup.object({
       title: Yup.string()
@@ -76,7 +79,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     getDataDetail();
   }, [id, getData]);
 
-  // console.log(formik.values.start);
   return (
     <>
       <Text>Edit Data</Text>

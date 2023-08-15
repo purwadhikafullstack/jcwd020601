@@ -17,12 +17,15 @@ import {
 import { useFormik } from "formik";
 import Swal from "sweetalert2";
 import * as Yup from "yup";
-import "../../../../App.css";
 import { GrFormAdd } from "react-icons/gr";
 import { useState } from "react";
-import { api } from "../../../../api/api";
+
+import { api } from "../../../api/api";
+import "../../../App.css";
+import { useSelector } from "react-redux";
 
 export default function Add({ getData, token }) {
+  const userSelector = useSelector((state) => state.login.auth);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const formik = useFormik({
@@ -32,7 +35,7 @@ export default function Add({ getData, token }) {
       isPercent: null,
       start: "",
       end: "",
-      BranchId: 2,
+      BranchId: userSelector.branchId,
     },
     validationSchema: Yup.object({
       title: Yup.string()

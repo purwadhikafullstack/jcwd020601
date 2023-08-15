@@ -10,7 +10,13 @@ const discountController = {
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       const search = req.query.search_query || "";
-      const discountData = await discountServices.getAll(page, limit, search);
+      const place = req.query.place;
+      const discountData = await discountServices.getAll(
+        page,
+        limit,
+        search,
+        place
+      );
       res.send(discountData);
     } catch (err) {
       console.log(err.message);
