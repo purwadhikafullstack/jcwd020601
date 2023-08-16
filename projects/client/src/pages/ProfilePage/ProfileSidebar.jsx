@@ -55,7 +55,7 @@ export default function ProfileSidebar(props) {
             _hover={{ color: "#0060ae" }}
             color={location == "orders" ? "#0060ae" : "black"}
             cursor={"pointer"}
-            onClick={() => props.setSideTab("myOrders")}
+            onClick={() => nav("/orders")}
           >
             Pesanan Saya
           </Flex>
@@ -63,7 +63,7 @@ export default function ProfileSidebar(props) {
             color={location == "profile" ? "#0060ae" : "black"}
             _hover={{ color: "#0060ae" }}
             cursor={"pointer"}
-            onClick={() => props.setSideTab("myAccount")}
+            onClick={() => nav("/profile")}
           >
             Akun Saya
           </Flex>
