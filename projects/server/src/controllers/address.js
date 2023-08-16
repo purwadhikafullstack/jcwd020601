@@ -103,7 +103,7 @@ const addressController = {
       });
       let min = Math.min(...result.map((item) => item.distance));
       let lowest = result.filter((item) => item.distance === min);
-      console.log(...lowest.distance);
+      console.log(lowest[0].distance);
       if (lowest[0].distance <= 50) {
         return res.send(...lowest);
       }
