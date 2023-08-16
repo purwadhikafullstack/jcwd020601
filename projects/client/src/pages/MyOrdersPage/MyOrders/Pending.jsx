@@ -5,28 +5,13 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
-export default function Pending() {
-  const [pending, setPending] = useState([]);
+export default function Pending(props) {
   const nav = useNavigate();
-  const userSelector = useSelector((state) => state.login.auth);
-  async function fetchPending() {
-    await api
-      .get("/order/pending/" + userSelector.id)
-      .then((res) => {
-        setPending(res.data);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }
-  useEffect(() => {
-    fetchPending();
-  }, []);
   return (
     <>
       <Flex w={"100%"} mt={"20px"} gap={"30px"} flexDir={"column"}>
-        {pending[0] ? (
-          pending.map((val) => (
+        {props.pending[0] ? (
+          props.pending.map((val) => (
             <Flex
               gap={"30px"}
               flexDir={"column"}
