@@ -45,7 +45,6 @@ export default function DaftarAlamat(props) {
     initialValues: { UserId: props.userSelector.id },
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
-      console.log("kasdas");
       setCoolDown(true);
       await api.post("/address/v1?token=" + token, formikAddress.values);
       AddAddressHelpers.submit({
