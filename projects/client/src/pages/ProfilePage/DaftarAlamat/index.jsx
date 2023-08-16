@@ -35,7 +35,9 @@ export default function DaftarAlamat(props) {
   const [province, setProvince] = useState();
   const [cities, setCities] = useState([1, 2]);
   const [pos, setPos] = useState();
+  const [posCode, setPosCode] = useState();
   const [provinceId, setProvinceId] = useState();
+  const [coolDown, setCoolDown] = useState(false);
   const [cityId, setCityId] = useState();
   const nav = useNavigate();
   YupPassword(Yup);
@@ -43,6 +45,7 @@ export default function DaftarAlamat(props) {
     initialValues: { UserId: props.userSelector.id },
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
+      setCoolDown(true);
       await api.post("/address/v1?token=" + token, formikAddress.values);
       AddAddressHelpers.submit({
         Swal,
@@ -52,6 +55,7 @@ export default function DaftarAlamat(props) {
         fetchUserAddresses: props.fetchUserAddresses,
       });
       formikAddress.resetForm();
+      setCoolDown(false);
     },
   });
   useEffect(() => {
@@ -60,7 +64,7 @@ export default function DaftarAlamat(props) {
     }
   }, []);
   async function fetchCity() {
-    setPos();
+    setPos("");
     setCities([]);
     await api
       .get("/city/v1/" + provinceId)
@@ -72,7 +76,7 @@ export default function DaftarAlamat(props) {
       });
   }
   async function fetchPos() {
-    setPos();
+    setPos("");
     await api.get("/city/v2/" + cityId).then((res) => {
       setPos(res.data.result);
     });
@@ -91,9 +95,11 @@ export default function DaftarAlamat(props) {
   }
   useEffect(() => {
     fetchCity();
+    formikAddress.setFieldValue("city", "");
   }, [formikAddress.values.province]);
   useEffect(() => {
     fetchPos();
+    formikAddress.setFieldValue("pos", "");
   }, [formikAddress.values.city]);
   return (
     <Flex flexDir={"column"} gap={"20px"} pr={"50px"}>
@@ -169,6 +175,9 @@ export default function DaftarAlamat(props) {
           </ModalHeader>
           <ModalBody maxW="500px">
             <ModalAddAddress
+              posCode={posCode}
+              setPosCode={setPosCode}
+              coolDown={coolDown}
               pos={pos}
               setPos={setPos}
               fetchPos={fetchPos}

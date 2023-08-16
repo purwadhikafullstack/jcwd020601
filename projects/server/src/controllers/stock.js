@@ -7,6 +7,7 @@ const t = require("../helpers/transaction");
 const stockServices = require("../services").stockServices;
 const stockController = {
   getAllAsc: async (req, res) => {
+    console.log("masuk");
     try {
       const l = parseInt(req.query.limit);
       const limit = l || null;

@@ -17,6 +17,12 @@ const orderDetailController = {
   getById: async (req, res) => {
     try {
       const { OrderId } = req.body;
+      const Order = await db.Order.findOne({
+        where: {
+          id: OrderId,
+        },
+      });
+      console.log();
       const OrderDetail = await db.OrderDetail.findAll({
         where: {
           OrderId,
@@ -36,7 +42,10 @@ const orderDetailController = {
           },
         ],
       });
-      return res.send(OrderDetail);
+      if (Order.dataValues.UserId == req.user.id) {
+        return res.send(OrderDetail);
+      }
+      return res.status(500).send("Beda User");
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
