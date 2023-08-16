@@ -11,13 +11,16 @@ import Footer from "../../components/Footer";
 import ProfileFooter from "../ProfilePage/ProfileFooter";
 import { api } from "../../api/api";
 import MyOrders from "./MyOrders";
+import Loading from "./";
 export default function MyOrdersPage() {
   const userSelector = useSelector((state) => state.login.auth);
   const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
   const [pending, setPending] = useState([]);
   const [history, setHistory] = useState([]);
   async function fetch() {
     try {
+      setIsLoading(true);
       const pendingOrder = await api
         .get("/order/pending/" + userSelector.id)
         .then((res) => res.data);
@@ -36,6 +39,7 @@ export default function MyOrdersPage() {
         isClosable: true,
       });
     }
+    setIsLoading(false);
   }
   useEffect(() => {
     fetch();
@@ -63,7 +67,9 @@ export default function MyOrdersPage() {
             >
               <ProfileSidebar />
             </Flex>
+
             <MyOrders
+              isLoading={isLoading}
               pending={pending}
               history={history}
               setHistory={setHistory}

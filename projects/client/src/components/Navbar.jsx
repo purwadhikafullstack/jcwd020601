@@ -539,7 +539,11 @@ function DesktopNav({ callback, keyword, category }) {
             gap={"0px"}
             border={"#d6d6d6 solid 2px"}
             borderRadius={"50px"}
-            display={location == "profile" ? "none" : "inline-flex"}
+            display={
+              location == "profile" || location == "orders"
+                ? "none"
+                : "inline-flex"
+            }
             onClick={() => {
               modalSelectAddress.onOpen();
             }}
@@ -720,7 +724,7 @@ function DesktopNav({ callback, keyword, category }) {
                   My Account
                 </Text>
                 <Text
-                  onClick={() => nav("/profile")}
+                  onClick={() => nav("/orders")}
                   cursor={"pointer"}
                   _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
                   p={3}
