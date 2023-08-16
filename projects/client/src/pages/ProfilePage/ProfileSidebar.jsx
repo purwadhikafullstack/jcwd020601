@@ -53,14 +53,14 @@ export default function ProfileSidebar(props) {
         >
           <Flex
             _hover={{ color: "#0060ae" }}
-            color={props.sideTab == "myOrders" ? "#0060ae" : "black"}
+            color={location == "orders" ? "#0060ae" : "black"}
             cursor={"pointer"}
             onClick={() => props.setSideTab("myOrders")}
           >
             Pesanan Saya
           </Flex>
           <Flex
-            color={props.sideTab == "myAccount" ? "#0060ae" : "black"}
+            color={location == "profile" ? "#0060ae" : "black"}
             _hover={{ color: "#0060ae" }}
             cursor={"pointer"}
             onClick={() => props.setSideTab("myAccount")}
