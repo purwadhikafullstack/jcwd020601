@@ -32,9 +32,10 @@ export default function BookCard() {
   const [limit, setLimit] = useState(5);
   const [keyword, setKeyword] = useState("");
   const [place, setPlace] = useState(orderSelector.BranchId);
+  // const place = 2;
   console.log(place);
-  console.log(value);
-  // console.log(orderSelector.);
+  // console.log(value);
+  console.log(orderSelector);
   async function fetchProduct() {
     let response = await api.get(`/stock?limit=${limit}&place=${place}`);
     setValue(response.data.result);
@@ -79,6 +80,7 @@ export default function BookCard() {
       console.error(error);
     }
   }
+
   return (
     <Flex
       justify={"center"}
@@ -123,8 +125,8 @@ export default function BookCard() {
         justifyContent={"center"}
       >
         {value.map((val, idx) => (
-          <Card key={idx}>
-            <CardBody>
+          <Card key={idx} borderRadius={"10px"}>
+            <CardBody bgColor={"red"} borderTopRadius={"10px"}>
               <Box>
                 {val.Book?.Discount?.isPercent ? (
                   <>
@@ -132,11 +134,15 @@ export default function BookCard() {
                       w={10}
                       h={8}
                       // bgColor={"blue"}
+                      // borderTopRadius={"8px"}
+                      // borderRadius={"10px"}
                       position={"absolute"}
-                      left={"200px"}
+                      left={"220px"}
+                      top={"0px"}
                       display="flex"
                       alignItems="center"
                       justifyContent="center"
+                      bgColor={"blue.100"}
                     >
                       <Text fontWeight={"bold"}>
                         {val.Book?.Discount?.discount}%

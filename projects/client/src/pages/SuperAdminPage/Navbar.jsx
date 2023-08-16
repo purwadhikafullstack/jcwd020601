@@ -47,8 +47,11 @@ export default function Navbar() {
         display={"flex"}
         flexDirection={"row"}
         h={{ base: "6em" }}
-        top={0}
-        borderBottom="1px"
+        // top={0}
+        // borderBottom="1px"
+        zIndex={1}
+        w={"100%"}
+        position={"fixed"}
         borderBottomColor={useColorModeValue("gray.200", "gray.700")}
         bg={"#2c5282"}
       >
@@ -102,21 +105,61 @@ function DesktopNav() {
                 <Avatar border={"2px white solid"} w={45} h={45}></Avatar>
               </Flex>
             </MenuButton>
-            <MenuList my={5} position={"fixed"} left={"-6em"}>
-              <Flex padding={"0 0.5rem"} flexDir={"column"} gap={"0.4rem"}>
-                <Flex
-                  gap={"1rem"}
-                  justifyContent={"center"}
+            <MenuList
+              my={5}
+              p={0}
+              position={"fixed"}
+              left={"-6em"}
+              // bgColor={"yellow.100"}
+              display={"flex"}
+              flexDir={"column"}
+            >
+              <Box
+                onClick={logout}
+                cursor={"pointer"}
+                w={"100%"}
+                h={12}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+              >
+                Logout
+              </Box>
+              <Box
+                onClick={verify}
+                cursor={"pointer"}
+                w={"100%"}
+                h={12}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+              >
+                Verify Account
+              </Box>
+              {/* <Flex flexDir={"column"} bgColor={"blue.100"} h={"100%"}> */}
+              {/* <Flex */}
+              {/* // gap={"2em"} */}
+              {/* justifyContent={"center"}
                   flexDir={"column"}
-                  alignItems={"center"}
-                >
-                  Halo, User
-                  <Box>Full Name</Box>
-                  <Box>Address</Box>
-                  <Box onClick={logout}>Logout</Box>
-                  <Box onClick={verify}>Verify Account</Box>
-                </Flex>
-                <Center
+                  alignItems={"center"} */}
+              {/* > */}
+              {/* Halo, User */}
+              {/* <Box>Full Name</Box> */}
+              {/* <Box>Address</Box> */}
+              {/* <Text
+                    onClick={logout}
+                    cursor={"pointer"}
+                    w={"100%"}
+                    bgColor={"red.100"}
+                    _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+                  >
+                    Logout
+                  </Text>
+                  <Box onClick={verify}>Verify Account</Box> */}
+              {/* </Flex> */}
+              {/* <Center
                   bgColor={"blue.400"}
                   cursor={"pointer"}
                   _hover={{
@@ -124,8 +167,18 @@ function DesktopNav() {
                   }}
                 >
                   Full Profile
-                </Center>
-              </Flex>
+                </Center> */}
+              {/* <Text
+                  onClick={logout}
+                  cursor={"pointer"}
+                  w={"100%"}
+                  bgColor={"red.100"}
+                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+                >
+                  Logout
+                </Text>
+                <Box onClick={verify}>Verify Account</Box> */}
+              {/* </Flex> */}
             </MenuList>
           </Menu>
         </Box>
