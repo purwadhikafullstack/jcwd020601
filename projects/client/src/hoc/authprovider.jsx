@@ -40,6 +40,7 @@ export default function AuthProvider({ children }) {
           });
         } else if (!auth?.role) {
           console.log("login user");
+          console.log(address);
           const closestBranch = await api
             .post(
               "/address/closest",
@@ -58,6 +59,7 @@ export default function AuthProvider({ children }) {
               type: "login",
               payload: auth,
               address: address || userMainAddress,
+              closestBranch,
             });
             dispatch({
               type: "order",
@@ -72,7 +74,9 @@ export default function AuthProvider({ children }) {
               type: "login",
               payload: auth,
               address: address || userMainAddress,
+              closestBranch,
             });
+            console.log(closestBranch);
             dispatch({
               type: "order",
               payload: {

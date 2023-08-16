@@ -90,19 +90,17 @@ export default function ModalAddAddress(props) {
             <Flex fontWeight={"500"}>Province</Flex>
             <Select
               id="province"
-              onChange={async (val) => {
-                await props.inputHandlerAddress(val);
+              onChange={(val) => {
+                props.inputHandlerAddress(val);
               }}
               variant="flushed"
             >
               <option display="none" disabled selected hidden>
                 Select Province
               </option>
+              <option></option>
               {props.provinces.map((val) => (
-                <option
-                  value={val.province_id + "#" + val.province}
-                  clasd={val.province}
-                >
+                <option value={val.province_id + "#" + val.province}>
                   {val.province}
                 </option>
               ))}
@@ -123,14 +121,13 @@ export default function ModalAddAddress(props) {
             </Flex>
             <Select
               id="city"
-              onChange={async (val) => {
-                await props.inputHandlerAddress(val);
-              }}
+              onChange={props.inputHandlerAddress}
               variant="flushed"
             >
               <option display="none" disabled selected hidden>
                 Select City
               </option>
+              <option></option>
               {props.cities.map((val) => (
                 <option value={val.city_id + "#" + val.city_name}>
                   {val.city_name}
@@ -145,13 +142,17 @@ export default function ModalAddAddress(props) {
             <Flex fontWeight={"500"}>KodePos</Flex>
             <Select
               id="pos"
-              onChange={props.inputHandlerAddress}
+              onChange={(val) => {
+                props.inputHandlerAddress(val);
+                props.setPosCode(val.target.value);
+              }}
               variant="flushed"
+              value={props.posCode}
             >
               <option display="none" disabled selected hidden>
                 Select PosCode
               </option>
-
+              <option></option>
               <option value={props.pos?.postal_code}>
                 {props.pos?.postal_code}
               </option>
