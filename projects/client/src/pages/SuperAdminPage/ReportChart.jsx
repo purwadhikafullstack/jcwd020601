@@ -93,7 +93,13 @@ export default function ReportChart() {
   ];
   return (
     <>
-      <Flex bgColor={"#f2f2f2"} pl={"20px"}>
+      <Flex
+        bgColor={"#f2f2f2"}
+        pl={"20px"}
+        // backgroundColor={"red.100"}
+        marginTop={"6em"}
+        marginLeft={60}
+      >
         <Flex flexDir={"column"}>
           <Flex
             py={"20px"}

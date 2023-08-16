@@ -11,6 +11,7 @@ import {
   Box,
   Image,
   Input,
+  Text,
   Button,
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
@@ -19,7 +20,9 @@ import ReactPaginate from "react-paginate";
 import "../../App.css";
 import { BiSearchAlt } from "react-icons/bi";
 import { GrFormAdd, GrPowerReset } from "react-icons/gr";
+// import Add from "./product/Add";
 import Add from "./ProductPage/Add";
+// import Action from "./product/Action";
 import Action from "./ProductPage/Action";
 
 export default function Product() {
@@ -74,10 +77,11 @@ export default function Product() {
       currency: "IDR",
     }).format(number);
   };
+  console.log(value);
 
   return (
     <>
-      <Box marginLeft={30}>
+      <Box marginTop={"6em"} marginLeft={60}>
         <TableContainer padding={10}>
           <Box
             display={"flex"}
@@ -121,8 +125,9 @@ export default function Product() {
               <Tr>
                 <Th fontSize={18}>No</Th>
                 <Th fontSize={18}>Judul</Th>
-                <Th fontSize={18}>Bahasa</Th>
+                {/* <Th fontSize={18}>Bahasa</Th> */}
                 <Th fontSize={18}>Penulis</Th>
+                {/* <Th fontSize={18}>Diskon</Th> */}
                 <Th fontSize={18}>Lembar</Th>
                 <Th fontSize={18}>Harga</Th>
                 <Th fontSize={18}>Gambar</Th>
@@ -133,8 +138,23 @@ export default function Product() {
                 <Tr key={val.id}>
                   <Td>{idx + 1 + page * limit}</Td>
                   <Td>{val.title}</Td>
-                  <Td>{val.language}</Td>
+                  {/* <Td>{val.language}</Td> */}
                   <Td>{val.author}</Td>
+                  {/* <Td>
+                    {val.Discount?.isPercent ? (
+                      <>{val.Discount?.discount} %</>
+                    ) : (
+                      <>
+                        {val.Discount?.discount ? (
+                          <>{rupiah(val.Discount?.discount)}</>
+                        ) : (
+                          <>
+                            <Text>Belum Ada Diskon</Text>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </Td> */}
                   <Td>{val.pages}</Td>
                   <Td>{rupiah(val.price)}</Td>
 

@@ -708,6 +708,7 @@ function DesktopNav({ callback, keyword, category }) {
               position={"fixed"}
               left={"-6em"}
               // bgColor={"pink.100"}
+              p={0}
             >
               <Flex flexDir={"column"}>
                 <Text

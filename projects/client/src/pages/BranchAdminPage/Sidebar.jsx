@@ -26,12 +26,6 @@ const LinkItems = [
   { name: "Stock", icon: BiArchiveIn, link: "/admin/stock" },
   { name: "Discount", icon: TbDiscount, link: "/admin/discount" },
   { name: "Transaction", icon: GrTransaction, link: "/admin/order" },
-  // { name: "Settings", icon: FiSettings },
-  // {
-  //   name: "Branch-Admins",
-  //   icon: AiOutlineUsergroupAdd,
-  //   link: "/superadminpage/branchadmins",
-  // },
 ];
 
 export default function Sidebar(props) {
@@ -53,9 +47,6 @@ const SidebarContent = (props) => {
       borderRight="1px"
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={60}
-      // pos="sticky"
-      // position={"absolute"}
-      // overflow={"hidden"}
       position={"fixed"}
       zIndex={100}
       h="100vh"

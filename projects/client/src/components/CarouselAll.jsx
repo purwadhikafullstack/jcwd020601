@@ -22,8 +22,9 @@ export default function CarouselAll() {
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(4);
   const [keyword, setKeyword] = useState("");
+  const place = 1;
   async function fetchProduct() {
-    let response = await api.get(`/stock/Desc?limit=${limit}`);
+    let response = await api.get(`/stock/Desc?limit=${limit}&place=${place}`);
     setValue(response.data.result);
   }
   useEffect(() => {
@@ -113,9 +114,9 @@ export default function CarouselAll() {
                       ? val.Book?.title.slice(0, 15) + "..."
                       : val.Book?.title}
                   </Text>
-                  <Text color="#A0AEC0" as="del" fontSize="xl">
+                  {/* <Text color="#A0AEC0" as="del" fontSize="xl">
                     Rp. {val.Book?.price}
-                  </Text>
+                  </Text> */}
                   <Text color="blue.600" fontSize="xl">
                     Rp. {val.Book?.price}
                   </Text>

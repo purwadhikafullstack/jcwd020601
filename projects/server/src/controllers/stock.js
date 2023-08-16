@@ -28,7 +28,7 @@ const stockController = {
   getAllDesc: async (req, res) => {
     try {
       const limit = parseInt(req.query.limit) || 4;
-      const place = req.query.branchId || 1;
+      const place = req.query.place || 1;
       const stockData = await stockServices.getAllDesc(place, limit);
       res.json({
         result: stockData,
