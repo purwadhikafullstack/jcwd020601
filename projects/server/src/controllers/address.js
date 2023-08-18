@@ -103,7 +103,7 @@ const addressController = {
       });
       let min = Math.min(...result.map((item) => item.distance));
       let lowest = result.filter((item) => item.distance === min);
-      console.log(lowest.distance);
+      console.log(lowest[0].distance);
       if (lowest[0].distance <= 50) {
         return res.send(...lowest);
       }
@@ -231,6 +231,8 @@ const addressController = {
         UserId,
       } = req.body;
       let place = {};
+      console.log(city);
+      console.log("kotaa");
       const Main = await db.Address.findOne({
         where: {
           UserId,
@@ -238,25 +240,27 @@ const addressController = {
         },
       });
 
-      await opencage.geocode({ q: city, language: "id" }).then(async (res) => {
-        place = res.results[0].geometry;
+      await opencage
+        .geocode({ q: city.split("#")[1], language: "id" })
+        .then(async (res) => {
+          place = res.results[0].geometry;
 
-        await db.Address.create({
-          labelAlamat,
-          namaPenerima,
-          no_Handphone,
-          province: province.split("#")[1],
-          city: city.split("#")[1],
-          isMain: Main ? false : true,
-          alamatLengkap,
-          pos,
-          latitude: place.lat,
-          longitude: place.lng,
-          UserId,
-          ProvinceId: province.split("#")[0],
-          CityId: city.split("#")[0],
+          await db.Address.create({
+            labelAlamat,
+            namaPenerima,
+            no_Handphone,
+            province: province.split("#")[1],
+            city: city.split("#")[1],
+            isMain: Main ? false : true,
+            alamatLengkap,
+            pos,
+            latitude: place.lat,
+            longitude: place.lng,
+            UserId,
+            ProvinceId: province.split("#")[0],
+            CityId: city.split("#")[0],
+          });
         });
-      });
       const result = await db.Address.findAll();
       res.send(result);
     } catch (err) {

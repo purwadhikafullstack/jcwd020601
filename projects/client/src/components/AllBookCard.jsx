@@ -25,7 +25,7 @@ export default function AllBookCard({ keyword }) {
 
   // const [keyword, setKeyword] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  console.log(value);
+  // console.log(value);
   async function fetchProduct() {
     try {
       setIsLoading(true);
@@ -41,8 +41,8 @@ export default function AllBookCard({ keyword }) {
   useEffect(() => {
     fetchProduct();
   }, [token, keyword, place]);
-  console.log(value);
-  console.log(place);
+  // console.log(value);
+  // console.log(place);
   return (
     <>
       <Center
