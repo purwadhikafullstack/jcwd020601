@@ -15,7 +15,7 @@ router.get(
   userController.generateTokenByEmailVerify
 );
 router.get("/token/verifyemail", getUserByToken, userController.verifyEmail);
-router.get("/v3", getUserByToken, userController.getUserByToken);
+router.get("/v3", userController.getByToken, userController.getUserByToken);
 router.get("/:id", userController.getById);
 router.post("/v1", userController.insertUser);
 router.post("/", userController.register);

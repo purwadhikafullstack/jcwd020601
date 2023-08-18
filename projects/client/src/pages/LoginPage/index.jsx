@@ -66,6 +66,7 @@ export default function LoginPage() {
           .catch((err) => {
             console.log(err.message);
           });
+        console.log(user);
         const userMainAddress = await api
           .get("/address/ismain/" + user.id)
           .then((res) => {
