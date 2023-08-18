@@ -49,7 +49,7 @@ db.Sequelize = Sequelize;
 db.Address = require("./address")(sequelize, Sequelize);
 db.City = require("./city")(sequelize, Sequelize);
 db.Province = require("./province")(sequelize, Sequelize);
-db.BooksCategory = require("./bookCategory")(sequelize, Sequelize);
+// db.BooksCategory = require("./bookCategory")(sequelize, Sequelize);
 db.Admin = require("./admin")(sequelize, Sequelize);
 db.Book = require("./book")(sequelize, Sequelize);
 db.Branch = require("./branch")(sequelize, Sequelize);
@@ -79,16 +79,17 @@ db.Stock.belongsTo(db.Branch, {
 db.OrderDetail.belongsTo(db.Order, {
   foreignKey: "OrderId",
 });
-db.Category.belongsToMany(db.Book, { through: db.BooksCategory });
-db.Book.belongsToMany(db.Category, { through: db.BooksCategory });
-db.Book.belongsTo(db.Discount, {
-  foreignKey: "DiscountId",
-});
-db.Discount.hasOne(db.Book);
+// db.Category.belongsToMany(db.Book, { through: db.BooksCategory });
+// db.Book.belongsToMany(db.Category, { through: db.BooksCategory });
+// db.Book.belongsTo(db.Discount, {
+//   foreignKey: "DiscountId",
+// });
+// db.Discount.hasOne(db.Book);
 // db.Book.belongsTo(db.Category, {
 //   foreignKey: "CategoryId",
 // });
 // db.Category.hasOne(db.Book);
+db.Book.belongsTo(db.Category);
 db.Discount.belongsTo(db.Branch, {
   foreignKey: "BranchId",
 });
@@ -98,6 +99,7 @@ db.StockHistory.belongsTo(db.Stock, {
 db.User.hasOne(db.Token);
 db.Token.belongsTo(db.User);
 db.Stock.belongsTo(db.Book), db.Admin.hasOne(db.Token);
+db.Stock.belongsTo(db.Discount);
 db.Token.belongsTo(db.Admin);
 db.Cart.belongsTo(db.Stock, {
   foreignKey: "StockId",

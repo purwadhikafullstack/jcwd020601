@@ -9,6 +9,7 @@ import {
   Tbody,
   Tr,
   Th,
+  Text,
   Td,
 } from "@chakra-ui/react";
 import ReactPaginate from "react-paginate";
@@ -63,7 +64,13 @@ export default function Stock() {
     setQuery("");
   };
 
-  // console.log(value);
+  const rupiah = (number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    }).format(number);
+  };
+  console.log(value);
   // console.log(page);
   // console.log(userSelector.branchId);
   return (
@@ -121,15 +128,31 @@ export default function Stock() {
                 <Th fontSize={18}>Nama Buku</Th>
                 <Th fontSize={18}>Branch </Th>
                 <Th fontSize={18}>Stock</Th>
+                <Th fontSize={18}>Diskon</Th>
               </Tr>
             </Thead>
             <Tbody>
               {value.map((val, idx) => (
                 <Tr key={val.id}>
-                  <Td>{idx + 1}</Td>
+                  <Td>{idx + 1 + page * limit}</Td>
                   <Td>{val.Book?.title}</Td>
                   <Td>{val.Branch?.name}</Td>
                   <Td>{val.stock}</Td>
+                  <Td>
+                    {val.Discount?.isPercent ? (
+                      <>{val.Discount?.discount} %</>
+                    ) : (
+                      <>
+                        {val.Discount?.discount ? (
+                          <>{rupiah(val.Discount?.discount)}</>
+                        ) : (
+                          <>
+                            <Text>Belum Ada Diskon</Text>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </Td>
                   <Td>
                     <Action
                       id={val.id}

@@ -54,7 +54,7 @@ export default function HomePage() {
           console.log(token);
         }}
       >
-        lol
+        {/* lol */}
       </Flex>
       <Navbar />
       <CarouselShow />
