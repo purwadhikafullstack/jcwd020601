@@ -48,14 +48,14 @@ export default function HomePage() {
   }
   return (
     <Flex display={"columns"}>
-      <Flex
+      {/* <Flex
         onClick={() => {
           console.log(orderSelector);
           console.log(token);
         }}
       >
         lol
-      </Flex>
+      </Flex> */}
       <Navbar />
       <CarouselShow />
       <CarouselBooks />

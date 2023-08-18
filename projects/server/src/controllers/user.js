@@ -336,7 +336,6 @@ const userController = {
             Status: "LOGIN",
           },
         });
-        console.log(findToken);
         if (findToken) {
           console.log("skadsak");
           console.log(generateToken);

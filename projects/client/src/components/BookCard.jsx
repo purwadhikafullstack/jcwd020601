@@ -40,6 +40,7 @@ export default function BookCard() {
   async function fetchProduct() {
     let response = await api.get(`/stock?limit=${limit}&place=${place}`);
     setValue(response.data.result);
+    console.log(response.data.result);
   }
   useEffect(() => {
     fetchProduct();
