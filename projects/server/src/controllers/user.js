@@ -303,8 +303,7 @@ const userController = {
           // registered_by: "Google",
         },
       });
-
-      console.log({ dataINI: user.dataValues });
+      const generateToken = nanoid();
 
       if (!user) {
         create = await db.User.create({
@@ -330,7 +329,6 @@ const userController = {
 
       if (create || user) {
         const payload = user?.dataValues.id || create.dataValues.id;
-        const generateToken = nanoid();
         // console.log(nanoid());
         const findToken = await db.Token.findOne({
           where: {
@@ -338,7 +336,10 @@ const userController = {
             Status: "LOGIN",
           },
         });
+        console.log(findToken);
         if (findToken) {
+          console.log("skadsak");
+          console.log(generateToken);
           await db.Token.update(
             {
               token: generateToken,
@@ -383,9 +384,7 @@ const userController = {
   getByToken: async (req, res, next) => {
     try {
       let { token } = req.query;
-
       // console.log(token);
-
       let payload = await db.Token.findOne({
         where: {
           token,
@@ -395,12 +394,9 @@ const userController = {
           valid: true,
         },
       });
-
       if (!payload) {
         throw new Error("token has expired");
       }
-
-      // console.log(payload.dataValues);
       let user = await db.User.findOne({
         where: {
           id: payload.dataValues.UserId,
@@ -411,7 +407,7 @@ const userController = {
       req.user = user;
       next();
     } catch (err) {
-      // console.log(err);
+      console.log(err);
       return res.status(500).send({ message: err.message });
     }
   },
