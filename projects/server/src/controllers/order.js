@@ -579,8 +579,11 @@ const orderController = {
               const stock = await db.Stock.findByPk(StockId);
               const updatedStock = stock.stock - quantity;
               const updatedBucket = stock.bucket - quantity;
-              const sH = await db.StockHistory.findByPk(StockId);
-              console.log({ this: sH });
+              // const sH = await db.StockHistory.findByPk(StockId);
+              const sH = await db.StockHistory.findOne({
+                order: [["createdAt", "DESC"]], // Order by createdAt in descending order
+              });
+              console.log({ this: sH.dataValues });
               return Promise.all([
                 db.Stock.update(
                   {
