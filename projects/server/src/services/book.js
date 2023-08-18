@@ -23,7 +23,7 @@ const bookServices = {
       });
       const totalPage = Math.ceil(totalRows / limit);
       const result = await db.Book.findAll({
-        include: [{ model: db.Discount }, { model: db.Category }],
+        include: [{ model: db.Category }],
         where: {
           [Op.or]: [
             {
@@ -66,7 +66,7 @@ const bookServices = {
   getById: async (id) => {
     try {
       const Book = await db.Book.findOne({
-        include: [{ model: db.Discount }],
+        // include: [{ model: db.Discount }],
         where: {
           id: id,
         },
@@ -91,7 +91,7 @@ const bookServices = {
       price,
       rating,
       CategoryId,
-      DiscountId,
+      // DiscountId,
     },
     filename,
     transaction
@@ -114,7 +114,7 @@ const bookServices = {
           price,
           rating,
           CategoryId,
-          DiscountId,
+          // DiscountId,
         },
         {
           where: {

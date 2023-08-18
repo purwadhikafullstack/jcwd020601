@@ -9,7 +9,7 @@ const stockServices = {
         include: [
           {
             model: db.Book,
-            include: [db.Discount],
+            // include: [db.Discount],
             required: true, // Inner join
             where: {
               [Op.or]: [
@@ -24,9 +24,16 @@ const stockServices = {
           {
             model: db.Branch,
             required: true, // Inner join
-            where: { id: place },
+            // where: { id: place },
+          },
+          {
+            model: db.Discount,
+            // where: { id: place },
           },
         ],
+        where: {
+          BranchId: place,
+        },
         limit: limit,
         order: [["id", "ASC"]],
       });
@@ -46,6 +53,10 @@ const stockServices = {
           model: db.Branch,
           required: true, // Inner join
           where: { id: place },
+        },
+        {
+          model: db.Discount,
+          // where: { id: place },
         },
       ],
       limit: limit,
@@ -67,6 +78,12 @@ const stockServices = {
               },
             },
           },
+          {
+            model: db.Branch,
+          },
+          {
+            model: db.Discount,
+          },
         ],
         where: {
           BranchId: place,
@@ -85,6 +102,9 @@ const stockServices = {
           },
           {
             model: db.Branch,
+          },
+          {
+            model: db.Discount,
           },
         ],
         where: {
@@ -115,12 +135,16 @@ const stockServices = {
         include: [
           {
             model: db.Book,
-            include: [db.Discount],
+            // include: [db.Discount],
             required: true, // Inner join
           },
           {
             model: db.Branch,
             required: true, // Inner join
+          },
+          {
+            model: db.Branch,
+            required: true,
           },
         ],
       });
@@ -129,7 +153,7 @@ const stockServices = {
       throw err;
     }
   },
-  insertStock: async ({ stock, BranchId, BookId }, transaction) => {
+  insertStock: async ({ stock, BranchId, BookId, DiscountId }, transaction) => {
     try {
       // const data =
       await db.Stock.create(
@@ -137,6 +161,7 @@ const stockServices = {
           stock,
           BranchId,
           BookId,
+          DiscountId,
         },
         {
           transaction: transaction,
@@ -152,13 +177,18 @@ const stockServices = {
       throw err;
     }
   },
-  editStock: async (id, { stock, BranchId, BookId }, transaction) => {
+  editStock: async (
+    id,
+    { stock, BranchId, BookId, DiscountId },
+    transaction
+  ) => {
     try {
       await db.Stock.update(
         {
           stock,
           BranchId,
           BookId,
+          DiscountId,
         },
         {
           where: {
