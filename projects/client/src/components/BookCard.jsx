@@ -14,6 +14,7 @@ import {
   useMediaQuery,
   useToast,
   useDisclosure,
+  Icon,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -21,6 +22,7 @@ import { api } from "../api/api";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import TooFarModal from "./TooFarModal";
+import { BsChevronDown, BsCart } from "react-icons/bs";
 export default function BookCard() {
   let t = localStorage.getItem("auth");
   const userSelector = useSelector((state) => state.login.auth);
@@ -30,21 +32,28 @@ export default function BookCard() {
   const toast = useToast();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(6);
   const [keyword, setKeyword] = useState("");
-  const [place, setPlace] = useState(orderSelector.BranchId);
+  const [place, setPlace] = useState();
+  // Link
   // const place = 2;
-  console.log(place);
+  // console.log(place);
   // console.log(value);
   console.log(orderSelector);
   async function fetchProduct() {
-    let response = await api.get(`/stock?limit=${limit}&place=${place}`);
+    let response = await api.get(
+      `/stock?limit=${limit}&place=${orderSelector.BranchId}`
+    );
+    console.log(response);
     setValue(response.data.result);
     console.log(response.data.result);
   }
   useEffect(() => {
     fetchProduct();
-  }, [token, orderSelector, place]);
+    console.log("asd");
+  }, [token, orderSelector.BranchId]);
+
+  console.log(value);
 
   const settings = {
     dots: true,
@@ -53,9 +62,8 @@ export default function BookCard() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-  console.log(value);
-  console.log(token);
-  // Add to Cart
+  // console.log(value);
+  // console.log(token);
   async function add(idx) {
     try {
       if (userSelector.username) {
@@ -82,7 +90,7 @@ export default function BookCard() {
       console.error(error);
     }
   }
-
+  console.log(value);
   return (
     <Flex
       justify={"center"}
@@ -122,96 +130,117 @@ export default function BookCard() {
       </Box>
       <Box
         display={"flex"}
-        gap={"25px"}
+        gap={"30px"}
         flexWrap={"wrap"}
         justifyContent={"center"}
       >
         {value.map((val, idx) => (
-          <Card key={idx} borderRadius={"10px"}>
-            <CardBody bgColor={"red"} borderTopRadius={"10px"}>
-              <Box>
-                {val.Book?.Discount?.isPercent ? (
-                  <>
-                    <Box
-                      w={10}
-                      h={8}
-                      // bgColor={"blue"}
-                      // borderTopRadius={"8px"}
-                      // borderRadius={"10px"}
-                      position={"absolute"}
-                      left={"220px"}
-                      top={"0px"}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      bgColor={"blue.100"}
-                    >
-                      <Text fontWeight={"bold"}>
-                        {val.Book?.Discount?.discount}%
-                      </Text>
-                    </Box>
-                  </>
-                ) : (
-                  <></>
-                )}
-                <Image
-                  src={val.Book?.book_url}
-                  alt="Green double couch with wooden legs"
-                  borderRadius="lg"
-                  w={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
-                  h={{ base: "300px", sm: "280px", md: "260px", lg: "220px" }}
-                />
-              </Box>
-              <Stack mt="6">
-                <Heading size="sm">{val.Book?.author}</Heading>
-                <Text size={"sm"}>
-                  {val.Book?.title.length > 15
-                    ? val.Book?.title.slice(0, 15) + "..."
-                    : val.Book?.title}
-                </Text>
-                <Text color="blue.600" fontSize="xl">
-                  {val.Book?.Discount?.discount ? (
+          <Link
+            to={`/products/detail/${val.id}`}
+            cursor={"pointer"}
+            // bgColor={"red.200"}
+          >
+            <Card key={idx}>
+              <CardBody>
+                <Box>
+                  {val.Discount?.isPercent ? (
                     <>
-                      {val.Book?.Discount?.isPercent ? (
-                        <>
-                          <Text>Rp.{val.Book?.price}</Text>
-                        </>
-                      ) : (
-                        <>
-                          <Text color="red.600" as="del" fontSize="xl">
-                            Rp. {val.Book?.price}
-                          </Text>
-                          <Text>
-                            Rp. {val.Book?.price - val.Book?.Discount?.discount}
-                          </Text>
-                        </>
-                      )}
+                      <Box
+                        w={12}
+                        h={8}
+                        position={"absolute"}
+                        left={"152px"}
+                        borderTopRightRadius={"5px"}
+                        top={"0px"}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        bgColor={"blue.100"}
+                      >
+                        <Text fontWeight={"bold"} color={"blue.900"}>
+                          {val.Discount?.discount}%
+                        </Text>
+                      </Box>
                     </>
                   ) : (
-                    <>
-                      <Text>Rp.{val.Book?.price}</Text>
-                    </>
+                    <></>
                   )}
-                </Text>
-              </Stack>
-            </CardBody>
-            <CardFooter p={5}>
+                  <Image
+                    src={val.Book?.book_url}
+                    alt="Green double couch with wooden legs"
+                    borderRadius="lg"
+                    w={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}
+                    h={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}
+                  />
+                </Box>
+                <Flex flexDir={"column"} my={5} gap={3}>
+                  <Text color="#4A5568" as={"i"}>
+                    {val.Book?.author.length > 15
+                      ? val.Book?.author.slice(0, 15) + "..."
+                      : val.Book?.author}
+                  </Text>
+                  <Text fontSize="lg">
+                    {val.Book?.title.length > 15
+                      ? val.Book?.title.slice(0, 15) + "..."
+                      : val.Book?.title}
+                  </Text>
+                  <Text color="blue.600" fontSize="md">
+                    {val.Discount?.discount ? (
+                      <>
+                        {val.Discount?.isPercent ? (
+                          <>
+                            {/* val.Book?.price */}
+                            <Text fontSize="xl">
+                              Rp.{Intl.NumberFormat().format(val.Book?.price)}
+                            </Text>
+                          </>
+                        ) : (
+                          <>
+                            <Box gap={3} display={"flex"} flexDir={"column"}>
+                              <Text color="#A0AEC0" as="del" fontSize="md">
+                                Rp.{" "}
+                                {Intl.NumberFormat().format(val.Book?.price)}
+                              </Text>
+                              <Text fontSize="xl">
+                                Rp.{" "}
+                                {Intl.NumberFormat().format(
+                                  val.Book?.price - val.Discount?.discount
+                                )}
+                              </Text>
+                            </Box>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Text fontSize="xl">
+                          Rp. {Intl.NumberFormat().format(val.Book?.price)}
+                        </Text>
+                      </>
+                    )}
+                  </Text>
+                </Flex>
+              </CardBody>
+              {/* <CardFooter>
               <ButtonGroup justifyContent={"center"}>
                 <Button
                   variant="solid"
                   colorScheme="blue"
+                  // p={5}
                   onClick={
                     orderSelector.TooFar
                       ? () => tooFarModal.onOpen()
                       : () => add(idx)
                   }
-                >
-                  Add to cart
+                > */}
+              {/* Add to cart */}
+              {/* <Icon as={BsCart} w={8} h={8} color="whiteAlpha.900"></Icon>
                 </Button>
               </ButtonGroup>
             </CardFooter>
-            <TooFarModal tooFarModal={tooFarModal} />
-          </Card>
+            <TooFarModal tooFarModal={tooFarModal} /> */}
+            </Card>
+          </Link>
         ))}
       </Box>
     </Flex>

@@ -410,7 +410,7 @@ const userController = {
       return res.status(500).send({ message: err.message });
     }
   },
-  getUserByToken: async (req, res) => {
+  getUserByLoginToken: async (req, res) => {
     res.status(200).send(req.user);
   },
   generateTokenByEmail: async (req, res) => {

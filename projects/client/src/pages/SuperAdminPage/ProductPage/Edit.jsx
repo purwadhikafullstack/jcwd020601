@@ -44,7 +44,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       dimension: "",
       price: "",
       rating: "",
-      // DiscountId: "",
+      CategoryId: "",
     },
     validationSchema: Yup.object({
       title: Yup.string().required("required!"),
@@ -87,7 +87,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       formData.append("dimension", values.dimension);
       formData.append("price", values.price);
       formData.append("rating", values.rating);
-      // formData.append("DiscountId", values.DiscountId);
+      formData.append("CategoryId", values.CategoryId);
       await api.patch(`/book/v2/${id}`, formData, {
         headers: {
           Authorization: token,

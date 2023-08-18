@@ -56,6 +56,7 @@ export default function HomePage() {
       >
         lol
       </Flex> */}
+
       <Navbar />
       <CarouselShow />
       <CarouselBooks />

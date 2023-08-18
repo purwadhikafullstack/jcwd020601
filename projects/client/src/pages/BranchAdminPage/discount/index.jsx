@@ -130,7 +130,7 @@ export default function Discount() {
             <Tbody>
               {value.map((val, idx) => (
                 <Tr key={val.id}>
-                  <Td>{idx + 1}</Td>
+                  <Td>{idx + 1 + page * limit}</Td>
                   <Td>{val.title}</Td>
                   <Td>
                     {val.isPercent ? (
