@@ -68,7 +68,7 @@ export default function Category() {
   console.log(value);
   return (
     <>
-      <Box marginLeft={30}>
+      <Box marginTop={"6em"} marginLeft={60}>
         <TableContainer padding={10}>
           <Box
             display={"flex"}

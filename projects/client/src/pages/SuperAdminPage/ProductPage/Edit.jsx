@@ -44,7 +44,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       dimension: "",
       price: "",
       rating: "",
-      DiscountId: "",
+      // DiscountId: "",
     },
     validationSchema: Yup.object({
       title: Yup.string().required("required!"),
@@ -87,7 +87,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       formData.append("dimension", values.dimension);
       formData.append("price", values.price);
       formData.append("rating", values.rating);
-      formData.append("DiscountId", values.DiscountId);
+      // formData.append("DiscountId", values.DiscountId);
       await api.patch(`/book/v2/${id}`, formData, {
         headers: {
           Authorization: token,
@@ -107,35 +107,36 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       },
     });
 
+    console.log(res);
     async function getImage(a) {
       let value = await fetch(a)
         .then((res) => res.blob())
         .then((blob) => {
           return new File([blob], "image", { type: blob.type });
         });
-      console.log(value);
+      // console.log(value);
       return value;
     }
     let imageData;
-    getImage(res.data.book_url)
+    getImage(res.data.value.book_url)
       .then((result) => {
         imageData = result;
         setSelectedFile(URL.createObjectURL(imageData));
         formik.setValues({
           ...formik.values,
-          title: res.data.title,
-          language: res.data.language,
-          publish_date: new Date(res.data.publish_date).getFullYear(),
-          author: res.data.author,
-          publisher: res.data.publisher,
-          description: res.data.publisher,
+          title: res.data.value.title,
+          language: res.data.value.language,
+          publish_date: new Date(res.data.value.publish_date).getFullYear(),
+          author: res.data.value.author,
+          publisher: res.data.value.publisher,
+          description: res.data.value.publisher,
           book_url: imageData,
-          pages: res.data.pages,
-          weight: res.data.weight,
-          dimension: res.data.dimension,
-          price: res.data.price,
-          rating: res.data.rating,
-          DiscountId: res.data.DiscountId,
+          pages: res.data.value.pages,
+          weight: res.data.value.weight,
+          dimension: res.data.value.dimension,
+          price: res.data.value.price,
+          rating: res.data.value.rating,
+          // DiscountId: res.data.DiscountId,
         });
       })
       .catch((error) => {

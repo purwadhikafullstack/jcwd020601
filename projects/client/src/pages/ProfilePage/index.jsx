@@ -13,7 +13,6 @@ import Biodata from "./Biodata";
 import DaftarAlamat from "./DaftarAlamat";
 import ProfileFooter from "./ProfileFooter";
 import { api } from "../../api/api";
-import MyOrders from "./MyOrders";
 export default function ProfilePage() {
   const [userAddresses, setUserAddresses] = useState([]);
   const userSelector = useSelector((state) => state.login.auth);
@@ -25,12 +24,6 @@ export default function ProfilePage() {
       await api.get("/address/user/" + userSelector.id).then((res) => {
         setUserAddresses(res.data);
       });
-      const pendingOrder = await api
-        .get("/order/pending/" + userSelector.id)
-        .then((res) => res.data);
-      const historyOrder = await api
-        .get("/order/history/" + userSelector.id)
-        .then((res) => res.data);
     } catch (err) {
       toast({
         position: "top",
@@ -65,29 +58,21 @@ export default function ProfilePage() {
             >
               <ProfileSidebar setSideTab={setSideTab} sideTab={sideTab} />
             </Flex>
-            {sideTab == "myAccount" ? (
-              <Flex flexDir={"column"} gap={"20px"}>
-                <TabBar setTab={setTab} tab={tab} />
-                {tab == "biodata" ? (
-                  <Biodata userSelector={userSelector} />
-                ) : tab == "daftarAlamat" ? (
-                  <DaftarAlamat
-                    setUserAddresses={setUserAddresses}
-                    userAddresses={userAddresses}
-                    fetchUserAddresses={fetchUserAddresses}
-                    userSelector={userSelector}
-                  />
-                ) : (
-                  <Flex>djas</Flex>
-                )}
-              </Flex>
-            ) : sideTab == "myOrders" ? (
-              <>
-                <MyOrders />
-              </>
-            ) : (
-              <></>
-            )}
+            <Flex flexDir={"column"} gap={"20px"}>
+              <TabBar setTab={setTab} tab={tab} />
+              {tab == "biodata" ? (
+                <Biodata userSelector={userSelector} />
+              ) : tab == "daftarAlamat" ? (
+                <DaftarAlamat
+                  setUserAddresses={setUserAddresses}
+                  userAddresses={userAddresses}
+                  fetchUserAddresses={fetchUserAddresses}
+                  userSelector={userSelector}
+                />
+              ) : (
+                <Flex>djas</Flex>
+              )}
+            </Flex>
           </Flex>
         </Center>
         <Footer />

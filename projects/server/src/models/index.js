@@ -85,9 +85,9 @@ db.Book.belongsTo(db.Discount, {
   foreignKey: "DiscountId",
 });
 db.Discount.hasOne(db.Book);
-db.Book.belongsTo(db.Category, {
-  foreignKey: "CategoryId",
-});
+// db.Book.belongsTo(db.Category, {
+//   foreignKey: "CategoryId",
+// });
 // db.Category.hasOne(db.Book);
 db.Discount.belongsTo(db.Branch, {
   foreignKey: "BranchId",
