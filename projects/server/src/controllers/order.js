@@ -79,13 +79,39 @@ const orderController = {
   getBranchOrder: async (req, res) => {
     try {
       const { BranchId } = req.body;
-      const Order = await db.Order.findAll({
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      // const status = req.query.status;
+      // const search = req.query.search_query || "";
+      // const condition = {
+      //   BranchId,
+      //   status: "waiting for payment",
+      // };
+
+      // if (status !== undefined) {
+      //   condition.status = status;
+      // }
+      // console.log(condition);
+      const offset = limit * page;
+
+      // Count
+      const totalRows = await db.Order.count({
         where: {
           BranchId,
         },
       });
+      const totalPage = Math.ceil(totalRows / limit);
 
-      return res.send(Order);
+      const Order = await db.Order.findAll({
+        where: {
+          BranchId,
+          // status: "waiting for payment",
+        },
+        offset: offset,
+        limit: limit,
+      });
+
+      return res.send({ Order, page, limit, totalRows, totalPage });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -433,7 +459,7 @@ const orderController = {
         },
       });
 
-      return res.send("continue to payment");
+      return res.status(200).send(order);
     } catch (err) {
       console.log(err);
       return res.status(500).send({
@@ -472,7 +498,7 @@ const orderController = {
   },
 
   //
-  // ------------ confirm payment by OrderId ---------- //
+  // ------------ Update Status ---------- //
   //
   updateStatus: async (req, res) => {
     try {
@@ -554,7 +580,7 @@ const orderController = {
               const updatedStock = stock.stock - quantity;
               const updatedBucket = stock.bucket - quantity;
               const sH = await db.StockHistory.findByPk(StockId);
-              console.log(sH);
+              console.log({ this: sH });
               return Promise.all([
                 db.Stock.update(
                   {
@@ -603,98 +629,7 @@ const orderController = {
           );
         }
       }
-      // // check if cancel
-      // if (status === "canceled") {
-      //   // update multiple buckets on stock
-      //   // console.log("masuk cancel");
-      //   await Promise.all(
-      //     data.map(async (detail) => {
-      //       const { quantity, StockId } = detail;
-      //       const stock = await db.Stock.findByPk(StockId);
-      //       const updatedStock = stock.bucket - quantity;
-      //       return db.Stock.update(
-      //         {
-      //           bucket: updatedStock,
-      //         },
-      //         {
-      //           where: {
-      //             id: StockId,
-      //           },
-      //         }
-      //       );
-      //     })
-      //   );
-      //   await db.Order.update(
-      //     {
-      //       status,
-      //     },
-      //     {
-      //       where: {
-      //         id: OrderId,
-      //       },
-      //     }
-      //   );
-      // } else if (status === "sending") {
-      //   // update multiple stocks
-      //   // update multiple stocksHistory
-      //   await Promise.all(
-      //     data.map(async (detail) => {
-      //       const { quantity, StockId } = detail;
-      //       console.log({ quantity, StockId });
-      //       const stock = await db.Stock.findByPk(StockId);
-      //       const updatedStock = stock.stock - quantity;
-      //       const updatedBucket = stock.bucket - quantity;
-      //       const sH = await db.StockHistory.findByPk(StockId);
-      //       console.log(sH);
-      //       return Promise.all([
-      //         db.Stock.update(
-      //           {
-      //             stock: updatedStock,
-      //             bucket: updatedBucket,
-      //             quantity: quantity,
-      //           },
-      //           {
-      //             where: {
-      //               id: StockId,
-      //             },
-      //           }
-      //         ),
-      //         db.StockHistory.create({
-      //           StockId,
-      //           totalBefore: sH.totalAfter,
-      //           totalAfter: updatedStock,
-      //           quantity: quantity,
-      //           type: "minus",
-      //           subject: "transaction",
-      //         }),
-      //       ]);
-      //     })
-      //   );
-      //   //
-      //   await db.Order.update(
-      //     {
-      //       status,
-      //     },
-      //     {
-      //       where: {
-      //         id: OrderId,
-      //       },
-      //     }
-      //   );
-      // } else {
-      //   await db.Order.update(
-      //     {
-      //       status,
-      //     },
-      //     {
-      //       where: {
-      //         id: OrderId,
-      //       },
-      //     }
-      //   );
-      // }
 
-      // res.send(data2);
       return await db.Order.findOne({
         where: {
           id: OrderId,

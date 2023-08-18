@@ -19,7 +19,7 @@ export default function BranchOrderPage() {
         >
           <Navbar />
           <BranchOrder />
-          <NavbarFooter />
+          {/* <NavbarFooter /> */}
         </Box>
       </Flex>
     </>

@@ -4,28 +4,19 @@ import {
   Container,
   Flex,
   Icon,
-  Center,
   Image,
   Input,
-  useDisclosure,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import { MdLocationOn } from "react-icons/md";
-import { AiOutlineDown, AiOutlineBank } from "react-icons/ai";
+import { AiOutlineBank } from "react-icons/ai";
 import { FcAddImage } from "react-icons/fc";
 import { api } from "../api/api";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Loading from "../components/Loading";
 import NotFoundPage from "./NotFoundPage";
+import ModalCancel from "../components/ModalCancel";
+import ModalConfirm from "../components/ModalConfirm";
 // import { useSelector } from "react-redux";
 
 export default function OrderPage() {
@@ -41,10 +32,8 @@ export default function OrderPage() {
   // GET
   async function fetch() {
     try {
-
-      const result = await api.post("orderdetail/id" + "?token=" + token, {
+      const result = await api.post("orderdetail/id?token=" + token, {
         OrderId: location,
-
       });
       setLink(result.data[0].Order.payment_url);
       setIsLoading(false);
@@ -74,11 +63,6 @@ export default function OrderPage() {
       console.log(error);
     }
   }
-
-  // useEffect(async () => {
-  //   const get = await api.get("/order/20");
-  //   return setUpload(get.data.payment_url);
-  // }, []);
 
   useEffect(() => {
     fetch();
@@ -138,9 +122,6 @@ export default function OrderPage() {
                         <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
                         <Box fontWeight={"semibold"}>{`X ${val.quantity}`}</Box>
                       </Flex>
-                      {/* seperate */}
-                      {/* seperate */}
-
                       <Flex
                         flexDir={"column"}
                         gap={"8px"}
@@ -167,13 +148,19 @@ export default function OrderPage() {
                 flexDir={"column"}
                 gap={"1rem"}
               >
-                <Flex fontWeight={"bold"} gap={"0.5rem"}>
-                  <Box>Total Order Payment</Box>
-                  <Box color={"blue.500"}>
-                    {order
-                      ? order[0].Order.total.toLocaleString("id-ID")
-                      : null}
-                  </Box>
+                <Flex flexDir={"column"}>
+                  <Flex gap={"0.5rem"} fontWeight={"semibold"}>
+                    <Box>Shipping</Box>
+                    <Box>{order ? order[0].Order.shipping : null}</Box>
+                  </Flex>
+                  <Flex gap={"0.5rem"} fontWeight={"bold"}>
+                    <Box>Total Order Payment</Box>
+                    <Box color={"blue.500"}>
+                      {order
+                        ? order[0].Order.total.toLocaleString("id-ID")
+                        : null}
+                    </Box>
+                  </Flex>
                 </Flex>
                 <Flex fontStyle={"italic"}>
                   Complete the payment and upload the payment proof
@@ -186,39 +173,50 @@ export default function OrderPage() {
                 flexDir={"column"}
                 boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
                 borderRadius={"0.7rem"}
+                alignItems={"center"}
+                padding={"2rem"}
+                gap={"2rem"}
+                fontWeight={"semibold"}
               >
-                <Box padding={"2rem"} fontSize={"xl"} fontWeight={"semibold"}>
-                  Upload Payment Proof
+                <Box fontSize={"xl"} fontWeight={"semibold"}>
+                  Payment Proof
                 </Box>
+                {link ? (
+                  <Image
+                    // height={"200px"}
+                    maxH={"200px"}
+                    // onClick={() => inputFileRef.current.click()}
+                    src={link}
+                  ></Image>
+                ) : (
+                  <Icon
+                    fontSize={"8xl"}
+                    as={FcAddImage}
+                    cursor={"pointer"}
+                  ></Icon>
+                )}
+
+                <Input
+                  display={"none"}
+                  ref={inputFileRef}
+                  type="file"
+                  onChange={handleFile}
+                ></Input>
+              </Flex>
+              <Flex
+                flexDir={"column"}
+                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                borderRadius={"0.7rem"}
+              >
                 <Flex
                   flexDir={"column"}
                   // justifyContent={"center"}
                   alignItems={"center"}
                   padding={"2rem"}
-                  gap={"2rem"}
+                  gap={"1rem"}
                   fontWeight={"semibold"}
                 >
-                  {link ? (
-                    <Image
-                      // height={"200px"}
-                      maxH={"200px"}
-                      // onClick={() => inputFileRef.current.click()}
-                      src={link}
-                    ></Image>
-                  ) : (
-                    <Icon
-                      fontSize={"8xl"}
-                      as={FcAddImage}
-                      cursor={"pointer"}
-                    ></Icon>
-                  )}
-
-                  <Input
-                    display={"none"}
-                    ref={inputFileRef}
-                    type="file"
-                    onChange={handleFile}
-                  ></Input>
+                  <Box>ACTION</Box>
                   <Button
                     colorScheme={"blue"}
                     borderRadius={"1.5rem"}
@@ -227,6 +225,11 @@ export default function OrderPage() {
                   >
                     Upload Payment Proof
                   </Button>
+                  {/*  */}
+                  <ModalConfirm id={location}></ModalConfirm>
+                  {/*  */}
+                  <ModalCancel id={location}></ModalCancel>
+                  {/*  */}
                 </Flex>
               </Flex>
             </Flex>

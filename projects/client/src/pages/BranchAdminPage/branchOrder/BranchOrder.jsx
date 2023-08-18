@@ -14,50 +14,45 @@ import {
   Select,
   useDisclosure,
 } from "@chakra-ui/react";
-// import NavbarFooter from "../../components/admin/NavbarFooter";
-// import Sidebar from "../../components/admin/Sidebar";
-// import Navbar from "../../components/admin/Admin";
 import { useEffect, useState } from "react";
 import { api } from "../../../api/api";
-import { FcImageFile, FcViewDetails } from "react-icons/fc";
-
 import ModalPayment from "../../../components/admin/transaction/ModalPayment";
 import ModalDetails from "../../../components/admin/transaction/ModalDetails";
 import ModalConfirm from "../../../components/admin/transaction/ModalConfirm";
+import { useSelector } from "react-redux";
+import ReactPaginate from "react-paginate";
 
 export default function BranchOrder() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [trans, setTrans] = useState();
+  const userSelector = useSelector((state) => state.login.auth);
+  const [pages, setPages] = useState(0);
+  const [page, setPage] = useState(0);
+  // const [limit, setLimit] = useState(6);
+  const [rows, setRows] = useState(0);
 
   // GET
   async function fetch() {
-    const result = await api.post("/order/branch", {
-      BranchId: 2,
+    const result = await api.post(`/order/branch?page=${page}&limit=${6}`, {
+      BranchId: userSelector.branchId,
     });
-    return setTrans(result.data);
+    setPage(result.data.page);
+    setRows(result.data.totalRows);
+    setPages(result.data.totalPage);
+    console.log(result);
+    setTrans(result.data.Order);
   }
-
-  // Update Status
-  async function status(e, val) {
-    try {
-      if (e.target.value === "sending" || e.target.value === "canceled") {
-        alert("this will change the available stock");
-      }
-      // console.log(e.target.value);
-      // console.log(val.id);
-      await api.patch("/order/v2/status", {
-        OrderId: val.id,
-        status: e.target.value,
-      });
-      // return onOpen();
-      return fetch();
-    } catch (error) {
-      alert(error.response.data);
-    }
-  }
+  console.log(pages);
+  console.log(page);
   useEffect(() => {
     fetch();
-  }, []);
+  }, [page]);
+
+  //
+  const changePage = ({ selected }) => {
+    // console.log(selected);
+    setPage(selected);
+  };
+  //
   return (
     <>
       <Box
@@ -86,24 +81,7 @@ export default function BranchOrder() {
                     <Td>{val.id}</Td>
                     <Td>Rp {Number(val.total).toLocaleString("id-ID")},-</Td>
                     <Td>
-                      <ModalConfirm onOpen={onOpen}></ModalConfirm>
-                      <Select
-                        value={val.status}
-                        onChange={(e) => status(e, val)}
-                      >
-                        <option value="waiting for payment">
-                          Waiting for Payment
-                        </option>
-                        <option value="waiting for payment confirmation">
-                          Waiting for Payment Confirmation
-                        </option>
-                        <option value="process">Process</option>
-                        <option value="sending">Sending</option>
-                        <option value="delivery confirm">
-                          Delivery Confirm
-                        </option>
-                        <option value="canceled">Canceled</option>
-                      </Select>
+                      <ModalConfirm val={val} fetch={fetch}></ModalConfirm>
                     </Td>
                     <Td>
                       <Flex gap={"0.6rem"}>
@@ -116,6 +94,20 @@ export default function BranchOrder() {
               })}
             </Tbody>
           </Table>
+          <ReactPaginate
+            previousLabel={"< Prev"}
+            nextLabel={"Next >"}
+            pageCount={pages}
+            onPageChange={changePage}
+            breakLabel="..."
+            containerClassName="pagination"
+            pageLinkClassName="page-num"
+            renderOnZeroPageCount={null}
+            previousLinkClassName="page-num"
+            nextLinkClassName="page-num"
+            activeLinkClassName="active"
+            pageRangeDisplayed={3}
+          />
         </TableContainer>
         <Flex>
           <Flex></Flex>

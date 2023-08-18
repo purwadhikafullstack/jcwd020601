@@ -16,13 +16,19 @@ import {
   FiStar,
   FiSettings,
 } from "react-icons/fi";
+import { GrTransaction } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
 const LinkItems = [
   { name: "Home", icon: FiHome, link: "/superadminpage" },
   { name: "Product", icon: FiTrendingUp, link: "/superadminpage/products" },
   { name: "Category", icon: FiCompass, link: "/superadminpage/categorys" },
+
+  { name: "Transaction", icon: GrTransaction, link: "/superadminpage/order" },
+  { name: "Settings", icon: FiSettings },
+
   // { name: "Favourites", icon: FiStar },
   // { name: "Settings", icon: FiSettings },
+
   {
     name: "Branch-Admins",
     icon: AiOutlineUsergroupAdd,
