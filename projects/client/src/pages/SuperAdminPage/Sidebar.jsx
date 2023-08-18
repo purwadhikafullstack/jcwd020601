@@ -16,13 +16,19 @@ import {
   FiStar,
   FiSettings,
 } from "react-icons/fi";
+import { GrTransaction } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
 const LinkItems = [
   { name: "Home", icon: FiHome, link: "/superadminpage" },
   { name: "Product", icon: FiTrendingUp, link: "/superadminpage/products" },
   { name: "Category", icon: FiCompass, link: "/superadminpage/categorys" },
-  { name: "Favourites", icon: FiStar },
+
+  { name: "Transaction", icon: GrTransaction, link: "/superadminpage/order" },
   { name: "Settings", icon: FiSettings },
+
+  // { name: "Favourites", icon: FiStar },
+  // { name: "Settings", icon: FiSettings },
+
   {
     name: "Branch-Admins",
     icon: AiOutlineUsergroupAdd,
@@ -49,8 +55,9 @@ const SidebarContent = (props) => {
       borderRight="1px"
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={60}
-      pos="sticky"
-      h="full"
+      position={"fixed"}
+      zIndex={100}
+      h="100vh"
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Image src={logo} w={{ base: "10em", sm: "12em" }} />

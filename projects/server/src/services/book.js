@@ -55,7 +55,9 @@ const bookServices = {
   },
   getAllBook: async () => {
     try {
-      const all = await db.Book.findAll();
+      const all = await db.Book.findAll({
+        include: [{ model: db.Category }],
+      });
       return all;
     } catch (err) {
       throw err;

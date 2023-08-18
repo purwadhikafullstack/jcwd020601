@@ -304,6 +304,8 @@ const userController = {
         },
       });
 
+      console.log({ dataINI: user.dataValues });
+
       if (!user) {
         create = await db.User.create({
           first_name: given_name,

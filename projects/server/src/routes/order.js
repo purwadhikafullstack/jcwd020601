@@ -1,5 +1,6 @@
 const express = require("express");
 const { fileUploader } = require("../middlewares/multer");
+const getAdminByToken = require("../middlewares/getadminbytoken");
 const router = express.Router();
 const orderController = require("../controllers").orderController;
 //get
@@ -28,7 +29,7 @@ router.post(
   fileUploader({ destinationFolder: "paymentImg" }).single("paymentImg"),
   orderController.uploadPayment
 );
-router.patch("/v2/status", orderController.updateStatus);
+router.patch("/v2/status", getAdminByToken, orderController.updateStatus);
 router.patch("/v2/:id", orderController.editOrder);
 router.delete("/v3/:id", orderController.deleteOrder);
 router.post("/shipping", orderController.getShipping);

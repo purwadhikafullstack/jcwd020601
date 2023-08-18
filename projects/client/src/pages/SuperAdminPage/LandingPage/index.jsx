@@ -25,7 +25,13 @@ export default function SuperAdminPageBranchAdmin() {
         <Box display={"flex"} flexDirection={"column"} width={"100%"}>
           <Navbar />
           {admins ? (
-            <Flex h={"1000px"} bgColor={"#f2f2f2"} pl={"20px"}>
+            <Flex
+              h={"1000px"}
+              marginTop={"6em"}
+              marginLeft={60}
+              bgColor={"#f2f2f2"}
+              pl={"20px"}
+            >
               <Flex flexDir={"column"}>
                 <Flex
                   py={"20px"}

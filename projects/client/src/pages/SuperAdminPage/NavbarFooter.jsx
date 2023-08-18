@@ -14,6 +14,8 @@ export default function NavbarFooter() {
       justifyContent={"center"}
       bottom={0}
       bgColor={"whiteAlpha.700"}
+      zIndex={1}
+      position={"fixed"}
     >
       <Box>
         <Text
