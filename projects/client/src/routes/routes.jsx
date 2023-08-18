@@ -31,6 +31,7 @@ import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/LandingPage";
 import BranchOrderPage from "../pages/BranchAdminPage/BranchOrderPage";
 import AdminPage from "../pages/BranchAdminPage";
 import SuperAdminPageCategory from "../pages/SuperAdminPage/CategoryPage";
+import SuperAdminPageOrder from "../pages/SuperAdminPage/OrderPage.jsx";
 // import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
 // >>>>>>> develop
 
@@ -186,6 +187,14 @@ const routes = [
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPageCategory />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/superadminpage/order"
+    element={
+      <ProtectedPage needSuperAdminLogin={true}>
+        <SuperAdminPageOrder />
       </ProtectedPage>
     }
   ></Route>,

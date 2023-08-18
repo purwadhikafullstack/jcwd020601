@@ -11,7 +11,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import { api } from "../../../api/api";
+import { api } from "../api/api";
 
 export default function ModalConfirm(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -21,11 +21,9 @@ export default function ModalConfirm(props) {
   // Update Status
   async function update() {
     try {
-      // console.log(e.target.value);
-      // console.log(val.id);
       await api.patch("/order/v2/status", {
-        OrderId: props.val.id,
-        status: status,
+        OrderId: props.id,
+        status: "delivery confirm",
       });
       onClose();
       return props.fetch();
@@ -36,26 +34,15 @@ export default function ModalConfirm(props) {
 
   return (
     <>
-      {/* <Button colorScheme="red" onClick={onOpen}>
-        Update Status
-      </Button> */}
-      <Select
-        value={props.val.status}
-        onChange={(e) => {
-          setStatus(e.target.value);
-          onOpen();
-        }}
-        // onChange={(e) => update(e, val)}
+      <Button
+        colorScheme={"green"}
+        variant={"outline"}
+        borderRadius={"1.5rem"}
+        width={"100%"}
+        onClick={onOpen}
       >
-        <option value="waiting for payment">Waiting for Payment</option>
-        <option value="waiting for payment confirmation">
-          Waiting for Payment Confirmation
-        </option>
-        <option value="process">Process</option>
-        <option value="sending">Sending</option>
-        <option value="delivery confirm">Delivery Confirm</option>
-        <option value="canceled">Canceled</option>
-      </Select>
+        Complete My Order
+      </Button>
 
       <AlertDialog
         isOpen={isOpen}
@@ -65,19 +52,19 @@ export default function ModalConfirm(props) {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Update Status
+              Complete Order
             </AlertDialogHeader>
 
             <AlertDialogBody fontWeight={"semibold"}>
-              Are you sure? To change the order status to "{status}"
+              Are you sure on completing this order?
             </AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
-                Cancel
+                Close
               </Button>
-              <Button colorScheme="yellow" onClick={update} ml={3}>
-                Update
+              <Button colorScheme="green" ml={3} onClick={update}>
+                Yes
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
