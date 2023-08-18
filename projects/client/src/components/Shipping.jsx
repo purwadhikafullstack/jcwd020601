@@ -25,6 +25,7 @@ export default function Shipping(props) {
   async function fetch() {
     try {
       console.log(props.courier);
+      console.log(props.weight);
       const ship = await api.post("order/shipping", {
         origin: "501",
         destination: "114",
@@ -39,6 +40,7 @@ export default function Shipping(props) {
 
   // console.log(service.costs[0].cost[0].values);
   // console.log(service[0].cost[0].value);
+  console.log(service);
 
   useEffect(() => {
     fetch();

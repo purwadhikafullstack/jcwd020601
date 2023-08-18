@@ -283,6 +283,7 @@ const orderController = {
   },
   editOrder: async (req, res) => {
     try {
+      console.log("masuk");
       const { payment_url, status, total, UserId, BranchId, AddressId } =
         req.body;
       await db.Order.update(
@@ -334,12 +335,10 @@ const orderController = {
               {
                 model: db.Book,
                 required: true,
-                include: [
-                  {
-                    model: db.Discount,
-                    required: false,
-                  },
-                ],
+              },
+              {
+                model: db.Discount,
+                required: false,
               },
               {
                 model: db.Branch,
@@ -365,20 +364,20 @@ const orderController = {
 
       // Price maping (discount)
       const list = cart.map((val) => {
-        if (val["Stock.Book.DiscountId"]) {
-          if (val["Stock.Book.Discount.isPercent"]) {
+        if (val["Stock.DiscountId"]) {
+          if (val["Stock.Discount.isPercent"]) {
             // "percent discount"
             return (
               (val["Stock.Book.price"] -
                 val["Stock.Book.price"] *
-                  val["Stock.Book.Discount.discount"] *
+                  val["Stock.Discount.discount"] *
                   0.01) *
               val["quantity"]
             );
           } else {
             // "minus discount"
             return (
-              (val["Stock.Book.price"] - val["Stock.Book.Discount.discount"]) *
+              (val["Stock.Book.price"] - val["Stock.Discount.discount"]) *
               val["quantity"]
             );
           }
@@ -630,6 +629,104 @@ const orderController = {
               },
             }
           );
+        }
+      }
+
+      return await db.Order.findOne({
+        where: {
+          id: OrderId,
+        },
+      }).then((result) => res.send(result));
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  updateStatusUser: async (req, res) => {
+    try {
+      console.log("MASUK");
+      const { status, OrderId } = req.body;
+      console.log(status);
+
+      const data = await db.OrderDetail.findAll({
+        where: {
+          OrderId,
+        },
+      });
+
+      const data2 = await db.Order.findOne({
+        where: {
+          id: OrderId,
+        },
+      });
+
+      console.log(data2.status);
+      if (data2.status === "delivery confirm") {
+        return res.status(400).send("The order has completed");
+      } else if (data2.status === "canceled") {
+        return res.status(400).send("The order has been permanently canceled");
+      } else if (data2.status === "sending") {
+        if (status === "delivery confirm") {
+          await db.Order.update(
+            {
+              status,
+            },
+            {
+              where: {
+                id: OrderId,
+              },
+            }
+          );
+        } else {
+          return res.status(400).send("The order has been send");
+        }
+      } else {
+        // check if cancel
+        if (status === "canceled") {
+          // update multiple buckets on stock
+          // console.log("masuk cancel");
+          await Promise.all(
+            data.map(async (detail) => {
+              const { quantity, StockId } = detail;
+              const stock = await db.Stock.findByPk(StockId);
+              const updatedStock = stock.bucket - quantity;
+              return db.Stock.update(
+                {
+                  bucket: updatedStock,
+                },
+                {
+                  where: {
+                    id: StockId,
+                  },
+                }
+              );
+            })
+          );
+          await db.Order.update(
+            {
+              status,
+            },
+            {
+              where: {
+                id: OrderId,
+              },
+            }
+          );
+        } else if (status === "waiting for payment confirmation") {
+          await db.Order.update(
+            {
+              status,
+            },
+            {
+              where: {
+                id: OrderId,
+              },
+            }
+          );
+        } else {
+          return res.status(400).send("Unauthorized");
         }
       }
 
