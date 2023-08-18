@@ -197,32 +197,50 @@ const adminController = {
   loginV2: async (req, res) => {
     try {
       const { email, password } = req.body;
-      const user = await db.Admin.findOne({
+      const admin = await db.Admin.findOne({
         where: {
           [Op.or]: {
             email,
           },
         },
       });
-      // console.log(req.body.email);
-      if (user) {
-        const match = await bcrypt.compare(password, user.dataValues.password);
+      if (admin) {
+        const match = await bcrypt.compare(password, admin.dataValues.password);
         if (match) {
-          const payload = user.dataValues.id;
+          const payload = admin.dataValues.id;
           const generateToken = nanoid();
-          const token = await db.Token.create({
-            expired: moment().add(1, "days").format(),
-            token: generateToken,
-            AdminId: JSON.stringify(payload),
-            status: "LOGIN",
+          const findToken = await db.Token.findOne({
+            where: {
+              AdminId: payload,
+              Status: "LOGIN",
+            },
           });
 
-          //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwibmFtZSI6InVkaW4yIiwiYWRkcmVzcyI6ImJhdGFtIiwicGFzc3dvcmQiOiIkMmIkMTAkWUkvcTl2dVdTOXQ0R1V5a1lxRGtTdWJnTTZwckVnRm9nZzJLSi9FckFHY3NXbXBRUjFOcXEiLCJlbWFpbCI6InVkaW4yQG1haWwuY29tIiwiY3JlYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNi0xOVQwNzowOTozNy4wMDBaIiwiZGVsZXRlZEF0IjpudWxsLCJDb21wYW55SWQiOm51bGwsImlhdCI6MTY4NDQ4MzQ4NSwiZXhwIjoxNjg0NDgzNTQ1fQ.Ye5l7Yml1TBWUgV7eUnhTVQjdT3frR9E0HXNxO7bTXw;
+          if (findToken) {
+            token = await db.Token.update(
+              {
+                expired: moment().add(1, "d").format(),
+                token: generateToken,
+              },
+              {
+                where: {
+                  AdminId: payload,
+                  Status: "LOGIN",
+                },
+              }
+            );
+          } else {
+            token = await db.Token.create({
+              expired: moment().add(1, "days").format(),
+              token: generateToken,
+              AdminId: payload,
+              status: "LOGIN",
+            });
+          }
 
           return res.send({
             message: "login berhasil",
-            // value: user,
-            token: token.dataValues.token,
+            token: generateToken,
           });
         } else {
           throw new Error("wrong password");
