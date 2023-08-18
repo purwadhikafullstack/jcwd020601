@@ -115,9 +115,9 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/admin/"
+    path="/admin"
     element={
-      <ProtectedPage>
+      <ProtectedPage needLoginAdmin={true}>
         <AdminPage />
       </ProtectedPage>
     }

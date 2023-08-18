@@ -2,7 +2,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import NavbarFooter from "../NavbarFooter";
 import Sidebar from "../Sidebar";
 import Navbar from "../Navbar";
-import OrderListPage from "../OrderListPage";
+import OrderListPage from "./OrderListPage";
 
 export default function SuperAdminPageOrder() {
   return (

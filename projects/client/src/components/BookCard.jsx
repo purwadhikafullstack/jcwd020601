@@ -46,6 +46,7 @@ export default function BookCard() {
     );
     console.log(response);
     setValue(response.data.result);
+    console.log(response.data.result);
   }
   useEffect(() => {
     fetchProduct();
