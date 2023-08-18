@@ -53,7 +53,8 @@ export default function OrderPage() {
 
       formData.append("id", location);
       const pay = await api.post("/order", formData);
-      await api.patch("/order/v2/status", {
+      console.log(location);
+      await api.patch("/order/v2/userstatus", {
         OrderId: location,
         status: "waiting for payment confirmation",
       });

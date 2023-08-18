@@ -32,8 +32,8 @@ export default function CartPage() {
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
-  console.log(userSelector.id);
-  console.log(orderSelector);
+  // console.log(userSelector.id);
+  // console.log(orderSelector);
   // const [edit, setEdit] = useState(false);
 
   const [origin, setOrigin] = useState();
@@ -43,6 +43,9 @@ export default function CartPage() {
   const [courier, setCourier] = useState();
   const [shipping, setShipping] = useState(0);
   const [totalOr, setTotalOr] = useState(0);
+
+  console.log(total);
+  console.log(totalOr);
 
   useEffect(() => {
     setTotalOr(Number(total) + Number(shipping));

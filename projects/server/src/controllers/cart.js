@@ -49,12 +49,16 @@ const cartController = {
               {
                 model: db.Book,
                 required: true,
-                include: [
-                  {
-                    model: db.Discount,
-                    required: false,
-                  },
-                ],
+                // include: [
+                //   {
+                //     model: db.Discount,
+                //     required: false,
+                //   },
+                // ],
+              },
+              {
+                model: db.Discount,
+                required: false,
               },
               {
                 model: db.Branch,

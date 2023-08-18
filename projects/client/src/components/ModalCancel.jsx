@@ -21,7 +21,7 @@ export default function ModalCancel(props) {
   // Update Status
   async function update() {
     try {
-      await api.patch("/order/v2/status", {
+      await api.patch("/order/v2/userstatus", {
         OrderId: props.id,
         status: "canceled",
       });
