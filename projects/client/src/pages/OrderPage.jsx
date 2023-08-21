@@ -24,6 +24,7 @@ export default function OrderPage() {
   const inputFileRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
   const [link, setLink] = useState();
+  const [status, setStatus] = useState();
   const locatio = useLocation();
   const location = locatio.pathname.split("/")[2];
   const token = JSON.parse(localStorage.getItem("auth"));
@@ -36,6 +37,7 @@ export default function OrderPage() {
         OrderId: location,
       });
       setLink(result.data[0].Order.payment_url);
+      setStatus(result.data[0].Order.status);
       setIsLoading(false);
       return setOrder(result.data);
     } catch (error) {
@@ -73,14 +75,19 @@ export default function OrderPage() {
     <Container maxW={"size.lg"}>
       <Navbar></Navbar>
       <Box>
-        <Box
-          onClick={() => console.log(order)}
-          padding={"1rem 2rem"}
-          fontSize={"2xl"}
-          fontWeight={"semibold"}
-        >
-          OrderID: onfd8762cv
-        </Box>
+        <Flex alignItems={"center"}>
+          <Box
+            onClick={() => console.log(order)}
+            padding={"1rem 2rem"}
+            fontSize={"2xl"}
+            fontWeight={"semibold"}
+          >
+            OrderID: onfd8762cv
+          </Box>
+          <Box ringColor={"red"} fontWeight={"semibold"} fontSize={"1.2rem"}>
+            {status}
+          </Box>
+        </Flex>
         {isLoading ? (
           <Loading />
         ) : order ? (
@@ -217,20 +224,62 @@ export default function OrderPage() {
                   gap={"1rem"}
                   fontWeight={"semibold"}
                 >
-                  <Box>ACTION</Box>
-                  <Button
-                    colorScheme={"blue"}
-                    borderRadius={"1.5rem"}
-                    width={"100%"}
-                    onClick={() => inputFileRef.current.click()}
-                  >
-                    Upload Payment Proof
-                  </Button>
-                  {/*  */}
-                  <ModalConfirm id={location}></ModalConfirm>
-                  {/*  */}
-                  <ModalCancel id={location}></ModalCancel>
-                  {/*  */}
+                  {status === "delivery confirm" || status === "canceled" ? (
+                    <Box
+                      ringColor={"red"}
+                      fontWeight={"semibold"}
+                      fontSize={"1.2rem"}
+                    >
+                      Order Status: {status}
+                    </Box>
+                  ) : status === "process" ? (
+                    <>
+                      <Box
+                        ringColor={"red"}
+                        fontWeight={"semibold"}
+                        fontSize={"1.2rem"}
+                      >
+                        Order Status: {status}
+                      </Box>
+                      <ModalCancel fetch={fetch} id={location}></ModalCancel>
+                      {/*  */}
+                    </>
+                  ) : status === "sending" ? (
+                    <>
+                      <Box
+                        ringColor={"red"}
+                        fontWeight={"semibold"}
+                        fontSize={"1.2rem"}
+                      >
+                        Order Status: {status}
+                      </Box>
+                      <ModalConfirm fetch={fetch} id={location}></ModalConfirm>
+                      {/*  */}
+                    </>
+                  ) : (
+                    <>
+                      <Box
+                        ringColor={"red"}
+                        fontWeight={"semibold"}
+                        fontSize={"1.2rem"}
+                      >
+                        Order Status: {status}
+                      </Box>
+                      <Button
+                        colorScheme={"blue"}
+                        borderRadius={"1.5rem"}
+                        width={"100%"}
+                        onClick={() => inputFileRef.current.click()}
+                      >
+                        Upload Payment Proof
+                      </Button>
+                      {/*  */}
+                      <ModalConfirm fetch={fetch} id={location}></ModalConfirm>
+                      {/*  */}
+                      <ModalCancel fetch={fetch} id={location}></ModalCancel>
+                      {/*  */}
+                    </>
+                  )}
                 </Flex>
               </Flex>
             </Flex>
