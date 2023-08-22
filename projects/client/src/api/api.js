@@ -1,7 +1,5 @@
 import axios from "axios";
 function createApiInstance() {
-  console.log("skandaskndasdasdn");
-  console.log(JSON.parse(localStorage.getItem("auth")));
   return axios.create({
     baseURL: "http://localhost:2000/",
     headers: {

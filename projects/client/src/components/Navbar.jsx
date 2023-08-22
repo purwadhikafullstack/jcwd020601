@@ -343,8 +343,8 @@ function MobileNav({ category }) {
 }
 
 function DesktopNav({ callback, keyword, category }) {
-  const locatio = useLocation();
   const toast = useToast();
+  const locatio = useLocation();
   const location = locatio.pathname.split("/")[1];
   const userSelector = useSelector((state) => state.login.auth);
   const dispatch = useDispatch();
