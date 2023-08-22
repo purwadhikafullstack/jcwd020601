@@ -165,37 +165,39 @@ const orderController = {
   },
   getBranchOrder: async (req, res) => {
     try {
-      const { BranchId } = req.body;
+      const { BranchId, status, search } = req.body;
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
-      // const status = req.query.status;
-      // const search = req.query.search_query || "";
-      // const condition = {
-      //   BranchId,
-      //   status: "waiting for payment",
-      // };
 
-      // if (status !== undefined) {
-      //   condition.status = status;
-      // }
-      // console.log(condition);
+      const condition = {
+        BranchId,
+      };
+
+      if (status !== "all") {
+        console.log("NOT ALL NOT ALL NOT ALL");
+        condition.status = status;
+      }
+
+      if (search) {
+        console.log("SEARCH");
+        condition.id = search;
+      }
+
       const offset = limit * page;
 
       // Count
       const totalRows = await db.Order.count({
-        where: {
-          BranchId,
-        },
+        where: condition,
       });
       const totalPage = Math.ceil(totalRows / limit);
 
       const Order = await db.Order.findAll({
-        where: {
-          BranchId,
-          // status: "waiting for payment",
-        },
+        where: condition,
         offset: offset,
         limit: limit,
+        order: [
+          ["createdAt", "DESC"], // Order by createdAt in descending order
+        ],
       });
 
       return res.send({ Order, page, limit, totalRows, totalPage });
@@ -666,9 +668,14 @@ const orderController = {
               const updatedBucket = stock.bucket - quantity;
               // const sH = await db.StockHistory.findByPk(StockId);
               const sH = await db.StockHistory.findOne({
-                order: [["createdAt", "DESC"]], // Order by createdAt in descending order
+                where: {
+                  StockId,
+                },
+                order: [
+                  ["createdAt", "DESC"], // Order by createdAt in descending order
+                ],
               });
-              console.log({ this: sH.dataValues });
+
               return Promise.all([
                 db.Stock.update(
                   {
@@ -732,7 +739,7 @@ const orderController = {
   },
   updateStatusUser: async (req, res) => {
     try {
-      console.log("MASUK");
+      // console.log("MASUK");
       const { status, OrderId } = req.body;
       console.log(status);
 
