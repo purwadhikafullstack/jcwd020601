@@ -60,9 +60,6 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
         modalEditAddress.onClose();
         val.fetchUserAddresses();
       });
-    console.log(val.addressUser.id);
-    console.log(address.id);
-    console.log(val.addressUser.id == address.id);
     if (val.addressUser.id == address.id) {
       const token = JSON.parse(localStorage.getItem("auth"));
       console.log(token);

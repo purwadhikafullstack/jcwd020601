@@ -31,6 +31,55 @@ const orderController = {
       });
     }
   },
+  getByFilter: async (req, res) => {
+    try {
+      const { BranchId, OrderId, status, before, after } = req.body;
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      // const status = r
+      const whereClause = {
+        createdAt: {
+          [Op.and]: {
+            [Op.gte]: new Date(after || "1900-01-01"),
+            [Op.lte]: new Date(before || "2100-10-10"),
+          },
+        },
+      };
+      if (BranchId) {
+        whereClause.BranchId = BranchId;
+      }
+      if (OrderId) {
+        whereClause.id = OrderId;
+      }
+      if (status) {
+        whereClause.status = status;
+      }
+      const offset = limit * page;
+
+      const Order = await db.Order.findAll({
+        where: whereClause,
+        offset: offset,
+        limit: limit,
+        include: {
+          model: db.Branch,
+        },
+      });
+      const totalRows = await db.Order.count({
+        where: whereClause,
+        offset: offset,
+        limit: limit,
+      });
+
+      const totalPage = Math.ceil(totalRows / limit);
+
+      return res.send({ Order, page, limit, totalRows, totalPage });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   getPendingByUserId: async (req, res) => {
     try {
       const Order = await db.Order.findAll({
@@ -69,6 +118,44 @@ const orderController = {
         },
       });
       return res.send(Order);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getAllBranchOrder: async (req, res) => {
+    try {
+      const { BranchId } = req.body;
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      // const status = req.query.status;
+      // const search = req.query.search_query || "";
+      // const condition = {
+      //   BranchId,
+      //   status: "waiting for payment",
+      // };
+
+      // if (status !== undefined) {
+      //   condition.status = status;
+      // }
+      // console.log(condition);
+      const offset = limit * page;
+
+      // Count
+      const totalRows = await db.Order.count({});
+      const totalPage = Math.ceil(totalRows / limit);
+
+      const Order = await db.Order.findAll({
+        offset: offset,
+        limit: limit,
+        include: {
+          model: db.Branch,
+        },
+      });
+
+      return res.send({ Order, page, limit, totalRows, totalPage });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -119,14 +206,13 @@ const orderController = {
       });
     }
   },
-
   getSalesOnAllTime: async (req, res) => {
     //INCOMPLETE
     try {
       let sales = 0;
       const Order = await db.Order.findAll({
         where: {
-          status: "done",
+          status: "delivery confirm",
         },
       });
       Order.map((val) => {
@@ -150,7 +236,7 @@ const orderController = {
       const Order = await db.Order.findAll({
         where: {
           [Op.and]: [
-            { Status: "done" },
+            { Status: "delivery confirm" },
             {
               createdAt: {
                 [db.Sequelize.Op.gte]: moment()
@@ -185,7 +271,7 @@ const orderController = {
         where: {
           [Op.and]: [
             { BranchId },
-            { Status: "done" },
+            { Status: "delivery confirm" },
             {
               createdAt: {
                 [db.Sequelize.Op.gte]: moment()
@@ -219,7 +305,7 @@ const orderController = {
       const Order = await db.Order.findAll({
         where: {
           [Op.and]: [
-            { Status: "done" },
+            { Status: "delivery confirm" },
             {
               createdAt: {
                 [db.Sequelize.Op.gte]: moment()
@@ -254,7 +340,7 @@ const orderController = {
         where: {
           [Op.and]: [
             { BranchId },
-            { Status: "done" },
+            { Status: "delivery confirm" },
             {
               createdAt: {
                 [db.Sequelize.Op.gte]: moment()

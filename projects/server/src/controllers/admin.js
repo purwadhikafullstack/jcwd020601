@@ -87,6 +87,46 @@ const adminController = {
       });
     }
   },
+  getAllBranchAdminWithPaginate: async (req, res) => {
+    try {
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      // const status = req.query.status;
+      // const search = req.query.search_query || "";
+      // const condition = {
+      //   BranchId,
+      //   status: "waiting for payment",
+      // };
+
+      // if (status !== undefined) {
+      //   condition.status = status;
+      // }
+      // console.log(condition);
+      const offset = limit * page;
+
+      // Count
+      const totalRows = await db.Admin.count({});
+      const totalPage = Math.ceil(totalRows / limit);
+
+      const Admin = await db.Admin.findAll({
+        offset: offset,
+        limit: limit,
+        where: {
+          role: "Admin-Branch",
+        },
+        include: {
+          model: db.Branch,
+        },
+      });
+
+      return res.send({ Admin, page, limit, totalRows, totalPage });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   insertBranchAdminAndBranch: async (req, res) => {
     // const t = await db.sequelize.transaction();
     try {

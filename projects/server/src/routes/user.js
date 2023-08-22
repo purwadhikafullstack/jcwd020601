@@ -34,10 +34,10 @@ router.post(
 //   upload.single("avatar"),
 //   userController.uploadAvatarv2
 // );
-router.patch("/v4", getUserByToken, userController.changePassword);
+router.patch("/v4", userController.getByToken, userController.changePassword);
 router.patch(
   "/v5",
-  getUserByToken,
+
   userController.checkOldPassword,
   userController.changePasswordNoToken
 );

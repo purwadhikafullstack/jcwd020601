@@ -3,6 +3,7 @@ import { AiFillApple, AiFillCalendar } from "react-icons/ai";
 import { BiSolidUser } from "react-icons/bi";
 import { FaCartShopping } from "react-icons/fa6";
 import { RxLoop } from "react-icons/rx";
+import { useSelector } from "react-redux";
 import {
   AreaChart,
   YAxis,
@@ -14,7 +15,9 @@ import {
   Legend,
   Bar,
 } from "recharts";
+import Greetings from "./Greetings";
 export default function ReportChart() {
+  const userSelector = useSelector((state) => state.login.auth);
   const data = [
     {
       name: "2023/8/1",
@@ -94,119 +97,119 @@ export default function ReportChart() {
   return (
     <>
       <Flex
-        bgColor={"#f2f2f2"}
-        pl={"20px"}
+        bgColor={"#fbfbfb"}
+        py={"10px"}
         // backgroundColor={"red.100"}
-        marginTop={"6em"}
         marginLeft={60}
       >
-        <Flex flexDir={"column"}>
-          <Flex
-            py={"20px"}
-            fontSize={"2rem"}
-            fontWeight={"600"}
-            color={"#2c5282"}
-          >
-            DashBoard
-          </Flex>
-          <Flex>
-            <Flex gap={"50px"}>
-              {objects.map((val, index) => {
-                return (
-                  <Flex
-                    p={"10px"}
-                    boxShadow="0 0 5px #e0e0e0"
-                    bgColor={"white"}
-                    h={"100px"}
-                    gap={"30px"}
-                  >
-                    <Flex flexDir={"column"}>
-                      <Flex
-                        fontWeight={"600"}
-                        color={"#757575"}
-                        fontSize={"0.8rem"}
-                      >
-                        {val.No1}
+        <Flex
+          ml={"10px"}
+          px={"10px"}
+          flexDir={"column"}
+          gap={"10px"}
+          w={"100%"}
+        >
+          <Flex flexDir={"column"}>
+            <Greetings />
+            <Flex>
+              <Flex gap={"50px"}>
+                {objects.map((val, index) => {
+                  return (
+                    <Flex
+                      p={"10px"}
+                      boxShadow="0 0 5px #e0e0e0"
+                      bgColor={"white"}
+                      h={"100px"}
+                      gap={"30px"}
+                    >
+                      <Flex flexDir={"column"}>
+                        <Flex
+                          fontWeight={"600"}
+                          color={"#757575"}
+                          fontSize={"0.8rem"}
+                        >
+                          {val.No1}
+                        </Flex>
+                        <Flex
+                          fontWeight={"600"}
+                          fontSize={"1.2rem"}
+                          color={"#595858"}
+                        >
+                          {val.No2}
+                        </Flex>
+                        <Flex color={"green"}>{val.No3}</Flex>
                       </Flex>
-                      <Flex
-                        fontWeight={"600"}
-                        fontSize={"1.2rem"}
-                        color={"#595858"}
-                      >
-                        {val.No2}
-                      </Flex>
-                      <Flex color={"green"}>{val.No3}</Flex>
+                      <Center>
+                        <Icon
+                          color={val.No4Color}
+                          fontSize={"40px"}
+                          as={val.No4}
+                        ></Icon>
+                      </Center>
                     </Flex>
-                    <Center>
-                      <Icon
-                        color={val.No4Color}
-                        fontSize={"40px"}
-                        as={val.No4}
-                      ></Icon>
-                    </Center>
-                  </Flex>
-                );
-              })}
-            </Flex>
-          </Flex>
-          <Flex mt={"30px"} bgColor={"#f2f2f2"} gap={"20px"} mb={"200px"}>
-            <Flex gap={"10px"} backgroundColor={"white"} flexDir={"column"}>
-              <Flex
-                pl={"10px"}
-                fontSize={"1.2rem"}
-                textDecor={"underline"}
-                color={"#2c5282"}
-                fontWeight={"600"}
-              >
-                Sales from last month
+                  );
+                })}
               </Flex>
-              <Flex>
-                <AreaChart
-                  width={600}
-                  height={250}
-                  data={data}
-                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            </Flex>
+            <Flex mt={"30px"} bgColor={"#f2f2f2"} gap={"20px"} mb={"200px"}>
+              <Flex gap={"10px"} backgroundColor={"white"} flexDir={"column"}>
+                <Flex
+                  pl={"10px"}
+                  fontSize={"1.2rem"}
+                  textDecor={"underline"}
+                  color={"#2c5282"}
+                  fontWeight={"600"}
                 >
-                  <defs>
-                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#8884d8" stopOpacity={1} />
-                      <stop offset="95%" stopColor="8884d8" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
+                  Sales from last month
+                </Flex>
+                <Flex>
+                  <AreaChart
+                    width={600}
+                    height={250}
+                    data={data}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8884d8" stopOpacity={1} />
+                        <stop offset="95%" stopColor="8884d8" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="uv"
+                      stroke="#8884d8"
+                      fillOpacity={1}
+                      fill="url(#colorUv)"
+                    />
+                  </AreaChart>
+                </Flex>
+              </Flex>
+
+              <Flex gap={"10px"} backgroundColor={"white"} flexDir={"column"}>
+                <Flex
+                  pl={"10px"}
+                  fontSize={"1.2rem"}
+                  textDecor={"underline"}
+                  color={"#2c5282"}
+                  fontWeight={"600"}
+                >
+                  Sales from last month
+                </Flex>
+                <BarChart width={500} height={300} data={data}>
+                  <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="name" />
                   <YAxis />
-                  <CartesianGrid strokeDasharray="3 3" />
                   <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="uv"
-                    stroke="#8884d8"
-                    fillOpacity={1}
-                    fill="url(#colorUv)"
-                  />
-                </AreaChart>
+                  <Legend />
+                  <Bar dataKey="pv" fill="#8884d8" />
+                  <Bar dataKey="uv" fill="#82ca9d" />
+                </BarChart>
               </Flex>
-            </Flex>
-
-            <Flex gap={"10px"} backgroundColor={"white"} flexDir={"column"}>
-              <Flex
-                pl={"10px"}
-                fontSize={"1.2rem"}
-                textDecor={"underline"}
-                color={"#2c5282"}
-                fontWeight={"600"}
-              >
-                Sales from last month
-              </Flex>
-              <BarChart width={500} height={300} data={data}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="pv" fill="#8884d8" />
-                <Bar dataKey="uv" fill="#82ca9d" />
-              </BarChart>
             </Flex>
           </Flex>
         </Flex>

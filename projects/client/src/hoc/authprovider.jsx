@@ -5,7 +5,6 @@ import Loading from "../components/Loading";
 
 export default function AuthProvider({ children }) {
   const dispatch = useDispatch();
-  const userSelector = useSelector((state) => state.login.auth);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -57,7 +56,7 @@ export default function AuthProvider({ children }) {
           if (closestBranch.message) {
             dispatch({
               type: "login",
-              payload: auth,
+              payload: { token, ...auth },
               address: address || userMainAddress,
               closestBranch,
             });
@@ -72,7 +71,7 @@ export default function AuthProvider({ children }) {
           } else {
             dispatch({
               type: "login",
-              payload: auth,
+              payload: { token, ...auth },
               address: address || userMainAddress,
               closestBranch,
             });

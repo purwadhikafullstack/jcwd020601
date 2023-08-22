@@ -337,8 +337,6 @@ const userController = {
           },
         });
         if (findToken) {
-          console.log("skadsak");
-          console.log(generateToken);
           await db.Token.update(
             {
               token: generateToken,
@@ -402,7 +400,6 @@ const userController = {
         },
       });
       delete user.dataValues.password;
-
       req.user = user;
       next();
     } catch (err) {
