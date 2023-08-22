@@ -48,7 +48,7 @@ export default function Add({ getData }) {
       // BookId: Yup.number().required("Required!"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api.post("/stock/v1", values, {
+      await api().post("/stock/v1", values, {
         // headers: {
         //   Authorization: token,
         // },
@@ -61,8 +61,8 @@ export default function Add({ getData }) {
   });
 
   const fetchData = async () => {
-    let response = await api.get("/book/all");
-    let response2 = await api.get(`/discount?place=${userSelector.branchId}`);
+    let response = await api().get("/book/all");
+    let response2 = await api().get(`/discount?place=${userSelector.branchId}`);
     setBook(response.data);
 
     setDiscount(response2.data.Discount);

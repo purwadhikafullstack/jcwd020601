@@ -8,7 +8,6 @@ import Footer from "../components/Footer";
 import NavbarFooter from "../components/NavbarFooter";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { api } from "../api/api";
 import { logDOM } from "@testing-library/react";
 
 export default function HomePage() {
@@ -37,24 +36,24 @@ export default function HomePage() {
       "Longitude",
       JSON.stringify(position.coords.longitude)
     );
-    const address = await api
-      .post("address/lat", {
-        latitude: JSON.stringify(position.coords.latitude),
-        longitude: JSON.stringify(position.coords.longitude),
-      })
-      .then((res) => {
-        return res.data;
-      });
+    // const address = await api()
+    //   .post("address/lat", {
+    //     latitude: JSON.stringify(position.coords.latitude),
+    //     longitude: JSON.stringify(position.coords.longitude),
+    //   })
+    //   .then((res) => {
+    //     return res.data;
+    //   });
   }
   return (
     <Flex display={"columns"}>
       <Flex
         onClick={() => {
           console.log(orderSelector);
-          console.log(token);
+          console.log(userSelector);
         }}
       >
-        {/* lol */}
+        lol
       </Flex>
       <Navbar />
       <CarouselShow />

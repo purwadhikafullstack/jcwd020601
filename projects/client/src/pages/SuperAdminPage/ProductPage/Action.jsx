@@ -16,7 +16,7 @@ import { FiEdit } from "react-icons/fi";
 export default function Action({ id, name, getData, token }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deleteData = async () => {
-    await api.delete(`/book/v3/${id}`, {
+    await api().delete(`/book/v3/${id}`, {
       headers: {
         Authorization: token,
       },

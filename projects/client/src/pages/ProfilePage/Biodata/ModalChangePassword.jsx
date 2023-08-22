@@ -27,7 +27,6 @@ import logo from "../../../assets/images/gramedia-icon-2.png";
 import YupPassword from "yup-password";
 import React from "react";
 import Swal from "sweetalert2";
-
 export default function ModalChangePassword(props) {
   YupPassword(Yup);
   const location = useLocation();
@@ -37,7 +36,6 @@ export default function ModalChangePassword(props) {
   const [seepassword2, setSeePassword2] = useState(false);
   const [seepassword3, setSeePassword3] = useState(false);
   const userSelector = useSelector((state) => state.login.auth);
-
   const formik = useFormik({
     initialValues: {
       oldPassword: "",
@@ -75,12 +73,10 @@ export default function ModalChangePassword(props) {
       changePassword(account);
     },
   });
-
   async function changePassword(values) {
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
-
-      await axios
+      await api()
         .patch("http://localhost:2000/auth/v5?token=" + token, {
           email: values.email,
           oldPassword: values.oldPassword,

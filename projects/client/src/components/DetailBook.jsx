@@ -20,7 +20,7 @@ export default function DetailBookPage() {
   const { id } = useParams();
   const [value, setValue] = useState([]);
   async function fetchProduct() {
-    let response = await api.get(`/stock/${parseInt(id)}`);
+    let response = await api().get(`/stock/${parseInt(id)}`);
     setValue(response.data);
     console.log(response);
   }

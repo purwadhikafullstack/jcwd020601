@@ -24,6 +24,8 @@ router.get("/history/:UserId", orderController.getHistoryByUserId);
 router.get("/:id", orderController.getByUserId);
 
 router.post("/branch", orderController.getBranchOrder);
+router.post("/filter", orderController.getByFilter);
+router.post("/allbranch", orderController.getAllBranchOrder);
 router.post("/v1", orderController.insertOrder);
 router.post(
   "/",

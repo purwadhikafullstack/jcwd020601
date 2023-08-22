@@ -25,29 +25,33 @@ export default function LoginPage() {
   async function submitLogin() {
     try {
       let token;
-      await api.post("/admin/v2", login).then((res) => {
-        localStorage.setItem("auth", JSON.stringify(res.data.token));
-        token = res.data.token;
-        toast({
-          title: res.data.message,
-          description: "Login Successful.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
+      await api()
+        .post("/admin/v2", login)
+        .then((res) => {
+          localStorage.setItem("auth", JSON.stringify(res.data.token));
+          token = res.data.token;
+          toast({
+            title: res.data.message,
+            description: "Login Successful.",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
         });
-      });
-      await api.get("/admin/v3?token=" + token).then(async (res) => {
-        console.log(res.data);
-        await dispatch({
-          type: "login",
-          payload: res.data,
+      await api()
+        .get("/admin/v3?token=" + token)
+        .then(async (res) => {
+          console.log(res.data);
+          await dispatch({
+            type: "login",
+            payload: res.data,
+          });
+          if (res.data.role == "Super-Admin") {
+            nav("/superadminpage");
+          } else {
+            nav("/admin/product");
+          }
         });
-        if (res.data.role == "Super-Admin") {
-          nav("/superadminpage");
-        } else {
-          nav("/admin/");
-        }
-      });
     } catch (err) {
       console.log(err);
       alert(err.response.data.message);

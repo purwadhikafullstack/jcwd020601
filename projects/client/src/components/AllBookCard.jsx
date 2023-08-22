@@ -42,7 +42,7 @@ export default function AllBookCard({ keyword }) {
   async function fetchProduct() {
     try {
       setIsLoading(true);
-      let response = await api.get(
+      let response = await api().get(
         `/stock?limit=${limit}&place=${orderSelector.BranchId}`
       );
       setValue(response.data.result);
@@ -61,7 +61,7 @@ export default function AllBookCard({ keyword }) {
   async function add(idx) {
     try {
       if (userSelector.username) {
-        await api.post("cart/v1", {
+        await api().post("cart/v1", {
           qty: 1,
           UserId: userSelector.id,
           StockId: value[idx].id,

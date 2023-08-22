@@ -23,7 +23,7 @@ export default function ModalConfirm(props) {
     try {
       // console.log(e.target.value);
       // console.log(val.id);
-      await api.patch("/order/v2/status", {
+      await api().patch("/order/v2/status", {
         OrderId: props.val.id,
         status: status,
       });

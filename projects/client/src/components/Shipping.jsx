@@ -26,7 +26,7 @@ export default function Shipping(props) {
     try {
       console.log(props.courier);
       console.log(props.weight);
-      const ship = await api.post("order/shipping", {
+      const ship = await api().post("order/shipping", {
         origin: "501",
         destination: "114",
         weight: props.weight,

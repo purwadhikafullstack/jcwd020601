@@ -29,7 +29,7 @@ export default function Action({ id, name, getData }) {
     onClose: onHistoryModalClose,
   } = useDisclosure();
   const deleteData = async () => {
-    await api.delete(`/stock/v3/${id}`, {
+    await api().delete(`/stock/v3/${id}`, {
       // headers: {
       //   Authorization: token,
       // },

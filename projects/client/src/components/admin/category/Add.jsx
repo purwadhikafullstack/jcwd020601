@@ -32,7 +32,7 @@ export default function Add({ getData, token }) {
         .required("Isi dalam bentuk karakter tidak boleh kosong"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api.post("/category/v1", values, {
+      await api().post("/category/v1", values, {
         headers: {
           Authorization: token,
         },

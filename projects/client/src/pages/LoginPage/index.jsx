@@ -42,10 +42,10 @@ export default function LoginPage() {
     var userObject = jwt_decode(response.credential);
     try {
       let token;
-      const loggingIn = await api
+      const loggingIn = await api()
         .post("/auth/v3", userObject)
-        .then(async (res) => {
-          await localStorage.setItem("auth", JSON.stringify(res.data.token));
+        .then((res) => {
+          localStorage.setItem("auth", JSON.stringify(res.data.token));
           token = res.data.token;
           Swal.fire("Good job!", "Login succesful", "success");
           return res.data.message;
@@ -59,22 +59,20 @@ export default function LoginPage() {
         });
       if (loggingIn) {
         const token = JSON.parse(localStorage.getItem("auth"));
-        console.log(token);
-        const user = await api
+        const user = await api()
           .get("/auth/v3?token=" + token)
           .then((res) => res.data)
           .catch((err) => {
             console.log(err.message);
           });
-        console.log(user);
-        const userMainAddress = await api
+        const userMainAddress = await api()
           .get("/address/ismain/" + user.id)
           .then((res) => {
             localStorage.setItem("address", JSON.stringify(res.data));
             return res.data;
           })
           .catch((err) => err.message);
-        const closestBranch = await api
+        const closestBranch = await api()
           .post(
             "/address/closest",
             userMainAddress
@@ -90,10 +88,12 @@ export default function LoginPage() {
           .then((res) => res.data)
           .catch((err) => console.log(err));
         if (user.email) {
+          console.log({ token, ...user });
+          console.log(user);
           if (closestBranch.message) {
             dispatch({
               type: "login",
-              payload: user,
+              payload: { token, ...user },
               address: userMainAddress,
             });
             dispatch({
@@ -107,7 +107,7 @@ export default function LoginPage() {
           } else {
             dispatch({
               type: "login",
-              payload: user,
+              payload: { token, ...user },
               address: userMainAddress,
             });
             dispatch({

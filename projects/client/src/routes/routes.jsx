@@ -24,10 +24,10 @@ import DiscountProduct from "../pages/BranchAdminPage/DiscountProduct";
 // import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 // import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
 import StockProduct from "../pages/BranchAdminPage/StockProduct";
-import BranchAdmin from "../pages/SuperAdminPage/LandingPage";
-import Product from "../pages/SuperAdminPage/Product";
+import BranchAdmin from "../pages/SuperAdminPage/AdminManagementPage";
+import Product from "../pages/SuperAdminPage/ProductPage/Product";
 import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
-import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/LandingPage";
+import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/AdminManagementPage";
 import BranchOrderPage from "../pages/BranchAdminPage/BranchOrderPage";
 import AdminPage from "../pages/BranchAdminPage";
 import SuperAdminPageCategory from "../pages/SuperAdminPage/CategoryPage";
@@ -115,9 +115,9 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/admin/"
+    path="/admin"
     element={
-      <ProtectedPage>
+      <ProtectedPage needLoginAdmin={true}>
         <AdminPage />
       </ProtectedPage>
     }

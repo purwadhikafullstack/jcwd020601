@@ -43,7 +43,7 @@ export default function BranchOrder() {
 
   // GET
   async function fetch() {
-    const result = await api.post(`/order/branch?page=${page}&limit=${10}`, {
+    const result = await api().post(`/order/branch?page=${page}&limit=${6}`, {
       BranchId: userSelector.branchId,
       status: status,
       search: search,

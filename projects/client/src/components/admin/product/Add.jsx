@@ -96,7 +96,7 @@ export default function Add({ getData, token }) {
       formData.append("rating", values.rating);
       // formData.append("DiscountId", values.DiscountId);
       formData.append("CategoryId", values.CategoryId);
-      await api.post("/book/v1", formData, {
+      await api().post("/book/v1", formData, {
         headers: {
           Authorization: token,
         },
@@ -109,8 +109,8 @@ export default function Add({ getData, token }) {
     },
   });
   const fetchDiskon = async () => {
-    let response = await api.get("/discount");
-    let response2 = await api.get("/category");
+    let response = await api().get("/discount");
+    let response2 = await api().get("/category");
     setDiskon(response.data.result);
     setCategory(response2.data.result);
   };

@@ -24,7 +24,7 @@ import Navbar from "../components/Navbar";
 import { useEffect, useRef, useState } from "react";
 import { api } from "../api/api";
 import CartBooks from "../components/CartBooks";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Shipping from "../components/Shipping";
 import { useSelector } from "react-redux";
 
@@ -32,10 +32,7 @@ export default function CartPage() {
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
-  // console.log(userSelector.id);
-  // console.log(orderSelector);
   // const [edit, setEdit] = useState(false);
-
   const [origin, setOrigin] = useState();
   const [destination, setDestination] = useState();
   const [total, setTotal] = useState(0);
@@ -53,21 +50,15 @@ export default function CartPage() {
   }, [shipping]);
 
   async function create() {
-    try {
-      const data = await api.post("order/v1", {
-        UserId: userSelector.id,
-        BranchId: orderSelector.BranchId,
-        AddressId: orderSelector.AddressId,
-        shipping: Number(shipping),
-        courier,
-      });
-      return nav("/order/" + JSON.stringify(data.data.id));
-    } catch (error) {
-      console.log(error);
-    }
+    await api().post("order/v1", {
+      UserId: userSelector.id,
+      BranchId: orderSelector.BranchId,
+      AddressId: orderSelector.AddressId,
+      shipping: Number(shipping),
+      courier,
+    });
+    return nav("/order");
   }
-
-  // console.log(order);
 
   return (
     <Container maxW={"size.lg"}>

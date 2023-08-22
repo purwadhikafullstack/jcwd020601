@@ -18,13 +18,13 @@ export default function MyOrdersPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [pending, setPending] = useState([]);
   const [history, setHistory] = useState([]);
-  async function fetch() {
+  async function fetcha() {
     try {
       setIsLoading(true);
-      const pendingOrder = await api
+      const pendingOrder = await api()
         .get("/order/pending/" + userSelector.id)
         .then((res) => res.data);
-      const historyOrder = await api
+      const historyOrder = await api()
         .get("/order/history/" + userSelector.id)
         .then((res) => res.data);
       setHistory(historyOrder);
@@ -42,7 +42,7 @@ export default function MyOrdersPage() {
     setIsLoading(false);
   }
   useEffect(() => {
-    fetch();
+    fetcha();
   }, []);
 
   return (

@@ -32,7 +32,7 @@ export default function Stock() {
   const [keyword, setKeyword] = useState("");
   const [query, setQuery] = useState("");
   async function fetchStock() {
-    let response = await api.get(
+    let response = await api().get(
       `/stock/all?search_query=${keyword}&page=${page}&limit=${limit}&place=${userSelector.branchId}`
     );
     setValue(response.data.result);

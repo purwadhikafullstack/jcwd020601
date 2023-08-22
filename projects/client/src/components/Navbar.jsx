@@ -58,7 +58,7 @@ export default function Navbar({ callback, keyword }) {
   const nav = useNavigate();
 
   const fetchCategori = async () => {
-    let response = await api.get(`/category`);
+    let response = await api().get(`/category`);
     setCategory(response.data.result);
   };
 
@@ -133,7 +133,9 @@ function MobileNav({ category }) {
   ];
   const fetchData = async (value) => {
     try {
-      const response = await api.get(`/stock?place=${orderSelector.BranchId}`);
+      const response = await api().get(
+        `/stock?place=${orderSelector.BranchId}`
+      );
       const json = await response.data.result;
       const result = json.filter((stock) => {
         return (
@@ -341,8 +343,8 @@ function MobileNav({ category }) {
 }
 
 function DesktopNav({ callback, keyword, category }) {
-  const locatio = useLocation();
   const toast = useToast();
+  const locatio = useLocation();
   const location = locatio.pathname.split("/")[1];
   const userSelector = useSelector((state) => state.login.auth);
   const dispatch = useDispatch();
@@ -384,7 +386,7 @@ function DesktopNav({ callback, keyword, category }) {
   }
   async function fetchUserAddresses() {
     try {
-      await api
+      await api()
         .get("/address/user/" + userSelector.id)
         .then((res) => {
           setUserAddresses(res.data);
@@ -406,7 +408,9 @@ function DesktopNav({ callback, keyword, category }) {
   }
   const fetchData = async (value) => {
     try {
-      const response = await api.get(`/stock?place=${orderSelector.BranchId}`);
+      const response = await api().get(
+        `/stock?place=${orderSelector.BranchId}`
+      );
       const json = await response.data.result;
       const result = json.filter((stock) => {
         return (

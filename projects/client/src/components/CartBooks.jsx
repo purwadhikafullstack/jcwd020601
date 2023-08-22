@@ -22,7 +22,7 @@ export default function CartBooks(props) {
 
   //GET
   async function fetch() {
-    const data = await api.post("/cart/id", {
+    const data = await api().post("/cart/id", {
       UserId: userSelector.id,
       BranchId: orderSelector.BranchId,
     });
@@ -36,7 +36,7 @@ export default function CartBooks(props) {
     try {
       // console.log(cart[idx].StockId);
       // console.log(cart[idx].id);
-      await api.patch("cart/v2", {
+      await api().patch("cart/v2", {
         StockId: cart[idx].StockId,
         UserId: cart[idx].UserId,
         id: cart[idx].id,

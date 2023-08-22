@@ -71,7 +71,7 @@ function DesktopNav() {
     return;
   }
   async function verify() {
-    await api
+    await api()
       .get("auth/generate-token/emailverify", {
         params: {
           email: userSelector.email,

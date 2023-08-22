@@ -41,11 +41,12 @@ export default function BookCard() {
   // console.log(value);
   console.log(orderSelector);
   async function fetchProduct() {
-    let response = await api.get(
+    let response = await api().get(
       `/stock?limit=${limit}&place=${orderSelector.BranchId}`
     );
     console.log(response);
     setValue(response.data.result);
+    console.log(response.data.result);
   }
   useEffect(() => {
     fetchProduct();
@@ -66,7 +67,7 @@ export default function BookCard() {
   async function add(idx) {
     try {
       if (userSelector.username) {
-        await api.post("cart/v1", {
+        await api().post("cart/v1", {
           qty: 1,
           UserId: userSelector.id,
           StockId: value[idx].id,

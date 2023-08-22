@@ -13,7 +13,6 @@ import {
 import { useEffect, useState } from "react";
 import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
-import { api } from "../api/api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -91,8 +90,8 @@ export default function ForgotPassword() {
         nav("/login");
       })
       .catch((err) => {
-        alert("Token has expired");
-        console.log(values);
+        alert("Token hasdasds expired");
+        console.log(err);
         // nav("/login");
       });
   }

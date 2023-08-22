@@ -5,7 +5,6 @@ import Loading from "../components/Loading";
 
 export default function AuthProvider({ children }) {
   const dispatch = useDispatch();
-  const userSelector = useSelector((state) => state.login.auth);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -22,10 +21,10 @@ export default function AuthProvider({ children }) {
       console.log(token);
 
       if (token) {
-        const auth = await api
+        const auth = await api()
           .get("/admin/v3?token=" + token)
           .then((res) => res.data);
-        const userMainAddress = await api
+        const userMainAddress = await api()
           .get("/address/ismain/" + auth?.id)
           .then((res) => res.data);
         console.log(Boolean(address));
@@ -41,7 +40,7 @@ export default function AuthProvider({ children }) {
         } else if (!auth?.role) {
           console.log("login user");
           console.log(address);
-          const closestBranch = await api
+          const closestBranch = await api()
             .post(
               "/address/closest",
               address
@@ -57,7 +56,7 @@ export default function AuthProvider({ children }) {
           if (closestBranch.message) {
             dispatch({
               type: "login",
-              payload: auth,
+              payload: { token, ...auth },
               address: address || userMainAddress,
               closestBranch,
             });
@@ -72,7 +71,7 @@ export default function AuthProvider({ children }) {
           } else {
             dispatch({
               type: "login",
-              payload: auth,
+              payload: { token, ...auth },
               address: address || userMainAddress,
               closestBranch,
             });
@@ -94,7 +93,7 @@ export default function AuthProvider({ children }) {
       } else {
         const latitude = JSON.parse(localStorage.getItem("Latitude"));
         const longitude = JSON.parse(localStorage.getItem("Longitude"));
-        const closestBranch = await api
+        const closestBranch = await api()
           .post("/address/closest", {
             lat: latitude,
             lon: longitude,

@@ -18,7 +18,7 @@ import Edit from "./Edit";
 export default function Action({ id, name, getData }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deleteData = async () => {
-    await api.delete(`/discount/v3/${id}`, {
+    await api().delete(`/discount/v3/${id}`, {
       // headers: {
       //   Authorization: token,
       // },
