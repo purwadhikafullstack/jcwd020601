@@ -14,10 +14,27 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FcImageFile, FcViewDetails } from "react-icons/fc";
+import { api } from "../../../api/api";
 
 export default function ModalDetails(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [data, setData] = useState();
+
+  async function fetch() {
+    const result = await api.post("/orderdetail/admin", {
+      OrderId: props.val.id,
+    });
+    return setData(result.data);
+  }
+
+  // console.log(data);
+  // console.log(props.val.id);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetch();
+    }
+  }, [isOpen]);
 
   return (
     <>

@@ -53,6 +53,43 @@ const orderDetailController = {
       });
     }
   },
+  getByIdAdmin: async (req, res) => {
+    try {
+      const { OrderId } = req.body;
+      const Order = await db.Order.findOne({
+        where: {
+          id: OrderId,
+        },
+      });
+      console.log();
+      const OrderDetail = await db.OrderDetail.findAll({
+        where: {
+          OrderId,
+        },
+        include: [
+          {
+            model: db.Order,
+            required: true,
+          },
+          {
+            model: db.Stock,
+            include: [
+              {
+                model: db.Book,
+              },
+            ],
+          },
+        ],
+      });
+
+      return res.send(OrderDetail);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   editOrderDetail: async (req, res) => {
     try {
       console.log("test");
