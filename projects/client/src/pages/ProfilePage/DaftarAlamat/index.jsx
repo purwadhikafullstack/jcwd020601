@@ -46,7 +46,7 @@ export default function DaftarAlamat(props) {
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
       setCoolDown(true);
-      await api.post("/address/v1?token=" + token, formikAddress.values);
+      await api().post("/address/v1?token=" + token, formikAddress.values);
       AddAddressHelpers.submit({
         Swal,
         modalAddAddress,
@@ -66,7 +66,7 @@ export default function DaftarAlamat(props) {
   async function fetchCity() {
     setPos("");
     setCities([]);
-    await api
+    await api()
       .get("/city/v1/" + provinceId)
       .then((res) => {
         setCities(res.data.result);
@@ -77,9 +77,11 @@ export default function DaftarAlamat(props) {
   }
   async function fetchPos() {
     setPos("");
-    await api.get("/city/v2/" + cityId).then((res) => {
-      setPos(res.data.result);
-    });
+    await api()
+      .get("/city/v2/" + cityId)
+      .then((res) => {
+        setPos(res.data.result);
+      });
   }
   async function inputHandlerAddress(input) {
     const { value, id } = input.target;

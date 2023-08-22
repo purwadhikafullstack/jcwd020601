@@ -31,7 +31,7 @@ export default function Discount() {
   const [keyword, setKeyword] = useState("");
   const [query, setQuery] = useState("");
   async function fetchDiscount() {
-    let response = await api.get(
+    let response = await api().get(
       `/discount?search_query=${keyword}&page=${page}&limit=${limit}&place=${userSelector.branchId}`
     );
     setValue(response.data.Discount);

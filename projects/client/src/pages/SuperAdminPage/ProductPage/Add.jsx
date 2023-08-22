@@ -24,9 +24,7 @@ import icon from "../../../assets/images/icon.png";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { api } from "../../../api/api";
-// import { api } from "../../../api/api";
 
-// api;
 export default function Add({ getData }) {
   let t = localStorage.getItem("auth");
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -100,7 +98,7 @@ export default function Add({ getData }) {
       formData.append("rating", values.rating);
       // formData.append("DiscountId", values.DiscountId);
       formData.append("CategoryId", values.CategoryId);
-      await api.post("/book/v1", formData, {
+      await api().post("/book/v1", formData, {
         headers: {
           Authorization: token,
         },
@@ -113,7 +111,7 @@ export default function Add({ getData }) {
     },
   });
   const fetchCategory = async () => {
-    let response = await api.get("/category");
+    let response = await api().get("/category");
     setCategory(response.data.result);
     console.log(response);
   };

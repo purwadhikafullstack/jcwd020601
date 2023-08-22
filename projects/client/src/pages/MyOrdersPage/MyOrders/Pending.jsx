@@ -1,7 +1,4 @@
 import { Box, Center, Flex, Image } from "@chakra-ui/react";
-import { useSelector } from "react-redux";
-import { api } from "../../../api/api";
-import { useEffect, useState } from "react";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 

@@ -42,7 +42,7 @@ export default function LoginPage() {
     var userObject = jwt_decode(response.credential);
     try {
       let token;
-      const loggingIn = await api
+      const loggingIn = await api()
         .post("/auth/v3", userObject)
         .then((res) => {
           localStorage.setItem("auth", JSON.stringify(res.data.token));
@@ -59,20 +59,20 @@ export default function LoginPage() {
         });
       if (loggingIn) {
         const token = JSON.parse(localStorage.getItem("auth"));
-        const user = await api
+        const user = await api()
           .get("/auth/v3?token=" + token)
           .then((res) => res.data)
           .catch((err) => {
             console.log(err.message);
           });
-        const userMainAddress = await api
+        const userMainAddress = await api()
           .get("/address/ismain/" + user.id)
           .then((res) => {
             localStorage.setItem("address", JSON.stringify(res.data));
             return res.data;
           })
           .catch((err) => err.message);
-        const closestBranch = await api
+        const closestBranch = await api()
           .post(
             "/address/closest",
             userMainAddress

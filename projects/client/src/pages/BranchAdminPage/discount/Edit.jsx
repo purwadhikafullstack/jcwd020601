@@ -48,7 +48,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       end: Yup.string().required("Required!"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api.patch(`/discount/v2/${id}`, values, {
+      await api().patch(`/discount/v2/${id}`, values, {
         // headers: {
         //   Authorization: token,
         // },
@@ -60,7 +60,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     },
   });
   const getDataDetail = async () => {
-    let res = await api.get(`/discount/${id}`, {
+    let res = await api().get(`/discount/${id}`, {
       // headers: {
       //   Authorization: token,
       // },

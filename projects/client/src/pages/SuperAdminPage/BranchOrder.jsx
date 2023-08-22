@@ -10,7 +10,7 @@ export default function BranchOrder() {
 
   // GET
   async function fetch() {
-    const result = await api.post("/order/branch", {
+    const result = await api().post("/order/branch", {
       BranchId: 1,
     });
     return setTrans(result.data);

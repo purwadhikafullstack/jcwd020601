@@ -115,7 +115,7 @@ export default function AddAdminButton(props) {
         pos,
         alamatLengkap,
       };
-      await api
+      await api()
         .post("/admin/v4", data)
         .then(async (res) => {
           // modalAddAdmin.onClose();
@@ -156,7 +156,7 @@ export default function AddAdminButton(props) {
   async function fetchCity() {
     setPos();
     setCities([]);
-    await api
+    await api()
       .get("/city/v1/" + provinceId)
       .then((res) => {
         setCities(res.data.result);
@@ -168,9 +168,11 @@ export default function AddAdminButton(props) {
 
   async function fetchPos() {
     setPos();
-    await api.get("/city/v2/" + cityId).then((res) => {
-      setPos(res.data.result);
-    });
+    await api()
+      .get("/city/v2/" + cityId)
+      .then((res) => {
+        setPos(res.data.result);
+      });
   }
 
   const modalAddAdmin = useDisclosure();

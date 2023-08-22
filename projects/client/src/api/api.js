@@ -1,13 +1,15 @@
 import axios from "axios";
-export const createApiInstance = () => {
-  const token = JSON.parse(localStorage.getItem("auth"));
-  console.log(token);
+function createApiInstance() {
+  console.log("skandaskndasdasdn");
+  console.log(JSON.parse(localStorage.getItem("auth")));
   return axios.create({
     baseURL: "http://localhost:2000/",
     headers: {
-      auth: token,
+      get auth() {
+        return JSON.parse(localStorage.getItem("auth"));
+      },
     },
   });
-};
+}
 
-export const api = createApiInstance();
+export const api = createApiInstance;

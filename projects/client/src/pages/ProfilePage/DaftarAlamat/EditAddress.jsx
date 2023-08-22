@@ -57,21 +57,27 @@ export default function EditAddress(val) {
   }
   async function fetchCity() {
     console.log(provinceId);
-    await api.get("/city/v1/" + provinceId).then((res) => {
-      setCities(res.data.result);
-    });
+    await api()
+      .get("/city/v1/" + provinceId)
+      .then((res) => {
+        setCities(res.data.result);
+      });
   }
   async function fetchPos() {
     console.log(cityId);
-    await api.get("/city/v2/" + cityId).then((res) => {
-      setPosCodes(res.data.result);
-    });
+    await api()
+      .get("/city/v2/" + cityId)
+      .then((res) => {
+        setPosCodes(res.data.result);
+      });
   }
   useEffect(() => {
     const fetchData = async () => {
-      const data = await api.get("province").then((res) => {
-        setProvinces(res.data.result);
-      });
+      const data = await api()
+        .get("province")
+        .then((res) => {
+          setProvinces(res.data.result);
+        });
     };
     fetchData();
   }, []);

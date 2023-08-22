@@ -48,7 +48,7 @@ export default function RegisterPage() {
     console.log(userObject);
     try {
       let token;
-      const loggingIn = await api
+      const loggingIn = await api()
         .post("/auth/v3", userObject)
         .then((res) => {
           localStorage.setItem("auth", JSON.stringify(res.data.token));
@@ -75,13 +75,15 @@ export default function RegisterPage() {
         });
       console.log(loggingIn);
       if (loggingIn) {
-        await api.get("/auth/v3?token=" + token).then((res) => {
-          console.log(res.data);
-          dispatch({
-            type: "login",
-            payload: res.data,
+        await api()
+          .get("/auth/v3?token=" + token)
+          .then((res) => {
+            console.log(res.data);
+            dispatch({
+              type: "login",
+              payload: res.data,
+            });
           });
-        });
         nav("/");
       }
     } catch (err) {
@@ -148,7 +150,7 @@ export default function RegisterPage() {
         formik.values;
       const account = { email, password, username, first_name, last_name };
 
-      const checkemail = await api
+      const checkemail = await api()
         .get("/auth/email?email=" + email)
         .then((res) => {
           if (res.data) {
@@ -162,7 +164,7 @@ export default function RegisterPage() {
         alert("Email has been used");
         formik.values.email = "";
       } else {
-        await api
+        await api()
           .post("/auth", account)
           .then(() => {
             toast({

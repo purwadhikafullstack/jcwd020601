@@ -23,7 +23,7 @@ const validationSchemaAddress = Yup.object().shape({
     .required("You need to enter your complete address"),
 });
 async function submit({ val, token, Swal, dispatch, formikAddress }) {
-  await api
+  await api()
     .patch(
       "/address/v2/" + val.addressUser.id + "?token=" + token,
       formikAddress.values
@@ -52,7 +52,7 @@ async function submit({ val, token, Swal, dispatch, formikAddress }) {
 async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
   let address = JSON.parse(localStorage.getItem("address"));
   try {
-    await api
+    await api()
       .post("address/v4/" + val.addressUser.id + "?token=" + token, {
         UserId: val.userSelector.id,
       })
@@ -63,7 +63,7 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
     if (val.addressUser.id == address.id) {
       const token = JSON.parse(localStorage.getItem("auth"));
       console.log(token);
-      const user = await api
+      const user = await api()
         .get("/auth/v3?token=" + token)
         .then(async (res) => {
           return res.data;
@@ -71,7 +71,7 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
         .catch((err) => {
           return err.message;
         });
-      const userMainAddress = await api
+      const userMainAddress = await api()
         .get("/address/ismain/" + val.userSelector.id)
         .then((res) => res.data)
         .catch((err) => {
@@ -80,7 +80,7 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
       localStorage.setItem("address", JSON.stringify(userMainAddress));
       address = JSON.parse(localStorage.getItem("address"));
 
-      const closestBranch = await api
+      const closestBranch = await api()
         .post("/address/closest", {
           lat: address.latitude,
           lon: address.longitude,
@@ -138,7 +138,7 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
 }
 async function changeMain({ val, token, Swal, api, dispatch }) {
   try {
-    await api
+    await api()
       .patch("address/v3/" + val.addressUser.id + "?token=" + token, {
         UserId: val.userSelector.id,
       })

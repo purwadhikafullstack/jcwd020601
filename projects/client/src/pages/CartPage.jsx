@@ -49,7 +49,7 @@ export default function CartPage() {
   }, [shipping]);
 
   async function create() {
-    await api.post("order/v1", {
+    await api().post("order/v1", {
       UserId: userSelector.id,
       BranchId: orderSelector.BranchId,
       AddressId: orderSelector.AddressId,
