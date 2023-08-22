@@ -1,12 +1,13 @@
 import { Box, Center, Flex, Image } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
-import { api } from "../../../api/api";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../../hoc/authprovider";
 
 export default function History(props) {
   const nav = useNavigate();
+
   return (
     <>
       <Flex w={"100%"} mt={"20px"} gap={"30px"} flexDir={"column"}>

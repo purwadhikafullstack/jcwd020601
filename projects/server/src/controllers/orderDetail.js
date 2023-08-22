@@ -22,7 +22,6 @@ const orderDetailController = {
           id: OrderId,
         },
       });
-      console.log();
       const OrderDetail = await db.OrderDetail.findAll({
         where: {
           OrderId,

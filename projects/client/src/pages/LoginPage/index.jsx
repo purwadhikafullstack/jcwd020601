@@ -44,8 +44,8 @@ export default function LoginPage() {
       let token;
       const loggingIn = await api
         .post("/auth/v3", userObject)
-        .then(async (res) => {
-          await localStorage.setItem("auth", JSON.stringify(res.data.token));
+        .then((res) => {
+          localStorage.setItem("auth", JSON.stringify(res.data.token));
           token = res.data.token;
           Swal.fire("Good job!", "Login succesful", "success");
           return res.data.message;
@@ -59,14 +59,12 @@ export default function LoginPage() {
         });
       if (loggingIn) {
         const token = JSON.parse(localStorage.getItem("auth"));
-        console.log(token);
         const user = await api
           .get("/auth/v3?token=" + token)
           .then((res) => res.data)
           .catch((err) => {
             console.log(err.message);
           });
-        console.log(user);
         const userMainAddress = await api
           .get("/address/ismain/" + user.id)
           .then((res) => {
@@ -90,10 +88,12 @@ export default function LoginPage() {
           .then((res) => res.data)
           .catch((err) => console.log(err));
         if (user.email) {
+          console.log({ token, ...user });
+          console.log(user);
           if (closestBranch.message) {
             dispatch({
               type: "login",
-              payload: user,
+              payload: { token, ...user },
               address: userMainAddress,
             });
             dispatch({
@@ -107,7 +107,7 @@ export default function LoginPage() {
           } else {
             dispatch({
               type: "login",
-              payload: user,
+              payload: { token, ...user },
               address: userMainAddress,
             });
             dispatch({

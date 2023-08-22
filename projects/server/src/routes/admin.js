@@ -10,7 +10,7 @@ router.get(
   adminController.getByToken,
   adminController.getAdminOrUserByToken
 );
-router.get("/adminbranch", adminController.getAllAdminBranch);
+router.post("/allAdminP", adminController.getAllBranchAdminWithPaginate);
 router.post("/v1", adminController.insertSuperAdmin);
 router.post(
   "/v4",

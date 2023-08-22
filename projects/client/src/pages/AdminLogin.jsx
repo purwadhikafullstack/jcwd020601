@@ -45,7 +45,7 @@ export default function LoginPage() {
         if (res.data.role == "Super-Admin") {
           nav("/superadminpage");
         } else {
-          nav("/admin/");
+          nav("/admin/product");
         }
       });
     } catch (err) {

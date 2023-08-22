@@ -13,47 +13,92 @@ import Swal from "sweetalert2";
 
 export default function Inputs(props) {
   async function submitLogin() {
+    const latitude = JSON.parse(localStorage.getItem("Latitude"));
+    const longitude = JSON.parse(localStorage.getItem("Longitude"));
     try {
       let token;
-      await api.post("/auth/v2", props.login).then((res) => {
-        localStorage.setItem("auth", JSON.stringify(res.data.token));
-        token = res.data.token;
-        console.log(token);
-        Swal.fire("Good job!", "Login succesful", "success");
-      });
-      const user = await api
-        .get("/auth/v3?token=" + token)
-        .then(async (res) => {
-          return res.data;
-        })
-        .catch((err) => {
-          return err.message;
-        });
-      const userMainAddress = await api
-        .get("/address/ismain/" + user.id)
+      const loggingIn = await api
+        .post("/auth/v2", props.login)
         .then((res) => {
-          localStorage.setItem("address", JSON.stringify(res.data));
-
-          console.log(res.data);
-
-          return res.data;
+          localStorage.setItem("auth", JSON.stringify(res.data.token));
+          token = res.data.token;
+          Swal.fire("Good job!", "Login succesful", "success");
+          return res.data.message;
         })
         .catch((err) => {
-          return err.message;
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: err.data.message,
+          });
         });
-      props.dispatch({
-        type: "login",
-        payload: user,
-        address: userMainAddress,
-      });
-      props.nav("/");
+      if (loggingIn) {
+        const token = JSON.parse(localStorage.getItem("auth"));
+        const user = await api
+          .get("/auth/v3?token=" + token)
+          .then((res) => res.data)
+          .catch((err) => {
+            console.log(err.message);
+          });
+        const userMainAddress = await api
+          .get("/address/ismain/" + user.id)
+          .then((res) => {
+            localStorage.setItem("address", JSON.stringify(res.data));
+            return res.data;
+          })
+          .catch((err) => err.message);
+        const closestBranch = await api
+          .post(
+            "/address/closest",
+            userMainAddress
+              ? {
+                  lat: userMainAddress.latitude,
+                  lon: userMainAddress.longitude,
+                }
+              : {
+                  lat: latitude,
+                  lon: longitude,
+                }
+          )
+          .then((res) => res.data)
+          .catch((err) => console.log(err));
+        if (user.email) {
+          console.log({ token, ...user });
+          console.log(user);
+          if (closestBranch.message) {
+            props.dispatch({
+              type: "login",
+              payload: { token, ...user },
+              address: userMainAddress,
+            });
+            props.dispatch({
+              type: "order",
+              payload: {
+                BranchId: closestBranch.BranchId,
+                AddressId: userMainAddress?.id,
+                TooFar: true,
+              },
+            });
+          } else {
+            props.dispatch({
+              type: "login",
+              payload: { token, ...user },
+              address: userMainAddress,
+            });
+            props.dispatch({
+              type: "order",
+              payload: {
+                BranchId: closestBranch.BranchId,
+                AddressId: userMainAddress?.id,
+              },
+            });
+          }
+          props.nav("/");
+        }
+      }
     } catch (err) {
       console.log(err);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: err.response.data.message,
-      });
+      alert(err.response.data.message);
     }
   }
   return (

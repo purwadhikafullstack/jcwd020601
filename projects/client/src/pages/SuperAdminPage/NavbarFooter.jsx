@@ -10,17 +10,15 @@ export default function NavbarFooter() {
       borderTopColor={useColorModeValue("gray.200", "gray.700")}
       h={{ base: "6em" }}
       alignItems={"center"}
-      w="100%"
       justifyContent={"center"}
       bottom={0}
-      bgColor={"whiteAlpha.700"}
+      bgColor={"#2c5282"}
       zIndex={1}
-      position={"fixed"}
     >
       <Box>
         <Text
           fontSize={{ base: "xl" }}
-          color={"grey"}
+          color={"white"}
           textAlign={"center"}
           mx="20px"
         >

@@ -186,52 +186,52 @@ export default function AddAdminButton(props) {
         >
           Add Branch-Admin and New Branch
         </Button>
-        <Modal
-          closeOnOverlayClick={false}
-          scrollBehavior="inside"
-          isOpen={modalAddAdmin.isOpen}
-          onClose={modalAddAdmin.onClose}
-          isCentered
-        >
-          <ModalOverlay />
-          <ModalContent maxH="500px" h={"500px"} maxW="500px">
-            <ModalHeader
-              px={"10px"}
-              display={"flex"}
-              flexDir={"row"}
-              justifyContent={"center"}
-            >
-              <Center w={"100%"} fontWeight={700} fontSize={"1rem"}>
-                Add Branch-Admin and New Branch
-              </Center>
-              <Flex w={"70%"} flexDir={"row-reverse"}>
-                <Button
-                  w={"30px"}
-                  onClick={() => {
-                    modalAddAdmin.onClose();
-                    formikAddress.resetForm();
-                  }}
-                >
-                  <Icon fontSize={"30px"} as={MdClose}></Icon>
-                </Button>
-              </Flex>
-            </ModalHeader>
-
-            <ModalBody maxH="500px" h={"500px"} maxW="500px">
-              <ModalAddAdmin
-                formikAddress={formikAddress}
-                pos={pos}
-                setPos={setPos}
-                setCities={setCities}
-                cities={cities}
-                setProvinces={setProvinces}
-                provinces={provinces}
-                inputHandlerAddress={inputHandlerAddress}
-              />
-            </ModalBody>
-          </ModalContent>
-        </Modal>
       </Flex>
+      <Modal
+        closeOnOverlayClick={false}
+        scrollBehavior="inside"
+        isOpen={modalAddAdmin.isOpen}
+        onClose={modalAddAdmin.onClose}
+        isCentered
+      >
+        <ModalOverlay />
+        <ModalContent maxH="500px" h={"500px"} maxW="500px">
+          <ModalHeader
+            px={"10px"}
+            display={"flex"}
+            flexDir={"row"}
+            justifyContent={"center"}
+          >
+            <Center w={"100%"} fontWeight={700} fontSize={"1rem"}>
+              Add Branch-Admin and New Branch
+            </Center>
+            <Flex w={"70%"} flexDir={"row-reverse"}>
+              <Button
+                w={"30px"}
+                onClick={() => {
+                  modalAddAdmin.onClose();
+                  formikAddress.resetForm();
+                }}
+              >
+                <Icon fontSize={"30px"} as={MdClose}></Icon>
+              </Button>
+            </Flex>
+          </ModalHeader>
+
+          <ModalBody maxH="500px" h={"500px"} maxW="500px">
+            <ModalAddAdmin
+              formikAddress={formikAddress}
+              pos={pos}
+              setPos={setPos}
+              setCities={setCities}
+              cities={cities}
+              setProvinces={setProvinces}
+              provinces={provinces}
+              inputHandlerAddress={inputHandlerAddress}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

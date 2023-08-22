@@ -8,48 +8,42 @@ import Sidebar from "../Sidebar";
 import Navbar from "../Navbar";
 export default function SuperAdminPageBranchAdmin() {
   const [admins, setAdmins] = useState([]);
-
+  const [pages, setPages] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rows, setRows] = useState(0);
   async function getAllAdminBranch() {
-    try {
-      const admins = await api.get("/admin/adminbranch");
-      setAdmins(admins.data);
-      return admins.data;
-    } catch (err) {
-      console.log(err);
-    }
+    const result = await api.post(`/admin/allAdminP?page=${page}&limit=${5}`);
+    setPage(result.data.page);
+    setRows(result.data.totalRows);
+    setPages(result.data.totalPage);
+    console.log(result);
+    setAdmins(result.data.Admin);
   }
+  const changePage = ({ selected }) => {
+    // console.log(selected);
+    setPage(selected);
+  };
   return (
     <>
-      <Flex>
+      <Flex w={"100%"}>
         <Sidebar />
         <Box display={"flex"} flexDirection={"column"} width={"100%"}>
           <Navbar />
           {admins ? (
-            <Flex
-              h={"1000px"}
-              marginTop={"6em"}
-              marginLeft={60}
-              bgColor={"#f2f2f2"}
-              pl={"20px"}
-            >
-              <Flex flexDir={"column"}>
-                <Flex
-                  py={"20px"}
-                  fontSize={"2rem"}
-                  fontWeight={"600"}
-                  color={"#2c5282"}
-                >
-                  Manage Admin
-                </Flex>
-                <Flex>
-                  <AddAdminButton getAllAdminBranch={getAllAdminBranch} />
-                </Flex>
-                <Flex>
-                  <AdminTables
-                    admins={admins}
-                    setAdmins={setAdmins}
-                    getAllAdminBranch={getAllAdminBranch}
-                  />
+            <Flex>
+              <Flex marginLeft={60} bgColor={"#fbfbfb"} w={"100%"}>
+                <Flex flexDir={"column"} w={"100%"}>
+                  <Flex w={"100%"}>
+                    <AdminTables
+                      pages={pages}
+                      rows={rows}
+                      page={page}
+                      changePage={changePage}
+                      admins={admins}
+                      setAdmins={setAdmins}
+                      getAllAdminBranch={getAllAdminBranch}
+                    />
+                  </Flex>
                 </Flex>
               </Flex>
             </Flex>
