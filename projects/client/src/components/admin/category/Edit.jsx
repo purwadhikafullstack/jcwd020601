@@ -32,7 +32,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       category: Yup.string().required("required!").trim("Tidak boleh kosong"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api.patch(`/category/v2/${id}`, values, {
+      await api().patch(`/category/v2/${id}`, values, {
         headers: {
           Authorization: token,
         },
@@ -44,7 +44,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     },
   });
   const getDataDetail = async () => {
-    let res = await api.get(`/category/${id}`, {
+    let res = await api().get(`/category/${id}`, {
       headers: {
         Authorization: token,
       },

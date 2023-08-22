@@ -37,7 +37,7 @@ export default function BookCardRecomend() {
   const [place, setPlace] = useState(orderSelector.BranchId);
 
   async function fetchProduct() {
-    let response = await api.get(`/stock?limit=${limit}&place=${place}`);
+    let response = await api().get(`/stock?limit=${limit}&place=${place}`);
     setValue(response.data.result);
   }
   useEffect(() => {
@@ -56,7 +56,7 @@ export default function BookCardRecomend() {
   async function add(idx) {
     try {
       if (userSelector.username) {
-        await api.post("cart/v1", {
+        await api().post("cart/v1", {
           qty: 1,
           UserId: userSelector.id,
           StockId: value[idx].id,

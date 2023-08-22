@@ -29,7 +29,7 @@ export default function CarouselAll() {
   const [keyword, setKeyword] = useState("");
   // const place = 1;
   async function fetchProduct() {
-    let response = await api.get(
+    let response = await api().get(
       `/stock/Desc?limit=${limit}&place=${orderSelector.BranchId}`
     );
     setValue(response.data.result);

@@ -19,7 +19,7 @@ export default function DeleteModal(props) {
   const nav = useNavigate();
 
   async function hapus() {
-    await api.delete("cart/v3/" + props.cartId);
+    await api().delete("cart/v3/" + props.cartId);
     props.setHapus(false);
   }
   return (

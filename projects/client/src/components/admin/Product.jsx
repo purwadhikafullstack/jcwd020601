@@ -35,7 +35,7 @@ export default function Product() {
   const [token, setToken] = useState(JSON.parse(t));
 
   async function fetchProduct() {
-    let response = await api.get(
+    let response = await api().get(
       `/book?search_query=${keyword}&page=${page}&limit=${limit}`,
       {
         headers: {

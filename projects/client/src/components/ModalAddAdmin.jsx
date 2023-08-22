@@ -7,9 +7,11 @@ import axios from "axios";
 export default function ModalAddAdmin(props) {
   useEffect(() => {
     const fetchData = async () => {
-      const data = await api.get("province").then((res) => {
-        props.setProvinces(res.data.result);
-      });
+      const data = await api()
+        .get("province")
+        .then((res) => {
+          props.setProvinces(res.data.result);
+        });
     };
     fetchData();
   }, []);
