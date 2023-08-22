@@ -143,7 +143,7 @@ const stockServices = {
             required: true, // Inner join
           },
           {
-            model: db.Branch,
+            model: db.Discount,
             required: true,
           },
         ],

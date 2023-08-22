@@ -91,7 +91,7 @@ export default function Product() {
           >
             <Box display={"flex"} py={3} gap={3}>
               <Input
-                placeholder="Search data"
+                placeholder="Search Product"
                 variant={"outline"}
                 w={"30em"}
                 size="lg"
@@ -140,21 +140,6 @@ export default function Product() {
                   <Td>{val.title}</Td>
                   {/* <Td>{val.language}</Td> */}
                   <Td>{val.author}</Td>
-                  {/* <Td>
-                    {val.Discount?.isPercent ? (
-                      <>{val.Discount?.discount} %</>
-                    ) : (
-                      <>
-                        {val.Discount?.discount ? (
-                          <>{rupiah(val.Discount?.discount)}</>
-                        ) : (
-                          <>
-                            <Text>Belum Ada Diskon</Text>
-                          </>
-                        )}
-                      </>
-                    )}
-                  </Td> */}
                   <Td>{val.pages}</Td>
                   <Td>{rupiah(val.price)}</Td>
 

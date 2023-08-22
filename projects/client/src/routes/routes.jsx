@@ -19,20 +19,15 @@ import AuthProvider from "../hoc/authprovider";
 import DetailBookCardPage from "../pages/DetailBookCardPage";
 import DetailBookPage from "../pages/DetailBookPage";
 import DiscountProduct from "../pages/BranchAdminPage/DiscountProduct";
-// import BranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
-// import Product from "../pages/SuperAdminPage/Product";
-// import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
-// import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/BranchAdminPage";
 import StockProduct from "../pages/BranchAdminPage/StockProduct";
 import BranchAdmin from "../pages/SuperAdminPage/LandingPage";
 import Product from "../pages/SuperAdminPage/Product";
+import FIlterPage from "../pages/FilterPage";
 import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/LandingPage";
 import BranchOrderPage from "../pages/BranchAdminPage/BranchOrderPage";
 import AdminPage from "../pages/BranchAdminPage";
 import SuperAdminPageCategory from "../pages/SuperAdminPage/CategoryPage";
-// import StockProductPage from "../pages/SuperAdminPage/BranchAdmins/StockProductPage";
-// >>>>>>> develop
 
 const routes = [
   <Route
@@ -66,6 +61,14 @@ const routes = [
     element={
       <ProtectedPage>
         <DetailBookCardPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/products/filter"
+    element={
+      <ProtectedPage>
+        <FIlterPage />
       </ProtectedPage>
     }
   ></Route>,

@@ -3,26 +3,18 @@ import {
   Flex,
   Card,
   CardBody,
-  Stack,
-  Heading,
   Text,
-  CardFooter,
-  Button,
   Image,
-  ButtonGroup,
   Divider,
-  useMediaQuery,
   useToast,
   useDisclosure,
-  Icon,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import TooFarModal from "./TooFarModal";
-import { BsChevronDown, BsCart } from "react-icons/bs";
+
 export default function BookCard() {
   let t = localStorage.getItem("auth");
   const userSelector = useSelector((state) => state.login.auth);
@@ -33,12 +25,6 @@ export default function BookCard() {
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(6);
-  const [keyword, setKeyword] = useState("");
-  const [place, setPlace] = useState();
-  // Link
-  // const place = 2;
-  // console.log(place);
-  // console.log(value);
   console.log(orderSelector);
   async function fetchProduct() {
     let response = await api.get(
@@ -61,8 +47,6 @@ export default function BookCard() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-  // console.log(value);
-  // console.log(token);
   async function add(idx) {
     try {
       if (userSelector.username) {
@@ -134,32 +118,54 @@ export default function BookCard() {
         justifyContent={"center"}
       >
         {value.map((val, idx) => (
-          <Link
-            to={`/products/detail/${val.id}`}
-            cursor={"pointer"}
-            // bgColor={"red.200"}
-          >
+          <Link to={`/products/detail/${val.id}`} cursor={"pointer"}>
             <Card key={idx}>
               <CardBody>
                 <Box>
-                  {val.Discount?.isPercent ? (
+                  {val.Discount?.discount ? (
                     <>
-                      <Box
-                        w={12}
-                        h={8}
-                        position={"absolute"}
-                        left={"152px"}
-                        borderTopRightRadius={"5px"}
-                        top={"0px"}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        bgColor={"blue.100"}
-                      >
-                        <Text fontWeight={"bold"} color={"blue.900"}>
-                          {val.Discount?.discount}%
-                        </Text>
-                      </Box>
+                      {val.Discount?.isPercent ? (
+                        <>
+                          <Box
+                            w={14}
+                            h={8}
+                            position={"absolute"}
+                            left={"145px"}
+                            borderTopRightRadius={"5px"}
+                            top={"0px"}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            bgColor={"blue.100"}
+                          >
+                            <Text color={"blue.900"}>
+                              -{val.Discount?.discount}%
+                            </Text>
+                          </Box>
+                        </>
+                      ) : (
+                        <>
+                          <Box
+                            w={20}
+                            h={8}
+                            position={"absolute"}
+                            left={"122px"}
+                            borderTopRightRadius={"5px"}
+                            top={"0px"}
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="center"
+                            bgColor={"blue.100"}
+                          >
+                            <Text fontSize="md">
+                              {/* - */}
+                              {Intl.NumberFormat().format(
+                                "-" + val.Discount?.discount
+                              )}
+                            </Text>
+                          </Box>
+                        </>
+                      )}
                     </>
                   ) : (
                     <></>
@@ -188,7 +194,6 @@ export default function BookCard() {
                       <>
                         {val.Discount?.isPercent ? (
                           <>
-                            {/* val.Book?.price */}
                             <Text fontSize="xl">
                               Rp.{Intl.NumberFormat().format(val.Book?.price)}
                             </Text>
@@ -196,15 +201,9 @@ export default function BookCard() {
                         ) : (
                           <>
                             <Box gap={3} display={"flex"} flexDir={"column"}>
-                              <Text color="#A0AEC0" as="del" fontSize="md">
-                                Rp.{" "}
-                                {Intl.NumberFormat().format(val.Book?.price)}
-                              </Text>
                               <Text fontSize="xl">
                                 Rp.{" "}
-                                {Intl.NumberFormat().format(
-                                  val.Book?.price - val.Discount?.discount
-                                )}
+                                {Intl.NumberFormat().format(val.Book?.price)}
                               </Text>
                             </Box>
                           </>
@@ -220,24 +219,6 @@ export default function BookCard() {
                   </Text>
                 </Flex>
               </CardBody>
-              {/* <CardFooter>
-              <ButtonGroup justifyContent={"center"}>
-                <Button
-                  variant="solid"
-                  colorScheme="blue"
-                  // p={5}
-                  onClick={
-                    orderSelector.TooFar
-                      ? () => tooFarModal.onOpen()
-                      : () => add(idx)
-                  }
-                > */}
-              {/* Add to cart */}
-              {/* <Icon as={BsCart} w={8} h={8} color="whiteAlpha.900"></Icon>
-                </Button>
-              </ButtonGroup>
-            </CardFooter>
-            <TooFarModal tooFarModal={tooFarModal} /> */}
             </Card>
           </Link>
         ))}

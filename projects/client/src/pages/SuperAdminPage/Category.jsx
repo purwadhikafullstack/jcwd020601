@@ -78,7 +78,7 @@ export default function Category() {
           >
             <Box display={"flex"} py={3} gap={3}>
               <Input
-                placeholder="Basic Usage"
+                placeholder="Search Category"
                 variant={"outline"}
                 w={"30em"}
                 size="lg"
