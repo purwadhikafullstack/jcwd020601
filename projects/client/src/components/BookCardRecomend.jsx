@@ -12,15 +12,24 @@ import {
   ButtonGroup,
   Divider,
   useMediaQuery,
+  useToast,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 // import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import TooFarModal from "./TooFarModal";
+import Swal from "sweetalert2";
 export default function BookCardRecomend() {
   const orderSelector = useSelector((state) => state.login.order);
+  const userSelector = useSelector((state) => state.login.auth);
   let t = localStorage.getItem("auth");
+
+  const toast = useToast();
+  const nav = useNavigate();
+  const tooFarModal = useDisclosure();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(5);
@@ -44,6 +53,32 @@ export default function BookCardRecomend() {
 
   console.log(value);
   console.log(token);
+  async function add(idx) {
+    try {
+      if (userSelector.username) {
+        await api.post("cart/v1", {
+          qty: 1,
+          UserId: userSelector.id,
+          StockId: value[idx].id,
+        });
+      } else {
+        Swal.fire("You need to login first?", "", "question");
+        nav("/login");
+      }
+    } catch (error) {
+      toast({
+        title: error.response.data,
+        position: "top",
+        containerStyle: {
+          maxWidth: "30%",
+        },
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      });
+      console.error(error);
+    }
+  }
   return (
     <Flex
       justify={"center"}
@@ -99,38 +134,109 @@ export default function BookCardRecomend() {
               // align={"center"}
             >
               <CardBody>
+                {val.Book?.Discount?.isPercent ? (
+                  <>
+                    <Box
+                      w={12}
+                      h={8}
+                      position={"absolute"}
+                      left={"152px"}
+                      borderTopRightRadius={"5px"}
+                      top={"0px"}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      bgColor={"blue.100"}
+                    >
+                      <Text fontWeight={"bold"} color={"blue.900"}>
+                        {val.Book?.Discount?.discount}%
+                      </Text>
+                    </Box>
+                  </>
+                ) : (
+                  <></>
+                )}
                 <Image
+                  src={val.Book?.book_url}
+                  alt="Green double couch with wooden legs"
+                  borderRadius="lg"
+                  w={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}
+                  h={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}
+                />
+                {/* <Image
                   src={val.Book?.book_url}
                   alt="Green double couch with wooden legs"
                   borderRadius="lg"
                   w={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
                   h={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
-                />
-                <Stack mt="6">
-                  <Heading size="sm">{val.Book?.author}</Heading>
-                  <Text size={"sm"}>
+                /> */}
+                <Flex flexDir={"column"} my={5} gap={3}>
+                  <Text color="#4A5568" as={"i"}>
+                    {val.Book?.author.length > 15
+                      ? val.Book?.author.slice(0, 15) + "..."
+                      : val.Book?.author}
+                  </Text>
+                  <Text fontSize="lg">
                     {val.Book?.title.length > 15
                       ? val.Book?.title.slice(0, 15) + "..."
                       : val.Book?.title}
                   </Text>
-                  <Text color="#A0AEC0" as="del" fontSize="xl">
-                    Rp. {val.Book?.price}
+                  <Text color="blue.600" fontSize="md">
+                    {val.Book?.Discount?.discount ? (
+                      <>
+                        {val.Book?.Discount?.isPercent ? (
+                          <>
+                            {/* val.Book?.price */}
+                            <Text fontSize="xl">
+                              Rp.{Intl.NumberFormat().format(val.Book?.price)}
+                            </Text>
+                          </>
+                        ) : (
+                          <>
+                            <Box gap={3} display={"flex"} flexDir={"column"}>
+                              <Text color="#A0AEC0" as="del" fontSize="md">
+                                Rp.{" "}
+                                {Intl.NumberFormat().format(val.Book?.price)}
+                              </Text>
+                              <Text fontSize="xl">
+                                Rp.{" "}
+                                {Intl.NumberFormat().format(
+                                  val.Book?.price - val.Book?.Discount?.discount
+                                )}
+                              </Text>
+                            </Box>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Text fontSize="xl">
+                          Rp. {Intl.NumberFormat().format(val.Book?.price)}
+                        </Text>
+                      </>
+                    )}
                   </Text>
-                  <Text color="blue.600" fontSize="xl">
-                    Rp. {val.Book?.price}
-                  </Text>
-                </Stack>
+                </Flex>
               </CardBody>
               <CardFooter p={5}>
                 <ButtonGroup spacing="2" justifyContent={"center"}>
                   {/* <Button variant="solid" colorScheme="blue">
                   Buy now
                 </Button> */}
-                  <Button variant="solid" colorScheme="blue">
+                  <Button
+                    variant="solid"
+                    colorScheme="blue"
+                    onClick={
+                      orderSelector.TooFar
+                        ? () => tooFarModal.onOpen()
+                        : () => add(idx)
+                    }
+                  >
                     Add to cart
                   </Button>
                 </ButtonGroup>
               </CardFooter>
+              <TooFarModal tooFarModal={tooFarModal} />
             </Card>
           </Link>
         ))}

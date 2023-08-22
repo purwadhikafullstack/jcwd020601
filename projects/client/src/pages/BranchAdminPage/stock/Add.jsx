@@ -33,12 +33,14 @@ export default function Add({ getData }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const [book, setBook] = useState([]);
+  const [discount, setDiscount] = useState([]);
   const formik = useFormik({
     initialValues: {
       stock: "",
       bucket: 0,
       BranchId: userSelector.branchId,
       BookId: null,
+      DiscountId: null,
     },
     validationSchema: Yup.object({
       stock: Yup.number().typeError("Isi dengan angka"),
@@ -60,14 +62,17 @@ export default function Add({ getData }) {
 
   const fetchData = async () => {
     let response = await api.get("/book/all");
+    let response2 = await api.get(`/discount?place=${userSelector.branchId}`);
     setBook(response.data);
+
+    setDiscount(response2.data.Discount);
     // console.log(response);
   };
   useEffect(() => {
     fetchData();
-  }, [isOpen, onOpen, onClose]);
+  }, [onOpen, onClose]);
   // console.log(formik.values);
-  // console.log(book);
+  console.log(book);
   return (
     <>
       <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">
@@ -134,6 +139,26 @@ export default function Add({ getData }) {
                   ))}
                 </Select>
                 <Text color={"red.800"}>{formik.errors.BookId}</Text>
+              </Box>
+              <Box>
+                <FormLabel>Nama Diskon</FormLabel>
+                <Select
+                  placeholder="Select Book"
+                  name="DiscountId"
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    const discountID = parseInt(e.target.value);
+                    formik.setFieldValue("DiscountId", discountID);
+                  }}
+                  value={formik.values.DiscountId}
+                >
+                  {discount.map((val, idx) => (
+                    <option key={val.id} value={val.id}>
+                      {val.title}
+                    </option>
+                  ))}
+                </Select>
+                {/* <Text color={"red.800"}>{formik.errors.BookId}</Text> */}
               </Box>
             </ModalBody>
             <ModalFooter>

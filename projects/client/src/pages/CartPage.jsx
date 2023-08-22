@@ -41,6 +41,9 @@ export default function CartPage() {
   const [shipping, setShipping] = useState(0);
   const [totalOr, setTotalOr] = useState(0);
 
+  console.log(total);
+  console.log(totalOr);
+
   useEffect(() => {
     setTotalOr(Number(total) + Number(shipping));
   }, [shipping]);

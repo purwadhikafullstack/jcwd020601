@@ -17,6 +17,9 @@ export default function CartBooks(props) {
   const [hapus, setHapus] = useState();
   const toast = useToast();
 
+  console.log(orderSelector.BranchId);
+  console.log(userSelector.id);
+
   //GET
   async function fetch() {
     const data = await api.post("/cart/id", {
@@ -57,18 +60,16 @@ export default function CartBooks(props) {
 
   // Price maping (discount)
   const list = cart.map((val) => {
-    if (val.Stock?.Book?.DiscountId) {
-      if (val.Stock?.Book?.Discount?.isPercent) {
+    if (val.Stock?.DiscountId) {
+      if (val.Stock?.Discount?.isPercent) {
         return (
           (val.Stock?.Book?.price -
-            val.Stock?.Book?.price *
-              val.Stock?.Book?.Discount?.discount *
-              0.01) *
+            val.Stock?.Book?.price * val.Stock?.Discount?.discount * 0.01) *
           val.quantity
         );
       } else {
         return (
-          (val.Stock?.Book?.price - val.Stock?.Book?.Discount?.discount) *
+          (val.Stock?.Book?.price - val.Stock?.Discount?.discount) *
           val.quantity
         );
       }
@@ -172,19 +173,19 @@ export default function CartBooks(props) {
                   justifyContent={"center"}
                   alignItems={"center"}
                 >
-                  {val.Stock?.Book?.DiscountId ? (
+                  {val.Stock?.DiscountId ? (
                     <Box>
-                      {val.Stock?.Book?.Discount?.isPercent
+                      {val.Stock?.Discount?.isPercent
                         ? `Rp ${(
                             (val.Stock?.Book?.price -
                               val.Stock?.Book?.price *
-                                val.Stock?.Book?.Discount?.discount *
+                                val.Stock?.Discount?.discount *
                                 0.01) *
                             val.quantity
                           ).toLocaleString("id-ID")} ,-`
                         : `Rp ${(
                             (val.Stock?.Book?.price -
-                              val.Stock?.Book?.Discount?.discount) *
+                              val.Stock?.Discount?.discount) *
                             val.quantity
                           ).toLocaleString("id-ID")} ,-`}
                     </Box>
