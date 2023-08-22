@@ -1,9 +1,11 @@
 import { Center, Flex } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 export default function Greetings() {
   const userSelector = useSelector((state) => state.login.auth);
-
+  const locatio = useLocation();
+  const location = locatio.pathname.split("/")[2];
   return (
     <>
       <Flex w={"100%"} borderBottom={"2px solid #787875"} pb={"10px"}>
@@ -16,6 +18,7 @@ export default function Greetings() {
               color={"#2c5282"}
               onClick={() => {
                 console.log(userSelector);
+                console.log(location);
               }}
             >
               {"Welcome, " + userSelector.admin_name}
