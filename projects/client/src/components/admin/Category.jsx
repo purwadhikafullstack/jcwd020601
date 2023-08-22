@@ -33,7 +33,7 @@ export default function Category() {
   const [token, setToken] = useState(JSON.parse(t));
 
   async function fetchCategori() {
-    let response = await api.get(
+    let response = await api().get(
       `/category?search_query=${keyword}&page=${page}&limit=${limit}`,
       {
         headers: {

@@ -71,13 +71,15 @@ export default function Biodata(props) {
         gender,
         phone,
       };
-      await api
+      await api()
         .patch("/auth/update", account)
         .then(async (res) => {
           const token = JSON.parse(localStorage.getItem("auth"));
-          const user = await api.get("/auth/v3?token=" + token).then((res) => {
-            return res.data;
-          });
+          const user = await api()
+            .get("/auth/v3?token=" + token)
+            .then((res) => {
+              return res.data;
+            });
           if (user?.email) {
             dispatch({
               type: "login",
@@ -106,7 +108,7 @@ export default function Biodata(props) {
       const token = JSON.parse(localStorage.getItem("auth"));
       const formData = new FormData();
       formData.append("avatar", file);
-      user = await api
+      user = await api()
         .post(
           "http://localhost:2000/auth/image/v1/" +
             props.userSelector.id +
@@ -176,7 +178,7 @@ export default function Biodata(props) {
     formik.setFieldValue(id, value);
   }
   async function verify() {
-    await api
+    await api()
       .get("auth/generate-token/emailverify", {
         params: {
           email: props.userSelector.email,

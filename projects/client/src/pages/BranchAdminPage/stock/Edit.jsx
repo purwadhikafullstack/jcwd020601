@@ -46,7 +46,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       BookId: Yup.number().required("Required!"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api.patch(`/stock/v2/${id}`, values, {
+      await api().patch(`/stock/v2/${id}`, values, {
         // headers: {
         //   Authorization: token,
         // },
@@ -58,7 +58,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     },
   });
   const getDataDetail = async () => {
-    let res = await api.get(`/stock/${id}`, {
+    let res = await api().get(`/stock/${id}`, {
       // headers: {
       //   Authorization: token,
       // },
@@ -70,8 +70,8 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       BookId: res.data.BookId,
       BranchId: res.data.BranchId,
     });
-    let response = await api.get("/book/all");
-    let response2 = await api.get(`/discount?place=${userSelector.branchId}`);
+    let response = await api().get("/book/all");
+    let response2 = await api().get(`/discount?place=${userSelector.branchId}`);
     setBook(response.data);
     // console.log(response2.data.Discount);
     setDiscount(response2.data.Discount);

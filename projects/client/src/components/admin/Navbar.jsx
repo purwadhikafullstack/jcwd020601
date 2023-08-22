@@ -261,7 +261,7 @@ function DesktopNav() {
   }
   async function fetchUserAddresses() {
     try {
-      await api
+      await api()
         .get("/address/user/" + userSelector.id)
         .then((res) => {
           setUserAddresses(res.data);

@@ -1,5 +1,3 @@
-import { api } from "../../../api/api";
-
 async function submit({
   Swal,
   modalAddAddress,

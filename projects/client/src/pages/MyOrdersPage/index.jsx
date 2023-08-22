@@ -21,10 +21,10 @@ export default function MyOrdersPage() {
   async function fetcha() {
     try {
       setIsLoading(true);
-      const pendingOrder = await api
+      const pendingOrder = await api()
         .get("/order/pending/" + userSelector.id)
         .then((res) => res.data);
-      const historyOrder = await api
+      const historyOrder = await api()
         .get("/order/history/" + userSelector.id)
         .then((res) => res.data);
       setHistory(historyOrder);

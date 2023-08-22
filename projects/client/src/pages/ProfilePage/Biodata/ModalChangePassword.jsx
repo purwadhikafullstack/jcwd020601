@@ -76,7 +76,7 @@ export default function ModalChangePassword(props) {
   async function changePassword(values) {
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
-      await api
+      await api()
         .patch("http://localhost:2000/auth/v5?token=" + token, {
           email: values.email,
           oldPassword: values.oldPassword,

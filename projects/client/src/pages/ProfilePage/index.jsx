@@ -21,9 +21,11 @@ export default function ProfilePage() {
   const toast = useToast();
   async function fetchUserAddresses() {
     try {
-      await api.get("/address/user/" + userSelector.id).then((res) => {
-        setUserAddresses(res.data);
-      });
+      await api()
+        .get("/address/user/" + userSelector.id)
+        .then((res) => {
+          setUserAddresses(res.data);
+        });
     } catch (err) {
       toast({
         position: "top",

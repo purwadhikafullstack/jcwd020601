@@ -17,7 +17,6 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { api } from "../../../api/api";
 import ModalPayment from "../../../components/admin/transaction/ModalPayment";
 import ModalDetails from "../../../components/admin/transaction/ModalDetails";
 import ModalConfirm from "../../../components/admin/transaction/ModalConfirm";

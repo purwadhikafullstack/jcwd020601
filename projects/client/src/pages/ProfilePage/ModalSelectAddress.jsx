@@ -27,7 +27,7 @@ export default function ModalSelectAddress(val) {
         onClick={async () => {
           const token = JSON.parse(localStorage.getItem("auth"));
           console.log(token);
-          const user = await api
+          const user = await api()
             .get("/auth/v3?token=" + token)
             .then(async (res) => {
               return res.data;
@@ -36,7 +36,7 @@ export default function ModalSelectAddress(val) {
               return err.message;
             });
           localStorage.setItem("address", JSON.stringify(val.address));
-          const closestBranch = await api
+          const closestBranch = await api()
             .post("/address/closest", {
               lat: val.address.latitude,
               lon: val.address.longitude,

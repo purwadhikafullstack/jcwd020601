@@ -49,7 +49,7 @@ export default function Add({ getData, token }) {
       end: Yup.string().required("Required!"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api.post("/discount/v1", values, {
+      await api().post("/discount/v1", values, {
         // headers: {
         //   Authorization: token,
         // },

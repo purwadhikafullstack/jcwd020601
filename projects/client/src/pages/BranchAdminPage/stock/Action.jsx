@@ -17,7 +17,7 @@ import "../../../App.css";
 export default function Action({ id, name, getData }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deleteData = async () => {
-    await api.delete(`/stock/v3/${id}`, {
+    await api().delete(`/stock/v3/${id}`, {
       // headers: {
       //   Authorization: token,
       // },

@@ -41,7 +41,7 @@ export default function BranchOrder() {
   const [rows, setRows] = useState(0);
 
   async function submit() {
-    const result = await api.post(
+    const result = await api().post(
       `/order/filter?page=${page}&limit=${5}`,
       filter
     );
@@ -52,7 +52,7 @@ export default function BranchOrder() {
     setFiltered(true);
   }
   async function fetch() {
-    const result = await api.post(`/order/allbranch?page=${page}&limit=${5}`);
+    const result = await api().post(`/order/allbranch?page=${page}&limit=${5}`);
     setPage(result.data.page);
     setRows(result.data.totalRows);
     setPages(result.data.totalPage);

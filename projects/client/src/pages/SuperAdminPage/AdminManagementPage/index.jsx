@@ -12,7 +12,7 @@ export default function SuperAdminPageBranchAdmin() {
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState(0);
   async function getAllAdminBranch() {
-    const result = await api.post(`/admin/allAdminP?page=${page}&limit=${5}`);
+    const result = await api().post(`/admin/allAdminP?page=${page}&limit=${5}`);
     setPage(result.data.page);
     setRows(result.data.totalRows);
     setPages(result.data.totalPage);

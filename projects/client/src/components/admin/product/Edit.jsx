@@ -96,7 +96,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       formData.append("rating", values.rating);
       // formData.append("DiscountId", values.DiscountId);
       formData.append("CategoryId", values.CategoryId);
-      await api.patch(`/book/v2/${id}`, formData, {
+      await api().patch(`/book/v2/${id}`, formData, {
         headers: {
           Authorization: token,
         },
@@ -109,7 +109,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
   });
 
   const getDataDetail = async () => {
-    let res = await api.get(`/book/${id}`, {
+    let res = await api().get(`/book/${id}`, {
       headers: {
         Authorization: token,
       },
@@ -152,8 +152,8 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       });
   };
   const fetchDiskon = async () => {
-    let response = await api.get("/discount");
-    let response2 = await api.get("/category");
+    let response = await api().get("/discount");
+    let response2 = await api().get("/category");
     setDiskon(response.data.result);
     setCategory(response2.data.result);
   };
