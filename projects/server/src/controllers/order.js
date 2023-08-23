@@ -5,6 +5,7 @@ const moment = require("moment");
 const { default: axios } = require("axios");
 const fs = require("fs");
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 const orderController = {
   getAll: async (req, res) => {
@@ -582,6 +583,8 @@ const orderController = {
       //     },
       //   ]
 
+      const invoiceCode = uuidv4();
+
       // Create Order
       const order = await db.Order.create({
         status: "waiting for payment",
@@ -592,6 +595,7 @@ const orderController = {
         shipping,
         courier,
         weight,
+        invoiceCode,
       });
 
       // post multiple orderdetails from order

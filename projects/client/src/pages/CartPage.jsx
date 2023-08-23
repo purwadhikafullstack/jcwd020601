@@ -60,7 +60,7 @@ export default function CartPage() {
         shipping: Number(shipping),
         courier,
       });
-      return nav("/order/" + result.data.id);
+      return nav("/order/" + result.data.invoiceCode);
     } catch (error) {
       console.log(error);
       toast({
