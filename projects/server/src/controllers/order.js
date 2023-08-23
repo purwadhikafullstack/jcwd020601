@@ -3,6 +3,8 @@ const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
 const { default: axios } = require("axios");
+const fs = require("fs");
+const path = require("path");
 
 const orderController = {
   getAll: async (req, res) => {
@@ -406,6 +408,11 @@ const orderController = {
     try {
       const { UserId, BranchId, AddressId, shipping, courier } = req.body;
 
+      // check shipping
+      if (shipping == undefined || shipping <= 0) {
+        throw Error("Select the shipping method");
+      }
+
       // get the order from cart
       const cart = await db.Cart.findAll({
         where: {
@@ -436,14 +443,6 @@ const orderController = {
           },
         ],
       });
-
-      // cityId
-      const city = await db.City.findOne({
-        where: {
-          city_name: cart[0]["Stock.Branch.city"],
-        },
-      });
-      const cityId = city.dataValues.city_id;
 
       // Order weight
       const weight = cart.reduce((prev, curr) => {
@@ -589,8 +588,9 @@ const orderController = {
   //
   updateStatus: async (req, res) => {
     try {
+      console.log("MASUK");
       const { status, OrderId } = req.body;
-      console.log(status);
+      console.log({ this: status });
 
       const data = await db.OrderDetail.findAll({
         where: {
@@ -847,6 +847,53 @@ const orderController = {
         },
       });
       return await db.Order.findAll().then((result) => res.send(result));
+    } catch (err) {
+      console.log(err.message);
+      return res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
+  deleteOrderImage: async (req, res) => {
+    try {
+      const id = req.params.id;
+
+      // Find the order to get the payment image URL
+      const order = await db.Order.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!order) {
+        return res.status(404).send({ message: "Order not found" });
+      }
+
+      // Extract the filename from the payment_url
+      const paymentImageUrl = order.payment_url;
+      const filename = paymentImageUrl.split("/").pop();
+
+      // Construct the file path
+      const filePath = path.join(__dirname, "../public/paymentImg", filename);
+
+      // Delete the file if it exists
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+
+      // Update the order's payment_url to null
+      await db.Order.update(
+        {
+          payment_url: null,
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+
+      res.status(200).send("Payment image deleted successfully");
     } catch (err) {
       console.log(err.message);
       return res.status(500).send({

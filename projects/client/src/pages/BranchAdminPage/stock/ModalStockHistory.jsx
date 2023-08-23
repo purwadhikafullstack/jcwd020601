@@ -40,6 +40,8 @@ export default function ModalStockHistory({ isOpen, onClose, id, name }) {
     }
   }, [isOpen]);
 
+  // console.log(id);
+
   return (
     <>
       <Text>Stock History</Text>
