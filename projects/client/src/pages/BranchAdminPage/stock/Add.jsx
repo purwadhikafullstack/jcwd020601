@@ -71,7 +71,7 @@ export default function Add({ getData }) {
   useEffect(() => {
     fetchData();
   }, [onOpen, onClose]);
-  // console.log(formik.values);
+  console.log(formik.values);
   console.log(book);
   return (
     <>

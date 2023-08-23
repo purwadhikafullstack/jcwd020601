@@ -28,6 +28,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const inputFileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [category, setCategory] = useState([]);
   const [image, setImage] = useState(icon);
   // console.log(id);
   const formik = useFormik({
@@ -44,7 +45,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       dimension: "",
       price: "",
       rating: "",
-      CategoryId: "",
+      CategoryId: null,
     },
     validationSchema: Yup.object({
       title: Yup.string().required("required!"),
@@ -72,6 +73,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       dimension: Yup.string().required("required!"),
       price: Yup.number().required("required! number"),
       rating: Yup.string().required("required!"),
+      CategoryId: Yup.number().required("Required!"),
     }),
     onSubmit: async (values, { resetForm }) => {
       const formData = new FormData();
@@ -136,7 +138,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
           dimension: res.data.value.dimension,
           price: res.data.value.price,
           rating: res.data.value.rating,
-          // DiscountId: res.data.DiscountId,
+          CategoryId: res.data.value.CategoryId,
         });
       })
       .catch((error) => {
@@ -144,9 +146,15 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       });
   };
 
+  const getCategory = async () => {
+    let response = await api().get("/category/");
+    setCategory(response.data.result);
+  };
   useEffect(() => {
     getDataDetail();
-  }, [id]);
+    getCategory();
+  }, [id, getData]);
+  console.log(formik.values);
   return (
     <>
       <Text>Edit Data</Text>
@@ -263,6 +271,26 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
                   onChange={formik.handleChange}
                 />
                 <Text color={"red.800"}>{formik.errors.description}</Text>
+              </Box>
+              <Box>
+                <FormLabel>Pilih Category</FormLabel>
+                <Select
+                  placeholder="Category"
+                  name="CategoryId"
+                  onChange={(e) => {
+                    formik.handleChange(e);
+                    const CategoryId = parseInt(e.target.value);
+                    formik.setFieldValue("CategoryId", CategoryId);
+                  }}
+                  value={formik.values.CategoryId}
+                >
+                  {category.map((val, idx) => (
+                    <option key={val.id} value={val.id}>
+                      {val.category}
+                    </option>
+                  ))}
+                </Select>
+                <Text color={"red.800"}>{formik.errors.CategoryId}</Text>
               </Box>
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 <FormLabel>Rating</FormLabel>
