@@ -298,29 +298,53 @@ const orderController = {
   getSalesOnLastWeek: async (req, res) => {
     //INCOMPLETE
     try {
-      let sales = 0;
-      const Order = await db.Order.findAll({
+      //   let sales = 0;
+      //   const Order = await db.Order.findAll({
+      //     where: {
+      //       [Op.and]: [
+      //         { Status: "delivery confirm" },
+      //         {
+      //           createdAt: {
+      //             [db.Sequelize.Op.gte]: moment()
+      //               .subtract(1, "w")
+      //               .startOf("day")
+      //               .format(),
+      //           },
+      //         },
+      //       ],
+      //     },
+      //   });
+      //   Order.map((val) => {
+      //     sales = val.total + sales;
+      //   });
+      //   return res.send({
+      //     Date: "From Last Week",
+      //     TotalSales: JSON.stringify(sales),
+      //   });
+      const today = new Date();
+      const oneWeekAgo = new Date(today);
+      oneWeekAgo.setDate(today.getDate() - 7);
+      const weeklySales = await db.Order.findAll({
+        attributes: [
+          [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
+          [Sequelize.fn("sum", Sequelize.col("total")), "total_sales"],
+        ],
         where: {
-          [Op.and]: [
-            { Status: "delivery confirm" },
-            {
-              createdAt: {
-                [db.Sequelize.Op.gte]: moment()
-                  .subtract(1, "w")
-                  .startOf("day")
-                  .format(),
-              },
-            },
-          ],
+          status: "delivery confirm",
+          createdAt: {
+            [Sequelize.Op.between]: [oneWeekAgo, today],
+          },
         },
+        group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
+        raw: true,
       });
-      Order.map((val) => {
-        sales = val.total + sales;
-      });
-      return res.send({
-        Date: "From Last Week",
-        TotalSales: JSON.stringify(sales),
-      });
+      let max = Math.max(
+        ...weeklySales.map((item) => parseInt(item.total_sales))
+      );
+      let highest = weeklySales.filter(
+        (item) => parseInt(item.total_sales) === max
+      );
+      res.send({ weeklySales: weeklySales, highest: highest[0] });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({

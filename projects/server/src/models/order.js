@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize) => {
       shipping: Sequelize.INTEGER,
       courier: Sequelize.STRING,
       weight: Sequelize.INTEGER,
-      TransactionId: Sequelize.STRING,
+      invoiceCode: Sequelize.STRING,
     },
     {
       paranoid: true,

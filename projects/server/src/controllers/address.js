@@ -104,7 +104,7 @@ const addressController = {
       let min = Math.min(...result.map((item) => item.distance));
       let lowest = result.filter((item) => item.distance === min);
       if (lowest[0].distance <= 50) {
-        return res.send(result);
+        return res.send(...lowest);
       }
       return res.send({
         message: "Branch Terdekat Melebihi 50km",
