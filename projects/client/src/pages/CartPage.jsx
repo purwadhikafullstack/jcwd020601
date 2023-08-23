@@ -19,6 +19,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
+  useToast,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import { useEffect, useRef, useState } from "react";
@@ -29,6 +30,7 @@ import Shipping from "../components/Shipping";
 import { useSelector } from "react-redux";
 
 export default function CartPage() {
+  const toast = useToast();
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
@@ -50,14 +52,28 @@ export default function CartPage() {
   }, [shipping]);
 
   async function create() {
-    await api().post("order/v1", {
-      UserId: userSelector.id,
-      BranchId: orderSelector.BranchId,
-      AddressId: orderSelector.AddressId,
-      shipping: Number(shipping),
-      courier,
-    });
-    return nav("/order");
+    try {
+      const result = await api().post("order/v1", {
+        UserId: userSelector.id,
+        BranchId: orderSelector.BranchId,
+        AddressId: orderSelector.AddressId,
+        shipping: Number(shipping),
+        courier,
+      });
+      return nav("/order/" + result.data.id);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: error.response.data.message,
+        position: "top",
+        containerStyle: {
+          maxWidth: "30%",
+        },
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
   }
 
   return (
@@ -90,6 +106,8 @@ export default function CartPage() {
               total={total}
               setCourier={setCourier}
               courier={courier}
+              // BranchId={orderSelector.BranchId}
+              // AddressId={orderSelector.AddressId}
             ></Shipping>
             {/* Shipping */}
             <Flex

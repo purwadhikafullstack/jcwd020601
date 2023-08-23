@@ -11,11 +11,34 @@ import {
   Flex,
   Icon,
   Image,
+  Center,
 } from "@chakra-ui/react";
 import { FcImageFile, FcViewDetails } from "react-icons/fc";
+import { MdCancelPresentation } from "react-icons/md";
+import { api } from "../../../api/api";
 
 export default function ModalPayment(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  // Update Status
+  async function update(status) {
+    try {
+      // console.log(e.target.value);
+      // console.log(val.id);
+      await api().patch("/order/v2/status", {
+        OrderId: props.val.id,
+        status: status,
+      });
+      onClose();
+      if (status === "Waiting for Payment") {
+        await api().delete("/order/img/" + props.val.id);
+      }
+      return props.fetch();
+    } catch (error) {
+      console.log(error);
+      alert(error.response.data);
+    }
+  }
   return (
     <>
       <Flex
@@ -34,12 +57,46 @@ export default function ModalPayment(props) {
           <ModalHeader>Payment Proof</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Image src={props.val.payment_url}></Image>
+            {props.val.payment_url ? (
+              <Image src={props.val.payment_url}></Image>
+            ) : (
+              <Center height={"300px"} fontSize={"8xl"}>
+                <Icon color={"grey"} as={MdCancelPresentation}></Icon>
+              </Center>
+            )}
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
+            <Button
+              colorScheme="red"
+              mr={3}
+              onClick={() => {
+                return update("canceled");
+              }}
+            >
+              Cancel Order
+            </Button>
+
+            <Button
+              colorScheme="orange"
+              mr={3}
+              // onClick={update("Waiting for Payment")}
+              onClick={() => {
+                // setStatus("Waiting for Payment");
+                return update("Waiting for Payment");
+              }}
+            >
+              Reject Payment
+            </Button>
+            <Button
+              colorScheme="green"
+              mr={3}
+              // onClick={update("process")}
+              onClick={() => {
+                return update("process");
+              }}
+            >
+              Accept Payment
             </Button>
           </ModalFooter>
         </ModalContent>

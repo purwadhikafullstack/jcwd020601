@@ -9,13 +9,25 @@ import {
 import Swal from "sweetalert2";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { AiOutlineDelete } from "react-icons/ai";
+import { MdHistoryEdu } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import Edit from "./Edit";
+import ModalStockHistory from "./ModalStockHistory";
 import { api } from "../../../api/api";
 import "../../../App.css";
 
 export default function Action({ id, name, getData }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: editModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose,
+  } = useDisclosure();
+  const {
+    isOpen: historyModalOpen,
+    onOpen: onHistoryModalOpen,
+    onClose: onHistoryModalClose,
+  } = useDisclosure();
   const deleteData = async () => {
     await api().delete(`/stock/v3/${id}`, {
       // headers: {
@@ -57,15 +69,28 @@ export default function Action({ id, name, getData }) {
           <MenuItem
             icon={<FiEdit />}
             onClick={() => {
-              onOpen();
+              onEditModalOpen();
             }}
           >
             <Edit
-              isOpen={isOpen}
-              onClose={onClose}
+              isOpen={editModalOpen}
+              onClose={onEditModalClose}
               id={id}
               getData={getData}
               // token={token}
+            />
+          </MenuItem>
+          <MenuItem
+            icon={<MdHistoryEdu />}
+            onClick={() => {
+              onHistoryModalOpen();
+            }}
+          >
+            <ModalStockHistory
+              isOpen={historyModalOpen}
+              onClose={onHistoryModalClose}
+              id={id}
+              name={name}
             />
           </MenuItem>
         </MenuList>
