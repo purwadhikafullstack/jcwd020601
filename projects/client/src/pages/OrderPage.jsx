@@ -34,7 +34,7 @@ export default function OrderPage() {
   async function fetch() {
     try {
       const result = await api().post("orderdetail/id?token=" + token, {
-        OrderId: location,
+        invoiceCode: location,
       });
       setLink(result.data[0].Order.payment_url);
       setStatus(result.data[0].Order.status);
