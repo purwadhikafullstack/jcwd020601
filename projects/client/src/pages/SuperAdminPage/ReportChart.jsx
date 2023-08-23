@@ -16,7 +16,10 @@ import {
   Bar,
 } from "recharts";
 import Greetings from "./Greetings";
+import { useEffect, useState } from "react";
+import { api } from "../../api/api";
 export default function ReportChart() {
+  const [chartData, setChartData] = useState();
   const userSelector = useSelector((state) => state.login.auth);
   const data = [
     {
@@ -94,6 +97,14 @@ export default function ReportChart() {
       No4Color: "#ffa425",
     },
   ];
+  async function fetchSalesOfAllTime() {
+    const result = await api().get(`/order/sales`);
+    setChartData(result.data);
+    console.log(result.data);
+  }
+  useEffect(() => {
+    fetchSalesOfAllTime();
+  }, []);
   return (
     <>
       <Flex
@@ -110,7 +121,38 @@ export default function ReportChart() {
           w={"100%"}
         >
           <Flex flexDir={"column"}>
-            <Greetings />
+            <Flex w={"100%"} borderBottom={"2px solid #787875"} pb={"10px"}>
+              <Flex alignItems={"center"} w={"100%"}>
+                <Flex flexDir={"column"}>
+                  <Flex
+                    fontSize={"1.2rem"}
+                    fontWeight={"700"}
+                    width={"200px"}
+                    color={"#2c5282"}
+                  >
+                    {"Welcome, " + userSelector.admin_name}
+                  </Flex>
+                  <Flex
+                    fontSize={"0.8rem"}
+                    fontWeight={"600"}
+                    color={"#787875"}
+                  >
+                    This is The Sales Report Section
+                  </Flex>
+                  <Flex></Flex>
+                </Flex>
+                <Center
+                  w={"100%"}
+                  fontWeight={"600"}
+                  color={"#787875"}
+                  fontSize={"1.2rem"}
+                  flexWrap={"wrap"}
+                >
+                  This is where you can see all the sales from different
+                  branches
+                </Center>
+              </Flex>
+            </Flex>
             <Flex>
               <Flex gap={"50px"}>
                 {objects.map((val, index) => {
@@ -164,9 +206,9 @@ export default function ReportChart() {
                 </Flex>
                 <Flex>
                   <AreaChart
-                    width={600}
+                    width={400}
                     height={250}
-                    data={data}
+                    data={chartData?.weeklySales}
                     margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
                   >
                     <defs>
@@ -175,13 +217,16 @@ export default function ReportChart() {
                         <stop offset="95%" stopColor="8884d8" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <XAxis dataKey="name" />
-                    <YAxis />
+                    <XAxis dataKey="date" />
+                    <YAxis
+                      type="number"
+                      domain={[0, parseInt(chartData?.highest.total_sales)]}
+                    />
                     <CartesianGrid strokeDasharray="3 3" />
                     <Tooltip />
                     <Area
                       type="monotone"
-                      dataKey="uv"
+                      dataKey="total_sales"
                       stroke="#8884d8"
                       fillOpacity={1}
                       fill="url(#colorUv)"

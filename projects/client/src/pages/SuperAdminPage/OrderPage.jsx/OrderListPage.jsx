@@ -4,14 +4,10 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
-  Icon,
-  Select,
   useDisclosure,
   Center,
   Button,
@@ -20,13 +16,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../../api/api";
 import ModalPayment from "../../../components/admin/transaction/ModalPayment";
 import ModalDetails from "../../../components/admin/transaction/ModalDetails";
-import ModalConfirm from "../../../components/admin/transaction/ModalConfirm";
-import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
-import { BsFilterSquareFill } from "react-icons/bs";
-import { FiFilter } from "react-icons/fi";
-import { AiTwotoneSetting } from "react-icons/ai";
-import { GrSort } from "react-icons/gr";
 import ModalFilter from "./ModalFilter";
 import Greetings from "../Greetings";
 
@@ -36,11 +26,10 @@ export default function BranchOrder() {
   const [filtered, setFiltered] = useState(false);
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(0);
-  const modalFilter = useDisclosure();
-  // const [limit, setLimit] = useState(6);
   const [rows, setRows] = useState(0);
+  const modalFilter = useDisclosure();
 
-  async function submit() {
+  async function submitFilter() {
     const result = await api().post(
       `/order/filter?page=${page}&limit=${5}`,
       filter
@@ -60,7 +49,11 @@ export default function BranchOrder() {
   }
 
   useEffect(() => {
-    fetch();
+    if (filter) {
+      submitFilter();
+    } else {
+      fetch();
+    }
   }, [page]);
 
   //
@@ -172,14 +165,12 @@ export default function BranchOrder() {
             pageRangeDisplayed={3}
           />
         </TableContainer>
-        <Flex>
-          <ModalFilter
-            filter={filter}
-            setFilter={setFilter}
-            modalFilter={modalFilter}
-            submit={submit}
-          />
-        </Flex>
+        <ModalFilter
+          filter={filter}
+          setFilter={setFilter}
+          modalFilter={modalFilter}
+          submitFilter={submitFilter}
+        />
       </Box>
     </>
   );

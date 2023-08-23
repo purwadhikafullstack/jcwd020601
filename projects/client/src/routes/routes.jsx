@@ -30,6 +30,7 @@ import SuperAdminPageProduct from "../pages/SuperAdminPage/ProductPage";
 import SuperAdminPageBranchAdmin from "../pages/SuperAdminPage/AdminManagementPage";
 import BranchOrderPage from "../pages/BranchAdminPage/BranchOrderPage";
 import AdminPage from "../pages/BranchAdminPage";
+import FIlterPage from "../pages/FilterPage";
 import SuperAdminPageCategory from "../pages/SuperAdminPage/CategoryPage";
 
 import SuperAdminPageOrder from "../pages/SuperAdminPage/OrderPage.jsx";
@@ -71,6 +72,14 @@ const routes = [
     element={
       <ProtectedPage>
         <DetailBookCardPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
+    path="/products/filter"
+    element={
+      <ProtectedPage>
+        <FIlterPage />
       </ProtectedPage>
     }
   ></Route>,
@@ -122,14 +131,7 @@ const routes = [
       </ProtectedPage>
     }
   ></Route>,
-  // <Route
-  //   path="/admin/product"
-  //   element={
-  //     <ProtectedPage needLoginAdmin={true}>
-  //       <ProductPage />
-  //     </ProtectedPage>
-  //   }
-  // ></Route>,
+
   <Route
     path="/admin/discount"
     element={
@@ -138,14 +140,7 @@ const routes = [
       </ProtectedPage>
     }
   ></Route>,
-  // <Route
-  //   path="/admin/category"
-  //   element={
-  //     <ProtectedPage needLoginAdmin={true}>
-  //       <CategoryPage />
-  //     </ProtectedPage>
-  //   }
-  // ></Route>,
+
   <Route
     path="/admin/order"
     element={
@@ -171,7 +166,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/superadminpage/products"
+    path="/superadminpage/product"
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPageProduct />
@@ -179,7 +174,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/superadminpage/branchadmins"
+    path="/superadminpage/branchadmin"
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPageBranchAdmin />
@@ -187,7 +182,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/superadminpage/categorys"
+    path="/superadminpage/category"
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPageCategory />

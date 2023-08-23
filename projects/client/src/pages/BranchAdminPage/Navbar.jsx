@@ -75,7 +75,7 @@ function DesktopNav() {
     return;
   }
   async function verify() {
-    await api()
+    await api
       .get("auth/generate-token/emailverify", {
         params: {
           email: userSelector.email,
@@ -106,8 +106,25 @@ function DesktopNav() {
                 <Avatar border={"2px white solid"} w={45} h={45}></Avatar>
               </Flex>
             </MenuButton>
-            <MenuList my={5} position={"fixed"} left={"-6em"}>
-              <Flex padding={"0 0.5rem"} flexDir={"column"} gap={"0.4rem"}>
+            <MenuList
+              my={5}
+              p={0}
+              position={"fixed"}
+              left={"-6em"}
+              // bgColor={"yellow.100"}
+              display={"flex"}
+              flexDir={"column"}
+            >
+              {/* <Flex
+                // padding={"0 0.5rem"}
+                flexDir={"column"}
+                gap={"0.4rem"}
+                p={0}
+                display={"flex"}
+                // flexDir={"column"}
+                position={"fixed"}
+                left={"-6em"}
+              >
                 <Flex
                   gap={"1rem"}
                   justifyContent={"center"}
@@ -129,7 +146,31 @@ function DesktopNav() {
                 >
                   Full Profile
                 </Center>
-              </Flex>
+              </Flex> */}
+              <Box
+                onClick={logout}
+                cursor={"pointer"}
+                w={"100%"}
+                h={12}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+              >
+                Logout
+              </Box>
+              <Box
+                onClick={verify}
+                cursor={"pointer"}
+                w={"100%"}
+                h={12}
+                display={"flex"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+              >
+                Verify Account
+              </Box>
             </MenuList>
           </Menu>
         </Box>
