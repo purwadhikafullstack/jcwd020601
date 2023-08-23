@@ -16,15 +16,15 @@ const orderDetailController = {
   },
   getById: async (req, res) => {
     try {
-      const { OrderId } = req.body;
+      const { invoiceCode } = req.body;
       const Order = await db.Order.findOne({
         where: {
-          id: OrderId,
+          invoiceCode,
         },
       });
       const OrderDetail = await db.OrderDetail.findAll({
         where: {
-          OrderId,
+          OrderId: Order.id,
         },
         include: [
           {
