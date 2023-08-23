@@ -10,21 +10,11 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { api } from "../../../api/api";
-
 export default function ModalFilter(props) {
-  const transactionStatuses = [
-    "waiting for payment",
-    "waiting for payment confirmation",
-    "process",
-    "sending",
-    "delivery confirm",
-    "canceled",
-  ];
   const [branch, setBranch] = useState([]);
   function inputHandler(input) {
     const { value, id } = input.target;
@@ -74,6 +64,17 @@ export default function ModalFilter(props) {
               <Flex flexDir={"column"} gap={"10px"} w={"100%"}>
                 <Flex flexDir={"column"} gap={"5px"} w={"100%"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
+                    AdminId
+                  </Flex>
+                  <Input
+                    onChange={inputHandler}
+                    id="AdminId"
+                    w={"100%"}
+                    variant={"filled"}
+                  ></Input>
+                </Flex>
+                <Flex flexDir={"column"} gap={"5px"}>
+                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
                     BranchName
                   </Flex>
                   <Select
@@ -86,35 +87,6 @@ export default function ModalFilter(props) {
                       return (
                         <>
                           <option value={val.name}>{val.name}</option>
-                        </>
-                      );
-                    })}
-                  </Select>
-                </Flex>
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    OrderId
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="OrderId"
-                    variant={"filled"}
-                  ></Input>
-                </Flex>{" "}
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Transaction Status
-                  </Flex>
-                  <Select
-                    onChange={inputHandler}
-                    id="status"
-                    variant={"filled"}
-                    placeholder="Select Status"
-                  >
-                    {transactionStatuses.map((val) => {
-                      return (
-                        <>
-                          <option value={val}>{val}</option>
                         </>
                       );
                     })}

@@ -166,7 +166,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/superadminpage/products"
+    path="/superadminpage/product"
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPageProduct />
@@ -174,7 +174,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/superadminpage/branchadmins"
+    path="/superadminpage/branchadmin"
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPageBranchAdmin />
@@ -182,7 +182,7 @@ const routes = [
     }
   ></Route>,
   <Route
-    path="/superadminpage/categorys"
+    path="/superadminpage/category"
     element={
       <ProtectedPage needSuperAdminLogin={true}>
         <SuperAdminPageCategory />
