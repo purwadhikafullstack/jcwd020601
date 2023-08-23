@@ -37,6 +37,58 @@ const adminController = {
       });
     }
   },
+  getByFilter: async (req, res) => {
+    try {
+      const { AdminId, BranchName, before, after } = req.body;
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      // const status = r
+      const whereClause = {
+        createdAt: {
+          [Op.and]: {
+            [Op.gte]: new Date(after || "1900-01-01"),
+            [Op.lte]: new Date(before || "2100-10-10"),
+          },
+        },
+      };
+      const whereClause2 = {};
+      if (BranchName) {
+        whereClause2.name = BranchName;
+      }
+      if (AdminId) {
+        whereClause.id = AdminId;
+      }
+      const offset = limit * page;
+
+      const Admin = await db.Admin.findAll({
+        where: whereClause,
+        offset: offset,
+        limit: limit,
+        include: {
+          model: db.Branch,
+          where: whereClause2,
+        },
+      });
+      const totalRows = await db.Admin.count({
+        where: whereClause,
+        offset: offset,
+        limit: limit,
+        include: {
+          model: db.Branch,
+          where: whereClause2,
+        },
+      });
+
+      const totalPage = Math.ceil(totalRows / limit);
+
+      return res.send({ Admin, page, limit, totalRows, totalPage });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   editAdmin: async (req, res) => {
     try {
       const { role, email, phone, password, BranchId } = req.body;

@@ -49,15 +49,15 @@ export default function ProtectedPage({
     ) {
       console.log("f");
       setIsLoading(false);
-      return nav("/adminpage");
+      return nav("/admin");
     } else if (needLogin && userSelector?.role == "Admin-Branch") {
       console.log("g");
       setIsLoading(false);
-      return nav("/adminpage");
+      return nav("/admin");
     } else if (guestAndLogin && userSelector?.role == "Admin-Branch") {
       console.log("h");
       setIsLoading(false);
-      return nav("/adminpage");
+      return nav("/admin");
     } else if (needLogin && userSelector?.role == "Super-Admin") {
       console.log("i");
       setIsLoading(false);
