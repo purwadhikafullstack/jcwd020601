@@ -28,7 +28,9 @@ export default function DetailBookPage() {
     fetchProduct();
   }, [id]);
 
-  console.log(value.Book);
+  // console.log(value.Book?.title);
+  // console.log(value.Book);
+  console.log(value);
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -60,25 +62,47 @@ export default function DetailBookPage() {
             py={3}
           >
             <Box>
-              {value.Book?.Discount?.isPercent ? (
+              {value.Discount?.discount ? (
                 <>
-                  <Box
-                    w={12}
-                    h={8}
-                    position={"relative"}
-                    left={"152px"}
-                    // left={"152px"}
-                    borderTopRightRadius={"5px"}
-                    // top={"0px"}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    bgColor={"blue.100"}
-                  >
-                    <Text fontWeight={"bold"} color={"blue.900"}>
-                      {value.Book?.Discount?.discount}%
-                    </Text>
-                  </Box>
+                  {value.Discount?.isPercent ? (
+                    <>
+                      <Box
+                        w={14}
+                        h={8}
+                        // position={"absolute"}
+                        // left={"1px"}
+                        borderTopRightRadius={"5px"}
+                        // top={"0px"}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        bgColor={"blue.100"}
+                      >
+                        <Text color={"blue.900"}>
+                          -{value.Discount?.discount}%
+                        </Text>
+                      </Box>
+                    </>
+                  ) : (
+                    <>
+                      <Box
+                        w={20}
+                        h={8}
+                        borderTopRightRadius={"5px"}
+                        marginLeft={"50px"}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        bgColor={"blue.100"}
+                      >
+                        <Text fontSize="md">
+                          {Intl.NumberFormat().format(
+                            "-" + value.Discount?.discount
+                          )}
+                        </Text>
+                      </Box>
+                    </>
+                  )}
                 </>
               ) : (
                 <></>

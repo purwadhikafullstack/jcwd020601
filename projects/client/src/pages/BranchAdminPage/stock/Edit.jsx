@@ -23,9 +23,11 @@ import Swal from "sweetalert2";
 import * as Yup from "yup";
 import { useEffect, useState, useRef } from "react";
 import moment from "moment";
-import { api } from "../../../api/api";
+// import { api } from "../../../api/api";
+// api
 import "../../../App.css";
 import { useSelector } from "react-redux";
+import { api } from "../../../api/api";
 
 export default function Edit({ isOpen, onClose, id, getData, token }) {
   // useSelector
@@ -63,7 +65,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       //   Authorization: token,
       // },
     });
-    // console.log(typeof res.data.stock);
+    console.log(res);
     formik.setValues({
       ...formik.values,
       stock: res.data.stock,
@@ -78,12 +80,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
   };
   useEffect(() => {
     getDataDetail();
-  }, [getData]);
-
-  // console.log(id);
-  // console.log(formik.values);
-  // console.log(book);
-  // console.log(discount);
+  }, [getData, id]);
   return (
     <>
       <Text>Edit Data</Text>

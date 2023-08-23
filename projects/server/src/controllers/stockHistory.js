@@ -15,10 +15,11 @@ const stockHistoryController = {
     }
   },
   getById: async (req, res) => {
+    const { StockId } = req.body;
     try {
-      const StockHistory = await db.StockHistory.findOne({
+      const StockHistory = await db.StockHistory.findAll({
         where: {
-          id: req.params.id,
+          StockId,
         },
       });
       return res.send(StockHistory);

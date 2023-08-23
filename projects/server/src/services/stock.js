@@ -128,6 +128,7 @@ const stockServices = {
   },
   getById: async (id) => {
     try {
+      console.log(id);
       const Stock = await db.Stock.findOne({
         where: {
           id: id,
@@ -135,7 +136,6 @@ const stockServices = {
         include: [
           {
             model: db.Book,
-            // include: [db.Discount],
             required: true, // Inner join
           },
           {
@@ -143,11 +143,12 @@ const stockServices = {
             required: true, // Inner join
           },
           {
-            model: db.Branch,
-            required: true,
+            model: db.Discount,
+            // required: true, // Inner join
           },
         ],
       });
+      console.log(Stock);
       return Stock;
     } catch (err) {
       throw err;
@@ -155,23 +156,32 @@ const stockServices = {
   },
   insertStock: async ({ stock, BranchId, BookId, DiscountId }, transaction) => {
     try {
-      // const data =
-      await db.Stock.create(
+      const data = await db.Stock.create(
         {
           stock,
           BranchId,
           BookId,
           DiscountId,
-        },
-        {
-          transaction: transaction,
         }
+        // {
+        //   transaction: transaction,
+        // }
       );
+      console.log(data);
       // add to stockHistory
-      // await db.StockHistory.create({
-      //   StockId: data.id,
-      // });
-      let result = await db.Stock.findAll();
+      await db.StockHistory.create({
+        subject: "update",
+        type: "plus",
+        quantity: stock,
+        totalBefore: 0,
+        totalAfter: stock,
+        StockId: data.id,
+      });
+      let result = await db.Stock.findOne({
+        where: {
+          id: data.id,
+        },
+      });
       return result;
     } catch (err) {
       throw err;
@@ -183,7 +193,13 @@ const stockServices = {
     transaction
   ) => {
     try {
-      await db.Stock.update(
+      const Stock = await db.Stock.findOne({
+        where: {
+          id: id,
+        },
+      });
+
+      const data = await db.Stock.update(
         {
           stock,
           BranchId,
@@ -199,6 +215,21 @@ const stockServices = {
           transaction: transaction,
         }
       );
+      console.log(data);
+      let types;
+      if (stock >= Stock.stock) {
+        types = "plus";
+      } else {
+        types = "minus";
+      }
+      await db.StockHistory.create({
+        subject: "update",
+        type: types,
+        quantity: stock,
+        totalBefore: Stock.stock,
+        totalAfter: stock,
+        StockId: id,
+      });
       let result = await db.Stock.findOne({
         where: {
           id: id,

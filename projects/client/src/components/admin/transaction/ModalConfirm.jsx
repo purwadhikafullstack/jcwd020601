@@ -9,6 +9,7 @@ import {
   useDisclosure,
   Button,
   Select,
+  color,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { api } from "../../../api/api";
@@ -40,6 +41,16 @@ export default function ModalConfirm(props) {
         Update Status
       </Button> */}
       <Select
+        style={{
+          color:
+            props.val.status === "waiting for payment confirmation"
+              ? "blue"
+              : "initial",
+        }}
+        disabled={
+          props.val.status === "waiting for payment" ||
+          props.val.status === "waiting for payment confirmation"
+        }
         value={props.val.status}
         onChange={(e) => {
           setStatus(e.target.value);
