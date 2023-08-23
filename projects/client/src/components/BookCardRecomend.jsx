@@ -134,24 +134,50 @@ export default function BookCardRecomend() {
               // align={"center"}
             >
               <CardBody>
-                {val.Book?.Discount?.isPercent ? (
+                {val.Discount?.discount ? (
                   <>
-                    <Box
-                      w={12}
-                      h={8}
-                      position={"absolute"}
-                      left={"152px"}
-                      borderTopRightRadius={"5px"}
-                      top={"0px"}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      bgColor={"blue.100"}
-                    >
-                      <Text fontWeight={"bold"} color={"blue.900"}>
-                        {val.Book?.Discount?.discount}%
-                      </Text>
-                    </Box>
+                    {val.Discount?.isPercent ? (
+                      <>
+                        <Box
+                          w={14}
+                          h={8}
+                          position={"absolute"}
+                          left={"145px"}
+                          borderTopRightRadius={"5px"}
+                          top={"0px"}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          bgColor={"blue.100"}
+                        >
+                          <Text color={"blue.900"}>
+                            -{val.Discount?.discount}%
+                          </Text>
+                        </Box>
+                      </>
+                    ) : (
+                      <>
+                        <Box
+                          w={20}
+                          h={8}
+                          position={"absolute"}
+                          left={"122px"}
+                          borderTopRightRadius={"5px"}
+                          top={"0px"}
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          bgColor={"blue.100"}
+                        >
+                          <Text fontSize="md">
+                            {/* - */}
+                            {Intl.NumberFormat().format(
+                              "-" + val.Discount?.discount
+                            )}
+                          </Text>
+                        </Box>
+                      </>
+                    )}
                   </>
                 ) : (
                   <></>
