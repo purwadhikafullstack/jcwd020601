@@ -139,7 +139,7 @@ export default function BranchOrder() {
                     </Td>
                     <Td>
                       <Flex gap={"0.6rem"}>
-                        <ModalPayment val={val} />
+                        <ModalPayment val={val} fetch={fetch} />
                         <ModalDetails val={val} />
                       </Flex>
                     </Td>

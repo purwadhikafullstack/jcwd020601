@@ -29,7 +29,7 @@ export default function ModalStockHistory({ isOpen, onClose, id, name }) {
   // const { isOpen, onOpen, onClose } = useDisclosure();
   const [stock, setStock] = useState();
   async function fetch() {
-    const data = await api.post("/stockhistory/id", {
+    const data = await api().post("/stockhistory/id", {
       StockId: id,
     });
     setStock(data.data);
@@ -39,6 +39,8 @@ export default function ModalStockHistory({ isOpen, onClose, id, name }) {
       fetch();
     }
   }, [isOpen]);
+
+  // console.log(id);
 
   return (
     <>
