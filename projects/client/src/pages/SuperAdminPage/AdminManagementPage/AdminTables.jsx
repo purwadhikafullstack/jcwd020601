@@ -18,6 +18,8 @@ import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
 import AddAdminButton from "./AddBranchAdmin";
 import ModalFilter from "./ModalFilter";
+import ModalEditAdmin from "./ModalEditAdmin";
+import ModalSort from "./ModalSort";
 export default function AdminTables(props) {
   const userSelector = useSelector((state) => state.login.auth);
   return (
@@ -65,13 +67,13 @@ export default function AdminTables(props) {
               justifyContent={"space-between"}
             >
               <Flex gap={"20px"} alignItems={"center"}>
-                <Flex
+                <Button
+                  isDisabled={props.filtered ? false : true}
                   border={"2px #2c5282 solid"}
                   p={"10px"}
                   width={"120px"}
                   borderRadius={"10px"}
                   fontWeight={700}
-                  cursor={"pointer"}
                   onClick={() => {
                     props.getAllAdminBranch();
                     props.setFilter();
@@ -80,8 +82,8 @@ export default function AdminTables(props) {
                   bgColor={props.filtered ? "#2c5282" : "white"}
                   color={props.filtered ? "white" : "#2c5282"}
                 >
-                  {props.filtered ? "Filtered : On" : "Filtered : Off"}
-                </Flex>
+                  Close Filter
+                </Button>
                 <AddAdminButton getAllAdminBranch={props.getAllAdminBranch} />
               </Flex>
               <Flex alignItems={"center"} gap={"30px"} mr={"90px"}>
@@ -92,7 +94,11 @@ export default function AdminTables(props) {
                 >
                   Filter
                 </Button>
-                <Button bgColor={"#2c5282"} color={"white"}>
+                <Button
+                  onClick={props.modalSort.onOpen}
+                  bgColor={"#2c5282"}
+                  color={"white"}
+                >
                   Sort By
                 </Button>
               </Flex>
@@ -122,8 +128,13 @@ export default function AdminTables(props) {
                     <Td>{val.email}</Td>
                     <Td>
                       <Flex gap={"0.6rem"}>
-                        <ModalPayment val={val} />
-                        <ModalDetails val={val} />
+                        <ModalEditAdmin
+                          getAllAdminBranch={props.getAllAdminBranch}
+                          id={val.id}
+                          name={val.name}
+                          phone={val.phone}
+                          email={val.email}
+                        />
                       </Flex>
                     </Td>
                   </Tr>
@@ -150,6 +161,12 @@ export default function AdminTables(props) {
           filter={props.filter}
           setFilter={props.setFilter}
           modalFilter={props.modalFilter}
+          submitFilter={props.submitFilter}
+        />
+        <ModalSort
+          sort={props.sort}
+          setSort={props.setSort}
+          modalSort={props.modalSort}
           submitFilter={props.submitFilter}
         />
       </Box>

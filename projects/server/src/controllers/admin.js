@@ -39,46 +39,44 @@ const adminController = {
   },
   getByFilter: async (req, res) => {
     try {
-      const { AdminId, BranchName, before, after } = req.body;
+      const { AdminId, BranchName, before, after, sort } = req.body;
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
-      // const status = r
+      const offset = limit * page;
       const whereClause = {
-        createdAt: {
-          [Op.and]: {
-            [Op.gte]: new Date(after || "1900-01-01"),
-            [Op.lte]: new Date(before || "2100-10-10"),
+        offset: offset,
+        limit: limit,
+        where: {
+          createdAt: {
+            [Op.and]: {
+              [Op.gte]: new Date(after || "1900-01-01"),
+              [Op.lte]: new Date(before || "2100-10-10"),
+            },
           },
+          role: "Admin-Branch",
+        },
+        include: {
+          model: db.Branch,
+          as: "Branch",
         },
       };
-      const whereClause2 = {};
       if (BranchName) {
-        whereClause2.name = BranchName;
+        whereClause.include.where = { name: BranchName };
       }
       if (AdminId) {
-        whereClause.id = AdminId;
+        whereClause.where.id = AdminId;
       }
-      const offset = limit * page;
-
-      const Admin = await db.Admin.findAll({
-        where: whereClause,
-        offset: offset,
-        limit: limit,
-        include: {
-          model: db.Branch,
-          where: whereClause2,
-        },
-      });
-      const totalRows = await db.Admin.count({
-        where: whereClause,
-        offset: offset,
-        limit: limit,
-        include: {
-          model: db.Branch,
-          where: whereClause2,
-        },
-      });
-
+      if (sort?.sortedBy == "branchName") {
+        whereClause.order = [
+          [{ model: db.Branch, as: "Branch" }, "name", sort.asc],
+        ];
+      } else if (sort.sortedBy) {
+        whereClause.order = [[sort.sortedBy, sort.asc]];
+      } else {
+        whereClause.order = [["id", sort.asc]];
+      }
+      const Admin = await db.Admin.findAll(whereClause);
+      const totalRows = await db.Admin.count(whereClause);
       const totalPage = Math.ceil(totalRows / limit);
 
       return res.send({ Admin, page, limit, totalRows, totalPage });
@@ -91,15 +89,10 @@ const adminController = {
   },
   editAdmin: async (req, res) => {
     try {
-      const { role, email, phone, password, BranchId } = req.body;
+      const { role, name, email, phone, password, BranchId } = req.body;
+      const hashPassword = await bcrypt.hash(password, 10);
       await db.Admin.update(
-        {
-          role,
-          email,
-          phone,
-          password,
-          BranchId,
-        },
+        { name, role, email, phone, password: hashPassword, BranchId },
         {
           where: {
             id: req.params.id,
@@ -141,26 +134,13 @@ const adminController = {
   },
   getAllBranchAdminWithPaginate: async (req, res) => {
     try {
+      const { sort } = req.body;
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
-      // const status = req.query.status;
-      // const search = req.query.search_query || "";
-      // const condition = {
-      //   BranchId,
-      //   status: "waiting for payment",
-      // };
-
-      // if (status !== undefined) {
-      //   condition.status = status;
-      // }
-      // console.log(condition);
       const offset = limit * page;
-
-      // Count
       const totalRows = await db.Admin.count({});
       const totalPage = Math.ceil(totalRows / limit);
-
-      const Admin = await db.Admin.findAll({
+      const whereAdmin = {
         offset: offset,
         limit: limit,
         where: {
@@ -168,8 +148,19 @@ const adminController = {
         },
         include: {
           model: db.Branch,
+          as: "Branch",
         },
-      });
+      };
+      if (sort?.sortedBy == "branchName") {
+        whereAdmin.order = [
+          [{ model: db.Branch, as: "Branch" }, "name", sort.asc],
+        ];
+      } else if (sort) {
+        whereAdmin.order = [[sort.sortedBy, sort.asc]];
+      } else {
+      }
+
+      const Admin = await db.Admin.findAll(whereAdmin);
 
       return res.send({ Admin, page, limit, totalRows, totalPage });
     } catch (err) {

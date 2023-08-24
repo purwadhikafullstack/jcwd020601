@@ -79,16 +79,7 @@ db.Stock.belongsTo(db.Branch, {
 db.OrderDetail.belongsTo(db.Order, {
   foreignKey: "OrderId",
 });
-// db.Category.belongsToMany(db.Book, { through: db.BooksCategory });
-// db.Book.belongsToMany(db.Category, { through: db.BooksCategory });
-// db.Book.belongsTo(db.Discount, {
-//   foreignKey: "DiscountId",
-// });
-// db.Discount.hasOne(db.Book);
-// db.Book.belongsTo(db.Category, {
-//   foreignKey: "CategoryId",
-// });
-// db.Category.hasOne(db.Book);
+
 db.Book.belongsTo(db.Category);
 db.Discount.belongsTo(db.Branch, {
   foreignKey: "BranchId",
@@ -124,5 +115,15 @@ db.Order.belongsTo(db.Branch, {
   foreignKey: "BranchId",
 });
 db.Address.hasOne(db.Order);
-db.OrderDetail.belongsTo(db.Stock);
+db.OrderDetail.belongsTo(db.Stock, { foreignKey: "StockId" });
+// db.Category.belongsToMany(db.Book, { through: db.BooksCategory });
+// db.Book.belongsToMany(db.Category, { through: db.BooksCategory });
+// db.Book.belongsTo(db.Discount, {
+//   foreignKey: "DiscountId",
+// });
+// db.Discount.hasOne(db.Book);
+// db.Book.belongsTo(db.Category, {
+//   foreignKey: "CategoryId",
+// });
+// db.Category.hasOne(db.Book);
 module.exports = db;

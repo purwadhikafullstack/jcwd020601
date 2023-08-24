@@ -25,6 +25,7 @@ import ModalConfirm from "../../../components/admin/transaction/ModalConfirm";
 import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
 import { BiSearchAlt2 } from "react-icons/bi";
+import Greetings from "../Greetings";
 export default function BranchOrder() {
   const [trans, setTrans] = useState();
   const userSelector = useSelector((state) => state.login.auth);
@@ -72,12 +73,14 @@ export default function BranchOrder() {
         // display={"flex"}
         // flexDirection={"column"}
         marginLeft={60}
-        marginTop={"6em"}
         // h={"80vh"}
         h={"100%"}
         // bgColor={"red"}
         overflow={"auto"}
       >
+
+             <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
+          <Greetings />     
         <TableContainer>
           <Table variant="simple">
             <Thead>
@@ -162,6 +165,7 @@ export default function BranchOrder() {
             />
           </Box>
         </TableContainer>
+</Flex>
         <Flex>
           <Flex></Flex>
         </Flex>

@@ -9,17 +9,20 @@ import Navbar from "../Navbar";
 export default function SuperAdminPageBranchAdmin() {
   const [admins, setAdmins] = useState([]);
   const [filter, setFilter] = useState();
+  const [sort, setSort] = useState({
+    asc: "ASC",
+  });
   const [filtered, setFiltered] = useState(false);
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState(0);
   const modalFilter = useDisclosure();
-
+  const modalSort = useDisclosure();
   async function submitFilter() {
-    const result = await api().post(
-      `/admin/filter?page=${page}&limit=${5}`,
-      filter
-    );
+    const result = await api().post(`/admin/filter?page=${page}&limit=${5}`, {
+      ...filter,
+      sort,
+    });
     setPage(result.data.page);
     setRows(result.data.totalRows);
     setPages(result.data.totalPage);
@@ -57,10 +60,13 @@ export default function SuperAdminPageBranchAdmin() {
                 <Flex flexDir={"column"} w={"100%"}>
                   <Flex w={"100%"}>
                     <AdminTables
+                      setSort={setSort}
                       setFilter={setFilter}
                       setFiltered={setFiltered}
+                      sort={sort}
                       filter={filter}
                       filtered={filtered}
+                      modalSort={modalSort}
                       modalFilter={modalFilter}
                       submitFilter={submitFilter}
                       pages={pages}
