@@ -214,6 +214,13 @@ function DesktopNav({ callback, keyword, category }) {
                   fontWeight={"bold"}
                   fontSize={{ sm: "md", md: "xl" }}
                   color={"blue.700"}
+                  display={{
+                    base: "none",
+                    sm: "none",
+                    md: "none",
+                    lg: "none",
+                    xl: "block",
+                  }}
                 >
                   Kategori
                 </Text>
@@ -321,7 +328,7 @@ function DesktopNav({ callback, keyword, category }) {
                   color: "red.700",
                 },
               }}
-              w={{ md: "15em", lg: "30em" }}
+              w={{ sm: "15em", md: "18em", lg: "30em" }}
               focusBorderColor="transparent"
               _focus={{ borderBottom: "1.6px solid grey" }}
             />

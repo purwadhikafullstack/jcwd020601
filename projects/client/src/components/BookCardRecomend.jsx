@@ -127,11 +127,13 @@ export default function BookCardRecomend() {
         borderRadius={"10px"}
       >
         {value.map((val, idx) => (
-          <Link to={`/products/detail/${val.id}`} cursor={"pointer"}>
+          <Link key={idx} to={`/products/detail/${val.id}`} cursor={"pointer"}>
             <Card
-              key={idx}
               w={{ base: "250px", sm: "250px", md: "250px", lg: "200px" }}
-              // align={"center"}
+              h={{
+                base: "550px",
+                lg: "460px",
+              }}
             >
               <CardBody>
                 {val.Discount?.discount ? (
@@ -142,7 +144,11 @@ export default function BookCardRecomend() {
                           w={14}
                           h={8}
                           position={"absolute"}
-                          left={"145px"}
+                          left={{
+                            base: "195px",
+                            md: "195px",
+                            lg: "145px",
+                          }}
                           borderTopRightRadius={"5px"}
                           top={"0px"}
                           display="flex"
@@ -161,7 +167,11 @@ export default function BookCardRecomend() {
                           w={20}
                           h={8}
                           position={"absolute"}
-                          left={"122px"}
+                          left={{
+                            base: "170px",
+                            md: "170px",
+                            lg: "122px",
+                          }}
                           borderTopRightRadius={"5px"}
                           top={"0px"}
                           display="flex"
@@ -189,13 +199,7 @@ export default function BookCardRecomend() {
                   w={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}
                   h={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}
                 />
-                {/* <Image
-                  src={val.Book?.book_url}
-                  alt="Green double couch with wooden legs"
-                  borderRadius="lg"
-                  w={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
-                  h={{ base: "200px", sm: "200px", md: "200px", lg: "150px" }}
-                /> */}
+
                 <Flex flexDir={"column"} my={5} gap={3}>
                   <Text color="#4A5568" as={"i"}>
                     {val.Book?.author.length > 15
@@ -208,11 +212,11 @@ export default function BookCardRecomend() {
                       : val.Book?.title}
                   </Text>
                   <Text color="blue.600" fontSize="md">
-                    {val.Book?.Discount?.discount ? (
+                    {/* {val.Book?.Discount?.discount ? (
                       <>
                         {val.Book?.Discount?.isPercent ? (
                           <>
-                            {/* val.Book?.price */}
+                            
                             <Text fontSize="xl">
                               Rp.{Intl.NumberFormat().format(val.Book?.price)}
                             </Text>
@@ -228,6 +232,43 @@ export default function BookCardRecomend() {
                                 Rp.{" "}
                                 {Intl.NumberFormat().format(
                                   val.Book?.price - val.Book?.Discount?.discount
+                                )}
+                              </Text>
+                            </Box>
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Text fontSize="xl">
+                          Rp. {Intl.NumberFormat().format(val.Book?.price)}
+                        </Text>
+                      </>
+                    )} */}
+                    {val.Discount?.discount ? (
+                      <>
+                        {val.Discount?.isPercent ? (
+                          <>
+                            <Text fontSize="xl">
+                              Rp.{Intl.NumberFormat().format(val.Book?.price)}
+                            </Text>
+                          </>
+                        ) : (
+                          <>
+                            <Box gap={3} display={"flex"} flexDir={"column"}>
+                              <Text
+                                fontSize="md"
+                                my={0}
+                                as={"del"}
+                                color={"blackAlpha.500"}
+                              >
+                                Rp.{" "}
+                                {Intl.NumberFormat().format(val.Book?.price)}
+                              </Text>
+                              <Text fontSize="xl">
+                                Rp.{" "}
+                                {Intl.NumberFormat().format(
+                                  val.Book?.price - val.Discount?.discount
                                 )}
                               </Text>
                             </Box>

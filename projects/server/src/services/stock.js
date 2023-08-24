@@ -154,6 +154,49 @@ const stockServices = {
       throw err;
     }
   },
+  getPrice: async (place, price, category) => {
+    try {
+      const orderConfig = [];
+      if (price !== null && price !== undefined) {
+        orderConfig.push([db.Book, "price", price]);
+      }
+      const Stock = await db.Stock.findAll({
+        include: [
+          {
+            model: db.Book,
+            required: true, // Inner join
+            include: category
+              ? [
+                  {
+                    model: db.Category,
+                    required: true,
+                    where: {
+                      id: category,
+                    },
+                  },
+                ]
+              : [],
+          },
+          {
+            model: db.Branch,
+            required: true, // Inner join
+          },
+          {
+            model: db.Discount,
+            // required: true, // Inner join
+          },
+        ],
+        where: {
+          [Op.and]: [{ BranchId: place }],
+        },
+        order: orderConfig,
+      });
+      console.log(Stock);
+      return Stock;
+    } catch (err) {
+      throw err;
+    }
+  },
   insertStock: async ({ stock, BranchId, BookId, DiscountId }, transaction) => {
     try {
       const data = await db.Stock.create(
