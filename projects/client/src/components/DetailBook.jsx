@@ -9,16 +9,26 @@ import {
   Button,
   OrderedList,
   UnorderedList,
+  useToast,
+  Input,
 } from "@chakra-ui/react";
 import { MdCheckCircle, MdSettings } from "react-icons/md";
 import icon from "../assets/images/icon.png";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
+import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
+import tooFarModal from "./TooFarModal";
 
 export default function DetailBookPage() {
+  const orderSelector = useSelector((state) => state.login.order);
+  const userSelector = useSelector((state) => state.login.auth);
+  const toast = useToast();
+  const nav = useNavigate();
   const { id } = useParams();
   const [value, setValue] = useState([]);
+  const [qty, setQty] = useState(1);
   async function fetchProduct() {
     let response = await api().get(`/stock/${parseInt(id)}`);
     setValue(response.data);
@@ -31,6 +41,35 @@ export default function DetailBookPage() {
   // console.log(value.Book?.title);
   // console.log(value.Book);
   console.log(value);
+
+  // Add to Cart
+  async function add() {
+    try {
+      if (userSelector.username) {
+        await api().post("cart/v1", {
+          qty: qty,
+          UserId: userSelector.id,
+          StockId: value.id,
+        });
+        nav("/cart");
+      } else {
+        Swal.fire("You need to login first?", "", "question");
+        nav("/login");
+      }
+    } catch (error) {
+      toast({
+        title: error.response.data,
+        position: "top",
+        containerStyle: {
+          maxWidth: "30%",
+        },
+        status: "info",
+        duration: 3000,
+        isClosable: true,
+      });
+      console.error(error);
+    }
+  }
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -250,9 +289,13 @@ export default function DetailBookPage() {
                 </Text>
               </Box>
               <Box display={"flex"} my={3} alignItems={"center"} gap={3}>
-                <MdSettings />
-                <Text>1</Text>
-                <MdSettings />
+                {/* <Text>1</Text> */}
+                <Input
+                  width={"4rem"}
+                  type="number"
+                  defaultValue={qty}
+                  onChange={(e) => setQty(Number(e.target.value))}
+                ></Input>
               </Box>
               <Box display={"flex"} justifyContent={"space-between"}>
                 <Text fontWeight={"semibold"} fontSize={"lg"}>
@@ -267,12 +310,20 @@ export default function DetailBookPage() {
                 </Text>
               </Box>
               <Box display={"flex"} justifyContent={"space-between"} gap={5}>
-                <Button variant="solid" colorScheme="blue">
-                  Keranjang
+                <Button
+                  variant="solid"
+                  colorScheme="blue"
+                  onClick={
+                    orderSelector.TooFar
+                      ? () => tooFarModal.onOpen()
+                      : () => add()
+                  }
+                >
+                  Add to Cart
                 </Button>
-                <Button variant="solid" colorScheme="blue">
+                {/* <Button variant="solid" colorScheme="blue">
                   Beli
-                </Button>
+                </Button> */}
               </Box>
             </Box>
           </Box>
