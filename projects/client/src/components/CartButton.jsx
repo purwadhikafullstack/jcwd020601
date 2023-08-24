@@ -3,24 +3,25 @@ import { BsCart } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/api";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function CartButton(props) {
   const nav = useNavigate();
-  const [count, setCount] = useState();
+  const [count, setCount] = useState(0);
+  const dispatch = useDispatch();
+  const orderSelector = useSelector((state) => state.login.order);
+  const qtySelector = useSelector((state) => state.login.qty);
 
-  async function fetch() {
-    const data = await api().post("/cart/id", {
-      UserId: props.userSelector.id,
-      BranchId: props.orderSelector.BranchId,
-    });
-    return setCount(data.data.Cart.length);
-  }
+  console.log(qtySelector.quantity);
+  console.log(orderSelector.BranchId);
 
-  useEffect(() => {
-    fetch();
-  });
-
-  // console.log(props.orderSelector.quantity);
+  // dispatch({
+  //   type: "order",
+  //   payload: {
+  //     BranchId: closestBranch.BranchId,
+  //     AddressId: address.id || userMainAddress.id,
+  //   },
+  // });
 
   return (
     <Box>
@@ -29,7 +30,7 @@ export default function CartButton(props) {
           <Flex alignItems={"center"} gap={"0.1rem"} cursor={"pointer"}>
             <Box position={"relative"}>
               <Icon as={BsCart} w={10} h={10} color="blue.700"></Icon>
-              {count > 0 && (
+              {qtySelector.quantity > 0 && (
                 <Text
                   position="absolute"
                   bottom="-0.4rem"
@@ -41,7 +42,7 @@ export default function CartButton(props) {
                   fontSize="sm"
                   p={1}
                 >
-                  {count}
+                  {qtySelector.quantity}
                 </Text>
               )}
             </Box>

@@ -106,8 +106,8 @@ export default function CartPage() {
               total={total}
               setCourier={setCourier}
               courier={courier}
-              // BranchId={orderSelector.BranchId}
-              // AddressId={orderSelector.AddressId}
+              BranchId={orderSelector.BranchId}
+              AddressId={orderSelector.AddressId}
             ></Shipping>
             {/* Shipping */}
             <Flex

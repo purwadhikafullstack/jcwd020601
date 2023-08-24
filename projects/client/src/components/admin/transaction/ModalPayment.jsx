@@ -58,7 +58,9 @@ export default function ModalPayment(props) {
           <ModalCloseButton />
           <ModalBody>
             {props.val.payment_url ? (
-              <Image src={props.val.payment_url}></Image>
+              <Image
+                src={process.env.REACT_APP_API_BASE_URL + props.val.payment_url}
+              ></Image>
             ) : (
               <Center height={"300px"} fontSize={"8xl"}>
                 <Icon color={"grey"} as={MdCancelPresentation}></Icon>
