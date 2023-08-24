@@ -36,52 +36,129 @@ const orderController = {
   },
   getByFilter: async (req, res) => {
     try {
-      const { BranchName, OrderId, status, before, after } = req.body;
+      const { BranchName, OrderId, status, before, after, sort } = req.body;
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
-      // const status = r
+      const offset = limit * page;
       const whereClause = {
-        createdAt: {
-          [Op.and]: {
-            [Op.gte]: new Date(after || "1900-01-01"),
-            [Op.lte]: new Date(before || "2100-10-10"),
+        offset: offset,
+        limit: limit,
+        where: {
+          createdAt: {
+            [Op.and]: {
+              [Op.gte]: new Date(after || "1900-01-01"),
+              [Op.lte]: new Date(before || "2100-10-10"),
+            },
           },
         },
+        include: {
+          model: db.Branch,
+        },
       };
-      const whereClause2 = {};
       if (BranchName) {
-        whereClause2.name = BranchName;
+        whereClause.include.where = { name: BranchName };
       }
       if (OrderId) {
-        whereClause.id = OrderId;
+        whereClause.where.id = OrderId;
       }
       if (status) {
-        whereClause.status = status;
+        whereClause.where.status = status;
       }
-      const offset = limit * page;
-
-      const Order = await db.Order.findAll({
-        where: whereClause,
-        offset: offset,
-        limit: limit,
-        include: {
-          model: db.Branch,
-          where: whereClause2,
-        },
-      });
-      const totalRows = await db.Order.count({
-        where: whereClause,
-        offset: offset,
-        limit: limit,
-        include: {
-          model: db.Branch,
-          where: whereClause2,
-        },
-      });
-
+      if (sort?.sortedBy == "branchName") {
+        whereClause.order = [
+          [{ model: db.Branch, as: "Branch" }, "name", sort.asc],
+        ];
+      } else if (sort.sortedBy) {
+        whereClause.order = [[sort.sortedBy, sort.asc]];
+      } else {
+        whereClause.order = [["id", sort.asc]];
+      }
+      const Order = await db.Order.findAll(whereClause);
+      const totalRows = await db.Order.count(whereClause);
       const totalPage = Math.ceil(totalRows / limit);
 
       return res.send({ Order, page, limit, totalRows, totalPage });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getTotalSalesOnLastWeek: async (req, res) => {
+    //INCOMPLETE
+    try {
+      const { BranchId } = req.query;
+      let sales = 0;
+      let quantitySold = 0;
+      const whereOrder = {
+        [Op.and]: [
+          { Status: "delivery confirm" },
+          {
+            createdAt: {
+              [db.Sequelize.Op.gte]: moment()
+                .subtract(1, "week")
+                .startOf("day")
+                .format(),
+            },
+          },
+        ],
+      };
+      const whereQuantity = {
+        where: {
+          [Op.and]: [
+            {
+              createdAt: {
+                [db.Sequelize.Op.gte]: moment()
+                  .subtract(1, "week")
+                  .startOf("day")
+                  .format(),
+              },
+            },
+          ],
+        },
+      };
+      const whereTransaction = {
+        [Op.and]: [
+          { Status: "delivery confirm" },
+          {
+            createdAt: {
+              [db.Sequelize.Op.gte]: moment()
+                .subtract(1, "week")
+                .startOf("day")
+                .format(),
+            },
+          },
+        ],
+      };
+      if (BranchId) {
+        whereOrder.BranchId = BranchId;
+        whereQuantity.include = {
+          model: db.Order,
+          as: "Order",
+          where: { BranchId },
+        };
+        whereTransaction.BranchId = BranchId;
+      }
+      const Order = await db.Order.findAll({
+        where: whereOrder,
+      });
+      Order.map((val) => {
+        sales = val.total + sales;
+      });
+      const quantity = await db.OrderDetail.findAll(whereQuantity);
+      quantity.map((val) => {
+        quantitySold = quantitySold + val.quantity;
+      });
+      const transaction = await db.Order.findAndCountAll({
+        where: whereTransaction,
+      });
+      return res.send({
+        Date: "From Last Week",
+        TotalSales: "Rp." + parseInt(sales).toLocaleString("id-ID"),
+        TotalSold: JSON.stringify(quantitySold),
+        TotalTransaction: transaction.count,
+      });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -217,27 +294,19 @@ const orderController = {
       });
     }
   },
-  getSalesOnAllTime: async (req, res) => {
-    //INCOMPLETE
+  getSalesOnTime: async (req, res) => {
     try {
-      // let sales = 0;
-      // const Order = await db.Order.findAll({
-      //   where: {
-      //     status: "delivery confirm",
-      //   },
-      // });
-      // Order.map((val) => {
-      //   sales = val.total + sales;
-      // });
-      // return res.send({
-      //   Orders: Order,
-      //   Date: "From All Of Time",
-      //   TotalSales: JSON.stringify(sales),
-      // });
+      const { time } = req.query;
       const today = new Date();
-      const oneWeekAgo = new Date(today);
-      oneWeekAgo.setDate(today.getDate() - 7);
-      const weeklySales = await db.Order.findAll({
+      const Duration = new Date(today);
+      if (time == "allTime") {
+        Duration.setDate(today.getDate() - 20000);
+      } else if (time == "monthly") {
+        Duration.setDate(today.getDate() - 30);
+      } else {
+        Duration.setDate(today.getDate() - 7);
+      }
+      const Sales = await db.Order.findAll({
         attributes: [
           [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
           [Sequelize.fn("sum", Sequelize.col("total")), "total_sales"],
@@ -245,19 +314,16 @@ const orderController = {
         where: {
           status: "delivery confirm",
           createdAt: {
-            [Sequelize.Op.between]: [oneWeekAgo, today],
+            [Sequelize.Op.between]: [Duration, today],
           },
         },
         group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
         raw: true,
       });
-      let max = Math.max(
-        ...weeklySales.map((item) => parseInt(item.total_sales))
-      );
-      let highest = weeklySales.filter(
-        (item) => parseInt(item.total_sales) === max
-      );
-      res.send({ weeklySales: weeklySales, highest: highest[0] });
+      let max = Math.max(...Sales.map((item) => parseInt(item.total_sales)));
+      let highest = Sales.filter((item) => parseInt(item.total_sales) === max);
+
+      res.send({ sales: Sales, highest: highest[0] });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -265,89 +331,160 @@ const orderController = {
       });
     }
   },
-  getSalesOnLastMonth: async (req, res) => {
-    //INCOMPLETE
+  getSalesFromBranchIdOnTime: async (req, res) => {
     try {
-      let sales = 0;
-      const Order = await db.Order.findAll({
-        where: {
-          [Op.and]: [
-            { Status: "delivery confirm" },
-            {
-              createdAt: {
-                [db.Sequelize.Op.gte]: moment()
-                  .subtract(1, "month")
-                  .startOf("day")
-                  .format(),
-              },
-            },
-          ],
-        },
-      });
-      Order.map((val) => {
-        sales = val.total + sales;
-      });
-      return res.send({
-        Date: "From Last Month",
-        TotalSales: JSON.stringify(sales),
-      });
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  getSalesOnLastWeek: async (req, res) => {
-    //INCOMPLETE
-    try {
-      //   let sales = 0;
-      //   const Order = await db.Order.findAll({
-      //     where: {
-      //       [Op.and]: [
-      //         { Status: "delivery confirm" },
-      //         {
-      //           createdAt: {
-      //             [db.Sequelize.Op.gte]: moment()
-      //               .subtract(1, "w")
-      //               .startOf("day")
-      //               .format(),
-      //           },
-      //         },
-      //       ],
-      //     },
-      //   });
-      //   Order.map((val) => {
-      //     sales = val.total + sales;
-      //   });
-      //   return res.send({
-      //     Date: "From Last Week",
-      //     TotalSales: JSON.stringify(sales),
-      //   });
+      const { BranchId } = req.params;
+      const { time } = req.query;
       const today = new Date();
-      const oneWeekAgo = new Date(today);
-      oneWeekAgo.setDate(today.getDate() - 7);
-      const weeklySales = await db.Order.findAll({
+      const Duration = new Date(today);
+      if (time == "allTime") {
+        Duration.setDate(today.getDate() - 20000);
+      } else if (time == "monthly") {
+        Duration.setDate(today.getDate() - 30);
+      } else {
+        Duration.setDate(today.getDate() - 7);
+      }
+      const Sales = await db.Order.findAll({
         attributes: [
           [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
           [Sequelize.fn("sum", Sequelize.col("total")), "total_sales"],
         ],
         where: {
+          BranchId,
           status: "delivery confirm",
           createdAt: {
-            [Sequelize.Op.between]: [oneWeekAgo, today],
+            [Sequelize.Op.between]: [Duration, today],
+          },
+        },
+        group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
+        raw: true,
+      });
+      let max = Math.max(...Sales.map((item) => parseInt(item.total_sales)));
+      let highest = Sales.filter((item) => parseInt(item.total_sales) === max);
+
+      res.send({ sales: Sales, highest: highest[0] });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesQuantityOnTime: async (req, res) => {
+    try {
+      const { time } = req.query;
+      const today = new Date();
+      const Duration = new Date(today);
+      if (time == "allTime") {
+        Duration.setDate(today.getDate() - 20000);
+      } else if (time == "monthly") {
+        Duration.setDate(today.getDate() - 30);
+      } else {
+        Duration.setDate(today.getDate() - 7);
+      }
+      const Sales = await db.OrderDetail.findAll({
+        attributes: [
+          [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
+          [Sequelize.fn("sum", Sequelize.col("quantity")), "qty_sold"],
+        ],
+        where: {
+          createdAt: {
+            [Sequelize.Op.between]: [Duration, today],
+          },
+        },
+        group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
+        raw: true,
+      });
+      let max = Math.max(...Sales.map((item) => parseInt(item.qty_sold)));
+      let highest = Sales.filter((item) => parseInt(item.qty_sold) === max);
+
+      res.send({ sales: Sales, highest: highest[0] });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesQuantityFromBranchIdOnTime: async (req, res) => {
+    try {
+      const { BranchId } = req.params;
+      const { time } = req.query;
+      const today = new Date();
+      const Duration = new Date(today);
+      if (time == "allTime") {
+        Duration.setDate(today.getDate() - 20000);
+      } else if (time == "monthly") {
+        Duration.setDate(today.getDate() - 30);
+      } else {
+        Duration.setDate(today.getDate() - 7);
+      }
+      const Sales = await db.OrderDetail.findAll({
+        attributes: [
+          [
+            Sequelize.fn("date", Sequelize.col("OrderDetails.createdAt")),
+            "date",
+          ],
+          [Sequelize.fn("sum", Sequelize.col("quantity")), "qty_sold"],
+        ],
+        where: {
+          createdAt: {
+            [Sequelize.Op.between]: [Duration, today],
+          },
+        },
+        group: [Sequelize.fn("date", Sequelize.col("OrderDetails.createdAt"))],
+        include: {
+          model: db.Order,
+          as: "Order",
+          where: { BranchId },
+        },
+        raw: true,
+      });
+      let max = Math.max(...Sales.map((item) => parseInt(item.qty_sold)));
+      let highest = Sales.filter((item) => parseInt(item.qty_sold) === max);
+
+      res.send({ sales: Sales, highest: highest[0] });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getTransactionOnTime: async (req, res) => {
+    try {
+      const { time } = req.query;
+      const today = new Date();
+      const Duration = new Date(today);
+      if (time == "allTime") {
+        Duration.setDate(today.getDate() - 20000);
+      } else if (time == "monthly") {
+        Duration.setDate(today.getDate() - 30);
+      } else {
+        Duration.setDate(today.getDate() - 7);
+      }
+      const Sales = await db.Order.findAll({
+        attributes: [
+          [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
+          [Sequelize.fn("count", Sequelize.col("id")), "total_transaction"],
+        ],
+        where: {
+          status: "delivery confirm",
+          createdAt: {
+            [Sequelize.Op.between]: [Duration, today],
           },
         },
         group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
         raw: true,
       });
       let max = Math.max(
-        ...weeklySales.map((item) => parseInt(item.total_sales))
+        ...Sales.map((item) => parseInt(item.total_transaction))
       );
-      let highest = weeklySales.filter(
-        (item) => parseInt(item.total_sales) === max
+      let highest = Sales.filter(
+        (item) => parseInt(item.total_transaction) === max
       );
-      res.send({ weeklySales: weeklySales, highest: highest[0] });
+
+      res.send({ sales: Sales, highest: highest[0] });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -355,104 +492,42 @@ const orderController = {
       });
     }
   },
-  getSalesFromBranchIdOnLastMonth: async (req, res) => {
-    //INCOMPLETE
+  getTransactionFromBranchIdOnTime: async (req, res) => {
     try {
-      let sales = 0;
+      const { time } = req.query;
       const { BranchId } = req.params;
-      const Order = await db.Order.findAll({
+      const today = new Date();
+      const Duration = new Date(today);
+      if (time == "allTime") {
+        Duration.setDate(today.getDate() - 20000);
+      } else if (time == "monthly") {
+        Duration.setDate(today.getDate() - 30);
+      } else {
+        Duration.setDate(today.getDate() - 7);
+      }
+      const Sales = await db.Order.findAll({
+        attributes: [
+          [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
+          [Sequelize.fn("count", Sequelize.col("id")), "total_transaction"],
+        ],
         where: {
-          [Op.and]: [
-            { BranchId },
-            { Status: "delivery confirm" },
-            {
-              createdAt: {
-                [db.Sequelize.Op.gte]: moment()
-                  .subtract(1, "month")
-                  .startOf("day")
-                  .format(),
-              },
-            },
-          ],
+          BranchId,
+          status: "delivery confirm",
+          createdAt: {
+            [Sequelize.Op.between]: [Duration, today],
+          },
         },
+        group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
+        raw: true,
       });
-      Order.map((val) => {
-        sales = val.total + sales;
-      });
-      return res.send({
-        Date: "From Last Month",
-        TotalSales: JSON.stringify(sales),
-        BranchId,
-      });
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  getSalesOnLastWeek: async (req, res) => {
-    //INCOMPLETE
-    try {
-      let sales = 0;
-      const Order = await db.Order.findAll({
-        where: {
-          [Op.and]: [
-            { Status: "delivery confirm" },
-            {
-              createdAt: {
-                [db.Sequelize.Op.gte]: moment()
-                  .subtract(1, "week")
-                  .startOf("day")
-                  .format(),
-              },
-            },
-          ],
-        },
-      });
-      Order.map((val) => {
-        sales = val.total + sales;
-      });
-      return res.send({
-        Date: "From Last Week",
-        TotalSales: JSON.stringify(sales),
-      });
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  getSalesFromBranchIdOnLastWeek: async (req, res) => {
-    //INCOMPLETE
-    try {
-      let sales = 0;
-      const { BranchId } = req.params;
-      const Order = await db.Order.findAll({
-        where: {
-          [Op.and]: [
-            { BranchId },
-            { Status: "delivery confirm" },
-            {
-              createdAt: {
-                [db.Sequelize.Op.gte]: moment()
-                  .subtract(1, "week")
-                  .startOf("day")
-                  .format(),
-              },
-            },
-          ],
-        },
-      });
-      Order.map((val) => {
-        sales = val.total + sales;
-      });
-      return res.send({
-        Date: "From Last Week",
-        TotalSales: JSON.stringify(sales),
-        BranchId,
-      });
+      let max = Math.max(
+        ...Sales.map((item) => parseInt(item.total_transaction))
+      );
+      let highest = Sales.filter(
+        (item) => parseInt(item.total_transaction) === max
+      );
+
+      res.send({ sales: Sales, highest: highest[0] });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({

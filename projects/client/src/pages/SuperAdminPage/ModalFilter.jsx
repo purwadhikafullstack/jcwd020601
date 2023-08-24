@@ -10,17 +10,23 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
-import { api } from "../../../api/api";
-export default function ModalFilter(props) {
+import { api } from "../../api/api";
+
+export default function ModalFilterSales(props) {
   const [branch, setBranch] = useState([]);
+  const [filter, setFilter] = useState({
+    time: "allTime",
+    BranchId: "",
+  });
   function inputHandler(input) {
     const { value, id } = input.target;
-    const tempobject = { ...props.filter };
+    const tempobject = { ...filter };
     tempobject[id] = value;
-    props.setFilter(tempobject);
+    setFilter(tempobject);
     console.log(tempobject);
   }
   async function fetchBranchName() {
@@ -50,15 +56,15 @@ export default function ModalFilter(props) {
             justifyContent={"center"}
             bgColor={"#385898"}
           >
-            <Center w={"200px"} fontWeight={700} color={"white"}>
-              Admin Filter
+            <Center w={"130px"} fontWeight={700} color={"white"}>
+              Sales Filter
             </Center>
             <Flex w={"70%"} flexDir={"row-reverse"}>
               <Button
                 w={"30px"}
                 onClick={() => {
-                  props.setFilter();
                   props.modalFilter.onClose();
+                  setFilter({});
                 }}
               >
                 <Icon fontSize={"30px"} as={MdClose}></Icon>
@@ -70,22 +76,11 @@ export default function ModalFilter(props) {
               <Flex flexDir={"column"} gap={"10px"} w={"100%"}>
                 <Flex flexDir={"column"} gap={"5px"} w={"100%"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    AdminId
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="AdminId"
-                    w={"100%"}
-                    variant={"filled"}
-                  ></Input>
-                </Flex>
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
                     BranchName
                   </Flex>
                   <Select
                     onChange={inputHandler}
-                    id="BranchName"
+                    id="BranchId"
                     variant={"filled"}
                   >
                     <option display="none" disabled selected hidden>
@@ -94,38 +89,29 @@ export default function ModalFilter(props) {
                     {branch.map((val) => {
                       return (
                         <>
-                          <option value={val.name}>{val.name}</option>
+                          <option value={val.id}>{val.name}</option>
                         </>
                       );
                     })}
                   </Select>
-                </Flex>{" "}
-                <Flex flexDir={"column"} gap={"5px"}>
+                </Flex>
+                <Flex flexDir={"column"} gap={"5px"} w={"100%"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Created Before
+                    Date format
                   </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="before"
-                    type="datetime-local"
-                    variant={"filled"}
-                  ></Input>
-                </Flex>{" "}
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Created After
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="after"
-                    type="datetime-local"
-                    variant={"filled"}
-                  ></Input>
+                  <Select onChange={inputHandler} id="time" variant={"filled"}>
+                    <option display="none" disabled selected hidden>
+                      Select Date Format
+                    </option>
+                    <option value={"allTime"}>All Time</option>
+                    <option value={"monthly"}>Monthly</option>
+                    <option value={"weekly"}>Weekly</option>
+                  </Select>
                 </Flex>
                 <Flex mt={"20px"} flexDir={"row-reverse"} gap={"20px"}>
                   <Button
                     onClick={() => {
-                      props.setFilter();
+                      setFilter({});
                       props.modalFilter.onClose();
                     }}
                   >
@@ -134,7 +120,7 @@ export default function ModalFilter(props) {
                   <Button
                     onClick={() => {
                       props.modalFilter.onClose();
-                      props.submitFilter();
+                      props.submitFilter(filter);
                     }}
                     bgColor={"#385898"}
                     color={"white"}

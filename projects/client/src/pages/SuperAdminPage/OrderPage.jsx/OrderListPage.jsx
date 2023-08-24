@@ -19,21 +19,24 @@ import ModalDetails from "../../../components/admin/transaction/ModalDetails";
 import ReactPaginate from "react-paginate";
 import ModalFilter from "./ModalFilter";
 import Greetings from "../Greetings";
+import ModalSort from "./ModalSort";
 
 export default function BranchOrder() {
   const [trans, setTrans] = useState();
   const [filter, setFilter] = useState();
+  const [sort, setSort] = useState();
   const [filtered, setFiltered] = useState(false);
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState(0);
   const modalFilter = useDisclosure();
+  const modalSort = useDisclosure();
 
   async function submitFilter() {
-    const result = await api().post(
-      `/order/filter?page=${page}&limit=${5}`,
-      filter
-    );
+    const result = await api().post(`/order/filter?page=${page}&limit=${5}`, {
+      ...filter,
+      sort,
+    });
     setPage(result.data.page);
     setRows(result.data.totalRows);
     setPages(result.data.totalPage);
@@ -83,7 +86,8 @@ export default function BranchOrder() {
               borderRadius={"8px"}
               justifyContent={"space-between"}
             >
-              <Center
+              <Button
+                isDisabled={filtered ? false : true}
                 border={"2px #2c5282 solid"}
                 w={"120px"}
                 p={"10px"}
@@ -98,20 +102,21 @@ export default function BranchOrder() {
                 fontWeight={700}
                 cursor={"pointer"}
               >
-                {filtered ? "Filtered : On" : "Filtered : Off"}
-              </Center>
+                Close Filter
+              </Button>
               <Flex alignItems={"center"} gap={"30px"} mr={"90px"}>
                 <Button
-                  onClick={() => {
-                    modalFilter.onOpen();
-                    setFilter();
-                  }}
+                  onClick={modalFilter.onOpen}
                   bgColor={"#2c5282"}
                   color={"white"}
                 >
                   Filter
                 </Button>
-                <Button bgColor={"#2c5282"} color={"white"}>
+                <Button
+                  onClick={modalSort.onOpen}
+                  bgColor={"#2c5282"}
+                  color={"white"}
+                >
                   Sort By
                 </Button>
               </Flex>
@@ -169,6 +174,12 @@ export default function BranchOrder() {
           filter={filter}
           setFilter={setFilter}
           modalFilter={modalFilter}
+          submitFilter={submitFilter}
+        />
+        <ModalSort
+          sort={sort}
+          setSort={setSort}
+          modalSort={modalSort}
           submitFilter={submitFilter}
         />
       </Box>
