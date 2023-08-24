@@ -11,6 +11,7 @@ import {
   UnorderedList,
   useToast,
   Input,
+  Flex,
 } from "@chakra-ui/react";
 import { MdCheckCircle, MdSettings } from "react-icons/md";
 import icon from "../assets/images/icon.png";
@@ -42,6 +43,7 @@ export default function DetailBookPage() {
   // console.log(value.Book?.title);
   // console.log(value.Book);
   // console.log(value);
+
 
   // Add to Cart
   async function add() {
@@ -87,7 +89,7 @@ export default function DetailBookPage() {
             xl: "row",
           }}
           alignItems={{
-            base: "normal",
+            base: "center",
             sm: "normal",
             md: "normal",
             lg: "normal",
@@ -109,10 +111,8 @@ export default function DetailBookPage() {
                       <Box
                         w={14}
                         h={8}
-                        // position={"absolute"}
-                        // left={"1px"}
+                        marginLeft={"150px"}
                         borderTopRightRadius={"5px"}
-                        // top={"0px"}
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
@@ -170,50 +170,47 @@ export default function DetailBookPage() {
               </Text>
             </Box>
             <Box display={"flex"} gap={3} flexDirection={"column"}>
-              {/* <Text
-                fontSize={"xl"}
-                as={"del"}
-                color="#A0AEC0"
-                fontWeight={"semibold"}
-              >
-                Rp. {value.Book?.price}
-              </Text>
-              <Text fontSize={"xl"} color={"blue.600"} fontWeight={"semibold"}>
-                Rp. {value.Book?.price}
-              </Text> */}
               <Text color="blue.600" fontSize="md">
-                {value.Book?.Discount?.discount ? (
-                  <>
-                    {value.Book?.Discount?.isPercent ? (
-                      <>
-                        {/* value.Book?.price */}
-                        <Text fontSize="xl">
-                          Rp.{Intl.NumberFormat().format(value.Book?.price)}
-                        </Text>
-                      </>
-                    ) : (
-                      <>
-                        <Box gap={3} display={"flex"} flexDir={"column"}>
-                          <Text color="#A0AEC0" as="del" fontSize="md">
-                            Rp. {Intl.NumberFormat().format(value.Book?.price)}
-                          </Text>
+                <Text fontSize="xl" color="blue.600">
+                  {value.Discount?.discount ? (
+                    <>
+                      {value.Discount?.isPercent ? (
+                        <>
                           <Text fontSize="xl">
-                            Rp.{" "}
-                            {Intl.NumberFormat().format(
-                              value.Book?.price - value.Book?.Discount?.discount
-                            )}
+                            Rp.
+                            {Intl.NumberFormat().format(value.Book?.price)}
                           </Text>
-                        </Box>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Text fontSize="xl">
-                      Rp. {Intl.NumberFormat().format(value.Book?.price)}
-                    </Text>
-                  </>
-                )}
+                        </>
+                      ) : (
+                        <>
+                          <Box gap={2} display={"flex"} flexDir={"column"}>
+                            <Text
+                              fontSize="md"
+                              my={0}
+                              as={"del"}
+                              color={"blackAlpha.500"}
+                            >
+                              Rp.{" "}
+                              {Intl.NumberFormat().format(value.Book?.price)}
+                            </Text>
+                            <Text fontSize="xl">
+                              Rp.{" "}
+                              {Intl.NumberFormat().format(
+                                value.Book?.price - value.Discount?.discount
+                              )}
+                            </Text>
+                          </Box>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <Text fontSize="xl">
+                        Rp. {Intl.NumberFormat().format(value.Book?.price)}
+                      </Text>
+                    </>
+                  )}
+                </Text>
               </Text>
             </Box>
             <Box display={"flex"} gap={5} flexDirection={"column"}>
@@ -279,55 +276,37 @@ export default function DetailBookPage() {
               </Box>
             </Box>
           </Box>
-          <Box maxW={"300px"} p={5}>
-            <Box display={"flex"} flexDirection={"column"} p={3} gap={3}>
-              <Box display={"flex"} flexDirection={"column"} gap={3}>
-                <Text fontSize={"md"} color={"#6d6d6d"}>
-                  Ingin Beli Berapa ?
-                </Text>
-                <Text fontWeight={"semibold"} fontSize={"lg"}>
-                  Jumlah Barang
-                </Text>
-              </Box>
-              <Box display={"flex"} my={3} alignItems={"center"} gap={3}>
-                {/* <Text>1</Text> */}
-                <Input
-                  width={"4rem"}
-                  type="number"
-                  defaultValue={qty}
-                  onChange={(e) => setQty(Number(e.target.value))}
-                ></Input>
-              </Box>
-              <Box display={"flex"} justifyContent={"space-between"}>
-                <Text fontWeight={"semibold"} fontSize={"lg"}>
-                  Sub Total
-                </Text>
-                <Text
-                  fontWeight={"semibold"}
-                  fontSize={"lg"}
-                  color={"blue.600"}
-                >
-                  Rp. 74.000
-                </Text>
-              </Box>
-              <Box display={"flex"} justifyContent={"space-between"} gap={5}>
-                <Button
-                  variant="solid"
-                  colorScheme="blue"
-                  onClick={
-                    orderSelector.TooFar
-                      ? () => tooFarModal.onOpen()
-                      : () => add()
-                  }
-                >
-                  Add to Cart
-                </Button>
-                {/* <Button variant="solid" colorScheme="blue">
-                  Beli
-                </Button> */}
-              </Box>
+          <Flex flexDir={"column"}>
+            <Box>
+              <Input
+                width={"4rem"}
+                type="number"
+                defaultValue={qty}
+                onChange={(e) => setQty(Number(e.target.value))}
+              ></Input>
             </Box>
-          </Box>
+            <Box display={"flex"} justifyContent={"space-between"}>
+              <Text fontWeight={"semibold"} fontSize={"lg"}>
+                Sub Total
+              </Text>
+              <Text fontWeight={"semibold"} fontSize={"lg"} color={"blue.600"}>
+                Rp. 74.000
+              </Text>
+            </Box>
+            <Box display={"flex"} justifyContent={"space-between"} gap={5}>
+              <Button
+                variant="solid"
+                colorScheme="blue"
+                onClick={
+                  orderSelector.TooFar
+                    ? () => tooFarModal.onOpen()
+                    : () => add()
+                }
+              >
+                Add to Cart
+              </Button>
+            </Box>
+          </Flex>
         </Box>
       </Center>
     </>

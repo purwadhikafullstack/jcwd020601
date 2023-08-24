@@ -51,7 +51,7 @@ export default function Navbar() {
         // position={"absolute"}
         zIndex={1}
         w={"100%"}
-        position={"fixed"}
+        position={"sticky"}
         borderBottom="1px"
         borderBottomColor={useColorModeValue("gray.200", "gray.700")}
         bg={"#2c5282"}

@@ -3,7 +3,6 @@ import {
   Center,
   Flex,
   Icon,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
@@ -11,33 +10,22 @@ import {
   ModalOverlay,
   Select,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
-import { api } from "../../../api/api";
-export default function ModalFilter(props) {
-  const [branch, setBranch] = useState([]);
+export default function ModalSort(props) {
   function inputHandler(input) {
     const { value, id } = input.target;
-    const tempobject = { ...props.filter };
+    const tempobject = { ...props.sort };
     tempobject[id] = value;
-    props.setFilter(tempobject);
+    props.setSort(tempobject);
     console.log(tempobject);
   }
-  async function fetchBranchName() {
-    const result = await api().get(`/branch`);
-    setBranch(result.data);
-    console.log(result.data);
-  }
-  useEffect(() => {
-    fetchBranchName();
-  }, []);
   return (
     <>
       <Modal
         closeOnOverlayClick={false}
         scrollBehavior="inside"
-        isOpen={props.modalFilter.isOpen}
-        onClose={props.modalFilter.onClose}
+        isOpen={props.modalSort.isOpen}
+        onClose={props.modalSort.onClose}
         isCentered
       >
         <ModalOverlay />
@@ -51,14 +39,16 @@ export default function ModalFilter(props) {
             bgColor={"#385898"}
           >
             <Center w={"200px"} fontWeight={700} color={"white"}>
-              Admin Filter
+              Sort
             </Center>
             <Flex w={"70%"} flexDir={"row-reverse"}>
               <Button
                 w={"30px"}
                 onClick={() => {
-                  props.setFilter();
-                  props.modalFilter.onClose();
+                  props.setSort({
+                    asc: "ASC",
+                  });
+                  props.modalSort.onClose();
                 }}
               >
                 <Icon fontSize={"30px"} as={MdClose}></Icon>
@@ -70,70 +60,49 @@ export default function ModalFilter(props) {
               <Flex flexDir={"column"} gap={"10px"} w={"100%"}>
                 <Flex flexDir={"column"} gap={"5px"} w={"100%"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    AdminId
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="AdminId"
-                    w={"100%"}
-                    variant={"filled"}
-                  ></Input>
-                </Flex>
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    BranchName
+                    Sorted By
                   </Flex>
                   <Select
                     onChange={inputHandler}
-                    id="BranchName"
+                    id="sortedBy"
                     variant={"filled"}
                   >
                     <option display="none" disabled selected hidden>
-                      Select BranchName
+                      Sorted by....
                     </option>
-                    {branch.map((val) => {
-                      return (
-                        <>
-                          <option value={val.name}>{val.name}</option>
-                        </>
-                      );
-                    })}
+                    <option value="email">Email</option>
+                    <option value="name">Admin-Name</option>
+                    <option value="branchName">Branch Name</option>
+                  </Select>
+                </Flex>
+                <Flex flexDir={"column"} gap={"5px"}>
+                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
+                    Ascending or Descending
+                  </Flex>
+                  <Select
+                    value={props.sort.asc}
+                    onChange={inputHandler}
+                    id="asc"
+                    variant={"filled"}
+                  >
+                    <option value="ASC">Ascending</option>
+                    <option value="DESC">Descending</option>
                   </Select>
                 </Flex>{" "}
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Created Before
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="before"
-                    type="datetime-local"
-                    variant={"filled"}
-                  ></Input>
-                </Flex>{" "}
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Created After
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="after"
-                    type="datetime-local"
-                    variant={"filled"}
-                  ></Input>
-                </Flex>
                 <Flex mt={"20px"} flexDir={"row-reverse"} gap={"20px"}>
                   <Button
                     onClick={() => {
-                      props.setFilter();
-                      props.modalFilter.onClose();
+                      props.setSort({
+                        asc: "ASC",
+                      });
+                      props.modalSort.onClose();
                     }}
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={() => {
-                      props.modalFilter.onClose();
+                      props.modalSort.onClose();
                       props.submitFilter();
                     }}
                     bgColor={"#385898"}

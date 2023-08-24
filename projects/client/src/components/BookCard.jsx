@@ -85,7 +85,13 @@ export default function BookCard() {
       <Divider w={"75%"} />
       <Box
         display={"flex"}
-        justifyContent={"space-between"}
+        justifyContent={{
+          base: "space-evenly",
+          sm: "space-between",
+          md: "space-between",
+          lg: "space-between",
+          xl: "space-between",
+        }}
         alignItems={"center"}
         w={{
           base: "340px",
@@ -115,11 +121,23 @@ export default function BookCard() {
         display={"flex"}
         gap={"30px"}
         flexWrap={"wrap"}
-        justifyContent={"center"}
+        justifyContent={{
+          base: "center",
+          sm: "center",
+          md: "center",
+          lg: "center",
+          xl: "flex-start",
+        }}
       >
         {value.map((val, idx) => (
-          <Link to={`/products/detail/${val.id}`} cursor={"pointer"}>
-            <Card key={idx}>
+          <Link key={idx} to={`/products/detail/${val.id}`} cursor={"pointer"}>
+            <Card
+              // h={"360px"}
+              h={{
+                base: "440px",
+                lg: "370px",
+              }}
+            >
               <CardBody>
                 <Box>
                   {val.Discount?.discount ? (
@@ -130,7 +148,11 @@ export default function BookCard() {
                             w={14}
                             h={8}
                             position={"absolute"}
-                            left={"145px"}
+                            left={{
+                              base: "225px",
+                              md: "185px",
+                              lg: "145px",
+                            }}
                             borderTopRightRadius={"5px"}
                             top={"0px"}
                             display="flex"
@@ -149,7 +171,11 @@ export default function BookCard() {
                             w={20}
                             h={8}
                             position={"absolute"}
-                            left={"122px"}
+                            left={{
+                              base: "200px",
+                              md: "190px",
+                              lg: "122px",
+                            }}
                             borderTopRightRadius={"5px"}
                             top={"0px"}
                             display="flex"
@@ -201,9 +227,20 @@ export default function BookCard() {
                         ) : (
                           <>
                             <Box gap={3} display={"flex"} flexDir={"column"}>
-                              <Text fontSize="xl">
+                              <Text
+                                fontSize="md"
+                                my={0}
+                                as={"del"}
+                                color={"blackAlpha.500"}
+                              >
                                 Rp.{" "}
                                 {Intl.NumberFormat().format(val.Book?.price)}
+                              </Text>
+                              <Text fontSize="xl">
+                                Rp.{" "}
+                                {Intl.NumberFormat().format(
+                                  val.Book?.price - val.Discount?.discount
+                                )}
                               </Text>
                             </Box>
                           </>

@@ -5,6 +5,7 @@ const stockController = require("../controllers").stockController;
 
 router.get("/all", stockController.getAll);
 router.get("/", stockController.getAllAsc);
+router.get("/price", stockController.getPrice);
 router.get("/Desc", stockController.getAllDesc);
 router.get("/:id", stockController.getById);
 router.post("/v1", stockController.insertStock);
