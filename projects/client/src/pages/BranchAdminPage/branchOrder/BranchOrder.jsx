@@ -84,10 +84,7 @@ export default function BranchOrder() {
               <Tr>
                 <Th>
                   <InputGroup>
-                    <Input
-                      onChange={inputHandler}
-                      placeholder="Transaction ID"
-                    />
+                    <Input onChange={inputHandler} placeholder="Invoice Code" />
                     <InputRightElement>
                       <Icon
                         cursor={"pointer"}
@@ -132,14 +129,14 @@ export default function BranchOrder() {
               {trans?.map((val) => {
                 return (
                   <Tr>
-                    <Td>{val.id}</Td>
+                    <Td>{val.invoiceCode}</Td>
                     <Td>Rp {Number(val.total).toLocaleString("id-ID")},-</Td>
                     <Td>
                       <ModalConfirm val={val} fetch={fetch}></ModalConfirm>
                     </Td>
                     <Td>
                       <Flex gap={"0.6rem"}>
-                        <ModalPayment val={val} />
+                        <ModalPayment val={val} fetch={fetch} />
                         <ModalDetails val={val} />
                       </Flex>
                     </Td>

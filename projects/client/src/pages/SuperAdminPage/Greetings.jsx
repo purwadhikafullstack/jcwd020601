@@ -24,7 +24,10 @@ export default function Greetings() {
               {"Welcome, " + userSelector.admin_name}
             </Flex>
             <Flex fontSize={"0.8rem"} fontWeight={"600"} color={"#787875"}>
-              This is The Transaction Section
+              {"This is The " +
+                location.charAt(0).toUpperCase() +
+                location.slice(1) +
+                " Section"}
             </Flex>
           </Flex>
 

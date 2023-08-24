@@ -9,12 +9,23 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Select,
   useDisclosure,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
+import { api } from "../../../api/api";
 
 export default function ModalFilter(props) {
+  const transactionStatuses = [
+    "waiting for payment",
+    "waiting for payment confirmation",
+    "process",
+    "sending",
+    "delivery confirm",
+    "canceled",
+  ];
+  const [branch, setBranch] = useState([]);
   function inputHandler(input) {
     const { value, id } = input.target;
     const tempobject = { ...props.filter };
@@ -22,6 +33,14 @@ export default function ModalFilter(props) {
     props.setFilter(tempobject);
     console.log(tempobject);
   }
+  async function fetchBranchName() {
+    const result = await api().get(`/branch`);
+    setBranch(result.data);
+    console.log(result.data);
+  }
+  useEffect(() => {
+    fetchBranchName();
+  }, []);
   return (
     <>
       <Modal
@@ -55,14 +74,22 @@ export default function ModalFilter(props) {
               <Flex flexDir={"column"} gap={"10px"} w={"100%"}>
                 <Flex flexDir={"column"} gap={"5px"} w={"100%"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    BranchId
+                    BranchName
                   </Flex>
-                  <Input
+                  <Select
                     onChange={inputHandler}
-                    id="BranchId"
-                    w={"100%"}
+                    id="BranchName"
                     variant={"filled"}
-                  ></Input>
+                    placeholder="Select BranchName"
+                  >
+                    {branch.map((val) => {
+                      return (
+                        <>
+                          <option value={val.name}>{val.name}</option>
+                        </>
+                      );
+                    })}
+                  </Select>
                 </Flex>
                 <Flex flexDir={"column"} gap={"5px"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
@@ -78,15 +105,24 @@ export default function ModalFilter(props) {
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
                     Transaction Status
                   </Flex>
-                  <Input
+                  <Select
                     onChange={inputHandler}
                     id="status"
                     variant={"filled"}
-                  ></Input>
+                    placeholder="Select Status"
+                  >
+                    {transactionStatuses.map((val) => {
+                      return (
+                        <>
+                          <option value={val}>{val}</option>
+                        </>
+                      );
+                    })}
+                  </Select>
                 </Flex>{" "}
                 <Flex flexDir={"column"} gap={"5px"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Before
+                    Created Before
                   </Flex>
                   <Input
                     onChange={inputHandler}
@@ -97,7 +133,7 @@ export default function ModalFilter(props) {
                 </Flex>{" "}
                 <Flex flexDir={"column"} gap={"5px"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    After
+                    Created After
                   </Flex>
                   <Input
                     onChange={inputHandler}
@@ -111,7 +147,7 @@ export default function ModalFilter(props) {
                   <Button
                     onClick={() => {
                       props.modalFilter.onClose();
-                      props.submit();
+                      props.submitFilter();
                     }}
                     bgColor={"#385898"}
                     color={"white"}

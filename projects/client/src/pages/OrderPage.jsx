@@ -34,7 +34,7 @@ export default function OrderPage() {
   async function fetch() {
     try {
       const result = await api().post("orderdetail/id?token=" + token, {
-        OrderId: location,
+        invoiceCode: location,
       });
       setLink(result.data[0].Order.payment_url);
       setStatus(result.data[0].Order.status);
@@ -48,16 +48,16 @@ export default function OrderPage() {
 
   // POST Payment
   const handleFile = async (event) => post(event.target.files[0]);
+
   async function post(file) {
     try {
       const formData = new FormData();
       formData.append("paymentImg", file);
-
-      formData.append("id", location);
+      formData.append("id", order[0].OrderId);
       const pay = await api().post("/order", formData);
-      console.log(location);
+
       await api().patch("/order/v2/userstatus", {
-        OrderId: location,
+        OrderId: order[0].OrderId,
         status: "waiting for payment confirmation",
       });
 
@@ -77,15 +77,41 @@ export default function OrderPage() {
       <Box>
         <Flex alignItems={"center"}>
           <Box
-            onClick={() => console.log(order)}
+            // onClick={() => console.log(order)}
             padding={"1rem 2rem"}
             fontSize={"2xl"}
             fontWeight={"semibold"}
           >
-            OrderID: onfd8762cv
+            {order ? `Invoice Code: ${order[0].Order.invoiceCode}` : null}
           </Box>
-          <Box ringColor={"red"} fontWeight={"semibold"} fontSize={"1.2rem"}>
-            {status}
+          <Box
+            padding={"0.2rem"}
+            border={"3px solid"}
+            boxShadow={
+              "1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px"
+            }
+            ringColor={"red"}
+            fontWeight={"semibold"}
+            fontSize={"1.3rem"}
+            color={
+              status === "process" || status === "sending"
+                ? "green.500"
+                : status === "delivery confirm"
+                ? "blue.500"
+                : status === "waiting for payment confirmation"
+                ? "yellow.500"
+                : status === "canceled"
+                ? "red.500"
+                : "gray.900"
+            }
+          >
+            {status
+              ?.toLowerCase()
+              .split(" ")
+              .map(function (word) {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+              })
+              .join(" ")}
           </Box>
         </Flex>
         {isLoading ? (
@@ -241,7 +267,10 @@ export default function OrderPage() {
                       >
                         Order Status: {status}
                       </Box>
-                      <ModalCancel fetch={fetch} id={location}></ModalCancel>
+                      <ModalCancel
+                        fetch={fetch}
+                        id={order[0].OrderId}
+                      ></ModalCancel>
                       {/*  */}
                     </>
                   ) : status === "sending" ? (
@@ -253,7 +282,10 @@ export default function OrderPage() {
                       >
                         Order Status: {status}
                       </Box>
-                      <ModalConfirm fetch={fetch} id={location}></ModalConfirm>
+                      <ModalConfirm
+                        fetch={fetch}
+                        id={order[0].OrderId}
+                      ></ModalConfirm>
                       {/*  */}
                     </>
                   ) : (
@@ -274,9 +306,15 @@ export default function OrderPage() {
                         Upload Payment Proof
                       </Button>
                       {/*  */}
-                      <ModalConfirm fetch={fetch} id={location}></ModalConfirm>
+                      <ModalConfirm
+                        fetch={fetch}
+                        id={order[0].OrderId}
+                      ></ModalConfirm>
                       {/*  */}
-                      <ModalCancel fetch={fetch} id={location}></ModalCancel>
+                      <ModalCancel
+                        fetch={fetch}
+                        id={order[0].OrderId}
+                      ></ModalCancel>
                       {/*  */}
                     </>
                   )}

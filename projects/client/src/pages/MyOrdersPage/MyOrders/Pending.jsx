@@ -13,7 +13,7 @@ export default function Pending(props) {
               gap={"30px"}
               flexDir={"column"}
               w={"100%"}
-              onClick={() => nav("/order/" + val.id)}
+              onClick={() => nav("/order/" + val.invoiceCode)}
             >
               <Flex
                 _hover={{ bgColor: "#c7c7c7", cursor: "pointer" }}

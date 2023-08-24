@@ -3,6 +3,9 @@ const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
 const { default: axios } = require("axios");
+const fs = require("fs");
+const path = require("path");
+const { nanoid } = require("nanoid");
 
 const orderController = {
   getAll: async (req, res) => {
@@ -33,7 +36,7 @@ const orderController = {
   },
   getByFilter: async (req, res) => {
     try {
-      const { BranchId, OrderId, status, before, after } = req.body;
+      const { BranchName, OrderId, status, before, after } = req.body;
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       // const status = r
@@ -45,8 +48,9 @@ const orderController = {
           },
         },
       };
-      if (BranchId) {
-        whereClause.BranchId = BranchId;
+      const whereClause2 = {};
+      if (BranchName) {
+        whereClause2.name = BranchName;
       }
       if (OrderId) {
         whereClause.id = OrderId;
@@ -62,12 +66,17 @@ const orderController = {
         limit: limit,
         include: {
           model: db.Branch,
+          where: whereClause2,
         },
       });
       const totalRows = await db.Order.count({
         where: whereClause,
         offset: offset,
         limit: limit,
+        include: {
+          model: db.Branch,
+          where: whereClause2,
+        },
       });
 
       const totalPage = Math.ceil(totalRows / limit);
@@ -180,7 +189,7 @@ const orderController = {
 
       if (search) {
         console.log("SEARCH");
-        condition.id = search;
+        condition.invoiceCode = search;
       }
 
       const offset = limit * page;
@@ -211,19 +220,44 @@ const orderController = {
   getSalesOnAllTime: async (req, res) => {
     //INCOMPLETE
     try {
-      let sales = 0;
-      const Order = await db.Order.findAll({
+      // let sales = 0;
+      // const Order = await db.Order.findAll({
+      //   where: {
+      //     status: "delivery confirm",
+      //   },
+      // });
+      // Order.map((val) => {
+      //   sales = val.total + sales;
+      // });
+      // return res.send({
+      //   Orders: Order,
+      //   Date: "From All Of Time",
+      //   TotalSales: JSON.stringify(sales),
+      // });
+      const today = new Date();
+      const oneWeekAgo = new Date(today);
+      oneWeekAgo.setDate(today.getDate() - 7);
+      const weeklySales = await db.Order.findAll({
+        attributes: [
+          [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
+          [Sequelize.fn("sum", Sequelize.col("total")), "total_sales"],
+        ],
         where: {
           status: "delivery confirm",
+          createdAt: {
+            [Sequelize.Op.between]: [oneWeekAgo, today],
+          },
         },
+        group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
+        raw: true,
       });
-      Order.map((val) => {
-        sales = val.total + sales;
-      });
-      return res.send({
-        Date: "From All Of Time",
-        TotalSales: JSON.stringify(sales),
-      });
+      let max = Math.max(
+        ...weeklySales.map((item) => parseInt(item.total_sales))
+      );
+      let highest = weeklySales.filter(
+        (item) => parseInt(item.total_sales) === max
+      );
+      res.send({ weeklySales: weeklySales, highest: highest[0] });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -257,6 +291,63 @@ const orderController = {
         Date: "From Last Month",
         TotalSales: JSON.stringify(sales),
       });
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
+  getSalesOnLastWeek: async (req, res) => {
+    //INCOMPLETE
+    try {
+      //   let sales = 0;
+      //   const Order = await db.Order.findAll({
+      //     where: {
+      //       [Op.and]: [
+      //         { Status: "delivery confirm" },
+      //         {
+      //           createdAt: {
+      //             [db.Sequelize.Op.gte]: moment()
+      //               .subtract(1, "w")
+      //               .startOf("day")
+      //               .format(),
+      //           },
+      //         },
+      //       ],
+      //     },
+      //   });
+      //   Order.map((val) => {
+      //     sales = val.total + sales;
+      //   });
+      //   return res.send({
+      //     Date: "From Last Week",
+      //     TotalSales: JSON.stringify(sales),
+      //   });
+      const today = new Date();
+      const oneWeekAgo = new Date(today);
+      oneWeekAgo.setDate(today.getDate() - 7);
+      const weeklySales = await db.Order.findAll({
+        attributes: [
+          [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
+          [Sequelize.fn("sum", Sequelize.col("total")), "total_sales"],
+        ],
+        where: {
+          status: "delivery confirm",
+          createdAt: {
+            [Sequelize.Op.between]: [oneWeekAgo, today],
+          },
+        },
+        group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
+        raw: true,
+      });
+      let max = Math.max(
+        ...weeklySales.map((item) => parseInt(item.total_sales))
+      );
+      let highest = weeklySales.filter(
+        (item) => parseInt(item.total_sales) === max
+      );
+      res.send({ weeklySales: weeklySales, highest: highest[0] });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -406,6 +497,11 @@ const orderController = {
     try {
       const { UserId, BranchId, AddressId, shipping, courier } = req.body;
 
+      // check shipping
+      if (shipping == undefined || shipping <= 0) {
+        throw Error("Select the shipping method");
+      }
+
       // get the order from cart
       const cart = await db.Cart.findAll({
         where: {
@@ -436,14 +532,6 @@ const orderController = {
           },
         ],
       });
-
-      // cityId
-      const city = await db.City.findOne({
-        where: {
-          city_name: cart[0]["Stock.Branch.city"],
-        },
-      });
-      const cityId = city.dataValues.city_id;
 
       // Order weight
       const weight = cart.reduce((prev, curr) => {
@@ -495,6 +583,10 @@ const orderController = {
       //     },
       //   ]
 
+      // Invoice Code
+      const code = nanoid(8).toUpperCase();
+      const invoiceCode = "INV-" + code;
+
       // Create Order
       const order = await db.Order.create({
         status: "waiting for payment",
@@ -505,6 +597,7 @@ const orderController = {
         shipping,
         courier,
         weight,
+        invoiceCode,
       });
 
       // post multiple orderdetails from order
@@ -589,8 +682,9 @@ const orderController = {
   //
   updateStatus: async (req, res) => {
     try {
+      console.log("MASUK");
       const { status, OrderId } = req.body;
-      console.log(status);
+      console.log({ this: status });
 
       const data = await db.OrderDetail.findAll({
         where: {
@@ -829,10 +923,8 @@ const orderController = {
         },
       }).then((result) => res.send(result));
     } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
+      console.log(err);
+      res.status(500).send(err);
     }
   },
   deleteOrder: async (req, res) => {
@@ -847,6 +939,53 @@ const orderController = {
         },
       });
       return await db.Order.findAll().then((result) => res.send(result));
+    } catch (err) {
+      console.log(err.message);
+      return res.status(500).send({
+        error: err.message,
+      });
+    }
+  },
+  deleteOrderImage: async (req, res) => {
+    try {
+      const id = req.params.id;
+
+      // Find the order to get the payment image URL
+      const order = await db.Order.findOne({
+        where: {
+          id,
+        },
+      });
+
+      if (!order) {
+        return res.status(404).send({ message: "Order not found" });
+      }
+
+      // Extract the filename from the payment_url
+      const paymentImageUrl = order.payment_url;
+      const filename = paymentImageUrl.split("/").pop();
+
+      // Construct the file path
+      const filePath = path.join(__dirname, "../public/paymentImg", filename);
+
+      // Delete the file if it exists
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+
+      // Update the order's payment_url to null
+      await db.Order.update(
+        {
+          payment_url: null,
+        },
+        {
+          where: {
+            id,
+          },
+        }
+      );
+
+      res.status(200).send("Payment image deleted successfully");
     } catch (err) {
       console.log(err.message);
       return res.status(500).send({

@@ -29,6 +29,7 @@ export default function ModalCancel(props) {
       return props.fetch();
     } catch (error) {
       alert(error.response.data);
+      console.log(error);
     }
   }
 

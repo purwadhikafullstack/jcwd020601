@@ -4,99 +4,27 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
-  Icon,
-  Select,
   useDisclosure,
   Center,
   Button,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import ModalPayment from "../../../components/admin/transaction/ModalPayment";
 import ModalDetails from "../../../components/admin/transaction/ModalDetails";
-import ModalConfirm from "../../../components/admin/transaction/ModalConfirm";
 import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
-import { BsFilterSquareFill } from "react-icons/bs";
-import { FiFilter } from "react-icons/fi";
-import { AiTwotoneSetting } from "react-icons/ai";
-import { GrSort } from "react-icons/gr";
 import AddAdminButton from "./AddBranchAdmin";
-
+import ModalFilter from "./ModalFilter";
 export default function AdminTables(props) {
-  const [trans, setTrans] = useState();
-  const [filter, setFilter] = useState("");
-  const [filtered, setFiltered] = useState("");
   const userSelector = useSelector((state) => state.login.auth);
-  const [pages, setPages] = useState(0);
-  const [page, setPage] = useState(0);
-  // const [limit, setLimit] = useState(6);
-  const [rows, setRows] = useState(0);
-  const modalFilter = useDisclosure();
-
-  // GET
-
-  useEffect(() => {
-    props.getAllAdminBranch();
-  }, [props.page]);
-
-  //
-  const changePage = ({ selected }) => {
-    // console.log(selected);
-    setPage(selected);
-  };
-  //
   return (
     <>
-      <Box
-        w={"100%"}
-        bgColor={"#fbfbfb"}
-        // display={"flex"}
-        // flexDirection={"column"}
-        // bgColor={"red"}
-        py={"10px"}
-      >
+      <Box w={"100%"} bgColor={"#fbfbfb"} py={"10px"}>
         <Flex ml={"10px"} px={"10px"}>
           <Flex flexDir={"column"} gap={"10px"} w={"100%"}>
-            {/* <Flex w={"100%"} borderBottom={"2px solid #787875"} pb={"10px"}>
-              <Flex alignItems={"center"} w={"100%"}>
-                <Flex flexDir={"column"}>
-                  <Flex
-                    fontSize={"1.2rem"}
-                    fontWeight={"700"}
-                    width={"200px"}
-                    color={"#2c5282"}
-                    onClick={() => {
-                      console.log(userSelector);
-                    }}
-                  >
-                    {"Welcome, " + userSelector.admin_name}
-                  </Flex>
-                  <Flex
-                    fontSize={"0.8rem"}
-                    fontWeight={"600"}
-                    color={"#787875"}
-                  >
-                    This is The Branch-Admins Section
-                  </Flex>
-                  <Flex></Flex>
-                </Flex>
-                <Center
-                  w={"100%"}
-                  fontWeight={"600"}
-                  color={"#787875"}
-                  fontSize={"1.2rem"}
-                >
-                  This is where you can see, add and edit other Branch-Admins
-                  from different branches
-                </Center>
-              </Flex>
-            </Flex> */}
             <Flex w={"100%"} borderBottom={"2px solid #787875"} pb={"10px"}>
               <Flex alignItems={"center"} w={"100%"}>
                 <Flex flexDir={"column"}>
@@ -105,9 +33,6 @@ export default function AdminTables(props) {
                     fontWeight={"700"}
                     width={"200px"}
                     color={"#2c5282"}
-                    onClick={() => {
-                      console.log(userSelector);
-                    }}
                   >
                     {"Welcome, " + userSelector.admin_name}
                   </Flex>
@@ -148,19 +73,20 @@ export default function AdminTables(props) {
                   fontWeight={700}
                   cursor={"pointer"}
                   onClick={() => {
-                    setFilter();
-                    setFiltered(false);
+                    props.getAllAdminBranch();
+                    props.setFilter();
+                    props.setFiltered(false);
                   }}
-                  bgColor={filtered ? "#2c5282" : "white"}
-                  color={filtered ? "white" : "#2c5282"}
+                  bgColor={props.filtered ? "#2c5282" : "white"}
+                  color={props.filtered ? "white" : "#2c5282"}
                 >
-                  {filtered ? "Filtered : On" : "Filtered : Off"}
+                  {props.filtered ? "Filtered : On" : "Filtered : Off"}
                 </Flex>
                 <AddAdminButton getAllAdminBranch={props.getAllAdminBranch} />
               </Flex>
               <Flex alignItems={"center"} gap={"30px"} mr={"90px"}>
                 <Button
-                  onClick={modalFilter.onOpen}
+                  onClick={props.modalFilter.onOpen}
                   bgColor={"#2c5282"}
                   color={"white"}
                 >
@@ -220,7 +146,12 @@ export default function AdminTables(props) {
             pageRangeDisplayed={3}
           />
         </TableContainer>
-        <Flex></Flex>
+        <ModalFilter
+          filter={props.filter}
+          setFilter={props.setFilter}
+          modalFilter={props.modalFilter}
+          submitFilter={props.submitFilter}
+        />
       </Box>
     </>
   );
