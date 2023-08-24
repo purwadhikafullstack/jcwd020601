@@ -38,7 +38,6 @@ export default function CarouselAll() {
     fetchProduct();
   }, [token, orderSelector.BranchId]);
   console.log(value);
-  console.log(token);
 
   return (
     <Flex
@@ -51,7 +50,13 @@ export default function CarouselAll() {
       <Divider w={"75%"} />
       <Box
         display={"flex"}
-        justifyContent={"space-between"}
+        justifyContent={{
+          base: "space-evenly",
+          sm: "space-between",
+          md: "space-between",
+          lg: "space-between",
+          xl: "space-between",
+        }}
         alignItems={"center"}
         w={{
           base: "340px",
@@ -74,7 +79,7 @@ export default function CarouselAll() {
           color={"blue.400"}
           cursor={"pointer"}
         >
-          Lihat Semua
+          <Link to="/products/filter">Lihat Semua</Link>
         </Text>
       </Box>
       <Box display={"flex"} gap={"25px"} justifyContent={"center"}>
@@ -103,35 +108,75 @@ export default function CarouselAll() {
           mb={"120px"}
           flexWrap={"wrap"}
           justifyContent={"center"}
-          // bgColor={"red.100"}
         >
           {value.map((val, idx) => (
             <Link
               to={`/products/detail/${val.id}`}
               cursor={"pointer"}
               // bgColor={"red.200"}
+              key={idx}
+              p={0}
             >
-              <Card key={idx} p={0}>
+              <Card
+                h={{
+                  base: "440px",
+                  lg: "370px",
+                }}
+              >
                 <CardBody>
                   <Box>
-                    {val.Book?.Discount?.isPercent ? (
+                    {val.Discount?.discount ? (
                       <>
-                        <Box
-                          w={12}
-                          h={8}
-                          position={"absolute"}
-                          left={"152px"}
-                          borderTopRightRadius={"5px"}
-                          top={"0px"}
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="center"
-                          bgColor={"blue.100"}
-                        >
-                          <Text fontWeight={"bold"} color={"blue.900"}>
-                            {val.Book?.Discount?.discount}%
-                          </Text>
-                        </Box>
+                        {val.Discount?.isPercent ? (
+                          <>
+                            <Box
+                              w={14}
+                              h={8}
+                              position={"absolute"}
+                              left={{
+                                base: "225px",
+                                md: "185px",
+                                lg: "145px",
+                              }}
+                              borderTopRightRadius={"5px"}
+                              top={"0px"}
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              bgColor={"blue.100"}
+                            >
+                              <Text color={"blue.900"}>
+                                -{val.Discount?.discount}%
+                              </Text>
+                            </Box>
+                          </>
+                        ) : (
+                          <>
+                            <Box
+                              w={20}
+                              h={8}
+                              position={"absolute"}
+                              left={{
+                                base: "200px",
+                                md: "190px",
+                                lg: "122px",
+                              }}
+                              borderTopRightRadius={"5px"}
+                              top={"0px"}
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              bgColor={"blue.100"}
+                            >
+                              <Text fontSize="md">
+                                {/* - */}
+                                {Intl.NumberFormat().format(
+                                  "-" + val.Discount?.discount
+                                )}
+                              </Text>
+                            </Box>
+                          </>
+                        )}
                       </>
                     ) : (
                       <></>
@@ -166,11 +211,10 @@ export default function CarouselAll() {
                         : val.Book?.title}
                     </Text>
                     <Text color="blue.600" fontSize="md">
-                      {val.Book?.Discount?.discount ? (
+                      {val.Discount?.discount ? (
                         <>
-                          {val.Book?.Discount?.isPercent ? (
+                          {val.Discount?.isPercent ? (
                             <>
-                              {/* val.Book?.price */}
                               <Text fontSize="xl">
                                 Rp.{Intl.NumberFormat().format(val.Book?.price)}
                               </Text>
@@ -178,15 +222,19 @@ export default function CarouselAll() {
                           ) : (
                             <>
                               <Box gap={3} display={"flex"} flexDir={"column"}>
-                                <Text color="#A0AEC0" as="del" fontSize="md">
+                                <Text
+                                  fontSize="md"
+                                  my={0}
+                                  as={"del"}
+                                  color={"blackAlpha.500"}
+                                >
                                   Rp.{" "}
                                   {Intl.NumberFormat().format(val.Book?.price)}
                                 </Text>
                                 <Text fontSize="xl">
                                   Rp.{" "}
                                   {Intl.NumberFormat().format(
-                                    val.Book?.price -
-                                      val.Book?.Discount?.discount
+                                    val.Book?.price - val.Discount?.discount
                                   )}
                                 </Text>
                               </Box>
@@ -203,17 +251,6 @@ export default function CarouselAll() {
                     </Text>
                   </Flex>
                 </CardBody>
-                {/* <CardFooter p={5}>
-                <ButtonGroup justifyContent={"center"}> */}
-                {/* <Button variant="solid" colorScheme="blue">
-                    Buy now
-                  </Button> */}
-                {/* <Button variant="solid" colorScheme="blue"> */}
-                {/* Add to cart */}
-                {/* <Icon as={BsCart} w={8} h={8} color="whiteAlpha.900"></Icon>
-                  </Button>
-                </ButtonGroup>
-              </CardFooter> */}
               </Card>
             </Link>
           ))}

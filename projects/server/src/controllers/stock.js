@@ -110,6 +110,20 @@ const stockController = {
       });
     }
   },
+  getPrice: async (req, res) => {
+    try {
+      const place = req.query.place || 2;
+      const price = req.query.price || null;
+      const category = req.query.category || null;
+      const priceData = await stockServices.getPrice(place, price, category);
+      return res.send(priceData);
+    } catch (err) {
+      console.log(err.message);
+      res.status(500).send({
+        message: err.message,
+      });
+    }
+  },
   editStock: async (req, res) => {
     const transaction = await t.create();
     try {

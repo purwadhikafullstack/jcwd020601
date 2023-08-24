@@ -6,12 +6,8 @@ import {
   List,
   ListItem,
   ListIcon,
-  Button,
-  OrderedList,
-  UnorderedList,
 } from "@chakra-ui/react";
 import { MdCheckCircle, MdSettings } from "react-icons/md";
-import icon from "../assets/images/icon.png";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
@@ -27,9 +23,6 @@ export default function DetailBookPage() {
   useEffect(() => {
     fetchProduct();
   }, [id]);
-
-  // console.log(value.Book?.title);
-  // console.log(value.Book);
   console.log(value);
   return (
     <>
@@ -47,7 +40,7 @@ export default function DetailBookPage() {
             xl: "row",
           }}
           alignItems={{
-            base: "normal",
+            base: "center",
             sm: "normal",
             md: "normal",
             lg: "normal",
@@ -69,10 +62,8 @@ export default function DetailBookPage() {
                       <Box
                         w={14}
                         h={8}
-                        // position={"absolute"}
-                        // left={"1px"}
+                        marginLeft={"150px"}
                         borderTopRightRadius={"5px"}
-                        // top={"0px"}
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
@@ -130,50 +121,47 @@ export default function DetailBookPage() {
               </Text>
             </Box>
             <Box display={"flex"} gap={3} flexDirection={"column"}>
-              {/* <Text
-                fontSize={"xl"}
-                as={"del"}
-                color="#A0AEC0"
-                fontWeight={"semibold"}
-              >
-                Rp. {value.Book?.price}
-              </Text>
-              <Text fontSize={"xl"} color={"blue.600"} fontWeight={"semibold"}>
-                Rp. {value.Book?.price}
-              </Text> */}
               <Text color="blue.600" fontSize="md">
-                {value.Book?.Discount?.discount ? (
-                  <>
-                    {value.Book?.Discount?.isPercent ? (
-                      <>
-                        {/* value.Book?.price */}
-                        <Text fontSize="xl">
-                          Rp.{Intl.NumberFormat().format(value.Book?.price)}
-                        </Text>
-                      </>
-                    ) : (
-                      <>
-                        <Box gap={3} display={"flex"} flexDir={"column"}>
-                          <Text color="#A0AEC0" as="del" fontSize="md">
-                            Rp. {Intl.NumberFormat().format(value.Book?.price)}
-                          </Text>
+                <Text fontSize="xl" color="blue.600">
+                  {value.Discount?.discount ? (
+                    <>
+                      {value.Discount?.isPercent ? (
+                        <>
                           <Text fontSize="xl">
-                            Rp.{" "}
-                            {Intl.NumberFormat().format(
-                              value.Book?.price - value.Book?.Discount?.discount
-                            )}
+                            Rp.
+                            {Intl.NumberFormat().format(value.Book?.price)}
                           </Text>
-                        </Box>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <Text fontSize="xl">
-                      Rp. {Intl.NumberFormat().format(value.Book?.price)}
-                    </Text>
-                  </>
-                )}
+                        </>
+                      ) : (
+                        <>
+                          <Box gap={2} display={"flex"} flexDir={"column"}>
+                            <Text
+                              fontSize="md"
+                              my={0}
+                              as={"del"}
+                              color={"blackAlpha.500"}
+                            >
+                              Rp.{" "}
+                              {Intl.NumberFormat().format(value.Book?.price)}
+                            </Text>
+                            <Text fontSize="xl">
+                              Rp.{" "}
+                              {Intl.NumberFormat().format(
+                                value.Book?.price - value.Discount?.discount
+                              )}
+                            </Text>
+                          </Box>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <Text fontSize="xl">
+                        Rp. {Intl.NumberFormat().format(value.Book?.price)}
+                      </Text>
+                    </>
+                  )}
+                </Text>
               </Text>
             </Box>
             <Box display={"flex"} gap={5} flexDirection={"column"}>
@@ -239,7 +227,7 @@ export default function DetailBookPage() {
               </Box>
             </Box>
           </Box>
-          <Box maxW={"300px"} p={5}>
+          {/* <Box maxW={"300px"} p={5}>
             <Box display={"flex"} flexDirection={"column"} p={3} gap={3}>
               <Box display={"flex"} flexDirection={"column"} gap={3}>
                 <Text fontSize={"md"} color={"#6d6d6d"}>
@@ -275,7 +263,7 @@ export default function DetailBookPage() {
                 </Button>
               </Box>
             </Box>
-          </Box>
+          </Box> */}
         </Box>
       </Center>
     </>

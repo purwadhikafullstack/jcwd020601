@@ -119,7 +119,7 @@ export default function AllBookCard({ keyword }) {
                 <Card
                   key={idx}
                   w={{ base: "250px", sm: "250px", md: "250px", lg: "200px" }}
-                  h={"400px"}
+                  h={{ base: "520px", lg: "440px" }}
                 >
                   <CardBody>
                     <Link to={`/products/detail/${val.id}`} cursor={"pointer"}>
@@ -132,7 +132,11 @@ export default function AllBookCard({ keyword }) {
                                   w={14}
                                   h={8}
                                   position={"absolute"}
-                                  left={"145px"}
+                                  left={{
+                                    base: "195px",
+                                    md: "195px",
+                                    lg: "145px",
+                                  }}
                                   borderTopRightRadius={"5px"}
                                   top={"0px"}
                                   display="flex"
@@ -151,7 +155,11 @@ export default function AllBookCard({ keyword }) {
                                   w={20}
                                   h={8}
                                   position={"absolute"}
-                                  left={"122px"}
+                                  left={{
+                                    base: "170px",
+                                    md: "170px",
+                                    lg: "122px",
+                                  }}
                                   borderTopRightRadius={"5px"}
                                   top={"0px"}
                                   display="flex"
@@ -200,8 +208,54 @@ export default function AllBookCard({ keyword }) {
                             ? val.Book?.title.slice(0, 15) + "..."
                             : val.Book?.title}
                         </Text>
-                        <Text fontSize="xl" color="blue.600">
-                          Rp. {Intl.NumberFormat().format(val.Book?.price)}
+                        <Text color="blue.600" fontSize="md">
+                          {val.Discount?.discount ? (
+                            <>
+                              {val.Discount?.isPercent ? (
+                                <>
+                                  <Text fontSize="xl">
+                                    Rp.
+                                    {Intl.NumberFormat().format(
+                                      val.Book?.price
+                                    )}
+                                  </Text>
+                                </>
+                              ) : (
+                                <>
+                                  <Box
+                                    gap={2}
+                                    display={"flex"}
+                                    flexDir={"column"}
+                                  >
+                                    <Text
+                                      fontSize="md"
+                                      my={0}
+                                      as={"del"}
+                                      color={"blackAlpha.500"}
+                                    >
+                                      Rp.{" "}
+                                      {Intl.NumberFormat().format(
+                                        val.Book?.price
+                                      )}
+                                    </Text>
+                                    <Text fontSize="xl">
+                                      Rp.{" "}
+                                      {Intl.NumberFormat().format(
+                                        val.Book?.price - val.Discount?.discount
+                                      )}
+                                    </Text>
+                                  </Box>
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              <Text fontSize="xl">
+                                Rp.{" "}
+                                {Intl.NumberFormat().format(val.Book?.price)}
+                              </Text>
+                            </>
+                          )}
                         </Text>
                       </Flex>
                     </Link>
