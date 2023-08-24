@@ -25,7 +25,6 @@ export default function BranchOrder() {
     <>
       <Box
         marginLeft={60}
-        marginTop={"6em"}
         h={"80vh"}
         // bgColor={"red"}
         overflow={"auto"}
