@@ -23,7 +23,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-import { BsChevronDown, BsCart } from "react-icons/bs";
+import { BsChevronDown } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
 import { api } from "../api/api";
 import logo from "../assets/images/gramedia-icon-2.png";
@@ -35,13 +35,13 @@ import { MdClose } from "react-icons/md";
 import MobileNav from "./MobileNav";
 
 import ModalSelectAddress from "../pages/ProfilePage/ModalSelectAddress";
+import CartButton from "./CartButton";
 
 export default function Navbar({ callback, keyword }) {
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   const [large] = useMediaQuery("(min-width: 768px)");
   const [category, setCategory] = useState([]);
-  const nav = useNavigate();
 
   const fetchCategori = async () => {
     let response = await api().get(`/category`);
@@ -214,6 +214,13 @@ function DesktopNav({ callback, keyword, category }) {
                   fontWeight={"bold"}
                   fontSize={{ sm: "md", md: "xl" }}
                   color={"blue.700"}
+                  display={{
+                    base: "none",
+                    sm: "none",
+                    md: "none",
+                    lg: "none",
+                    xl: "block",
+                  }}
                 >
                   Kategori
                 </Text>
@@ -321,7 +328,7 @@ function DesktopNav({ callback, keyword, category }) {
                   color: "red.700",
                 },
               }}
-              w={{ md: "15em", lg: "30em" }}
+              w={{ sm: "15em", md: "18em", lg: "30em" }}
               focusBorderColor="transparent"
               _focus={{ borderBottom: "1.6px solid grey" }}
             />
@@ -514,15 +521,12 @@ function DesktopNav({ callback, keyword, category }) {
         h={"60px"}
         // bgColor={"green"}
       >
-        <Box>
-          <Menu>
-            <MenuButton onClick={() => nav("/cart")}>
-              <Flex alignItems={"center"} gap={"0.1rem"} cursor={"pointer"}>
-                <Icon as={BsCart} w={10} h={10} color="blue.700"></Icon>
-              </Flex>
-            </MenuButton>
-          </Menu>
-        </Box>
+        {/* CartButton */}
+        <CartButton
+          orderSelector={orderSelector}
+          userSelector={userSelector}
+        ></CartButton>
+        {/* CartButton */}
         <Box>
           <Menu>
             <MenuButton>

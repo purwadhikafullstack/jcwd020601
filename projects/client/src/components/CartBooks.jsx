@@ -6,12 +6,13 @@ import { IoStorefrontSharp } from "react-icons/io5";
 import { BsCartX } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Shipping from "./Shipping";
 
 export default function CartBooks(props) {
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
+  const dispatch = useDispatch();
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
   const [hapus, setHapus] = useState();
@@ -85,6 +86,12 @@ export default function CartBooks(props) {
 
   useEffect(() => {
     fetch();
+    // dispatch({
+    //   type: "order",
+    //   payload: {
+    //     quantity: orderSelector.quantity + 1,
+    //   },
+    // });
   }, [hapus]);
 
   useEffect(() => {

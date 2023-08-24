@@ -35,17 +35,21 @@ export default function FilterBook() {
   const tooFarModal = useDisclosure();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
-  const [place, setPlace] = useState(orderSelector.BranchId);
-  const [limit, setLimit] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [category, setCategory] = useState([]);
+  const [price, setPrice] = useState("");
+  const [data, setData] = useState(null);
   async function fetchProduct() {
     try {
       setIsLoading(true);
-      let response = await api.get(
-        `/stock?limit=${limit}&place=${orderSelector.BranchId}`
-      );
-      setValue(response.data.result);
+      let url = `/stock/price?price=${price}&place=${orderSelector.BranchId}`;
+      if (data !== null) {
+        url += `&category=${data}`;
+      }
+
+      const response = await api().get(url);
+      console.log(response);
+      setValue(response.data);
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -55,7 +59,8 @@ export default function FilterBook() {
   }
   useEffect(() => {
     fetchProduct();
-  }, [token, orderSelector.BranchId]);
+    // fetchCategori();
+  }, [price, data]);
 
   async function add(idx) {
     try {
@@ -83,154 +88,155 @@ export default function FilterBook() {
       console.error(error);
     }
   }
-  async function fetchDetail() {
-    let response = await api.get(`/stock/${7}`);
-    setData(response.data);
-    console.log(response);
-  }
+  const onChangeCategory = (e) => {
+    const value = e.target.value;
+    setData(value);
+  };
+  const fetchCategori = async () => {
+    let response = await api().get(`/category`);
+    setCategory(response.data.result);
+  };
   useEffect(() => {
-    fetchDetail();
+    fetchCategori();
   }, []);
+
+  const onChange = (e) => {
+    const value = e.target.value;
+    setPrice(value);
+  };
+  console.log(data);
+  console.log(price);
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
         <Box
-          maxW={"1200px"}
           display={"flex"}
+          flexDir={{ base: "column", sm: "column", md: "column", lg: "row" }}
+          h={"78vh"}
+          overflowY={"scroll"}
+          // bgColor={"yellow.100"}
+          sx={{
+            "&::-webkit-scrollbar": {
+              width: "5px",
+              borderRadius: "8px",
+              backgroundColor: `rgba(0, 0, 0, 0.05)`,
+            },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: `#cce6ff`,
+            },
+          }}
           p={3}
           gap={3}
-          flexDirection={{
-            base: "column",
-            sm: "column",
-            md: "column",
-            lg: "row",
-            xl: "row",
-          }}
           alignItems={{
-            base: "normal",
-            sm: "normal",
-            md: "normal",
-            lg: "normal",
-            xl: "normal",
+            base: "center",
+            sm: "center",
+            md: "center",
+            lg: "flex-start",
           }}
         >
           <Box
-            w={"400px"}
-            justifyContent={"center"}
+            w={{ base: "800px", lg: "400px" }}
+            justifyContent={{ base: "space-evenly", lg: "center" }}
             display={"flex"}
             px={10}
             py={3}
-            bgColor={"red"}
+            alignItems={{
+              base: "center",
+              sm: "center",
+              md: "center",
+              lg: "flex-start",
+            }}
           >
-            <Box display={"flex"} flexDir={"column"} gap={3}>
-              {/* {data.Discount?.discount ? (
-                <>
-                  {data.Discount?.isPercent ? (
-                    <>
-                      <Box
-                        w={14}
-                        h={8}
-                        // position={"absolute"}
-                        // left={"1px"}
-                        borderTopRightRadius={"5px"}
-                        // top={"0px"}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        bgColor={"blue.100"}
-                      >
-                        <Text color={"blue.900"}>
-                          -{data.Discount?.discount}%
-                        </Text>
-                      </Box>
-                    </>
-                  ) : (
-                    <>
-                      <Box
-                        w={20}
-                        h={8}
-                        borderTopRightRadius={"5px"}
-                        marginLeft={"50px"}
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="center"
-                        bgColor={"blue.100"}
-                      >
-                        <Text fontSize="md">
-                          {Intl.NumberFormat().format(
-                            "-" + data.Discount?.discount
-                          )}
-                        </Text>
-                      </Box>
-                    </>
-                  )}
-                </>
-              ) : (
-                <></>
-              )}
-              <Image src={data.Book?.book_url} width={"200"} height={"200px"} /> */}
+            <Box
+              display={"flex"}
+              flexDir={{
+                base: "column",
+                sm: "column",
+                md: "row",
+                lg: "column",
+              }}
+              gap={5}
+            >
               <Heading as="h3" size="lg">
                 Filter
               </Heading>
-              <Heading as="h4" size="md">
-                Kategori
-              </Heading>
-              <Heading as="h4" size="md">
-                Harga
-              </Heading>
-              <Text mb="8px">Value:</Text>
-              <Input
-                // value={value}
-                // onChange={handleChange}
-                placeholder="Here is a sample placeholder"
-                size="sm"
-              />
+              <Box gap={3} display={"flex"} flexDir={"column"}>
+                <Heading as="h4" size="md">
+                  Kategori
+                </Heading>
+                <Select
+                  onChange={onChangeCategory}
+                  placeholder="Pilih Kategori"
+                  value={data}
+                  w={"200px"}
+                  mr={8}
+                >
+                  {category.map((cate, idx) => (
+                    <option key={idx} value={cate.id}>
+                      {cate.category}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
+
+              <Box gap={3} display={"flex"} flexDir={"column"}>
+                <Heading as="h4" size="md">
+                  Harga
+                </Heading>
+                <Select
+                  onChange={onChange}
+                  placeholder="Pilih"
+                  value={price}
+                  w={"200px"}
+                  mr={8}
+                >
+                  <option value="ASC">Harga Termurah</option>
+                  <option value="DESC">Harga Termahal</option>
+                </Select>
+              </Box>
             </Box>
           </Box>
           <Box
-            maxWidth={"900px"}
+            w={{
+              base: "300px",
+              sm: "450px",
+              md: "600px",
+              lg: "750px",
+              xl: "900px",
+            }}
             display={"flex"}
-            // bgColor={"blue.200"}
             gap={3}
             p={3}
             flexWrap={"wrap"}
             justifyContent={{
               base: "center",
               sm: "center",
-              md: "flex-start",
-              // lg: "flex-start",
+              md: "center",
+              lg: "flex-start",
             }}
           >
             {isLoading ? (
-              <Spinner
-                thickness="4px"
-                speed="0.65s"
-                emptyColor="gray.200"
-                color="blue.500"
-                size="xl"
-              />
+              <Box
+                display={"flex"}
+                justifyContent={"center"}
+                flexDir={"column"}
+                mx={"auto"}
+              >
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="blue.500"
+                  size="xl"
+                />
+              </Box>
             ) : (
               <>
-                <Box
-                  w={{ base: "300px", sm: "300px", md: "600px", lg: "900px" }}
-                  display={"flex"}
-                  justifyContent={"space-between"}
-                  // bgColor={"red.100"}
-                >
-                  <Text fontSize={"3xl"} fontWeight={"bold"}>
-                    {/* All Books */}
-                  </Text>
-                  <Select placeholder="Select" w={"200px"} mr={8}>
-                    <option value="option1">Option 1</option>
-                    <option value="option2">Option 2</option>
-                    <option value="option3">Option 3</option>
-                  </Select>
-                </Box>
                 {value.map((val, idx) => (
                   <Card
                     key={idx}
                     w={{ base: "250px", sm: "250px", md: "250px", lg: "200px" }}
-                    h={"400px"}
+                    h={{ base: "520px", lg: "440px" }}
                   >
                     <CardBody>
                       <Link
@@ -246,7 +252,11 @@ export default function FilterBook() {
                                     w={14}
                                     h={8}
                                     position={"absolute"}
-                                    left={"145px"}
+                                    left={{
+                                      base: "195px",
+                                      md: "195px",
+                                      lg: "145px",
+                                    }}
                                     borderTopRightRadius={"5px"}
                                     top={"0px"}
                                     display="flex"
@@ -265,7 +275,11 @@ export default function FilterBook() {
                                     w={20}
                                     h={8}
                                     position={"absolute"}
-                                    left={"122px"}
+                                    left={{
+                                      base: "170px",
+                                      md: "170px",
+                                      lg: "122px",
+                                    }}
                                     borderTopRightRadius={"5px"}
                                     top={"0px"}
                                     display="flex"
@@ -315,7 +329,54 @@ export default function FilterBook() {
                               : val.Book?.title}
                           </Text>
                           <Text fontSize="xl" color="blue.600">
-                            Rp. {Intl.NumberFormat().format(val.Book?.price)}
+                            {val.Discount?.discount ? (
+                              <>
+                                {val.Discount?.isPercent ? (
+                                  <>
+                                    <Text fontSize="xl">
+                                      Rp.
+                                      {Intl.NumberFormat().format(
+                                        val.Book?.price
+                                      )}
+                                    </Text>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Box
+                                      gap={2}
+                                      display={"flex"}
+                                      flexDir={"column"}
+                                    >
+                                      <Text
+                                        fontSize="md"
+                                        my={0}
+                                        as={"del"}
+                                        color={"blackAlpha.500"}
+                                      >
+                                        Rp.{" "}
+                                        {Intl.NumberFormat().format(
+                                          val.Book?.price
+                                        )}
+                                      </Text>
+                                      <Text fontSize="xl">
+                                        Rp.{" "}
+                                        {Intl.NumberFormat().format(
+                                          val.Book?.price -
+                                            val.Discount?.discount
+                                        )}
+                                      </Text>
+                                    </Box>
+                                  </>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <Text fontSize="xl">
+                                  Rp.{" "}
+                                  {Intl.NumberFormat().format(val.Book?.price)}
+                                </Text>
+                              </>
+                            )}
                           </Text>
                         </Flex>
                       </Link>

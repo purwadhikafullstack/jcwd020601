@@ -5,7 +5,7 @@ const moment = require("moment");
 const { default: axios } = require("axios");
 const fs = require("fs");
 const path = require("path");
-const { v4: uuidv4 } = require("uuid");
+const { nanoid } = require("nanoid");
 
 const orderController = {
   getAll: async (req, res) => {
@@ -266,7 +266,7 @@ const orderController = {
 
       if (search) {
         console.log("SEARCH");
-        condition.id = search;
+        condition.invoiceCode = search;
       }
 
       const offset = limit * page;
@@ -658,7 +658,9 @@ const orderController = {
       //     },
       //   ]
 
-      const invoiceCode = uuidv4();
+      // Invoice Code
+      const code = nanoid(8).toUpperCase();
+      const invoiceCode = "INV-" + code;
 
       // Create Order
       const order = await db.Order.create({
@@ -996,10 +998,8 @@ const orderController = {
         },
       }).then((result) => res.send(result));
     } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
+      console.log(err);
+      res.status(500).send(err);
     }
   },
   deleteOrder: async (req, res) => {
