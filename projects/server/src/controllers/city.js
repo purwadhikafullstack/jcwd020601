@@ -94,7 +94,7 @@ const cityController = {
 
       const origin = await db.City.findOne({
         where: {
-          city_name: city.name,
+          city_name: city.city,
         },
       });
 

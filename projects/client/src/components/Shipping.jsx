@@ -20,15 +20,25 @@ export default function Shipping(props) {
   const dispatch = useDispatch();
   const [service, setService] = useState([]);
   const [etd, setEtd] = useState();
+  const [citycode, setCityCode] = useState();
   // console.log(etd);
+
+  async function cityCode() {
+    const result = await api().post("city/order", {
+      BranchId: props.BranchId,
+      AddressId: props.AddressId,
+    });
+    setCityCode(result.data);
+  }
+  console.log(citycode);
 
   async function fetch() {
     try {
       // console.log(props.courier);
       // console.log(props.weight);
       const ship = await api().post("order/shipping", {
-        origin: "501",
-        destination: "114",
+        origin: citycode.origin,
+        destination: citycode.destination,
         weight: props.weight,
         courier: props.courier,
       });
@@ -43,6 +53,7 @@ export default function Shipping(props) {
   console.log(service);
 
   useEffect(() => {
+    cityCode();
     fetch();
   }, [props.courier]);
 
