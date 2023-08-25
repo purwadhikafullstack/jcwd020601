@@ -72,7 +72,7 @@ export default function Stock() {
       currency: "IDR",
     }).format(number);
   };
-  console.log(value);
+  // console.log(value);
   // console.log(page);
   // console.log(userSelector.branchId);
   return (
@@ -131,6 +131,7 @@ export default function Stock() {
                   <Th fontSize={18}>Nama Buku</Th>
                   <Th fontSize={18}>Branch </Th>
                   <Th fontSize={18}>Stock</Th>
+                  <Th fontSize={18}>Booked-Stock</Th>
                   <Th fontSize={18}>Diskon</Th>
                 </Tr>
               </Thead>
@@ -141,6 +142,7 @@ export default function Stock() {
                     <Td>{val.Book?.title}</Td>
                     <Td>{val.Branch?.name}</Td>
                     <Td>{val.stock}</Td>
+                    <Td>{val.bucket}</Td>
                     <Td>
                       {val.Discount?.isPercent ? (
                         <>{val.Discount?.discount} %</>

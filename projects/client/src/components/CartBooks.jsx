@@ -7,7 +7,6 @@ import { BsCartX } from "react-icons/bs";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useDispatch, useSelector } from "react-redux";
-import Shipping from "./Shipping";
 
 export default function CartBooks(props) {
   const userSelector = useSelector((state) => state.login.auth);
@@ -15,7 +14,7 @@ export default function CartBooks(props) {
   const dispatch = useDispatch();
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
-  const [hapus, setHapus] = useState();
+  const [hapus, setHapus] = useState(false);
   const toast = useToast();
 
   console.log(orderSelector.BranchId);
@@ -28,6 +27,14 @@ export default function CartBooks(props) {
       BranchId: orderSelector.BranchId,
     });
     // console.log(data.data.Cart);
+    setHapus(false);
+    dispatch({
+      type: "qty",
+      payload: {
+        quantity: data.data.quantity,
+      },
+    });
+    // console.log(orderSelector.cart);
     props.setWeight(data.data.weight);
     return setCart(data.data.Cart);
   }
@@ -86,12 +93,6 @@ export default function CartBooks(props) {
 
   useEffect(() => {
     fetch();
-    // dispatch({
-    //   type: "order",
-    //   payload: {
-    //     quantity: orderSelector.quantity + 1,
-    //   },
-    // });
   }, [hapus]);
 
   useEffect(() => {

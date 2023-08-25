@@ -77,8 +77,13 @@ const cartController = {
             curr.dataValues.Stock.dataValues.Book.weight
         );
       }, 0);
-      // console.log(weight);
-      return res.send({ Cart, weight });
+
+      // Count Quantity
+      const quantity = Cart.reduce((prev, curr) => {
+        return prev + curr.dataValues.quantity;
+      }, 0);
+
+      return res.send({ Cart, weight, quantity });
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -195,8 +200,9 @@ const cartController = {
           },
         });
         return res.send(result);
-      } else if (n < qty) {
-        res.send("Stock Insufficient");
+      } else if (avail < qty) {
+        console.log({ masuk: avail, qty: qty });
+        res.status(400).send("Stock Insufficient");
       }
     } catch (err) {
       console.log(err);
