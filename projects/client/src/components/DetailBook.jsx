@@ -24,6 +24,8 @@ import tooFarModal from "./TooFarModal";
 const IMG = process.env.REACT_APP_API_BASE_URL;
 
 export default function DetailBookPage() {
+  const IMG = process.env.REACT_APP_API_BASE_URL;
+  console.log(IMG);
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   const toast = useToast();
@@ -73,6 +75,10 @@ export default function DetailBookPage() {
       console.error(error);
     }
   }
+  const percent = (a, b) => {
+    let result = (a / 100) * b;
+    return result;
+  };
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -176,10 +182,26 @@ export default function DetailBookPage() {
                     <>
                       {value.Discount?.isPercent ? (
                         <>
-                          <Text fontSize="xl">
-                            Rp.
-                            {Intl.NumberFormat().format(value.Book?.price)}
-                          </Text>
+                          <Box gap={3} display={"flex"} flexDir={"column"}>
+                            <Text
+                              fontSize="md"
+                              my={0}
+                              as={"del"}
+                              color={"blackAlpha.500"}
+                            >
+                              Rp.{Intl.NumberFormat().format(value.Book?.price)}
+                            </Text>
+                            <Text fontSize="xl">
+                              Rp.
+                              {Intl.NumberFormat().format(
+                                value.Book?.price -
+                                  percent(
+                                    value.Discount?.discount,
+                                    value.Book?.price
+                                  )
+                              )}
+                            </Text>
+                          </Box>
                         </>
                       ) : (
                         <>
@@ -276,7 +298,7 @@ export default function DetailBookPage() {
               </Box>
             </Box>
           </Box>
-          <Flex flexDir={"column"}>
+          <Flex flexDir={"column"} gap={3}>
             <Box>
               <Input
                 width={"4rem"}
@@ -285,12 +307,53 @@ export default function DetailBookPage() {
                 onChange={(e) => setQty(Number(e.target.value))}
               ></Input>
             </Box>
-            <Box display={"flex"} justifyContent={"space-between"}>
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              gap={5}
+              alignItems={"center"}
+            >
               <Text fontWeight={"semibold"} fontSize={"lg"}>
-                Sub Total
+                Sub Total :
               </Text>
               <Text fontWeight={"semibold"} fontSize={"lg"} color={"blue.600"}>
-                Rp. 74.000
+                {value.Discount?.discount ? (
+                  <>
+                    {value.Discount?.isPercent ? (
+                      <>
+                        <Box gap={3} display={"flex"} flexDir={"column"}>
+                          <Text fontSize="xl">
+                            Rp.
+                            {Intl.NumberFormat().format(
+                              value.Book?.price -
+                                percent(
+                                  value.Discount?.discount,
+                                  value.Book?.price
+                                )
+                            )}
+                          </Text>
+                        </Box>
+                      </>
+                    ) : (
+                      <>
+                        <Box gap={3} display={"flex"} flexDir={"column"}>
+                          <Text fontSize="xl">
+                            Rp.{" "}
+                            {Intl.NumberFormat().format(
+                              value.Book?.price - value.Discount?.discount
+                            )}
+                          </Text>
+                        </Box>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Text fontSize="xl">
+                      Rp. {Intl.NumberFormat().format(value.Book?.price)}
+                    </Text>
+                  </>
+                )}
               </Text>
             </Box>
             <Box display={"flex"} justifyContent={"space-between"} gap={5}>
