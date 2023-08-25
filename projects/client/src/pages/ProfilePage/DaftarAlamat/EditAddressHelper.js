@@ -62,14 +62,13 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
       });
     if (val.addressUser.id == address.id) {
       const token = JSON.parse(localStorage.getItem("auth"));
-      console.log(token);
       const user = await api()
         .get("/auth/v3?token=" + token)
         .then(async (res) => {
           return res.data;
         })
         .catch((err) => {
-          return err.message;
+          console.log(err.message);
         });
       const userMainAddress = await api()
         .get("/address/ismain/" + val.userSelector.id)
@@ -79,7 +78,6 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
         });
       localStorage.setItem("address", JSON.stringify(userMainAddress));
       address = JSON.parse(localStorage.getItem("address"));
-
       const closestBranch = await api()
         .post("/address/closest", {
           lat: address.latitude,

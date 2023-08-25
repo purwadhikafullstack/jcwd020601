@@ -119,7 +119,6 @@ const addressController = {
       });
     }
   },
-
   editAddress: async (req, res) => {
     try {
       let place = {};
@@ -182,6 +181,7 @@ const addressController = {
   editMainAddress: async (req, res) => {
     try {
       const { UserId } = req.body;
+      const { id } = req.params;
       const Address = await db.Address.update(
         {
           isMain: false,
@@ -198,7 +198,7 @@ const addressController = {
         },
         {
           where: {
-            id: req.params.id,
+            id,
           },
         }
       );

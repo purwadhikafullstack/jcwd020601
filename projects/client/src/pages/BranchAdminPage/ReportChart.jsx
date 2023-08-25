@@ -67,7 +67,7 @@ export default function ReportChart() {
     const total = await api().get(
       `/order/totalsales/week?BranchId=${userSelector.branchId}`
     );
-    setSalesCardData(total.data);
+    setSalesCardData(total?.data);
     setLoading(false);
   }
   async function submitFilter(val) {
@@ -266,7 +266,7 @@ export default function ReportChart() {
                             type="number"
                             domain={[
                               0,
-                              parseInt(salesChart?.highest.total_sales),
+                              parseInt(salesChart?.highest?.total_sales),
                             ]}
                           />
                           <CartesianGrid strokeDasharray="3 3" />
@@ -304,7 +304,7 @@ export default function ReportChart() {
                             type="number"
                             domain={[
                               0,
-                              parseInt(quantityChart?.highest.qty_sold),
+                              parseInt(quantityChart?.highest?.qty_sold),
                             ]}
                           />
                           <Tooltip

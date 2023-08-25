@@ -24,6 +24,7 @@ import Swal from "sweetalert2";
 export default function LoginPage() {
   useEffect(() => {
     /* global google */
+    // "417414378341-5iq94ontj89hqcfu7649s67bveqsfagb.apps.googleusercontent.com";
     google.accounts.id.initialize({
       client_id:
         "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
