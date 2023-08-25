@@ -76,6 +76,10 @@ export default function AllBookCard({ keyword }) {
       console.error(error);
     }
   }
+  const percent = (a, b) => {
+    let result = (a / 100) * b;
+    return result;
+  };
   return (
     <>
       <Center
@@ -213,12 +217,33 @@ export default function AllBookCard({ keyword }) {
                             <>
                               {val.Discount?.isPercent ? (
                                 <>
-                                  <Text fontSize="xl">
-                                    Rp.
-                                    {Intl.NumberFormat().format(
-                                      val.Book?.price
-                                    )}
-                                  </Text>
+                                  <Box
+                                    gap={3}
+                                    display={"flex"}
+                                    flexDir={"column"}
+                                  >
+                                    <Text
+                                      fontSize="md"
+                                      my={0}
+                                      as={"del"}
+                                      color={"blackAlpha.500"}
+                                    >
+                                      Rp.
+                                      {Intl.NumberFormat().format(
+                                        val.Book?.price
+                                      )}
+                                    </Text>
+                                    <Text fontSize="xl">
+                                      Rp.
+                                      {Intl.NumberFormat().format(
+                                        val.Book?.price -
+                                          percent(
+                                            val.Discount?.discount,
+                                            val.Book?.price
+                                          )
+                                      )}
+                                    </Text>
+                                  </Box>
                                 </>
                               ) : (
                                 <>

@@ -79,6 +79,10 @@ export default function BookCardRecomend() {
       console.error(error);
     }
   }
+  const percent = (a, b) => {
+    let result = (a / 100) * b;
+    return result;
+  };
   return (
     <Flex
       justify={"center"}
@@ -249,9 +253,26 @@ export default function BookCardRecomend() {
                       <>
                         {val.Discount?.isPercent ? (
                           <>
-                            <Text fontSize="xl">
-                              Rp.{Intl.NumberFormat().format(val.Book?.price)}
-                            </Text>
+                            <Box gap={3} display={"flex"} flexDir={"column"}>
+                              <Text
+                                fontSize="md"
+                                my={0}
+                                as={"del"}
+                                color={"blackAlpha.500"}
+                              >
+                                Rp.{Intl.NumberFormat().format(val.Book?.price)}
+                              </Text>
+                              <Text fontSize="xl">
+                                Rp.
+                                {Intl.NumberFormat().format(
+                                  val.Book?.price -
+                                    percent(
+                                      val.Discount?.discount,
+                                      val.Book?.price
+                                    )
+                                )}
+                              </Text>
+                            </Box>
                           </>
                         ) : (
                           <>
