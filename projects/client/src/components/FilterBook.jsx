@@ -21,7 +21,8 @@ import {
 import { useEffect, useState } from "react";
 import { MdCheckCircle, MdSettings } from "react-icons/md";
 import { api } from "../api/api";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import TooFarModal from "./TooFarModal";
 import Swal from "sweetalert2";
@@ -29,9 +30,11 @@ import Swal from "sweetalert2";
 export default function FilterBook() {
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
+  // const history = useHistory();
   let t = localStorage.getItem("auth");
   const toast = useToast();
   const nav = useNavigate();
+  const { categoryId } = useParams();
   const tooFarModal = useDisclosure();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
@@ -58,9 +61,12 @@ export default function FilterBook() {
     }
   }
   useEffect(() => {
+    if (categoryId) {
+      setData(parseInt(categoryId));
+    }
     fetchProduct();
     // fetchCategori();
-  }, [price, data]);
+  }, [price, data, categoryId]);
 
   async function add(idx) {
     try {
@@ -89,8 +95,13 @@ export default function FilterBook() {
     }
   }
   const onChangeCategory = (e) => {
-    const value = e.target.value;
-    setData(value);
+    nav(`/products/filter/${parseInt(e)}`);
+    if (e == "") {
+      setData(null);
+      nav(`/products/filter`);
+    }
+
+    // console.log(e);
   };
   const fetchCategori = async () => {
     let response = await api().get(`/category`);
@@ -100,12 +111,19 @@ export default function FilterBook() {
     fetchCategori();
   }, []);
 
+  console.log(categoryId);
+
   const onChange = (e) => {
     const value = e.target.value;
     setPrice(value);
   };
   console.log(data);
   console.log(price);
+  // console.log(categoryId);
+  const percent = (a, b) => {
+    let result = (a / 100) * b;
+    return result;
+  };
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -165,7 +183,7 @@ export default function FilterBook() {
                   Kategori
                 </Heading>
                 <Select
-                  onChange={onChangeCategory}
+                  onChange={(e) => onChangeCategory(e.target.value)}
                   placeholder="Pilih Kategori"
                   value={data}
                   w={"200px"}
@@ -333,17 +351,38 @@ export default function FilterBook() {
                               <>
                                 {val.Discount?.isPercent ? (
                                   <>
-                                    <Text fontSize="xl">
-                                      Rp.
-                                      {Intl.NumberFormat().format(
-                                        val.Book?.price
-                                      )}
-                                    </Text>
+                                    <Box
+                                      gap={3}
+                                      display={"flex"}
+                                      flexDir={"column"}
+                                    >
+                                      <Text
+                                        fontSize="md"
+                                        my={0}
+                                        as={"del"}
+                                        color={"blackAlpha.500"}
+                                      >
+                                        Rp.
+                                        {Intl.NumberFormat().format(
+                                          val.Book?.price
+                                        )}
+                                      </Text>
+                                      <Text fontSize="xl">
+                                        Rp.
+                                        {Intl.NumberFormat().format(
+                                          val.Book?.price -
+                                            percent(
+                                              val.Discount?.discount,
+                                              val.Book?.price
+                                            )
+                                        )}
+                                      </Text>
+                                    </Box>
                                   </>
                                 ) : (
                                   <>
                                     <Box
-                                      gap={2}
+                                      gap={3}
                                       display={"flex"}
                                       flexDir={"column"}
                                     >
