@@ -1,8 +1,8 @@
+const { join } = require("path");
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({path:join(__dirname, "../.env")});
 const express = require("express");
 const cors = require("cors");
-const { join } = require("path");
 const db = require("./models");
 const routes = require("./routes");
 // db.sequelize.sync({ alter: true });
