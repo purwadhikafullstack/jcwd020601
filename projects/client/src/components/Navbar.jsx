@@ -29,7 +29,7 @@ import { api } from "../api/api";
 import logo from "../assets/images/gramedia-icon-2.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link, useParams } from "react-router-dom";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { MdClose } from "react-icons/md";
 import MobileNav from "./MobileNav";
@@ -42,6 +42,7 @@ export default function Navbar({ callback, keyword }) {
   const userSelector = useSelector((state) => state.login.auth);
   const [large] = useMediaQuery("(min-width: 768px)");
   const [category, setCategory] = useState([]);
+  const { categoryProduct } = useParams();
 
   const fetchCategori = async () => {
     let response = await api().get(`/category`);
@@ -283,16 +284,17 @@ function DesktopNav({ callback, keyword, category }) {
                   }}
                 >
                   {category.map((val) => (
-                    <Text
-                      key={val.id}
-                      cursor={"pointer"}
-                      w={"15em"}
-                      p={"10px"}
-                      pl={"30px"}
-                      _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-                    >
-                      {val.category}
-                    </Text>
+                    <Link key={val.id} to={`/products/filter/${val.id}`}>
+                      <Text
+                        cursor={"pointer"}
+                        w={"15em"}
+                        p={"10px"}
+                        pl={"30px"}
+                        _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+                      >
+                        {val.category}
+                      </Text>
+                    </Link>
                   ))}
                 </Flex>
                 <Box>
