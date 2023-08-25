@@ -1,6 +1,6 @@
 const { join } = require("path");
 const dotenv = require("dotenv");
-dotenv.config({path:join(__dirname, "../.env")});
+dotenv.config({ path: join(__dirname, "../.env") });
 const express = require("express");
 const cors = require("cors");
 const db = require("./models");
@@ -49,7 +49,7 @@ app.use("/bookImage", express.static(`${__dirname}/public/book`));
 // NOTE : Add your routes here
 
 app.get("/api", (req, res) => {
- 	res.send(`Hello, this is my API`);
+  res.send(`Hello, this is my API`);
 });
 
 // app.get("/api/greetings", (req, res, next) => {
@@ -62,21 +62,21 @@ app.get("/api", (req, res) => {
 
 // not found
 app.use((req, res, next) => {
-	if (req.path.includes("/api/")) {
-		res.status(404).send("Not found !");
- 	} else {
- 		next();
- 	}
+  if (req.path.includes("/api/")) {
+    res.status(404).send("Not found !");
+  } else {
+    next();
+  }
 });
 
 // error
 app.use((err, req, res, next) => {
- 	if (req.path.includes("/api/")) {
- 		console.error("Error : ", err.stack);
- 		res.status(500).send("Error !");
- 	} else {
- 		next();
- 	}
+  if (req.path.includes("/api/")) {
+    console.error("Error : ", err.stack);
+    res.status(500).send("Error !");
+  } else {
+    next();
+  }
 });
 
 //#endregion
@@ -87,7 +87,7 @@ app.use(express.static(join(__dirname, clientPath)));
 
 // Serve the HTML page
 app.get("*", (req, res) => {
- 	res.sendFile(join(__dirname, clientPath, "index.html"));
+  res.sendFile(join(__dirname, clientPath, "index.html"));
 });
 
 //#endregion

@@ -1024,20 +1024,22 @@ const orderController = {
   deleteOrderImage: async (req, res) => {
     try {
       const id = req.params.id;
-
+      console.log("MASUK-kkk");
+      console.log(id);
       // Find the order to get the payment image URL
       const order = await db.Order.findOne({
         where: {
           id,
         },
       });
-
+      console.log(order);
       if (!order) {
         return res.status(404).send({ message: "Order not found" });
       }
 
       // Extract the filename from the payment_url
       const paymentImageUrl = order.payment_url;
+      console.log(paymentImageUrl);
       const filename = paymentImageUrl.split("/").pop();
 
       // Construct the file path
