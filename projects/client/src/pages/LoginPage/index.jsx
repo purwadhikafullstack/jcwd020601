@@ -21,7 +21,9 @@ import { useCallback } from "react";
 import Options from "./Options";
 import Inputs from "./Inputs";
 import Swal from "sweetalert2";
+const client_id = process.env.GOOGLE_CLIENT_ID;
 export default function LoginPage() {
+  // "417414378341-5iq94ontj89hqcfu7649s67bveqsfagb.apps.googleusercontent.com";
   useEffect(() => {
     /* global google */
     google.accounts.id.initialize({
@@ -88,36 +90,20 @@ export default function LoginPage() {
           .then((res) => res.data)
           .catch((err) => console.log(err));
         if (user.email) {
-          console.log({ token, ...user });
-          console.log(user);
-          if (closestBranch.message) {
-            dispatch({
-              type: "login",
-              payload: { token, ...user },
-              address: userMainAddress,
-            });
-            dispatch({
-              type: "order",
-              payload: {
-                BranchId: closestBranch.BranchId,
-                AddressId: userMainAddress?.id,
-                TooFar: true,
-              },
-            });
-          } else {
-            dispatch({
-              type: "login",
-              payload: { token, ...user },
-              address: userMainAddress,
-            });
-            dispatch({
-              type: "order",
-              payload: {
-                BranchId: closestBranch.BranchId,
-                AddressId: userMainAddress?.id,
-              },
-            });
-          }
+          dispatch({
+            type: "login",
+            payload: { token, ...user },
+            address: userMainAddress,
+            closestBranch,
+          });
+          dispatch({
+            type: "order",
+            payload: {
+              BranchId: closestBranch.BranchId,
+              TooFar: closestBranch.TooFar,
+              AddressId: userMainAddress?.id,
+            },
+          });
           nav("/");
         }
       }
@@ -152,6 +138,7 @@ export default function LoginPage() {
                 className={"loginpage-container"}
                 flexDir={"column"}
                 border={"1px solid #dbdbdb"}
+                onClick={() => console.log(client_id)}
               >
                 <Img src={logo} width={"300px"} py={"40px"}></Img>
                 <Inputs

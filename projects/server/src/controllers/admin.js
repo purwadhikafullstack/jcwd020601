@@ -460,9 +460,14 @@ const adminController = {
     }
   },
   getAdminOrUserByToken: async (req, res) => {
-    console.log("sakdaskd");
-    console.log(req.user);
-    res.status(200).send(req.user);
+    try {
+      if (req.admin) {
+        res.status(200).send(req.admin);
+      }
+      res.status(200).send(req.user);
+    } catch (err) {
+      res.status(500).send({ message: err.message });
+    }
   },
 };
 

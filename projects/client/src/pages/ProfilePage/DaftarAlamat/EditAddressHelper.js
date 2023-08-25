@@ -61,63 +61,50 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
         val.fetchUserAddresses();
       });
     if (val.addressUser.id == address.id) {
+      const latitude = JSON.parse(localStorage.getItem("Latitude"));
+      const longitude = JSON.parse(localStorage.getItem("Longitude"));
       const token = JSON.parse(localStorage.getItem("auth"));
-      console.log(token);
       const user = await api()
         .get("/auth/v3?token=" + token)
         .then(async (res) => {
           return res.data;
         })
         .catch((err) => {
-          return err.message;
+          console.log(err.message);
         });
-      const userMainAddress = await api()
-        .get("/address/ismain/" + val.userSelector.id)
-        .then((res) => res.data)
-        .catch((err) => {
-          return err.message;
-        });
-      localStorage.setItem("address", JSON.stringify(userMainAddress));
+      const userMainAddress = await api().get(
+        "/address/ismain/" + val.userSelector.id
+      );
+      if (!userMainAddress.data) {
+      }
+      localStorage.setItem("address", JSON.stringify(userMainAddress.data));
       address = JSON.parse(localStorage.getItem("address"));
-
       const closestBranch = await api()
-        .post("/address/closest", {
-          lat: address.latitude,
-          lon: address.longitude,
-        })
+        .post(
+          "/address/closest",
+          address
+            ? { lat: address.latitude, lon: address.longitude }
+            : { lat: latitude, lon: longitude }
+        )
         .then((res) => {
           console.log(address);
           return res.data;
         });
       console.log(closestBranch);
-      if (closestBranch.message) {
-        dispatch({
-          type: "login",
-          payload: user,
-          address: address,
-        });
-        dispatch({
-          type: "order",
-          payload: {
-            BranchId: closestBranch.BranchId,
-            AddressId: address.id,
-            TooFar: true,
-          },
-        });
-      } else {
-        dispatch({
-          type: "login",
-          payload: user,
-          address: address,
-        });
-        dispatch({
-          type: "order",
-          payload: {
-            BranchId: closestBranch.BranchId,
-            AddressId: address.id,
-          },
-        });
-      }
+      dispatch({
+        type: "login",
+        payload: { token, ...user },
+        address: address,
+        closestBranch,
+      });
+      dispatch({
+        type: "order",
+        payload: {
+          BranchId: closestBranch.BranchId,
+          TooFar: closestBranch.TooFar,
+          AddressId: address.id,
+        },
+      });
     }
   } catch (err) {
     Swal.fire({

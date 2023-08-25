@@ -25,6 +25,8 @@ import { useDispatch } from "react-redux";
 import ModalChangeProfile from "./ModalChangeProfile";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+const IMGURL = process.env.REACT_APP_API_IMAGE_URL;
+
 export default function Biodata(props) {
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -110,10 +112,7 @@ export default function Biodata(props) {
       formData.append("avatar", file);
       user = await api()
         .post(
-          "http://localhost:2000/auth/image/v1/" +
-            props.userSelector.id +
-            "?token=" +
-            token,
+          "auth/image/v1/" + props.userSelector.id + "?token=" + token,
           formData
         )
         .then((res) => {
@@ -163,8 +162,6 @@ export default function Biodata(props) {
       input.target.value = value.slice(0, maxLength);
     }
     formik.setFieldValue(id, value);
-    console.log(tempobject);
-    console.log(formik.values);
   }
   function radioInputHandler(value) {
     const id = "gender";
@@ -212,9 +209,10 @@ export default function Biodata(props) {
             borderRadius="full"
             objectFit={"fill"}
             border={"2px #0060ae solid"}
+            cursor={"pointer"}
             src={
               props.userSelector.avatar_url
-                ? props.userSelector.avatar_url
+                ? IMGURL + props.userSelector.avatar_url
                 : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT19eLyqRHQDO-VnXj1HhzL_9q8yHF-3ewIhA&usqp=CAU"
             }
             onClick={() => inputFileRef.current.click()}
@@ -331,14 +329,6 @@ export default function Biodata(props) {
         </InputGroup>
         <Flex color={"red"} fontSize={"0.9rem"}>
           {formik.errors.phone}
-        </Flex>
-      </Flex>
-      <Flex flexDir={"column"}>
-        <Flex color={"grey"} fontSize={"0.8rem"}>
-          Profesi atau pekerjaan
-        </Flex>
-        <Flex>
-          <Select w={"260px"} variant="flushed" placeholder="Flushed"></Select>
         </Flex>
       </Flex>
       <Flex>

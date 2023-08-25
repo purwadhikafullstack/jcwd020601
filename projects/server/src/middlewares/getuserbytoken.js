@@ -4,8 +4,6 @@ async function getUserByToken(req, res, next) {
 
   try {
     let token = req.headers["auth"];
-    console.log(token);
-    console.log("sdksakdsad");
     let payload = await db.Token.findOne({
       where: {
         token,

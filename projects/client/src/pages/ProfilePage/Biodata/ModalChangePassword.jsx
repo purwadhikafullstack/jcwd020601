@@ -16,7 +16,6 @@ import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
 import { api } from "../../../api/api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AiOutlineClose,
@@ -77,7 +76,7 @@ export default function ModalChangePassword(props) {
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
       await api()
-        .patch("http://localhost:2000/auth/v5?token=" + token, {
+        .patch("auth/v5?token=" + token, {
           email: values.email,
           oldPassword: values.oldPassword,
           user: values,

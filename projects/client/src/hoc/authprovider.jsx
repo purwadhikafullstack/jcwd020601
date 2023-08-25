@@ -27,10 +27,7 @@ export default function AuthProvider({ children }) {
         const userMainAddress = await api()
           .get("/address/ismain/" + auth?.id)
           .then((res) => res.data);
-        console.log(Boolean(address));
-        console.log(address);
         console.log(userMainAddress);
-        console.log(latitude);
         if (auth?.role) {
           console.log("login admin");
           dispatch({
@@ -40,6 +37,7 @@ export default function AuthProvider({ children }) {
         } else if (!auth?.role) {
           console.log("login user");
           console.log(address);
+
           const closestBranch = await api()
             .post(
               "/address/closest",
@@ -53,37 +51,21 @@ export default function AuthProvider({ children }) {
                 : { lat: latitude, lon: longitude }
             )
             .then((res) => res.data);
-          if (closestBranch.message) {
-            dispatch({
-              type: "login",
-              payload: { token, ...auth },
-              address: address || userMainAddress,
-              closestBranch,
-            });
-            dispatch({
-              type: "order",
-              payload: {
-                BranchId: closestBranch.BranchId,
-                TooFar: true,
-                AddressId: address.id || userMainAddress.id,
-              },
-            });
-          } else {
-            dispatch({
-              type: "login",
-              payload: { token, ...auth },
-              address: address || userMainAddress,
-              closestBranch,
-            });
-            console.log(closestBranch);
-            dispatch({
-              type: "order",
-              payload: {
-                BranchId: closestBranch.BranchId,
-                AddressId: address.id || userMainAddress.id,
-              },
-            });
-          }
+          console.log(closestBranch);
+          dispatch({
+            type: "login",
+            payload: { token, ...auth },
+            address: address || userMainAddress,
+            closestBranch,
+          });
+          dispatch({
+            type: "order",
+            payload: {
+              BranchId: closestBranch.BranchId,
+              TooFar: closestBranch.TooFar,
+              AddressId: address.id || userMainAddress.id,
+            },
+          });
         } else {
           dispatch({
             type: "logout",

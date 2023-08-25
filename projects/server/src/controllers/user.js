@@ -647,7 +647,7 @@ const userController = {
     const { filename } = req.file;
     await db.User.update(
       {
-        avatar_url: image_url + filename,
+        avatar_url: "avatar/" + filename,
       },
       {
         where: {
@@ -663,12 +663,7 @@ const userController = {
   },
   uploadAvatarv2: async (req, res) => {
     const buffer = await sharp(req.file.buffer).resize(25, 25).png().toBuffer();
-    var fullUrl =
-      req.protocol +
-      "://" +
-      req.get("host") +
-      "/auth/image/render/" +
-      req.params.id;
+    var fullUrl = "/auth/image/render/" + req.params.id;
     await db.User.update(
       {
         avatar_url: fullUrl,
