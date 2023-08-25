@@ -16,11 +16,13 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TooFarModal from "./TooFarModal";
 import Swal from "sweetalert2";
 
 export default function AllBookCard({ keyword }) {
+  const dispatch = useDispatch();
+  const quantitySelector = useSelector((state) => state.login.qty);
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   let t = localStorage.getItem("auth");
@@ -57,6 +59,12 @@ export default function AllBookCard({ keyword }) {
           qty: 1,
           UserId: userSelector.id,
           StockId: value[idx].id,
+        });
+        dispatch({
+          type: "qty",
+          payload: {
+            quantity: quantitySelector.quantity + 1,
+          },
         });
       } else {
         Swal.fire("You need to login first?", "", "question");

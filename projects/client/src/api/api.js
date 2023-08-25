@@ -1,7 +1,7 @@
 import axios from "axios";
 function createApiInstance() {
   return axios.create({
-    baseURL: "http://localhost:2000/",
+    baseURL: process.env.REACT_APP_API_BASE_URL,
     headers: {
       get auth() {
         return JSON.parse(localStorage.getItem("auth"));

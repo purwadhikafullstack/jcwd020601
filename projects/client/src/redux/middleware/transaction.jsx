@@ -3,7 +3,6 @@ const init = {
   AddressId: "",
   shipping: "",
   courier: "",
-  // quantity: 0,
 };
 
 function transactionReducer(state = init, action) {
@@ -18,10 +17,7 @@ function transactionReducer(state = init, action) {
       shipping: action.payload.shipping,
       courier: action.payload.courier,
       weight: action.payload.weight,
-      // quantity: action.payload.quantity,
     };
-    // } else if (action.type === "logout") {
-    //   return init;
   }
 
   return state;
