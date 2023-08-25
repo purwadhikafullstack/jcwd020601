@@ -1,38 +1,79 @@
-.App {
+.loginpage-border {
+  width: 430px;
+}
+.loginpage-container {
+  width: 430px;
+}
+.loginpage-inputs {
+  gap: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.loginpage-forgot-password:hover {
+  color: #0060ae;
+  cursor: pointer;
+}
+.adminloginpage-logo {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.register-logo {
+  padding-top: 40px;
+  padding-bottom: 20px;
+}
+.forgetpassword-logo {
+  width: 200px;
+}
+.forgetpassword-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.forgetpassword-title {
+  font-size: 32px;
+  color: #0060ae;
   text-align: center;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.forgetpassword-description {
+  color: #9ea3bd;
+  font-size: 16px;
+  text-align: center;
+}
+.forgetpassword-container2 {
+  width: 440px;
+  gap: 15px;
+}
+.forgetpassword-link {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.forgetpassword-textlink {
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  color: #0060ae;
+}
+.pagination {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5rem;
+  font-size: 1.2rem;
+  gap: 5px;
+}
+.pagination .page-num {
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: 400;
 }
 
-.App-link {
-  color: #61dafb;
+.pagination .page-num:hover {
+  background-color: #5ab1bb;
+  color: #fff;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.pagination .active {
+  background-color: #5ab1bb;
 }
