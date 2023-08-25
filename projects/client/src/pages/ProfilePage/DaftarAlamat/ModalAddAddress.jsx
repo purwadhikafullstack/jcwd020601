@@ -8,8 +8,9 @@ export default function ModalAddAddress(props) {
   useEffect(() => {
     const fetchData = async () => {
       const data = await api()
-        .get("http://localhost:2000/province")
+        .get("/province")
         .then((res) => {
+          console.log(res);
           props.setProvinces(res.data.result);
         });
     };

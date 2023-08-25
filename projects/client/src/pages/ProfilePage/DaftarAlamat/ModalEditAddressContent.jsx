@@ -8,7 +8,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 export default function ModalEditAddressContent(props) {
-  const modalEditAddress = useDisclosure();
   return (
     <>
       <Flex

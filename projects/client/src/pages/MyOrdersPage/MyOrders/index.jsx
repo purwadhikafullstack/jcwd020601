@@ -12,7 +12,6 @@ export default function MyOrders(props) {
       <Flex>
         <Flex flexDir={"column"}>
           <TabBar setTab={setTab} tab={tab} />
-
           {props.isLoading ? (
             <Box mt={"50px"}>
               <Loading />

@@ -4,20 +4,12 @@ import { GrRadialSelected } from "react-icons/gr";
 import { IoCheckmarkCircleSharp } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { api } from "../../api/api";
+import Swal from "sweetalert2";
 
 export default function ModalSelectAddress(val) {
   const dispatch = useDispatch();
   return (
     <>
-      {/* <Flex
-        onClick={() => {
-          console.log(val.userSelector.address);
-          console.log(val.address);
-          console.log(val.address == val.userSelector.address);
-        }}
-      >
-        lol
-      </Flex> */}
       <Flex
         bg={"#e8e8e8"}
         w={"100%"}
@@ -25,53 +17,49 @@ export default function ModalSelectAddress(val) {
         _hover={{ bgColor: "#c7c7c7" }}
         cursor={"pointer"}
         onClick={async () => {
-          const token = JSON.parse(localStorage.getItem("auth"));
-          console.log(token);
-          const user = await api()
-            .get("/auth/v3?token=" + token)
-            .then(async (res) => {
-              return res.data;
-            })
-            .catch((err) => {
-              return err.message;
-            });
-          localStorage.setItem("address", JSON.stringify(val.address));
-          const closestBranch = await api()
-            .post("/address/closest", {
-              lat: val.address.latitude,
-              lon: val.address.longitude,
-            })
-            .then((res) => res.data);
-
-          if (closestBranch.message) {
+          try {
+            const token = JSON.parse(localStorage.getItem("auth"));
+            const checkAddress = await api().get(
+              "address/getaddress/" + val.address.id
+            );
+            const user = await api()
+              .get("/auth/v3?token=" + token)
+              .then(async (res) => {
+                return res.data;
+              })
+              .catch((err) => {
+                return err.message;
+              });
+            localStorage.setItem("address", JSON.stringify(val.address));
+            const closestBranch = await api()
+              .post("/address/closest", {
+                lat: val.address.latitude,
+                lon: val.address.longitude,
+              })
+              .then((res) => res.data);
             dispatch({
               type: "login",
-              payload: user,
+              payload: { token, ...user },
               address: val.address,
+              closestBranch,
             });
             dispatch({
               type: "order",
               payload: {
                 BranchId: closestBranch.BranchId,
-                AddressId: val.address.id,
-                TooFar: true,
-              },
-            });
-          } else {
-            dispatch({
-              type: "login",
-              payload: user,
-              address: val.address,
-            });
-            dispatch({
-              type: "order",
-              payload: {
-                BranchId: closestBranch.BranchId,
+                TooFar: closestBranch.TooFar,
                 AddressId: val.address.id,
               },
             });
+            val.modalSelectAddress.onClose();
+          } catch (err) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+            val.modalSelectAddress.onClose();
           }
-          val.modalSelectAddress.onClose();
         }}
       >
         <Flex
