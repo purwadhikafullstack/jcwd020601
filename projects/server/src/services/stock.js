@@ -154,12 +154,40 @@ const stockServices = {
       throw err;
     }
   },
-  getPrice: async (place, price, category) => {
+  getPrice: async (place, price, category, page, limit) => {
     try {
+      const offset = limit * page;
       const orderConfig = [];
       if (price !== null && price !== undefined) {
         orderConfig.push([db.Book, "price", price]);
       }
+      const totalRows = await db.Stock.count({
+        include: [
+          {
+            model: db.Book,
+            required: true,
+            include: category
+              ? [
+                  {
+                    model: db.Category,
+                    required: true,
+                    where: {
+                      id: category,
+                    },
+                  },
+                ]
+              : [],
+          },
+        ],
+        where: {
+          [Op.and]: [
+            {
+              BranchId: place,
+            },
+          ],
+        },
+      });
+      const totalPage = Math.ceil(totalRows / limit);
       const Stock = await db.Stock.findAll({
         include: [
           {
@@ -190,9 +218,18 @@ const stockServices = {
           [Op.and]: [{ BranchId: place }],
         },
         order: orderConfig,
+        limit: limit,
+        offset: offset,
       });
       console.log(Stock);
-      return Stock;
+      // return Stock;
+      return {
+        Stock,
+        page,
+        limit,
+        totalRows,
+        totalPage,
+      };
     } catch (err) {
       throw err;
     }

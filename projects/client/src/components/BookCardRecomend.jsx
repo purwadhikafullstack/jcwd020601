@@ -24,6 +24,7 @@ import TooFarModal from "./TooFarModal";
 import Swal from "sweetalert2";
 import NoAddressModal from "./NoAddressModal";
 export default function BookCardRecomend() {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   let t = localStorage.getItem("auth");
@@ -206,7 +207,7 @@ export default function BookCardRecomend() {
                   <></>
                 )}
                 <Image
-                  src={val.Book?.book_url}
+                  src={IMG + val.Book?.book_url}
                   alt="Green double couch with wooden legs"
                   borderRadius="lg"
                   w={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}

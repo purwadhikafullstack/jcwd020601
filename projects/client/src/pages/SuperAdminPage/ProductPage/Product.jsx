@@ -21,12 +21,11 @@ import ReactPaginate from "react-paginate";
 import "../../../App.css";
 import { BiSearchAlt } from "react-icons/bi";
 import { GrFormAdd, GrPowerReset } from "react-icons/gr";
-// import Add from "./product/Add";
 import Add from "./Add";
-// import Action from "./product/Action";
 import Action from "./Action";
 import Greetings from "../Greetings";
 export default function Product() {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   let t = localStorage.getItem("auth");
   const [value, setValue] = useState([]);
   const [page, setPage] = useState(0);
@@ -36,10 +35,11 @@ export default function Product() {
   const [keyword, setKeyword] = useState("");
   const [query, setQuery] = useState("");
   const [token, setToken] = useState(JSON.parse(t));
+  const [category, setCategory] = useState(null);
 
   async function fetchProduct() {
     let response = await api().get(
-      `/book?search_query=${keyword}&page=${page}&limit=${limit}`,
+      `/book?search_query=${keyword}&page=${page}&limit=${limit}&category=${category}`,
       {
         headers: {
           Authorization: token,
@@ -147,7 +147,7 @@ export default function Product() {
                     <Td>{rupiah(val.price)}</Td>
 
                     <Td>
-                      <Image src={val.book_url} w={50} h={50} />
+                      <Image src={IMG + val.book_url} w={50} h={50} />
                     </Td>
                     <Td>
                       <Action

@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 export default function BookCard() {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   let t = localStorage.getItem("auth");
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
@@ -201,7 +202,7 @@ export default function BookCard() {
                     <></>
                   )}
                   <Image
-                    src={val.Book?.book_url}
+                    src={IMG + val.Book?.book_url}
                     alt="Green double couch with wooden legs"
                     borderRadius="lg"
                     w={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}

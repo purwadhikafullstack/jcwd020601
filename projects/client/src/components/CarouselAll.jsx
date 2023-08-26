@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import { BsChevronDown, BsCart } from "react-icons/bs";
 import { Link } from "react-router-dom";
 export default function CarouselAll() {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const [large] = useMediaQuery("(min-width: 1280px)");
   let t = localStorage.getItem("auth");
   const orderSelector = useSelector((state) => state.login.order);
@@ -186,7 +187,7 @@ export default function CarouselAll() {
                       <></>
                     )}
                     <Image
-                      src={val.Book?.book_url}
+                      src={IMG + val.Book?.book_url}
                       alt="Green double couch with wooden legs"
                       borderRadius="lg"
                       w={{
