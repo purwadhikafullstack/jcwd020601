@@ -39,7 +39,7 @@ export default function LoginPage() {
           });
         });
       await api()
-        .get("/admin/v3")
+        .get("/admin/v3?token=" + token)
         .then(async (res) => {
           console.log(res.data);
           dispatch({

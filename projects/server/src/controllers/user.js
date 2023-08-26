@@ -661,27 +661,6 @@ const userController = {
       },
     }).then((result) => res.send(result));
   },
-  uploadAvatarv2: async (req, res) => {
-    const buffer = await sharp(req.file.buffer).resize(25, 25).png().toBuffer();
-    var fullUrl = "/auth/image/render/" + req.params.id;
-    await db.User.update(
-      {
-        avatar_url: fullUrl,
-        avatar: buffer,
-      },
-      {
-        where: {
-          id: req.params.id,
-        },
-      }
-    );
-    // await db.User.findOne({
-    //   where: {
-    //     id: req.params.id,
-    //   },
-    // }).then((result) => res.send(result));
-    res.send("berhasil upload");
-  },
 };
 
 module.exports = userController;
