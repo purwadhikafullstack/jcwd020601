@@ -21,10 +21,9 @@ import { api } from "../api/api";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import tooFarModal from "./TooFarModal";
-const IMG = process.env.REACT_APP_API_BASE_URL;
 
 export default function DetailBookPage() {
-  const IMG = process.env.REACT_APP_API_BASE_URL;
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   console.log(IMG);
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
@@ -45,7 +44,6 @@ export default function DetailBookPage() {
   // console.log(value.Book?.title);
   // console.log(value.Book);
   // console.log(value);
-
 
   // Add to Cart
   async function add() {
@@ -79,6 +77,8 @@ export default function DetailBookPage() {
     let result = (a / 100) * b;
     return result;
   };
+  console.log(value.Book?.book_url);
+  console.log(value.Book?.title);
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -154,7 +154,7 @@ export default function DetailBookPage() {
                 <></>
               )}
               <Image
-                src={IMG + value.Book?.book_url}
+                src={process.env.REACT_APP_API_IMAGE_URL + value.Book?.book_url}
                 width={"200"}
                 height={"200px"}
               />

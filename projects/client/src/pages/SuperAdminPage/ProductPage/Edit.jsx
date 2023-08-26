@@ -25,6 +25,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { api } from "../../../api/api";
 export default function Edit({ isOpen, onClose, id, getData, token }) {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const inputFileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -120,7 +121,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       return value;
     }
     let imageData;
-    getImage(res.data.value.book_url)
+    getImage(IMG + res.data.value.book_url)
       .then((result) => {
         imageData = result;
         setSelectedFile(URL.createObjectURL(imageData));
@@ -131,7 +132,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
           publish_date: new Date(res.data.value.publish_date).getFullYear(),
           author: res.data.value.author,
           publisher: res.data.value.publisher,
-          description: res.data.value.publisher,
+          description: res.data.value.description,
           book_url: imageData,
           pages: res.data.value.pages,
           weight: res.data.value.weight,
