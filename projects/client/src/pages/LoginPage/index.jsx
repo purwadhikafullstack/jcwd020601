@@ -39,27 +39,18 @@ export default function LoginPage() {
     google.accounts.id.prompt();
   }, []);
   async function handleCallbackResponse(response) {
-    const latitude = JSON.parse(localStorage.getItem("Latitude"));
-    const longitude = JSON.parse(localStorage.getItem("Longitude"));
+    const latitude = JSON.parse(localStorage.getItem("Latitude") || "6.2088");
+    const longitude = JSON.parse(
+      localStorage.getItem("Longitude") || "106.8456"
+    );
     var userObject = jwt_decode(response.credential);
     try {
       let token;
-      const loggingIn = await api()
-        .post("/auth/v3", userObject)
-        .then((res) => {
-          localStorage.setItem("auth", JSON.stringify(res.data.token));
-          token = res.data.token;
-          Swal.fire("Good job!", "Login succesful", "success");
-          return res.data.message;
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: err.data.message,
-          });
-        });
-      if (loggingIn) {
+      const loggingIn = await api().post("/auth/v3", userObject);
+      localStorage.setItem("auth", JSON.stringify(loggingIn.data.token));
+      token = loggingIn.data.token;
+      Swal.fire("Good job!", "Login succesful", "success");
+      if (loggingIn.data.message) {
         const token = JSON.parse(localStorage.getItem("auth"));
         const user = await api()
           .get("/auth/v3?token=" + token)
@@ -104,6 +95,7 @@ export default function LoginPage() {
               AddressId: userMainAddress?.id,
             },
           });
+          console.log("lol");
           nav("/");
         }
       }

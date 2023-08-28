@@ -10,19 +10,27 @@ async function submit({
     fetchUserAddresses();
     Swal.fire("Good job!", "Address Added", "success");
   } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: "Login session has expired",
-    });
-    localStorage.removeItem("auth");
-    localStorage.removeItem("address");
-    localStorage.removeItem("Latitude");
-    localStorage.removeItem("Longitude");
-    dispatch({
-      type: "logout",
-    });
-    nav("/login");
+    if (err.response.data.message == "token has expired") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.response.data.message,
+      });
+      localStorage.removeItem("auth");
+      localStorage.removeItem("address");
+      localStorage.removeItem("Latitude");
+      localStorage.removeItem("Longitude");
+      dispatch({
+        type: "logout",
+      });
+      nav("/login");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.response.data.message,
+      });
+    }
     modalAddAddress.onClose();
   }
 }

@@ -79,7 +79,8 @@ const addressServices = {
       isMain,
       UserId,
     },
-    id
+    id,
+    t
   ) => {
     let place = {};
     await opencage
@@ -107,6 +108,7 @@ const addressServices = {
         where: {
           id,
         },
+        transaction: t,
       }
     );
     const result = await db.Address.findOne({
@@ -116,7 +118,7 @@ const addressServices = {
     });
     return result;
   },
-  patchMainAddress: async (UserId, id) => {
+  patchMainAddress: async (UserId, id, t) => {
     const Address = await db.Address.update(
       {
         isMain: false,
@@ -135,6 +137,7 @@ const addressServices = {
         where: {
           id,
         },
+        transaction: t,
       }
     );
     return await db.Address.findOne({
@@ -153,6 +156,7 @@ const addressServices = {
     pos,
     UserId,
   }) => {
+    let place = {};
     const Main = await db.Address.findOne({
       where: {
         UserId,
@@ -165,23 +169,26 @@ const addressServices = {
       .then(async (res) => {
         place = res.results[0].geometry;
 
-        await db.Address.create({
-          labelAlamat,
-          namaPenerima,
-          no_Handphone,
-          province: province.split("#")[1],
-          city: city.split("#")[1],
-          isMain: Main ? false : true,
-          alamatLengkap,
-          pos,
-          latitude: place.lat,
-          longitude: place.lng,
-          UserId,
-          ProvinceId: province.split("#")[0],
-          CityId: city.split("#")[0],
-        });
+        await db.Address.create(
+          {
+            labelAlamat,
+            namaPenerima,
+            no_Handphone,
+            province: province.split("#")[1],
+            city: city.split("#")[1],
+            isMain: Main ? false : true,
+            alamatLengkap,
+            pos,
+            latitude: place.lat,
+            longitude: place.lng,
+            UserId,
+            ProvinceId: province.split("#")[0],
+            CityId: city.split("#")[0],
+          },
+          { transaction: t }
+        );
       });
-    const result = await db.Address.findAll();
+    return await db.Address.findAll();
   },
 };
 module.exports = addressServices;

@@ -103,7 +103,14 @@ export default function ModalEditAddressContent(props) {
             </Flex>
           </Flex>
           <Flex flexDir={"column"}>
-            <Flex fontWeight={"500"}>City</Flex>
+            <Flex
+              onClick={() => {
+                console.log(props.formikAddress.values);
+              }}
+              fontWeight={"500"}
+            >
+              City
+            </Flex>
             <Select
               id="city"
               onChange={async (val) => {

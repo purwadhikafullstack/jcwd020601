@@ -51,10 +51,13 @@ const adminController = {
     }
   },
   editAdmin: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
-      const result = await adminServices.patchAdmin(req.body, req.params.id);
+      const result = await adminServices.patchAdmin(req.body, req.params.id, t);
+      await t.commit();
       res.send(result);
     } catch (err) {
+      await t.rollback();
       console.log(err.message);
       res.status(500).send({
         message: err.message,
@@ -62,10 +65,17 @@ const adminController = {
     }
   },
   insertBranchAdminAndBranch: async (req, res) => {
+    const t = await db.sequelize.transaction();
+
     try {
-      const result = await adminServices.insertBranchAdminAndBranch(req.body);
+      const result = await adminServices.insertBranchAdminAndBranch(
+        req.body,
+        t
+      );
+      await t.commit();
       res.send(result);
     } catch (err) {
+      await t.rollback();
       console.log(err);
       return res.status(500).send({
         message: err.message,
@@ -73,10 +83,14 @@ const adminController = {
     }
   },
   deleteAdmin: async (req, res) => {
+    const t = await db.sequelize.transaction();
+
     try {
-      const result = await adminServices.deleteAdmin(req.params.id);
+      const result = await adminServices.deleteAdmin(req.params.id, t);
+      await t.commit();
       res.send(result);
     } catch (err) {
+      await t.rollback();
       console.log(err.message);
       return res.status(500).send({
         error: err.message,
@@ -84,10 +98,13 @@ const adminController = {
     }
   },
   loginV2: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
-      const result = await adminServices.loginAdmin(req.body);
+      const result = await adminServices.loginAdmin(req.body, t);
+      await t.commit();
       res.send(result);
     } catch (err) {
+      await t.rollback();
       console.log(err.message);
       return res
         .status(500)

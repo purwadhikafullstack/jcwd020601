@@ -56,28 +56,17 @@ export default function EditAddress(val) {
     formikAddress.resetForm();
   }
   async function fetchCity() {
-    console.log(provinceId);
-    await api()
-      .get("/city/v1/" + provinceId)
-      .then((res) => {
-        setCities(res.data.result);
-      });
+    const cityResult = await api().get("/city/v1/" + provinceId);
+    setCities(cityResult.data.result);
   }
   async function fetchPos() {
-    console.log(cityId);
-    await api()
-      .get("/city/v2/" + cityId)
-      .then((res) => {
-        setPosCodes(res.data.result);
-      });
+    const posCodesResult = await api().get("/city/v2/" + cityId);
+    setPosCodes(posCodesResult.data.result);
   }
   useEffect(() => {
     const fetchData = async () => {
-      const data = await api()
-        .get("province")
-        .then((res) => {
-          setProvinces(res.data.result);
-        });
+      const provincesResult = await api().get("province");
+      setProvinces(provincesResult.data.result);
     };
     fetchData();
   }, []);
@@ -87,16 +76,24 @@ export default function EditAddress(val) {
       no_Handphone: val.addressUser.no_Handphone,
       namaPenerima: val.addressUser.namaPenerima,
       labelAlamat: val.addressUser.labelAlamat,
-      province: val.addressUser.province,
-      city: val.addressUser.city,
+      province: val.addressUser.ProvinceId + "#" + val.addressUser.province,
+      city: val.addressUser.CityId + "#" + val.addressUser.city,
       pos: val.addressUser.pos,
       alamatLengkap: val.addressUser.alamatLengkap,
     },
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
       setReset(false);
-      await Helpers.submit({ val, token, Swal, dispatch, formikAddress });
-      modalEditAddress.onClose();
+      await Helpers.submit({
+        val,
+        token,
+        Swal,
+        dispatch,
+        formikAddress,
+        modalEditAddress,
+        setState,
+        initialState,
+      });
     },
   });
   async function inputHandlerAddress(input) {

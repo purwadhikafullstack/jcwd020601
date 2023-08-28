@@ -22,7 +22,16 @@ const validationSchemaAddress = Yup.object().shape({
     .trim()
     .required("You need to enter your complete address"),
 });
-async function submit({ val, token, Swal, dispatch, formikAddress }) {
+async function submit({
+  val,
+  token,
+  Swal,
+  dispatch,
+  formikAddress,
+  modalEditAddress,
+  setState,
+  initialState,
+}) {
   await api()
     .patch(
       "/address/v2/" + val.addressUser.id + "?token=" + token,
@@ -31,21 +40,33 @@ async function submit({ val, token, Swal, dispatch, formikAddress }) {
     .then(async (res) => {
       await val.fetchUserAddresses();
       Swal.fire("Good job!", "Address Changed", "success");
+      modalEditAddress.onClose();
     })
     .catch((err) => {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: err.message,
-      });
-      localStorage.removeItem("auth");
-      localStorage.removeItem("address");
-      localStorage.removeItem("Latitude");
-      localStorage.removeItem("Longitude");
-      dispatch({
-        type: "logout",
-      });
-      val.nav("/login");
+      if (err.response.data.message == "token has expired") {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err.response.data.message,
+        });
+        localStorage.removeItem("auth");
+        localStorage.removeItem("address");
+        localStorage.removeItem("Latitude");
+        localStorage.removeItem("Longitude");
+        dispatch({
+          type: "logout",
+        });
+        val.nav("/login");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err.response.data.message,
+        });
+      }
+      modalEditAddress.onClose();
+      formikAddress.resetForm();
+      setState({ ...initialState });
     });
 }
 
@@ -107,47 +128,60 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
       });
     }
   } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: err.response.data.message,
-    });
-    localStorage.removeItem("auth");
-    localStorage.removeItem("address");
-    localStorage.removeItem("Latitude");
-    localStorage.removeItem("Longitude");
-    dispatch({
-      type: "logout",
-    });
-    val.nav("/login");
+    if (err.response.data.message == "token has expired") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.response.data.message,
+      });
+      localStorage.removeItem("auth");
+      localStorage.removeItem("address");
+      localStorage.removeItem("Latitude");
+      localStorage.removeItem("Longitude");
+      dispatch({
+        type: "logout",
+      });
+      val.nav("/login");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.response.data.message,
+      });
+    }
     modalEditAddress.onClose();
   }
 }
 async function changeMain({ val, token, Swal, api, dispatch }) {
   try {
-    await api()
-      .patch("address/v3/" + val.addressUser.id + "?token=" + token, {
-        UserId: val.userSelector.id,
-      })
-      .then((res) => {
-        Swal.fire("Good job!", "Main Address Changed", "success");
-        val.setSelectIsMain(false);
-        val.fetchUserAddresses();
-      });
+    await api().patch("address/v3/" + val.addressUser.id + "?token=" + token, {
+      UserId: val.userSelector.id,
+    });
+    Swal.fire("Good job!", "Main Address Changed", "success");
+    val.setSelectIsMain(false);
+    val.fetchUserAddresses();
   } catch (err) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: err.data.response.message,
-    });
-    localStorage.removeItem("auth");
-    localStorage.removeItem("address");
-    localStorage.removeItem("Latitude");
-    localStorage.removeItem("Longitude");
-    dispatch({
-      type: "logout",
-    });
-    val.nav("/login");
+    if (err.response.data.message == "token has expired") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.response.data.message,
+      });
+      localStorage.removeItem("auth");
+      localStorage.removeItem("address");
+      localStorage.removeItem("Latitude");
+      localStorage.removeItem("Longitude");
+      dispatch({
+        type: "logout",
+      });
+      val.nav("/login");
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: err.response.data.message,
+      });
+    }
   }
 }
 const Helpers = {
