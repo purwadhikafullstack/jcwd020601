@@ -67,13 +67,17 @@ const addressController = {
     }
   },
   editAddress: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
       const result = await addressServices.patchAddress(
         req.body,
-        req.params.id
+        req.params.id,
+        t
       );
+      await t.commit();
       res.status(200).send(result);
     } catch (err) {
+      await t.rollback();
       console.log(err.message);
       res.status(500).send({
         message: err.message,
@@ -81,12 +85,19 @@ const addressController = {
     }
   },
   editMainAddress: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
       const { UserId } = req.body;
       const { id } = req.params;
-      const result = await addressServices.patchMainAddress(UserId, id);
-      res.send(result);
+      const result = await addressServices.patchMainAddress(UserId, id, t);
+      if (result) {
+        await t.commit();
+        return res.send(result);
+      }
+      throw new Error("Address does not exist");
     } catch (err) {
+      await t.rollback();
+
       console.log(err.message);
       res.status(500).send({
         message: err.message,
@@ -94,10 +105,15 @@ const addressController = {
     }
   },
   insertAddress: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
-      const result = await addressServices.createAddress(req.body);
+      const result = await addressServices.createAddress(req.body, t);
+      await t.commit();
+
       res.send(result);
     } catch (err) {
+      await t.rollback();
+
       console.log(err);
       return res.status(500).send({
         message: err.message,
@@ -105,6 +121,7 @@ const addressController = {
     }
   },
   deleteAddress: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
       const Address = await db.Address.findOne({
         where: {
@@ -115,6 +132,7 @@ const addressController = {
         where: {
           id: req.params.id,
         },
+        transaction: t,
       });
       if (Address.isMain) {
         const Addresses = await db.Address.findAll({
@@ -131,13 +149,18 @@ const addressController = {
               where: {
                 id: Addresses[0].id,
               },
+              transaction: t,
             }
           );
         }
       }
 
-      return await db.Address.findAll().then((result) => res.send(result));
+      return await db.Address.findAll().then(async (result) => {
+        await t.commit();
+        res.send(result);
+      });
     } catch (err) {
+      await t.rollback();
       console.log(err.message);
       return res.status(500).send({
         error: err.message,

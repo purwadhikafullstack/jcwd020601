@@ -98,20 +98,28 @@ export default function ModalChangePassword(props) {
           // nav("/login");
         });
     } catch (err) {
-      console.log(err);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Login session has expired",
-      });
-      localStorage.removeItem("auth");
-      localStorage.removeItem("address");
-      localStorage.removeItem("Latitude");
-      localStorage.removeItem("Longitude");
-      dispatch({
-        type: "logout",
-      });
-      nav("/login");
+      if (err.response.data.message == "token has expired") {
+        console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Login session has expired",
+        });
+        localStorage.removeItem("auth");
+        localStorage.removeItem("address");
+        localStorage.removeItem("Latitude");
+        localStorage.removeItem("Longitude");
+        dispatch({
+          type: "logout",
+        });
+        nav("/login");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err.response.data.message,
+        });
+      }
     }
   }
   const dispatch = useDispatch();

@@ -64,7 +64,6 @@ export default function Biodata(props) {
       first_name: Yup.string().trim().required("Phone number is required"),
     }),
     onSubmit: async () => {
-      console.log("sakdsakd");
       const { id, first_name, last_name, gender, phone } = formik.values;
       const account = {
         id,
@@ -91,16 +90,27 @@ export default function Biodata(props) {
           Swal.fire("Good job!", "Profile Updated", "success");
         })
         .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Login session has expired",
-          });
-          dispatch({
-            type: "logout",
-          });
-          localStorage.removeItem("address");
-          nav("/login");
+          if (err.response.data.message == "token has expired") {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+            localStorage.removeItem("auth");
+            localStorage.removeItem("address");
+            localStorage.removeItem("Latitude");
+            localStorage.removeItem("Longitude");
+            dispatch({
+              type: "logout",
+            });
+            nav("/login");
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+          }
         });
     },
   });
@@ -120,19 +130,27 @@ export default function Biodata(props) {
           return res.data;
         })
         .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Login session has expired",
-          });
-          localStorage.removeItem("auth");
-          localStorage.removeItem("address");
-          localStorage.removeItem("Latitude");
-          localStorage.removeItem("Longitude");
-          dispatch({
-            type: "logout",
-          });
-          nav("/login");
+          if (err.response.data.message == "token has expired") {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+            localStorage.removeItem("auth");
+            localStorage.removeItem("address");
+            localStorage.removeItem("Latitude");
+            localStorage.removeItem("Longitude");
+            dispatch({
+              type: "logout",
+            });
+            nav("/login");
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+          }
         });
       await dispatch({
         type: "login",
