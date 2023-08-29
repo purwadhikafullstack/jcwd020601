@@ -27,11 +27,9 @@ export default function ModalPayment(props) {
       // console.log(val.id);
       await api().patch("/order/v2/status", {
         OrderId: props.val.id,
-        status: status,
+        status: status.toLowerCase(),
       });
-      if (status === "Waiting for Payment") {
-        await api().delete("order/v3/img:" + props.val.id);
-      }
+
       onClose();
       return props.fetch();
     } catch (error) {
