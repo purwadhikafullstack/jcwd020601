@@ -6,7 +6,13 @@ export default function Pending(props) {
   const nav = useNavigate();
   return (
     <>
-      <Flex w={"100%"} mt={"20px"} gap={"30px"} flexDir={"column"}>
+      <Flex
+        mb={{ base: "100px", sm: "100px", md: "100px" }}
+        w={"100%"}
+        mt={"20px"}
+        gap={"30px"}
+        flexDir={"column"}
+      >
         {props.pending[0] ? (
           props.pending.map((val) => (
             <Flex
