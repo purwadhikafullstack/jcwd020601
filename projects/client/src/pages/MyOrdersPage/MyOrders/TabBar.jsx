@@ -17,15 +17,15 @@ export default function TabBar(props) {
       <Flex>
         <Center
           w={{
-            base: "120px",
-            sm: "150px",
-            md: "200px",
-            lg: "250px",
+            base: "180px",
+            sm: "200px",
+            md: "230px",
+            lg: "270px",
             xl: "300px",
             "2xl": "400px",
           }}
           fontSize={{
-            base: "0.8rem",
+            base: "1rem",
             sm: "1rem",
             md: "1rem",
             lg: "1rem",
@@ -56,15 +56,15 @@ export default function TabBar(props) {
       <Flex>
         <Center
           w={{
-            base: "120px",
-            sm: "150px",
-            md: "200px",
-            lg: "250px",
+            base: "180px",
+            sm: "200px",
+            md: "230px",
+            lg: "270px",
             xl: "300px",
             "2xl": "400px",
           }}
           fontSize={{
-            base: "0.8rem",
+            base: "1rem",
             sm: "1rem",
             md: "1rem",
             lg: "1rem",

@@ -94,10 +94,12 @@ export default function Pending(props) {
         ) : (
           <>
             <Center w={"100%"} flexDir={"column"}>
-              <Center fontSize={"1.2rem"} color={"#0060ae"} fontWeight={600}>
+              <Center fontSize={"1.3rem"} color={"#0060ae"} fontWeight={600}>
                 There Are No Orders Here
               </Center>
-              <Center color={"#0095d8"}>Your Orders Would Go Here</Center>
+              <Center fontSize={"1.1rem"} color={"#0095d8"}>
+                Your Orders Would Go Here
+              </Center>
             </Center>
           </>
         )}
