@@ -27,12 +27,10 @@ export default function ModalPayment(props) {
       // console.log(val.id);
       await api().patch("/order/v2/status", {
         OrderId: props.val.id,
-        status: status,
+        status: status.toLowerCase(),
       });
+
       onClose();
-      if (status === "Waiting for Payment") {
-        await api().delete("/order/img/" + props.val.id);
-      }
       return props.fetch();
     } catch (error) {
       console.log(error);
@@ -59,7 +57,9 @@ export default function ModalPayment(props) {
           <ModalBody>
             {props.val.payment_url ? (
               <Image
-                src={process.env.REACT_APP_API_BASE_URL + props.val.payment_url}
+                src={
+                  process.env.REACT_APP_API_IMAGE_URL + props.val.payment_url
+                }
               ></Image>
             ) : (
               <Center height={"300px"} fontSize={"8xl"}>

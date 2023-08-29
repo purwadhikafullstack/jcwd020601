@@ -21,6 +21,7 @@ import TooFarModal from "./TooFarModal";
 import Swal from "sweetalert2";
 
 export default function AllBookCard({ keyword }) {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const dispatch = useDispatch();
   const quantitySelector = useSelector((state) => state.login.qty);
   const orderSelector = useSelector((state) => state.login.order);
@@ -192,7 +193,7 @@ export default function AllBookCard({ keyword }) {
                           <></>
                         )}
                         <Image
-                          src={val.Book?.book_url}
+                          src={IMG + val.Book?.book_url}
                           alt=""
                           borderRadius="lg"
                           w={{

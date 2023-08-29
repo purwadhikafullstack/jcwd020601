@@ -18,19 +18,18 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
 import "../../../App.css";
-import { GrFormAdd, GrPowerReset } from "react-icons/gr";
 import Swal from "sweetalert2";
 import icon from "../../../assets/images/icon.png";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { api } from "../../../api/api";
 export default function Edit({ isOpen, onClose, id, getData, token }) {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const inputFileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [category, setCategory] = useState([]);
   const [image, setImage] = useState(icon);
-  // console.log(id);
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -108,19 +107,16 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
         Authorization: token,
       },
     });
-
-    console.log(res);
     async function getImage(a) {
       let value = await fetch(a)
         .then((res) => res.blob())
         .then((blob) => {
           return new File([blob], "image", { type: blob.type });
         });
-      // console.log(value);
       return value;
     }
     let imageData;
-    getImage(res.data.value.book_url)
+    getImage(IMG + res.data.value.book_url)
       .then((result) => {
         imageData = result;
         setSelectedFile(URL.createObjectURL(imageData));
@@ -131,7 +127,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
           publish_date: new Date(res.data.value.publish_date).getFullYear(),
           author: res.data.value.author,
           publisher: res.data.value.publisher,
-          description: res.data.value.publisher,
+          description: res.data.value.description,
           book_url: imageData,
           pages: res.data.value.pages,
           weight: res.data.value.weight,
@@ -154,7 +150,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     getDataDetail();
     getCategory();
   }, [id, getData]);
-  console.log(formik.values);
   return (
     <>
       <Text>Edit Data</Text>
@@ -169,7 +164,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
           <ModalContent>
             <ModalHeader>Edit Buku</ModalHeader>
             <ModalCloseButton />
-            {/* {console.log(formik.values.book_url)} */}
             <ModalBody gap={5} display={"flex"} flexDirection={"column"}>
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 <FormLabel>Judul Buku</FormLabel>
@@ -329,16 +323,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
             <ModalFooter>
               <Box gap={5} display={"flex"} my={5}>
                 <Button type="submit">Submit</Button>
-                {/* <Button
-									colorScheme="blue"
-									mr={3}
-									onClick={(e) => {
-										onClose();
-										// getData();
-									}}
-								>
-									Close
-								</Button> */}
               </Box>
             </ModalFooter>
           </ModalContent>
