@@ -27,7 +27,10 @@ export default function Pending(props) {
                     <Flex gap={"10px"}>
                       <Flex border={"3px solid #385898"}>
                         <Image
-                          src={val.payment_url}
+                          src={
+                            process.env.REACT_APP_API_IMAGE_URL +
+                            val.payment_url
+                          }
                           h={"100px"}
                           w={"100px"}
                         ></Image>

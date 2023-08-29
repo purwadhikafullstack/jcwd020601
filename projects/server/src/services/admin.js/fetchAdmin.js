@@ -6,7 +6,7 @@ const fetchAdmin = {
     queryPage,
     queryLimit
   ) => {
-    const page = parseInt(queryPage) || 0;
+    let page = parseInt(queryPage) || 0;
     const limit = parseInt(queryLimit) || 10;
     const offset = limit * page;
     const whereClause = {
@@ -47,7 +47,10 @@ const fetchAdmin = {
     Admin.map((val) => {
       delete val.dataValues.password;
     });
-
+    // if (sort || AdminId || BranchName || before || after) {
+    //   console.log("skdaskdsakdk");
+    //   page = 0;
+    // }
     return { Admin, page, limit, totalRows, totalPage };
   },
   fetchBranchAdminsWithBranch: async ({ sort }, queryPage, queryLimit) => {

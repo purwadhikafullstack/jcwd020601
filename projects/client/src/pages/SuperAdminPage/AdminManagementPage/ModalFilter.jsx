@@ -133,9 +133,10 @@ export default function ModalFilter(props) {
                   </Button>
                   <Button
                     onClick={() => {
+                      console.log(props);
                       props.modalFilter.onClose();
                       props.submitFilter();
-                      props.setFilter();
+                      props.setPage(0);
                     }}
                     bgColor={"#385898"}
                     color={"white"}
