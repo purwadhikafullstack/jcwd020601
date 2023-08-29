@@ -107,6 +107,7 @@ const cityController = {
       res.status(200).send({
         origin: origin.city_id,
         destination: destination.CityId,
+        adress: destination.city,
       });
     } catch (err) {
       res.status(500).send({

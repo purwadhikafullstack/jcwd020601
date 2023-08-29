@@ -13,7 +13,7 @@ import {
   Image,
   Center,
 } from "@chakra-ui/react";
-import { FcImageFile, FcViewDetails } from "react-icons/fc";
+import { FcImageFile } from "react-icons/fc";
 import { MdCancelPresentation } from "react-icons/md";
 import { api } from "../../../api/api";
 
@@ -23,8 +23,6 @@ export default function ModalPayment(props) {
   // Update Status
   async function update(status) {
     try {
-      // console.log(e.target.value);
-      // console.log(val.id);
       await api().patch("/order/v2/status", {
         OrderId: props.val.id,
         status: status.toLowerCase(),
@@ -82,9 +80,7 @@ export default function ModalPayment(props) {
             <Button
               colorScheme="orange"
               mr={3}
-              // onClick={update("Waiting for Payment")}
               onClick={() => {
-                // setStatus("Waiting for Payment");
                 return update("Waiting for Payment");
               }}
             >
@@ -93,7 +89,6 @@ export default function ModalPayment(props) {
             <Button
               colorScheme="green"
               mr={3}
-              // onClick={update("process")}
               onClick={() => {
                 return update("process");
               }}

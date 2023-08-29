@@ -5,11 +5,9 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  AlertDialogCloseButton,
   useDisclosure,
   Button,
   Select,
-  color,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { api } from "../../../api/api";
@@ -22,8 +20,6 @@ export default function ModalConfirm(props) {
   // Update Status
   async function update() {
     try {
-      // console.log(e.target.value);
-      // console.log(val.id);
       await api().patch("/order/v2/status", {
         OrderId: props.val.id,
         status: status,
@@ -37,9 +33,6 @@ export default function ModalConfirm(props) {
 
   return (
     <>
-      {/* <Button colorScheme="red" onClick={onOpen}>
-        Update Status
-      </Button> */}
       <Select
         style={{
           color:
@@ -56,7 +49,6 @@ export default function ModalConfirm(props) {
           setStatus(e.target.value);
           onOpen();
         }}
-        // onChange={(e) => update(e, val)}
       >
         <option value="waiting for payment">Waiting for Payment</option>
         <option value="waiting for payment confirmation">

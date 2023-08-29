@@ -3,8 +3,6 @@ import {
   Button,
   Container,
   Flex,
-  Icon,
-  Image,
   useDisclosure,
   TableContainer,
   Table,
@@ -18,7 +16,6 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  AlertDialogCloseButton,
   useToast,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
@@ -34,18 +31,11 @@ export default function CartPage() {
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
-  // const [edit, setEdit] = useState(false);
-  const [origin, setOrigin] = useState();
-  const [destination, setDestination] = useState();
   const [total, setTotal] = useState(0);
   const [weight, setWeight] = useState();
   const [courier, setCourier] = useState();
   const [shipping, setShipping] = useState(0);
   const [totalOr, setTotalOr] = useState(0);
-
-  // console.log(total);
-  // console.log(totalOr);
-  // console.log(orderSelector.OrderId);
 
   useEffect(() => {
     setTotalOr(Number(total) + Number(shipping));
@@ -77,23 +67,30 @@ export default function CartPage() {
   }
 
   return (
-    <Container maxW={"size.lg"}>
+    <Container maxW={"size.xl"}>
       <Navbar></Navbar>
       <Box>
         <Box padding={"1rem 2rem"} fontSize={"2xl"} fontWeight={"semibold"}>
           Cart
         </Box>
-        <Flex flexWrap={"wrap"}>
+        <Flex
+          flexWrap={"wrap"}
+          flexDir={{ base: "column", md: "row" }}
+          alignItems={{ base: "center", md: "start" }}
+          justifyContent={"center"}
+        >
           <Flex
-            width={"65%"}
+            width={{ base: "22rem", lg: "65%" }}
             flexDir={"column"}
             gap={"1rem"}
             padding={" 1rem 2rem"}
+            justifyContent={"center"}
+            alignItems={"center"}
           >
             <CartBooks setWeight={setWeight} setTotal={setTotal}></CartBooks>
           </Flex>
           <Flex
-            width={"35%"}
+            width={{ base: "22rem", lg: "35%" }}
             flexDir={"column"}
             gap={"1rem"}
             padding={"1rem 2rem"}
@@ -114,25 +111,26 @@ export default function CartPage() {
               flexDir={"column"}
               boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
               borderRadius={"0.7rem"}
+              padding={"0.5rem"}
             >
-              <Box padding={"2rem"} fontSize={"xl"} fontWeight={"semibold"}>
+              <Box
+                padding={"1rem"}
+                textAlign={"center"}
+                fontSize={"xl"}
+                fontWeight={"semibold"}
+              >
                 Order Details
               </Box>
               <Flex
                 flexDir={"column"}
-                // justifyContent={"center"}
                 alignItems={"center"}
-                padding={"2rem"}
+                padding={"1rem"}
                 gap={"2rem"}
                 fontWeight={"semibold"}
               >
                 <Flex gap={"1rem"}>
-                  {/* <Box>Payment Summary</Box>
-                  <Box color={"blue.500"} fontWeight={"bold"}>
-                    Rp {total.toLocaleString("id-ID")},-
-                  </Box> */}
                   <TableContainer>
-                    <Table variant="simple">
+                    <Table size={{ base: "sm", lg: "md" }} variant="simple">
                       <Tbody>
                         <Th>Payment Summary</Th>
                         <Tr>
@@ -154,15 +152,6 @@ export default function CartPage() {
                   </TableContainer>
                 </Flex>
                 <AlertOrder create={create} />
-                {/* <Button
-                  colorScheme={"blue"}
-                  borderRadius={"1.5rem"}
-                  width={"100%"}
-                  // isDisabled={true}
-                  onClick={create}
-                >
-                  Create Order
-                </Button> */}
               </Flex>
             </Flex>
           </Flex>
@@ -182,13 +171,10 @@ function AlertOrder(props) {
         colorScheme={"blue"}
         borderRadius={"1.5rem"}
         width={"100%"}
-        // isDisabled={true}
-
         onClick={onOpen}
       >
         Create Order
       </Button>
-
       <AlertDialog
         isOpen={isOpen}
         leastDestructiveRef={cancelRef}
@@ -215,51 +201,4 @@ function AlertOrder(props) {
       </AlertDialog>
     </>
   );
-}
-
-{
-  /* <Flex
-              boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-              padding={"1rem 2rem"}
-              borderRadius={"0.7rem"}
-              justifyContent={"end"}
-            >
-              {edit ? (
-                <Flex
-                  justifyContent={"space-between"}
-                  width={"100%"}
-                  alignItems={"center"}
-                >
-                  <Flex alignItems={"center"} gap={"0.3rem"}>
-                    <input
-                      style={{ width: "1.2rem", height: "1.2rem" }}
-                      type={"checkbox"}
-                    />
-                    <Box>Select All</Box>
-                  </Flex>
-                  <Flex gap={"6px"}>
-                    <Button>Delete</Button>
-                    <Button
-                      colorScheme={"blue"}
-                      onClick={() => {
-                        setEdit(false);
-                      }}
-                    >
-                      Cancel
-                    </Button>
-                  </Flex>
-                </Flex>
-              ) : (
-                <Box
-                  fontWeight={"semibold"}
-                  cursor={"pointer"}
-                  _hover={{ color: "blue.400" }}
-                  onClick={() => {
-                    setEdit(true);
-                  }}
-                >
-                  Edit Cart
-                </Box>
-              )}
-            </Flex> */
 }

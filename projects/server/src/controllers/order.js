@@ -666,25 +666,21 @@ const orderController = {
       });
 
       // post multiple orderdetails from order
-      await Promise.all(
-        orderDetails.map(async (detail) => {
-          return await createOrderDetail({
-            ...detail,
-            OrderId: order.id,
-            trans,
-          });
-        })
-      );
+      for (const detail of orderDetails) {
+        await createOrderDetail({
+          ...detail,
+          OrderId: order.id,
+          trans,
+        });
+      }
 
       // update multiple bucket in stocks
-      await Promise.all(
-        orderDetails.map(async (detail) => {
-          const { quantity, StockId } = detail;
-          const stock = await db.Stock.findByPk(StockId);
-          const updatedStock = stock.bucket + quantity;
-          return updateBucket({ updatedStock, StockId, trans });
-        })
-      );
+      for (const detail of orderDetails) {
+        const { quantity, StockId } = detail;
+        const stock = await getStockById({ StockId });
+        const updatedStock = stock.bucket + quantity;
+        await updateBucket({ updatedStock, StockId, trans });
+      }
 
       // delete cart by UserId
       await destroyCart({ UserId, trans });
@@ -766,33 +762,33 @@ const orderController = {
           // update multiple stocks
           // update multiple stocksHistory
           console.log("masuk-sending");
-          await Promise.all(
-            data.map(async (detail) => {
-              const { quantity, StockId } = detail;
-              console.log({ quantity, StockId });
-              const stock = await getStockById({ StockId });
-              const updatedStock = stock.stock - quantity;
-              const bucket = stock.bucket - quantity;
-              const sH = await getStockHistory({ StockId });
-              console.log(sH);
-              return Promise.all([
-                await updateStock({
-                  updatedStock,
-                  bucket,
-                  quantity,
-                  StockId,
-                  trans,
-                }),
-                await createStockHistory({
-                  StockId,
-                  updatedStock,
-                  quantity,
-                  tB: sH.totalAfter,
-                  trans,
-                }),
-              ]);
-            })
-          );
+          for (const detail of data) {
+            const { quantity, StockId } = detail;
+            console.log({ quantity, StockId });
+
+            const stock = await getStockById({ StockId });
+            const updatedStock = stock.stock - quantity;
+            const bucket = stock.bucket - quantity;
+
+            const sH = await getStockHistory({ StockId });
+            console.log(sH);
+
+            await updateStock({
+              updatedStock,
+              bucket,
+              quantity,
+              StockId,
+              trans,
+            });
+
+            await createStockHistory({
+              StockId,
+              updatedStock,
+              quantity,
+              tB: sH.totalAfter,
+              trans,
+            });
+          }
           // update status
           await updateStatus({ OrderId, status, trans });
         } else if (status === "waiting for payment") {
@@ -901,55 +897,6 @@ const orderController = {
         },
       });
       return await db.Order.findAll().then((result) => res.send(result));
-    } catch (err) {
-      console.log(err.message);
-      return res.status(500).send({
-        error: err.message,
-      });
-    }
-  },
-  deleteOrderImage: async (req, res) => {
-    try {
-      const id = req.params.id;
-      console.log("MASUK-kkk");
-      console.log(id);
-      // Find the order to get the payment image URL
-      const order = await db.Order.findOne({
-        where: {
-          id,
-        },
-      });
-      console.log(order);
-      if (!order) {
-        return res.status(404).send({ message: "Order not found" });
-      }
-
-      // Extract the filename from the payment_url
-      const paymentImageUrl = order.payment_url;
-      console.log(paymentImageUrl);
-      const filename = paymentImageUrl.split("/").pop();
-
-      // Construct the file path
-      const filePath = path.join(__dirname, "../public/paymentImg", filename);
-
-      // Delete the file if it exists
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-
-      // Update the order's payment_url to null
-      await db.Order.update(
-        {
-          payment_url: null,
-        },
-        {
-          where: {
-            id,
-          },
-        }
-      );
-
-      res.status(200).send("Payment image deleted successfully");
     } catch (err) {
       console.log(err.message);
       return res.status(500).send({
