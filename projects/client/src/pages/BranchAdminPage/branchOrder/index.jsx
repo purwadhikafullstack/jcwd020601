@@ -29,31 +29,6 @@ export default function BranchOrder() {
         // bgColor={"red"}
         overflow={"auto"}
       ></Box>
-      {/* <Flex marginLeft={60} marginTop={20}> */}
-      {/* <Sidebar /> */}
-      {/* <Box
-          display={"flex"}
-          flexDirection={"column"}
-          width={"100%"}
-          marginLeft={50}
-        > */}
-      {/* <Navbar /> */}
-      {/* <h1>adsdas</h1>
-          {/* transaction on branch */}
-      {/* {trans?.map((val) => {
-            return (
-              <Flex height={"100px"} width={"100px"}>
-                {val.total}
-              </Flex>
-            );
-          })} */}
-      {/* <Flex bgColor={"red"} height={"100px"} width={"100px"}></Flex> */}
-      {/* <Flex>
-            <Flex></Flex>
-          </Flex> */}
-      {/* <NavbarFooter /> */}
-      {/* </Box>
-      </Flex> */}
     </>
   );
 }

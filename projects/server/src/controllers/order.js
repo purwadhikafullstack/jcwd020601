@@ -5,41 +5,15 @@ const moment = require("moment");
 const { default: axios } = require("axios");
 const fs = require("fs");
 const path = require("path");
-const { nanoid } = require("nanoid");
 const {
-  createOrder,
-  uploadPayment,
-  getOrder,
-  updateStatus,
-  deletePayment,
-} = require("../services/order");
-const { getCartUserId, destroyCart } = require("../services/cart");
-const {
-  createOrderDetail,
-  getOrderDetail,
-} = require("../services/orderDetail");
-const {
-  updateBucket,
-  getStockById,
-  updateStock,
-} = require("../services/stock");
-const {
-  getStockHistory,
-  createStockHistory,
-} = require("../services/stockHistory");
+  orderServices,
+  orderDetailServices,
+  stockServices,
+  stockHistoryServices,
+  cartServices,
+} = require("../services");
 
 const orderController = {
-  getAll: async (req, res) => {
-    try {
-      const Order = await db.Order.findAll();
-      return res.send(Order);
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
   getByUserId: async (req, res) => {
     try {
       const Order = await db.Order.findAll({
@@ -608,7 +582,7 @@ const orderController = {
       }
 
       // get the order from cart
-      const cart = await getCartUserId({ UserId, BranchId });
+      const cart = await cartServices.getCartUserId({ UserId, BranchId });
 
       // Order weight
       const weight = cart.reduce((prev, curr) => {
@@ -654,7 +628,7 @@ const orderController = {
       }));
 
       // Create Order
-      const order = await createOrder({
+      const order = await orderServices.createOrder({
         total,
         UserId,
         BranchId,
@@ -666,28 +640,24 @@ const orderController = {
       });
 
       // post multiple orderdetails from order
-      await Promise.all(
-        orderDetails.map(async (detail) => {
-          return await createOrderDetail({
-            ...detail,
-            OrderId: order.id,
-            trans,
-          });
-        })
-      );
+      for (const detail of orderDetails) {
+        await orderDetailServices.createOrderDetail({
+          ...detail,
+          OrderId: order.id,
+          trans,
+        });
+      }
 
       // update multiple bucket in stocks
-      await Promise.all(
-        orderDetails.map(async (detail) => {
-          const { quantity, StockId } = detail;
-          const stock = await db.Stock.findByPk(StockId);
-          const updatedStock = stock.bucket + quantity;
-          return updateBucket({ updatedStock, StockId, trans });
-        })
-      );
+      for (const detail of orderDetails) {
+        const { quantity, StockId } = detail;
+        const stock = await stockServices.getStockById({ StockId });
+        const updatedStock = stock.bucket + quantity;
+        await stockServices.updateBucket({ updatedStock, StockId, trans });
+      }
 
       // delete cart by UserId
-      await destroyCart({ UserId, trans });
+      await cartServices.destroyCart({ UserId, trans });
       await trans.commit();
       return res.status(200).send(order);
     } catch (err) {
@@ -709,7 +679,7 @@ const orderController = {
       const { filename } = req.file;
       console.log(filename);
       const payment_url = process.env.payment_img + filename;
-      await uploadPayment({ payment_url, id, trans });
+      await orderServices.uploadPayment({ payment_url, id, trans });
       await trans.commit();
       res.status(200).send("payment proof uploaded");
     } catch (err) {
@@ -729,10 +699,10 @@ const orderController = {
       const { status, OrderId } = req.body;
       console.log({ this: status });
       //
-      const data = await getOrderDetail({ OrderId });
+      const data = await orderDetailServices.getOrderDetail({ OrderId });
       // console.log(data);
 
-      const data2 = await getOrder({ OrderId });
+      const data2 = await orderServices.getOrder({ OrderId });
 
       console.log(data2.status);
       if (data2.status === "delivery confirm") {
@@ -741,7 +711,7 @@ const orderController = {
         return res.status(400).send("The order has been permanently canceled");
       } else if (data2.status === "sending") {
         if (status === "delivery confirm") {
-          await updateStatus({ OrderId, status, trans });
+          await orderServices.updateStatus({ OrderId, status, trans });
         } else {
           return res.status(400).send("The order has been send");
         }
@@ -754,55 +724,55 @@ const orderController = {
           for (const detail of data) {
             const { quantity, StockId } = detail;
             console.log({ quantity, StockId });
-            const stock = await getStockById({ StockId });
+            const stock = await stockServices.getStockById({ StockId });
             console.log({ bucket: stock.bucket });
             const bucket = stock.bucket - quantity;
             console.log({ bucket });
-            await updateStock({ bucket, StockId, trans });
+            await stockServices.updateStock({ bucket, StockId, trans });
           }
           // update status
-          await updateStatus({ OrderId, status, trans });
+          await orderServices.updateStatus({ OrderId, status, trans });
         } else if (status === "sending") {
           // update multiple stocks
           // update multiple stocksHistory
           console.log("masuk-sending");
-          await Promise.all(
-            data.map(async (detail) => {
-              const { quantity, StockId } = detail;
-              console.log({ quantity, StockId });
-              const stock = await getStockById({ StockId });
-              const updatedStock = stock.stock - quantity;
-              const bucket = stock.bucket - quantity;
-              const sH = await getStockHistory({ StockId });
-              console.log(sH);
-              return Promise.all([
-                await updateStock({
-                  updatedStock,
-                  bucket,
-                  quantity,
-                  StockId,
-                  trans,
-                }),
-                await createStockHistory({
-                  StockId,
-                  updatedStock,
-                  quantity,
-                  tB: sH.totalAfter,
-                  trans,
-                }),
-              ]);
-            })
-          );
+          for (const detail of data) {
+            const { quantity, StockId } = detail;
+            console.log({ quantity, StockId });
+
+            const stock = await stockServices.getStockById({ StockId });
+            const updatedStock = stock.stock - quantity;
+            const bucket = stock.bucket - quantity;
+
+            const sH = await stockHistoryServices.getStockHistory({ StockId });
+            console.log(sH);
+
+            await stockServices.updateStock({
+              updatedStock,
+              bucket,
+              quantity,
+              StockId,
+              trans,
+            });
+
+            await stockHistoryServices.createStockHistory({
+              StockId,
+              updatedStock,
+              quantity,
+              tB: sH.totalAfter,
+              trans,
+            });
+          }
           // update status
-          await updateStatus({ OrderId, status, trans });
+          await orderServices.updateStatus({ OrderId, status, trans });
         } else if (status === "waiting for payment") {
           console.log("masuk-WFP");
           console.log(status);
-          await updateStatus({ OrderId, status, trans });
+          await orderServices.updateStatus({ OrderId, status, trans });
 
           // delete image payment
           // Find the order to get the payment image URL
-          const order = await getOrder({ OrderId });
+          const order = await orderServices.getOrder({ OrderId });
           console.log(order);
           if (!order) {
             return res.status(404).send({ message: "Order not found" });
@@ -824,14 +794,16 @@ const orderController = {
             fs.unlinkSync(filePath);
           }
           // Update the order's payment_url to null
-          await deletePayment({ id: OrderId, trans });
+          await orderServices.deletePayment({ id: OrderId, trans });
         } else {
           console.log("masuk-else");
-          await updateStatus({ OrderId, status, trans });
+          await orderServices.updateStatus({ OrderId, status, trans });
         }
       }
       await trans.commit();
-      return await getOrder({ OrderId }).then((result) => res.send(result));
+      return await orderServices
+        .getOrder({ OrderId })
+        .then((result) => res.send(result));
     } catch (err) {
       await trans.rollback();
       console.log(err.message);
@@ -846,8 +818,8 @@ const orderController = {
       const { status, OrderId } = req.body;
       console.log(status);
 
-      const data = await getOrderDetail({ OrderId });
-      const data2 = await getOrder({ OrderId });
+      const data = await orderDetailServices.getOrderDetail({ OrderId });
+      const data2 = await orderServices.getOrder({ OrderId });
 
       console.log(data2.status);
       if (data2.status === "delivery confirm") {
@@ -856,7 +828,7 @@ const orderController = {
         return res.status(400).send("The order has been permanently canceled");
       } else if (data2.status === "sending") {
         if (status === "delivery confirm") {
-          await updateStatus({ OrderId, status, trans });
+          await orderServices.updateStatus({ OrderId, status, trans });
         } else {
           return res.status(400).send("The order has been send");
         }
@@ -867,22 +839,24 @@ const orderController = {
           for (const detail of data) {
             const { quantity, StockId } = detail;
             console.log({ quantity, StockId });
-            const stock = await getStockById({ StockId });
+            const stock = await stockServices.getStockById({ StockId });
             console.log({ bucket: stock.bucket });
             const bucket = stock.bucket - quantity;
             console.log({ bucket });
-            await updateStock({ bucket, StockId, trans });
+            await stockServices.updateStock({ bucket, StockId, trans });
           }
           // update status
-          await updateStatus({ OrderId, status, trans });
+          await orderServices.updateStatus({ OrderId, status, trans });
         } else if (status === "waiting for payment confirmation") {
-          await updateStatus({ OrderId, status, trans });
+          await orderServices.updateStatus({ OrderId, status, trans });
         } else {
           return res.status(400).send("Unauthorized");
         }
       }
       await trans.commit();
-      return await getOrder({ OrderId }).then((result) => res.send(result));
+      return await orderServices
+        .getOrder({ OrderId })
+        .then((result) => res.send(result));
     } catch (err) {
       await trans.rollback();
       console.log(err);
@@ -901,55 +875,6 @@ const orderController = {
         },
       });
       return await db.Order.findAll().then((result) => res.send(result));
-    } catch (err) {
-      console.log(err.message);
-      return res.status(500).send({
-        error: err.message,
-      });
-    }
-  },
-  deleteOrderImage: async (req, res) => {
-    try {
-      const id = req.params.id;
-      console.log("MASUK-kkk");
-      console.log(id);
-      // Find the order to get the payment image URL
-      const order = await db.Order.findOne({
-        where: {
-          id,
-        },
-      });
-      console.log(order);
-      if (!order) {
-        return res.status(404).send({ message: "Order not found" });
-      }
-
-      // Extract the filename from the payment_url
-      const paymentImageUrl = order.payment_url;
-      console.log(paymentImageUrl);
-      const filename = paymentImageUrl.split("/").pop();
-
-      // Construct the file path
-      const filePath = path.join(__dirname, "../public/paymentImg", filename);
-
-      // Delete the file if it exists
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-
-      // Update the order's payment_url to null
-      await db.Order.update(
-        {
-          payment_url: null,
-        },
-        {
-          where: {
-            id,
-          },
-        }
-      );
-
-      res.status(200).send("Payment image deleted successfully");
     } catch (err) {
       console.log(err.message);
       return res.status(500).send({

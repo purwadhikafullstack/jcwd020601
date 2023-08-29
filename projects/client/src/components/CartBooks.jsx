@@ -1,5 +1,4 @@
 import { Box, Flex, Icon, Image, useToast } from "@chakra-ui/react";
-import Increment from "./Increment";
 import DeleteModal from "../components/DeleteCart";
 import { AiFillPlusCircle, AiFillMinusCircle } from "react-icons/ai";
 import { IoStorefrontSharp } from "react-icons/io5";
@@ -17,16 +16,12 @@ export default function CartBooks(props) {
   const [hapus, setHapus] = useState(false);
   const toast = useToast();
 
-  console.log(orderSelector.BranchId);
-  console.log(userSelector.id);
-
   //GET
   async function fetch() {
     const data = await api().post("/cart/id", {
       UserId: userSelector.id,
       BranchId: orderSelector.BranchId,
     });
-    // console.log(data.data.Cart);
     setHapus(false);
     dispatch({
       type: "qty",
@@ -34,7 +29,6 @@ export default function CartBooks(props) {
         quantity: data.data.quantity,
       },
     });
-    // console.log(orderSelector.cart);
     props.setWeight(data.data.weight);
     return setCart(data.data.Cart);
   }
@@ -42,8 +36,6 @@ export default function CartBooks(props) {
   //PATCH
   async function edit(idx, type) {
     try {
-      // console.log(cart[idx].StockId);
-      // console.log(cart[idx].id);
       await api().patch("cart/v2", {
         StockId: cart[idx].StockId,
         UserId: cart[idx].UserId,
@@ -108,15 +100,19 @@ export default function CartBooks(props) {
     <>
       <Flex
         flexDir={"column"}
+        width={"100%"}
         boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
         borderRadius={"0.7rem"}
       >
-        {/* {console.log(cart[0])} */}
         {cart[0] ? (
           cart.map((val, idx) => (
             <>
-              <Flex padding={"1rem"}>
-                <Box textAlign={"center"} width={"20%"} fontWeight={"semibold"}>
+              <Flex
+                padding={"1rem"}
+                flexDir={"column"}
+                // justifyContent={"start"}
+              >
+                <Box textAlign={"start"} fontWeight={"semibold"}>
                   {`Order ${idx + 1}`}
                 </Box>
                 <Flex alignItems={"center"} gap={"0.3rem"}>
@@ -127,18 +123,23 @@ export default function CartBooks(props) {
               <Flex
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                padding={"1rem 2rem"}
+                // padding={"1rem 2rem"}
+                padding={{ base: "0.5rem", md: "1rem 2rem" }}
+                flexDir={{ base: "column", lg: "row" }}
+                gap={"1rem"}
               >
                 <Image
                   maxHeight={"100px"}
-                  src={val.Stock.Book.book_url}
+                  src={
+                    process.env.REACT_APP_API_IMAGE_URL +
+                    val.Stock.Book.book_url
+                  }
                 ></Image>
                 <Flex
-                  w={"45%"}
+                  w={{ base: "auto", md: "45%" }}
                   flexDir={"column"}
                   justifyContent={"space-evenly"}
                 >
-                  {/* <Box>Logika Algoritma dan Pemrograman Dasar</Box> */}
                   <Box>{val.Stock.Book.title}</Box>
                   <Box>
                     {val.Stock.Book.author} -{" "}
@@ -149,68 +150,65 @@ export default function CartBooks(props) {
                   )},-`}</Box>
                   <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
                 </Flex>
-                {/* seperate */}
-                {/* seperate */}
-                <Flex alignItems={"center"} gap={"1rem"}>
-                  <Icon
-                    fontSize={"2xl"}
-                    color={"blue.400"}
-                    as={AiFillMinusCircle}
-                    cursor={"pointer"}
-                    onClick={() => {
-                      edit(idx, "minus");
-                    }}
-                  ></Icon>
-                  <Box fontSize={"1rem"}>
-                    {/* <input type="number" defaultValue={qty} /> */}
-                    {val.quantity}
-                  </Box>
-                  <Icon
-                    fontSize={"2xl"}
-                    color={"blue.400"}
-                    as={AiFillPlusCircle}
-                    cursor={"pointer"}
-                    onClick={() => {
-                      edit(idx, "plus");
-                    }}
-                  ></Icon>
-                </Flex>
-                <Flex
-                  flexDir={"column"}
-                  gap={"8px"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  {val.Stock?.DiscountId ? (
-                    <Box>
-                      {val.Stock?.Discount?.isPercent
-                        ? `Rp ${(
-                            (val.Stock?.Book?.price -
-                              val.Stock?.Book?.price *
-                                val.Stock?.Discount?.discount *
-                                0.01) *
-                            val.quantity
-                          ).toLocaleString("id-ID")} ,-`
-                        : `Rp ${(
-                            (val.Stock?.Book?.price -
-                              val.Stock?.Discount?.discount) *
-                            val.quantity
-                          ).toLocaleString("id-ID")} ,-`}
-                    </Box>
-                  ) : (
-                    <Box>
-                      Rp{" "}
-                      {(val.Stock?.Book?.price * val.quantity).toLocaleString(
-                        "id-ID"
-                      )}{" "}
-                      ,-
-                    </Box>
-                  )}
 
-                  <Flex alignItems={"center"}>
-                    {/* Delete */}
-                    <DeleteModal setHapus={setHapus} cartId={val.id} />
+                <Flex gap={"1rem"} flexDir={{ md: "column" }}>
+                  <Flex alignItems={"center"} gap={"1rem"}>
+                    <Icon
+                      fontSize={"2xl"}
+                      color={"blue.400"}
+                      as={AiFillMinusCircle}
+                      cursor={"pointer"}
+                      onClick={() => {
+                        edit(idx, "minus");
+                      }}
+                    ></Icon>
+                    <Box fontSize={"1rem"}>{val.quantity}</Box>
+                    <Icon
+                      fontSize={"2xl"}
+                      color={"blue.400"}
+                      as={AiFillPlusCircle}
+                      cursor={"pointer"}
+                      onClick={() => {
+                        edit(idx, "plus");
+                      }}
+                    ></Icon>
                   </Flex>
+                  <Flex
+                    flexDir={"column"}
+                    gap={"8px"}
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                  >
+                    {val.Stock?.DiscountId ? (
+                      <Box>
+                        {val.Stock?.Discount?.isPercent
+                          ? `Rp ${(
+                              (val.Stock?.Book?.price -
+                                val.Stock?.Book?.price *
+                                  val.Stock?.Discount?.discount *
+                                  0.01) *
+                              val.quantity
+                            ).toLocaleString("id-ID")} ,-`
+                          : `Rp ${(
+                              (val.Stock?.Book?.price -
+                                val.Stock?.Discount?.discount) *
+                              val.quantity
+                            ).toLocaleString("id-ID")} ,-`}
+                      </Box>
+                    ) : (
+                      <Box>
+                        Rp{" "}
+                        {(val.Stock?.Book?.price * val.quantity).toLocaleString(
+                          "id-ID"
+                        )}{" "}
+                        ,-
+                      </Box>
+                    )}
+                  </Flex>
+                </Flex>
+                <Flex alignItems={"center"}>
+                  {/* Delete */}
+                  <DeleteModal setHapus={setHapus} cartId={val.id} />
                 </Flex>
               </Flex>
             </>
@@ -232,12 +230,6 @@ export default function CartBooks(props) {
           padding={"1rem 2rem"}
           fontWeight={"semibold"}
         >
-          {/* <Box
-            // onClick={() => console.log(cart[0].Stock.Book.Discount.discount)}
-            onClick={() => console.log(list)}
-          >
-            KLIK
-          </Box> */}
           <Box w={"50%"}>total</Box>
           <Box w={"50%"}>RP {total.toLocaleString("id-ID")},-</Box>
         </Flex>
