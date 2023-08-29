@@ -8,7 +8,7 @@ export default function History(props) {
   return (
     <>
       <Flex
-        mb={{ base: "40px", sm: "50px", md: "50px" }}
+        mb={{ base: "100px", sm: "100px", md: "100px" }}
         w={"100%"}
         mt={"20px"}
         gap={"30px"}
@@ -95,10 +95,12 @@ export default function History(props) {
         ) : (
           <>
             <Center w={"100%"} flexDir={"column"}>
-              <Center fontSize={"1.2rem"} color={"#0060ae"} fontWeight={600}>
+              <Center fontSize={"1.3rem"} color={"#0060ae"} fontWeight={600}>
                 There Are No Orders Here
               </Center>
-              <Center color={"#0095d8"}>Your Orders Would Go Here</Center>
+              <Center fontSize={"1.1rem"} color={"#0095d8"}>
+                Your Orders Would Go Here
+              </Center>
             </Center>
           </>
         )}
