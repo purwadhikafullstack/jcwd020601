@@ -131,7 +131,10 @@ export default function CartBooks(props) {
               >
                 <Image
                   maxHeight={"100px"}
-                  src={val.Stock.Book.book_url}
+                  src={
+                    process.env.REACT_APP_API_IMAGE_URL +
+                    val.Stock.Book.book_url
+                  }
                 ></Image>
                 <Flex
                   w={"45%"}
