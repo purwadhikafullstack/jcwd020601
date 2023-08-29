@@ -41,7 +41,6 @@ export default function Stock() {
     setPage(response.data.page);
     setRows(response.data.totalRows);
     setPages(response.data.totalPage);
-    // console.log(response.data.result);
   }
 
   useEffect(() => {
@@ -49,7 +48,6 @@ export default function Stock() {
   }, [keyword, page]);
 
   const changePage = ({ selected }) => {
-    // console.log(selected);
     setPage(selected);
   };
 
@@ -72,17 +70,9 @@ export default function Stock() {
       currency: "IDR",
     }).format(number);
   };
-  // console.log(value);
-  // console.log(page);
-  // console.log(userSelector.branchId);
   return (
     <>
-      <Box
-        marginLeft={60}
-        h={"80vh"}
-        // bgColor={"red"}
-        overflow={"auto"}
-      >
+      <Box marginLeft={60} h={"80vh"} overflow={"auto"}>
         <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
           <Greetings />
           <TableContainer padding={10}>

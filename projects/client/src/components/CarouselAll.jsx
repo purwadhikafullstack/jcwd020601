@@ -38,7 +38,6 @@ export default function CarouselAll() {
   useEffect(() => {
     fetchProduct();
   }, [token, orderSelector.BranchId]);
-  console.log(value);
 
   const percent = (a, b) => {
     let result = (a / 100) * b;

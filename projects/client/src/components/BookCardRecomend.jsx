@@ -52,9 +52,6 @@ export default function BookCardRecomend() {
     slidesToShow: 1,
     slidesToScroll: 1,
   };
-
-  console.log(value);
-  console.log(token);
   async function add(idx) {
     try {
       if (userSelector.username) {
@@ -224,39 +221,6 @@ export default function BookCardRecomend() {
                       : val.Book?.title}
                   </Text>
                   <Text color="blue.600" fontSize="md">
-                    {/* {val.Book?.Discount?.discount ? (
-                      <>
-                        {val.Book?.Discount?.isPercent ? (
-                          <>
-                            
-                            <Text fontSize="xl">
-                              Rp.{Intl.NumberFormat().format(val.Book?.price)}
-                            </Text>
-                          </>
-                        ) : (
-                          <>
-                            <Box gap={3} display={"flex"} flexDir={"column"}>
-                              <Text color="#A0AEC0" as="del" fontSize="md">
-                                Rp.{" "}
-                                {Intl.NumberFormat().format(val.Book?.price)}
-                              </Text>
-                              <Text fontSize="xl">
-                                Rp.{" "}
-                                {Intl.NumberFormat().format(
-                                  val.Book?.price - val.Book?.Discount?.discount
-                                )}
-                              </Text>
-                            </Box>
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        <Text fontSize="xl">
-                          Rp. {Intl.NumberFormat().format(val.Book?.price)}
-                        </Text>
-                      </>
-                    )} */}
                     {val.Discount?.discount ? (
                       <>
                         {val.Discount?.isPercent ? (
@@ -316,9 +280,6 @@ export default function BookCardRecomend() {
               </CardBody>
               <CardFooter p={5}>
                 <ButtonGroup spacing="2" justifyContent={"center"}>
-                  {/* <Button variant="solid" colorScheme="blue">
-                  Buy now
-                </Button> */}
                   <Button
                     variant="solid"
                     colorScheme="blue"

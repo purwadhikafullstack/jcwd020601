@@ -103,7 +103,6 @@ function DesktopNav({ callback, keyword, category }) {
   const [userAddress, setUserAddress] = useState([]);
   const [trans, setTrans] = useState(true);
   const modalSelectAddress = useDisclosure();
-  // const [keyword, setkeyword] = useState("");
   const [value, setValue] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [input, setInput] = useState("");
@@ -140,7 +139,6 @@ function DesktopNav({ callback, keyword, category }) {
         .get("/address/user/" + userSelector.id)
         .then((res) => {
           setUserAddresses(res.data);
-          // console.log(res.data);
         })
         .catch((err) => {
           toast({
@@ -170,8 +168,6 @@ function DesktopNav({ callback, keyword, category }) {
           stock.Book.title.toLowerCase().includes(value.toLowerCase())
         );
       });
-
-      // console.log(result);
       setResult(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -318,11 +314,9 @@ function DesktopNav({ callback, keyword, category }) {
               type="text"
               border={"none"}
               borderBottom={"1px solid #cccc"}
-              placeholder="Search Book or Author"
+              placeholder="Search Book"
               color="blue.700"
               borderRadius={"0"}
-              // value={keyword}
-              // onChange={callback}
               value={input}
               onChange={(e) => handleChange(e.target.value)}
               style={{

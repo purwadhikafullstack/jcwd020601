@@ -18,7 +18,6 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
 import "../../../App.css";
-import { GrFormAdd, GrPowerReset } from "react-icons/gr";
 import Swal from "sweetalert2";
 import icon from "../../../assets/images/icon.png";
 import { useFormik } from "formik";
@@ -31,7 +30,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [category, setCategory] = useState([]);
   const [image, setImage] = useState(icon);
-  // console.log(id);
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -109,15 +107,12 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
         Authorization: token,
       },
     });
-
-    console.log(res);
     async function getImage(a) {
       let value = await fetch(a)
         .then((res) => res.blob())
         .then((blob) => {
           return new File([blob], "image", { type: blob.type });
         });
-      // console.log(value);
       return value;
     }
     let imageData;
@@ -155,7 +150,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     getDataDetail();
     getCategory();
   }, [id, getData]);
-  console.log(formik.values);
   return (
     <>
       <Text>Edit Data</Text>
@@ -170,7 +164,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
           <ModalContent>
             <ModalHeader>Edit Buku</ModalHeader>
             <ModalCloseButton />
-            {/* {console.log(formik.values.book_url)} */}
             <ModalBody gap={5} display={"flex"} flexDirection={"column"}>
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 <FormLabel>Judul Buku</FormLabel>
@@ -330,16 +323,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
             <ModalFooter>
               <Box gap={5} display={"flex"} my={5}>
                 <Button type="submit">Submit</Button>
-                {/* <Button
-									colorScheme="blue"
-									mr={3}
-									onClick={(e) => {
-										onClose();
-										// getData();
-									}}
-								>
-									Close
-								</Button> */}
               </Box>
             </ModalFooter>
           </ModalContent>

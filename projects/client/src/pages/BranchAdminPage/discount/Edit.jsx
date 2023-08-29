@@ -65,7 +65,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       //   Authorization: token,
       // },
     });
-    console.log(res);
     formik.setValues({
       ...formik.values,
       title: res.data.result.title,
