@@ -329,6 +329,57 @@ const stockServices = {
       throw err;
     }
   },
+  updateBucket: async (body) => {
+    try {
+      const { updatedStock, StockId } = body;
+      return await db.Stock.update(
+        {
+          bucket: updatedStock,
+        },
+        {
+          where: {
+            id: StockId,
+          },
+          transaction: body.trans,
+        }
+      );
+    } catch (error) {
+      return error;
+    }
+  },
+  getStockById: async (body) => {
+    try {
+      const { StockId } = body;
+      return await db.Stock.findByPk(StockId);
+    } catch (error) {
+      return error;
+    }
+  },
+  updateStock: async (body) => {
+    try {
+      const updateClouse = {};
+      // console.log(body);
+      // console.log(body.bucket);
+      if (body.quantity) {
+        updateClouse.quantity = body.quantity;
+        updateClouse.bucket = body.bucket;
+        updateClouse.stock = body.updatedStock;
+      }
+      if (body.bucket >= 0) {
+        updateClouse.bucket = body.bucket;
+      }
+      console.log({ stockServoce: updateClouse });
+      console.log(body.trans);
+      return await db.Stock.update(updateClouse, {
+        where: {
+          id: body.StockId,
+        },
+        transaction: body.trans,
+      });
+    } catch (error) {
+      return error;
+    }
+  },
 };
 
 module.exports = stockServices;

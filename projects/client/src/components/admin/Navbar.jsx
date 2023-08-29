@@ -281,16 +281,6 @@ function DesktopNav() {
       alert(err.data.message);
     }
   }
-  // async function fetchUserMainAddress() {
-  //   try {
-  //     await api.get("/address/ismain/" + userSelector.id).then((res) => {
-  //       setUserAddress(res.data);
-  //       console.log(res.data);
-  //     });
-  //   } catch (err) {
-  //     console.log(err.data.message);
-  //   }
-  // }
 
   return (
     <>

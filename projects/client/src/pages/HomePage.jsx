@@ -36,14 +36,6 @@ export default function HomePage() {
       "Longitude",
       JSON.stringify(position.coords.longitude)
     );
-    // const address = await api()
-    //   .post("address/lat", {
-    //     latitude: JSON.stringify(position.coords.latitude),
-    //     longitude: JSON.stringify(position.coords.longitude),
-    //   })
-    //   .then((res) => {
-    //     return res.data;
-    //   });
   }
   return (
     <Flex display={"columns"}>

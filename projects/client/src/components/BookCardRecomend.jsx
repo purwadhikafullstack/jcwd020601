@@ -22,6 +22,7 @@ import { api } from "../api/api";
 import { useDispatch, useSelector } from "react-redux";
 import TooFarModal from "./TooFarModal";
 import Swal from "sweetalert2";
+import NoAddressModal from "./NoAddressModal";
 export default function BookCardRecomend() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const orderSelector = useSelector((state) => state.login.order);
@@ -32,6 +33,7 @@ export default function BookCardRecomend() {
   const toast = useToast();
   const nav = useNavigate();
   const tooFarModal = useDisclosure();
+  const noAddressModal = useDisclosure();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(5);
@@ -286,7 +288,9 @@ export default function BookCardRecomend() {
                     onClick={
                       orderSelector.TooFar
                         ? () => tooFarModal.onOpen()
-                        : () => add(idx)
+                        : orderSelector.AddressId
+                        ? () => add(idx)
+                        : () => noAddressModal.onOpen()
                     }
                   >
                     Add to cart
@@ -294,6 +298,7 @@ export default function BookCardRecomend() {
                 </ButtonGroup>
               </CardFooter>
               <TooFarModal tooFarModal={tooFarModal} />
+              <NoAddressModal noAddressModal={noAddressModal} />
             </Card>
           </Link>
         ))}

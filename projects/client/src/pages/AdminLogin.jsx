@@ -42,7 +42,7 @@ export default function LoginPage() {
         .get("/admin/v3?token=" + token)
         .then(async (res) => {
           console.log(res.data);
-          await dispatch({
+          dispatch({
             type: "login",
             payload: res.data,
           });

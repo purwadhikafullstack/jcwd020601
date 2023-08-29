@@ -4,30 +4,13 @@ const { Op } = db.Sequelize;
 const moment = require("moment");
 const { default: axios } = require("axios");
 const opencage = require("opencage-api-client");
-function distance(lat1, lon1, lat2, lon2, BranchId) {
-  const r = 6371; // km
-  const p = Math.PI / 180;
-
-  const a =
-    0.5 -
-    Math.cos((lat2 - lat1) * p) / 2 +
-    (Math.cos(lat1 * p) *
-      Math.cos(lat2 * p) *
-      (1 - Math.cos((lon2 - lon1) * p))) /
-      2;
-
-  return {
-    BranchId,
-    distance: 2 * r * Math.asin(Math.sqrt(a)),
-  };
-}
+const { addressServices } = require("../services");
 const addressController = {
   getAll: async (req, res) => {
     try {
-      const Address = await db.Address.findAll();
+      const Address = await addressServices.findAllAddress();
       return res.send(Address);
     } catch (err) {
-      console.log(err.message);
       res.status(500).send({
         message: err.message,
       });
@@ -35,12 +18,11 @@ const addressController = {
   },
   getById: async (req, res) => {
     try {
-      const Address = await db.Address.findOne({
-        where: {
-          id: req.params.id,
-        },
-      });
-      return res.send(Address);
+      const Address = await addressServices.findOneAddress(req.params.id);
+      if (Address) {
+        return res.send(Address);
+      }
+      throw new Error("Address does not exist");
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -50,26 +32,9 @@ const addressController = {
   },
   getByUserId: async (req, res) => {
     try {
-      const Address = await db.Address.findAll({
-        where: {
-          UserId: req.params.id,
-        },
-      });
+      const { id } = req.params;
+      const Address = await addressServices.findAllAddressByUserId(id);
       return res.send(Address);
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  getLatLonByCity: async (req, res) => {
-    try {
-      const Address = await opencage.geocode({
-        q: "Kabupaten Bandung",
-        language: "id",
-      });
-      return res.send(Address.results);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -80,11 +45,7 @@ const addressController = {
   getIsMainByUserId: async (req, res) => {
     try {
       const { id } = req.params;
-      const Address = await db.Address.findOne({
-        where: {
-          [Op.and]: [{ UserId: id }, { isMain: true }],
-        },
-      });
+      const Address = await addressServices.findMainAddressByUserId(id);
       return res.send(Address);
     } catch (err) {
       console.log(err.message);
@@ -96,22 +57,8 @@ const addressController = {
   getClosestBranchByLatLon: async (req, res) => {
     try {
       const { lat, lon } = req.body;
-      const result = [];
-      const Branches = await db.Branch.findAll();
-      await Branches.map((val) => {
-        result.push(distance(lat, lon, val.latitude, val.longitude, val.id));
-      });
-      let min = Math.min(...result.map((item) => item.distance));
-      let lowest = result.filter((item) => item.distance === min);
-      if (lowest[0].distance <= 50) {
-        return res.send(...lowest);
-      }
-      return res.send({
-        message: "Branch Terdekat Melebihi 50km",
-        BranchId: 2,
-        ClosestBranchId: lowest[0].BranchId,
-        distance: lowest[0].distance,
-      });
+      const result = await addressServices.getClosestBranch(lat, lon);
+      return res.send(result);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -119,60 +66,18 @@ const addressController = {
       });
     }
   },
-
   editAddress: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
-      let place = {};
-      console.log("sakdsakd");
-      const {
-        labelAlamat,
-        namaPenerima,
-        no_Handphone,
-        province,
-        city,
-        alamatLengkap,
-        pos,
-        isMain,
-        latitude,
-        longitude,
-        UserId,
-      } = req.body;
-      await opencage
-        .geocode({ q: city?.split("#")[1], language: "id" })
-        .then(async (res) => {
-          place = res?.results[0].geometry;
-        });
-      await db.Address.update(
-        {
-          labelAlamat,
-          namaPenerima,
-          no_Handphone,
-          province: province?.split("#")[1],
-          city: city?.split("#")[1],
-          isMain,
-          alamatLengkap,
-          pos,
-          latitude: place.lat,
-          longitude: place.lng,
-          UserId,
-          ProvinceId: province?.split("#")[0],
-          CityId: city?.split("#")[0],
-        },
-        {
-          where: {
-            id: req.params.id,
-          },
-        }
+      const result = await addressServices.patchAddress(
+        req.body,
+        req.params.id,
+        t
       );
-
-      const result = await db.Address.findOne({
-        where: {
-          id: req.params.id,
-        },
-      });
+      await t.commit();
       res.status(200).send(result);
     } catch (err) {
-      console.log("sadkaskd");
+      await t.rollback();
       console.log(err.message);
       res.status(500).send({
         message: err.message,
@@ -180,35 +85,19 @@ const addressController = {
     }
   },
   editMainAddress: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
       const { UserId } = req.body;
-      const Address = await db.Address.update(
-        {
-          isMain: false,
-        },
-        {
-          where: {
-            [Op.and]: [{ UserId }, { isMain: true }],
-          },
-        }
-      );
-      await db.Address.update(
-        {
-          isMain: true,
-        },
-        {
-          where: {
-            id: req.params.id,
-          },
-        }
-      );
-
-      return await db.Address.findOne({
-        where: {
-          id: req.params.id,
-        },
-      }).then((result) => res.send(result));
+      const { id } = req.params;
+      const result = await addressServices.patchMainAddress(UserId, id, t);
+      if (result) {
+        await t.commit();
+        return res.send(result);
+      }
+      throw new Error("Address does not exist");
     } catch (err) {
+      await t.rollback();
+
       console.log(err.message);
       res.status(500).send({
         message: err.message,
@@ -216,53 +105,15 @@ const addressController = {
     }
   },
   insertAddress: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
-      const {
-        labelAlamat,
-        namaPenerima,
-        no_Handphone,
-        province,
-        city,
-        alamatLengkap,
-        pos,
-        latitude,
-        longitude,
-        UserId,
-      } = req.body;
-      let place = {};
-      console.log(city);
-      console.log("kotaa");
-      const Main = await db.Address.findOne({
-        where: {
-          UserId,
-          isMain: true,
-        },
-      });
+      const result = await addressServices.createAddress(req.body, t);
+      await t.commit();
 
-      await opencage
-        .geocode({ q: city.split("#")[1], language: "id" })
-        .then(async (res) => {
-          place = res.results[0].geometry;
-
-          await db.Address.create({
-            labelAlamat,
-            namaPenerima,
-            no_Handphone,
-            province: province.split("#")[1],
-            city: city.split("#")[1],
-            isMain: Main ? false : true,
-            alamatLengkap,
-            pos,
-            latitude: place.lat,
-            longitude: place.lng,
-            UserId,
-            ProvinceId: province.split("#")[0],
-            CityId: city.split("#")[0],
-          });
-        });
-      const result = await db.Address.findAll();
       res.send(result);
     } catch (err) {
+      await t.rollback();
+
       console.log(err);
       return res.status(500).send({
         message: err.message,
@@ -270,8 +121,8 @@ const addressController = {
     }
   },
   deleteAddress: async (req, res) => {
+    const t = await db.sequelize.transaction();
     try {
-      console.log(req.params.id);
       const Address = await db.Address.findOne({
         where: {
           id: req.params.id,
@@ -281,11 +132,9 @@ const addressController = {
         where: {
           id: req.params.id,
         },
+        transaction: t,
       });
-      console.log(Address.isMain);
-      console.log("sadas");
       if (Address.isMain) {
-        console.log(req.body.UserId);
         const Addresses = await db.Address.findAll({
           where: {
             UserId: req.body.UserId,
@@ -300,116 +149,21 @@ const addressController = {
               where: {
                 id: Addresses[0].id,
               },
+              transaction: t,
             }
           );
         }
       }
 
-      return await db.Address.findAll().then((result) => res.send(result));
+      return await db.Address.findAll().then(async (result) => {
+        await t.commit();
+        res.send(result);
+      });
     } catch (err) {
+      await t.rollback();
       console.log(err.message);
       return res.status(500).send({
         error: err.message,
-      });
-    }
-  },
-  addAddressByLongitudeLatitude: async (req, res) => {
-    try {
-      const { latitude, longitude } = req.body;
-      opencage
-        .geocode({ q: latitude + "," + longitude, language: "id" })
-        .then(async (data) => {
-          // console.log(JSON.stringify(data));
-          if (data.status.code === 200 && data.results.length > 0) {
-            const place = data.results[0].geometry;
-
-            res.send({
-              place: data.results[0].components.city,
-
-              // namaPenerima,
-              // no_Handphone,
-              // province: place.components.state,
-              // city: place.components.city,
-              // alamatLengkap,
-              // pos: place.components.postcode,
-              // latitude,
-              // longitude,
-              // UserId,
-            });
-          } else {
-            console.log("status", data.status.message);
-            console.log("total_results", data.total_results);
-          }
-        })
-        .catch((error) => {
-          console.log("error", error.message);
-          if (error.status.code === 402) {
-            console.log("hit free trial daily limit");
-            console.log("become a customer: https://opencagedata.com/pricing");
-          }
-        });
-      const user = await db.User.findAll();
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  getAllProvince: async (req, res) => {
-    try {
-      const province = await axios
-        .get("https://api.rajaongkir.com/starter/province", {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        })
-        .then((res) => {
-          return res.data.rajaongkir.results;
-        });
-      // .catch((err) => {
-      //   console.log(err.message);
-      // });
-
-      return res.status(200).send(province);
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  getAllCityByProvince: async (req, res) => {
-    try {
-      const { id } = req.body;
-      const province = await axios
-        .get("https://api.rajaongkir.com/starter/city?&province=" + id, {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        })
-        .then((res) => {
-          return res.data.rajaongkir.results;
-        });
-      return res.status(200).send(province);
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
-  getAllPosByCity: async (req, res) => {
-    try {
-      const { id } = req.body;
-      const province = await axios
-        .get("https://api.rajaongkir.com/starter/city?id=" + id, {
-          headers: { key: "fdaa10aca9ee40feab355d1646c531eb" },
-        })
-        .then((res) => {
-          return res.data.rajaongkir.results;
-        });
-      return res.status(200).send(province);
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
       });
     }
   },

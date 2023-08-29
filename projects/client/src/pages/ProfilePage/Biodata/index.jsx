@@ -25,6 +25,8 @@ import { useDispatch } from "react-redux";
 import ModalChangeProfile from "./ModalChangeProfile";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+const IMGURL = process.env.REACT_APP_API_IMAGE_URL;
+
 export default function Biodata(props) {
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -62,7 +64,6 @@ export default function Biodata(props) {
       first_name: Yup.string().trim().required("Phone number is required"),
     }),
     onSubmit: async () => {
-      console.log("sakdsakd");
       const { id, first_name, last_name, gender, phone } = formik.values;
       const account = {
         id,
@@ -89,16 +90,27 @@ export default function Biodata(props) {
           Swal.fire("Good job!", "Profile Updated", "success");
         })
         .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Login session has expired",
-          });
-          dispatch({
-            type: "logout",
-          });
-          localStorage.removeItem("address");
-          nav("/login");
+          if (err.response.data.message == "token has expired") {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+            localStorage.removeItem("auth");
+            localStorage.removeItem("address");
+            localStorage.removeItem("Latitude");
+            localStorage.removeItem("Longitude");
+            dispatch({
+              type: "logout",
+            });
+            nav("/login");
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+          }
         });
     },
   });
@@ -110,10 +122,7 @@ export default function Biodata(props) {
       formData.append("avatar", file);
       user = await api()
         .post(
-          "http://localhost:2000/auth/image/v1/" +
-            props.userSelector.id +
-            "?token=" +
-            token,
+          "auth/image/v1/" + props.userSelector.id + "?token=" + token,
           formData
         )
         .then((res) => {
@@ -121,19 +130,27 @@ export default function Biodata(props) {
           return res.data;
         })
         .catch((err) => {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Login session has expired",
-          });
-          localStorage.removeItem("auth");
-          localStorage.removeItem("address");
-          localStorage.removeItem("Latitude");
-          localStorage.removeItem("Longitude");
-          dispatch({
-            type: "logout",
-          });
-          nav("/login");
+          if (err.response.data.message == "token has expired") {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+            localStorage.removeItem("auth");
+            localStorage.removeItem("address");
+            localStorage.removeItem("Latitude");
+            localStorage.removeItem("Longitude");
+            dispatch({
+              type: "logout",
+            });
+            nav("/login");
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: err.response.data.message,
+            });
+          }
         });
       await dispatch({
         type: "login",
@@ -163,8 +180,6 @@ export default function Biodata(props) {
       input.target.value = value.slice(0, maxLength);
     }
     formik.setFieldValue(id, value);
-    console.log(tempobject);
-    console.log(formik.values);
   }
   function radioInputHandler(value) {
     const id = "gender";
@@ -212,9 +227,10 @@ export default function Biodata(props) {
             borderRadius="full"
             objectFit={"fill"}
             border={"2px #0060ae solid"}
+            cursor={"pointer"}
             src={
               props.userSelector.avatar_url
-                ? props.userSelector.avatar_url
+                ? IMGURL + props.userSelector.avatar_url
                 : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT19eLyqRHQDO-VnXj1HhzL_9q8yHF-3ewIhA&usqp=CAU"
             }
             onClick={() => inputFileRef.current.click()}
@@ -331,14 +347,6 @@ export default function Biodata(props) {
         </InputGroup>
         <Flex color={"red"} fontSize={"0.9rem"}>
           {formik.errors.phone}
-        </Flex>
-      </Flex>
-      <Flex flexDir={"column"}>
-        <Flex color={"grey"} fontSize={"0.8rem"}>
-          Profesi atau pekerjaan
-        </Flex>
-        <Flex>
-          <Select w={"260px"} variant="flushed" placeholder="Flushed"></Select>
         </Flex>
       </Flex>
       <Flex>

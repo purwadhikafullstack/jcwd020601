@@ -6,6 +6,27 @@ const { default: axios } = require("axios");
 const fs = require("fs");
 const path = require("path");
 const { nanoid } = require("nanoid");
+const {
+  createOrder,
+  uploadPayment,
+  getOrder,
+  updateStatus,
+  deletePayment,
+} = require("../services/order");
+const { getCartUserId, destroyCart } = require("../services/cart");
+const {
+  createOrderDetail,
+  getOrderDetail,
+} = require("../services/orderDetail");
+const {
+  updateBucket,
+  getStockById,
+  updateStock,
+} = require("../services/stock");
+const {
+  getStockHistory,
+  createStockHistory,
+} = require("../services/stockHistory");
 
 const orderController = {
   getAll: async (req, res) => {
@@ -184,6 +205,9 @@ const orderController = {
             },
           ],
         },
+        include: {
+          model: db.Address,
+        },
       });
       return res.send(Order);
     } catch (err) {
@@ -201,6 +225,9 @@ const orderController = {
             { UserId: req.params.UserId },
             { status: { [Op.or]: ["delivery confirm", "canceled"] } },
           ],
+        },
+        include: {
+          model: db.Address,
         },
       });
       return res.send(Order);
@@ -252,7 +279,7 @@ const orderController = {
   getBranchOrder: async (req, res) => {
     try {
       const { BranchId, status, search } = req.body;
-      const page = parseInt(req.query.page) || 0;
+      let page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
 
       const condition = {
@@ -267,6 +294,8 @@ const orderController = {
       if (search) {
         console.log("SEARCH");
         condition.invoiceCode = search;
+        delete condition.status;
+        page = 0;
       }
 
       const offset = limit * page;
@@ -569,6 +598,7 @@ const orderController = {
     }
   },
   insertOrder: async (req, res) => {
+    const trans = await db.sequelize.transaction();
     try {
       const { UserId, BranchId, AddressId, shipping, courier } = req.body;
 
@@ -578,35 +608,7 @@ const orderController = {
       }
 
       // get the order from cart
-      const cart = await db.Cart.findAll({
-        where: {
-          UserId,
-        },
-        raw: true,
-        include: [
-          {
-            model: db.Stock,
-            required: true,
-            where: {
-              BranchId,
-            },
-            include: [
-              {
-                model: db.Book,
-                required: true,
-              },
-              {
-                model: db.Discount,
-                required: false,
-              },
-              {
-                model: db.Branch,
-                required: true,
-              },
-            ],
-          },
-        ],
-      });
+      const cart = await getCartUserId({ UserId, BranchId });
 
       // Order weight
       const weight = cart.reduce((prev, curr) => {
@@ -650,21 +652,9 @@ const orderController = {
         price: list[idx], // price with discount
         StockId: val["Stock.id"],
       }));
-      //   [
-      //     {
-      //       "quantity": ,
-      //       "price": ,
-      //       "StockId":
-      //     },
-      //   ]
-
-      // Invoice Code
-      const code = nanoid(8).toUpperCase();
-      const invoiceCode = "INV-" + code;
 
       // Create Order
-      const order = await db.Order.create({
-        status: "waiting for payment",
+      const order = await createOrder({
         total,
         UserId,
         BranchId,
@@ -672,18 +662,16 @@ const orderController = {
         shipping,
         courier,
         weight,
-        invoiceCode,
+        trans,
       });
 
       // post multiple orderdetails from order
       await Promise.all(
         orderDetails.map(async (detail) => {
-          const { quantity, price, StockId } = detail;
-          return db.OrderDetail.create({
-            quantity,
-            price,
+          return await createOrderDetail({
+            ...detail,
             OrderId: order.id,
-            StockId,
+            trans,
           });
         })
       );
@@ -694,28 +682,16 @@ const orderController = {
           const { quantity, StockId } = detail;
           const stock = await db.Stock.findByPk(StockId);
           const updatedStock = stock.bucket + quantity;
-          return db.Stock.update(
-            {
-              bucket: updatedStock,
-            },
-            {
-              where: {
-                id: StockId,
-              },
-            }
-          );
+          return updateBucket({ updatedStock, StockId, trans });
         })
       );
 
       // delete cart by UserId
-      await db.Cart.destroy({
-        where: {
-          UserId,
-        },
-      });
-
+      await destroyCart({ UserId, trans });
+      await trans.commit();
       return res.status(200).send(order);
     } catch (err) {
+      await trans.rollback();
       console.log(err);
       return res.status(500).send({
         message: err.message,
@@ -726,26 +702,18 @@ const orderController = {
   // Uploud Payment Img
   //
   uploadPayment: async (req, res) => {
+    const trans = await db.sequelize.transaction();
     try {
       console.log("masuk");
       const { id } = req.body;
-      // console.log(req.body);
-      // console.log("cek");
       const { filename } = req.file;
-      // console.log(req.file);
       console.log(filename);
-      const result = await db.Order.update(
-        {
-          payment_url: process.env.payment_img + filename,
-        },
-        {
-          where: {
-            id,
-          },
-        }
-      );
+      const payment_url = process.env.payment_img + filename;
+      await uploadPayment({ payment_url, id, trans });
+      await trans.commit();
       res.status(200).send("payment proof uploaded");
     } catch (err) {
+      await trans.rollback();
       return res.status(500).send({
         message: err.message,
       });
@@ -756,22 +724,15 @@ const orderController = {
   // ------------ Update Status ---------- //
   //
   updateStatus: async (req, res) => {
+    const trans = await db.sequelize.transaction();
     try {
-      console.log("MASUK");
       const { status, OrderId } = req.body;
       console.log({ this: status });
+      //
+      const data = await getOrderDetail({ OrderId });
+      // console.log(data);
 
-      const data = await db.OrderDetail.findAll({
-        where: {
-          OrderId,
-        },
-      });
-
-      const data2 = await db.Order.findOne({
-        where: {
-          id: OrderId,
-        },
-      });
+      const data2 = await getOrder({ OrderId });
 
       console.log(data2.status);
       if (data2.status === "delivery confirm") {
@@ -780,126 +741,99 @@ const orderController = {
         return res.status(400).send("The order has been permanently canceled");
       } else if (data2.status === "sending") {
         if (status === "delivery confirm") {
-          await db.Order.update(
-            {
-              status,
-            },
-            {
-              where: {
-                id: OrderId,
-              },
-            }
-          );
+          await updateStatus({ OrderId, status, trans });
         } else {
           return res.status(400).send("The order has been send");
         }
       } else {
         // check if cancel
+        console.log("MMMMMAUSK");
         if (status === "canceled") {
           // update multiple buckets on stock
-          // console.log("masuk cancel");
-          await Promise.all(
-            data.map(async (detail) => {
-              const { quantity, StockId } = detail;
-              const stock = await db.Stock.findByPk(StockId);
-              const updatedStock = stock.bucket - quantity;
-              return db.Stock.update(
-                {
-                  bucket: updatedStock,
-                },
-                {
-                  where: {
-                    id: StockId,
-                  },
-                }
-              );
-            })
-          );
-          await db.Order.update(
-            {
-              status,
-            },
-            {
-              where: {
-                id: OrderId,
-              },
-            }
-          );
+          console.log("masuk-cancel");
+          for (const detail of data) {
+            const { quantity, StockId } = detail;
+            console.log({ quantity, StockId });
+            const stock = await getStockById({ StockId });
+            console.log({ bucket: stock.bucket });
+            const bucket = stock.bucket - quantity;
+            console.log({ bucket });
+            await updateStock({ bucket, StockId, trans });
+          }
+          // update status
+          await updateStatus({ OrderId, status, trans });
         } else if (status === "sending") {
           // update multiple stocks
           // update multiple stocksHistory
+          console.log("masuk-sending");
           await Promise.all(
             data.map(async (detail) => {
               const { quantity, StockId } = detail;
               console.log({ quantity, StockId });
-              const stock = await db.Stock.findByPk(StockId);
+              const stock = await getStockById({ StockId });
               const updatedStock = stock.stock - quantity;
-              const updatedBucket = stock.bucket - quantity;
-              // const sH = await db.StockHistory.findByPk(StockId);
-              const sH = await db.StockHistory.findOne({
-                where: {
-                  StockId,
-                },
-                order: [
-                  ["createdAt", "DESC"], // Order by createdAt in descending order
-                ],
-              });
-
+              const bucket = stock.bucket - quantity;
+              const sH = await getStockHistory({ StockId });
+              console.log(sH);
               return Promise.all([
-                db.Stock.update(
-                  {
-                    stock: updatedStock,
-                    bucket: updatedBucket,
-                    quantity: quantity,
-                  },
-                  {
-                    where: {
-                      id: StockId,
-                    },
-                  }
-                ),
-                db.StockHistory.create({
+                await updateStock({
+                  updatedStock,
+                  bucket,
+                  quantity,
                   StockId,
-                  totalBefore: sH.totalAfter,
-                  totalAfter: updatedStock,
-                  quantity: quantity,
-                  type: "minus",
-                  subject: "transaction",
+                  trans,
+                }),
+                await createStockHistory({
+                  StockId,
+                  updatedStock,
+                  quantity,
+                  tB: sH.totalAfter,
+                  trans,
                 }),
               ]);
             })
           );
-          //
-          await db.Order.update(
-            {
-              status,
-            },
-            {
-              where: {
-                id: OrderId,
-              },
-            }
+          // update status
+          await updateStatus({ OrderId, status, trans });
+        } else if (status === "waiting for payment") {
+          console.log("masuk-WFP");
+          console.log(status);
+          await updateStatus({ OrderId, status, trans });
+
+          // delete image payment
+          // Find the order to get the payment image URL
+          const order = await getOrder({ OrderId });
+          console.log(order);
+          if (!order) {
+            return res.status(404).send({ message: "Order not found" });
+          }
+
+          // Extract the filename from the payment_url
+          const paymentImageUrl = order.payment_url;
+          console.log(paymentImageUrl);
+          const filename = paymentImageUrl.split("/").pop();
+
+          // Construct the file path
+          const filePath = path.join(
+            __dirname,
+            "../public/paymentImg",
+            filename
           );
+          // Delete the file if it exists
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+          }
+          // Update the order's payment_url to null
+          await deletePayment({ id: OrderId, trans });
         } else {
-          await db.Order.update(
-            {
-              status,
-            },
-            {
-              where: {
-                id: OrderId,
-              },
-            }
-          );
+          console.log("masuk-else");
+          await updateStatus({ OrderId, status, trans });
         }
       }
-
-      return await db.Order.findOne({
-        where: {
-          id: OrderId,
-        },
-      }).then((result) => res.send(result));
+      await trans.commit();
+      return await getOrder({ OrderId }).then((result) => res.send(result));
     } catch (err) {
+      await trans.rollback();
       console.log(err.message);
       res.status(500).send({
         message: err.message,
@@ -907,22 +841,13 @@ const orderController = {
     }
   },
   updateStatusUser: async (req, res) => {
+    const trans = await db.sequelize.transaction();
     try {
-      // console.log("MASUK");
       const { status, OrderId } = req.body;
       console.log(status);
 
-      const data = await db.OrderDetail.findAll({
-        where: {
-          OrderId,
-        },
-      });
-
-      const data2 = await db.Order.findOne({
-        where: {
-          id: OrderId,
-        },
-      });
+      const data = await getOrderDetail({ OrderId });
+      const data2 = await getOrder({ OrderId });
 
       console.log(data2.status);
       if (data2.status === "delivery confirm") {
@@ -931,16 +856,7 @@ const orderController = {
         return res.status(400).send("The order has been permanently canceled");
       } else if (data2.status === "sending") {
         if (status === "delivery confirm") {
-          await db.Order.update(
-            {
-              status,
-            },
-            {
-              where: {
-                id: OrderId,
-              },
-            }
-          );
+          await updateStatus({ OrderId, status, trans });
         } else {
           return res.status(400).send("The order has been send");
         }
@@ -948,56 +864,27 @@ const orderController = {
         // check if cancel
         if (status === "canceled") {
           // update multiple buckets on stock
-          // console.log("masuk cancel");
-          await Promise.all(
-            data.map(async (detail) => {
-              const { quantity, StockId } = detail;
-              const stock = await db.Stock.findByPk(StockId);
-              const updatedStock = stock.bucket - quantity;
-              return db.Stock.update(
-                {
-                  bucket: updatedStock,
-                },
-                {
-                  where: {
-                    id: StockId,
-                  },
-                }
-              );
-            })
-          );
-          await db.Order.update(
-            {
-              status,
-            },
-            {
-              where: {
-                id: OrderId,
-              },
-            }
-          );
+          for (const detail of data) {
+            const { quantity, StockId } = detail;
+            console.log({ quantity, StockId });
+            const stock = await getStockById({ StockId });
+            console.log({ bucket: stock.bucket });
+            const bucket = stock.bucket - quantity;
+            console.log({ bucket });
+            await updateStock({ bucket, StockId, trans });
+          }
+          // update status
+          await updateStatus({ OrderId, status, trans });
         } else if (status === "waiting for payment confirmation") {
-          await db.Order.update(
-            {
-              status,
-            },
-            {
-              where: {
-                id: OrderId,
-              },
-            }
-          );
+          await updateStatus({ OrderId, status, trans });
         } else {
           return res.status(400).send("Unauthorized");
         }
       }
-
-      return await db.Order.findOne({
-        where: {
-          id: OrderId,
-        },
-      }).then((result) => res.send(result));
+      await trans.commit();
+      return await getOrder({ OrderId }).then((result) => res.send(result));
     } catch (err) {
+      await trans.rollback();
       console.log(err);
       res.status(500).send(err);
     }
@@ -1024,20 +911,22 @@ const orderController = {
   deleteOrderImage: async (req, res) => {
     try {
       const id = req.params.id;
-
+      console.log("MASUK-kkk");
+      console.log(id);
       // Find the order to get the payment image URL
       const order = await db.Order.findOne({
         where: {
           id,
         },
       });
-
+      console.log(order);
       if (!order) {
         return res.status(404).send({ message: "Order not found" });
       }
 
       // Extract the filename from the payment_url
       const paymentImageUrl = order.payment_url;
+      console.log(paymentImageUrl);
       const filename = paymentImageUrl.split("/").pop();
 
       // Construct the file path

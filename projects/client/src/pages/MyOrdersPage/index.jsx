@@ -67,7 +67,6 @@ export default function MyOrdersPage() {
             >
               <ProfileSidebar />
             </Flex>
-
             <MyOrders
               isLoading={isLoading}
               pending={pending}

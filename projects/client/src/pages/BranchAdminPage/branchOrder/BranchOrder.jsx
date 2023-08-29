@@ -44,6 +44,8 @@ export default function BranchOrder() {
 
   // GET
   async function fetch() {
+    console.log(status);
+    console.log(search);
     const result = await api().post(`/order/branch?page=${page}&limit=${6}`, {
       BranchId: userSelector.branchId,
       status: status,
@@ -69,103 +71,100 @@ export default function BranchOrder() {
   //
   return (
     <>
-      <Box
-        // display={"flex"}
-        // flexDirection={"column"}
-        marginLeft={60}
-        // h={"80vh"}
-        h={"100%"}
-        // bgColor={"red"}
-        overflow={"auto"}
-      >
-
-             <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
-          <Greetings />     
-        <TableContainer>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>
-                  <InputGroup>
-                    <Input onChange={inputHandler} placeholder="Invoice Code" />
-                    <InputRightElement>
-                      <Icon
-                        cursor={"pointer"}
-                        as={BiSearchAlt2}
-                        onClick={() => {
-                          fetch();
+      <Box marginLeft={60} h={"100%"} overflow={"auto"}>
+        <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
+          <Greetings />
+          <TableContainer>
+            <Table variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>
+                    <InputGroup>
+                      <Input
+                        value={search}
+                        onChange={inputHandler}
+                        placeholder="Invoice Code"
+                      />
+                      <InputRightElement>
+                        <Icon
+                          cursor={"pointer"}
+                          as={BiSearchAlt2}
+                          onClick={() => {
+                            fetch();
+                          }}
+                        ></Icon>
+                      </InputRightElement>
+                    </InputGroup>
+                  </Th>
+                  <Th>Transaction Price</Th>
+                  <Th>
+                    <Flex alignItems={"center"} gap={"0.3rem"}>
+                      <Box>Filter by Status:</Box>
+                      <Select
+                        maxW={"20rem"}
+                        value={status}
+                        onChange={(e) => {
                           setSearch("");
+                          setStatus(e.target.value);
                         }}
-                      ></Icon>
-                    </InputRightElement>
-                  </InputGroup>
-                </Th>
-                <Th>Transaction Price</Th>
-                <Th>
-                  <Flex alignItems={"center"} gap={"0.3rem"}>
-                    <Box>Filter by Status:</Box>
-                    <Select
-                      maxW={"20rem"}
-                      value={status}
-                      onChange={(e) => {
-                        setStatus(e.target.value);
-                      }}
-                    >
-                      <option value="all">All</option>
-                      <option value="waiting for payment">
-                        Waiting for Payment
-                      </option>
-                      <option value="waiting for payment confirmation">
-                        Waiting for Payment Confirmation
-                      </option>
-                      <option value="process">Process</option>
-                      <option value="sending">Sending</option>
-                      <option value="delivery confirm">Delivery Confirm</option>
-                      <option value="canceled">Canceled</option>
-                    </Select>
-                  </Flex>
-                </Th>
-                <Th>Check</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {trans?.map((val) => {
-                return (
-                  <Tr>
-                    <Td>{val.invoiceCode}</Td>
-                    <Td>Rp {Number(val.total).toLocaleString("id-ID")},-</Td>
-                    <Td>
-                      <ModalConfirm val={val} fetch={fetch}></ModalConfirm>
-                    </Td>
-                    <Td>
-                      <Flex gap={"0.6rem"}>
-                        <ModalPayment val={val} fetch={fetch} />
-                        <ModalDetails val={val} />
-                      </Flex>
-                    </Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-          <Box marginTop={"1rem"}>
-            <ReactPaginate
-              previousLabel={"< Prev"}
-              nextLabel={"Next >"}
-              pageCount={pages}
-              onPageChange={changePage}
-              breakLabel="..."
-              containerClassName="pagination"
-              pageLinkClassName="page-num"
-              renderOnZeroPageCount={null}
-              previousLinkClassName="page-num"
-              nextLinkClassName="page-num"
-              activeLinkClassName="active"
-              pageRangeDisplayed={3}
-            />
-          </Box>
-        </TableContainer>
-</Flex>
+                      >
+                        <option value="all">All</option>
+                        <option value="waiting for payment">
+                          Waiting for Payment
+                        </option>
+                        <option value="waiting for payment confirmation">
+                          Waiting for Payment Confirmation
+                        </option>
+                        <option value="process">Process</option>
+                        <option value="sending">Sending</option>
+                        <option value="delivery confirm">
+                          Delivery Confirm
+                        </option>
+                        <option value="canceled">Canceled</option>
+                      </Select>
+                    </Flex>
+                  </Th>
+                  <Th>Check</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {trans?.map((val) => {
+                  return (
+                    <Tr>
+                      <Td>{val.invoiceCode}</Td>
+                      <Td>Rp {Number(val.total).toLocaleString("id-ID")},-</Td>
+                      <Td>
+                        <ModalConfirm val={val} fetch={fetch}></ModalConfirm>
+                      </Td>
+                      <Td>
+                        <Flex gap={"0.6rem"}>
+                          <ModalPayment val={val} fetch={fetch} />
+                          <ModalDetails val={val} />
+                        </Flex>
+                      </Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+            <Box marginTop={"1rem"}>
+              <ReactPaginate
+                previousLabel={"< Prev"}
+                nextLabel={"Next >"}
+                pageCount={pages}
+                onPageChange={changePage}
+                breakLabel="..."
+                containerClassName="pagination"
+                pageLinkClassName="page-num"
+                renderOnZeroPageCount={null}
+                previousLinkClassName="page-num"
+                nextLinkClassName="page-num"
+                activeLinkClassName="active"
+                pageRangeDisplayed={3}
+              />
+            </Box>
+          </TableContainer>
+        </Flex>
         <Flex>
           <Flex></Flex>
         </Flex>
