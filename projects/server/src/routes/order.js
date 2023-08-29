@@ -43,6 +43,7 @@ router.patch(
 );
 router.patch("/v2/:id", orderController.editOrder);
 router.delete("/v3/:id", orderController.deleteOrder);
+router.delete("/v3/img:id", orderController.deleteOrderImage);
 router.post("/shipping", orderController.getShipping);
 
 module.exports = router;

@@ -220,7 +220,7 @@ export default function OrderPage() {
                     // height={"200px"}
                     maxH={"200px"}
                     // onClick={() => inputFileRef.current.click()}
-                    src={process.env.REACT_APP_API_BASE_URL + link}
+                    src={process.env.REACT_APP_API_IMAGE_URL + link}
                   ></Image>
                 ) : (
                   <Icon
