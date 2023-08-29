@@ -255,12 +255,6 @@ export default function MobileNav({
           </Box>
         </Box>
       </Box>
-      <ModalSelectAddress
-        userAddresses={userAddresses}
-        modalSelectAddress={modalSelectAddress}
-        userAddress={userAddress}
-        setUserAddress={setUserAddress}
-      />
     </>
   );
 }
@@ -324,7 +318,11 @@ const MobileNavItem = ({ label, children, href, display, onOpen, onClick }) => {
         >
           {children &&
             children.map((child) => (
-              <Link key={child.label} py={2} to={`${child.href}`}>
+              <Link
+                key={child.label}
+                py={2}
+                to={`/products/filter/${child.id}`}
+              >
                 {child.category}
               </Link>
             ))}
