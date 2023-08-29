@@ -60,7 +60,7 @@ export default function ModalSelectAddress({
             maxW="500px"
             py={"20px"}
             onClick={() => {
-              console.log("sakd");
+              console.log(userAddresses);
             }}
           >
             {userAddresses[0] ? (

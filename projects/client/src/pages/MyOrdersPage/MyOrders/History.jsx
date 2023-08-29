@@ -7,7 +7,13 @@ export default function History(props) {
 
   return (
     <>
-      <Flex w={"100%"} mt={"20px"} gap={"30px"} flexDir={"column"}>
+      <Flex
+        mb={{ base: "40px", sm: "50px", md: "50px" }}
+        w={"100%"}
+        mt={"20px"}
+        gap={"30px"}
+        flexDir={"column"}
+      >
         {props.history[0] ? (
           props.history.map((val) => (
             <Flex
