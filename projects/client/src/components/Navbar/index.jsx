@@ -447,10 +447,7 @@ function DesktopNav({
         // bgColor={"green"}
       >
         {/* CartButton */}
-        <CartButton
-          orderSelector={orderSelector}
-          userSelector={userSelector}
-        ></CartButton>
+        <CartButton></CartButton>
         {/* CartButton */}
         <Box>
           <Menu>

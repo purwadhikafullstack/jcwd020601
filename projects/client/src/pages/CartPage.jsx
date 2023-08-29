@@ -1,33 +1,27 @@
 import {
   Box,
-  Button,
   Container,
   Flex,
-  useDisclosure,
   TableContainer,
   Table,
   Tbody,
   Tr,
   Td,
   Th,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
   useToast,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../api/api";
-import CartBooks from "../components/CartBooks";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import CartBooks from "../components/CartBooks";
 import Shipping from "../components/Shipping";
-import { useSelector } from "react-redux";
+import AlertOrder from "../components/AlertOrder";
 
 export default function CartPage() {
   const toast = useToast();
+  const dispatch = useDispatch();
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
   const nav = useNavigate();
@@ -39,7 +33,7 @@ export default function CartPage() {
 
   useEffect(() => {
     setTotalOr(Number(total) + Number(shipping));
-  }, [shipping]);
+  }, [total, shipping]);
 
   async function create() {
     try {
@@ -49,6 +43,12 @@ export default function CartPage() {
         AddressId: orderSelector.AddressId,
         shipping: Number(shipping),
         courier,
+      });
+      dispatch({
+        type: "qty",
+        payload: {
+          quantity: 0,
+        },
       });
       return nav("/order/" + result.data.invoiceCode);
     } catch (error) {
@@ -158,47 +158,5 @@ export default function CartPage() {
         </Flex>
       </Box>
     </Container>
-  );
-}
-
-function AlertOrder(props) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef();
-
-  return (
-    <>
-      <Button
-        colorScheme={"blue"}
-        borderRadius={"1.5rem"}
-        width={"100%"}
-        onClick={onOpen}
-      >
-        Create Order
-      </Button>
-      <AlertDialog
-        isOpen={isOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Create Order
-            </AlertDialogHeader>
-
-            <AlertDialogBody>Are you sure?</AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Check
-              </Button>
-              <Button colorScheme="blue" onClick={props.create} ml={3}>
-                Create
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-    </>
   );
 }
