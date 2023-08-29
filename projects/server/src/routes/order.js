@@ -6,7 +6,7 @@ const router = express.Router();
 const orderController = require("../controllers").orderController;
 //get
 
-router.get("/", orderController.getAll);
+// router.get("/", orderController.getAll);
 router.get("/totalsales/week", orderController.getTotalSalesOnLastWeek);
 router.get("/sales", orderController.getSalesOnTime);
 router.get("/sales/:BranchId", orderController.getSalesFromBranchIdOnTime);
