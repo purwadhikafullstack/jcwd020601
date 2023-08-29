@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { api } from "../../api/api";
 import Swal from "sweetalert2";
 
-export default function ModalSelectAddress(val) {
+export default function SelectAddress(val) {
   const dispatch = useDispatch();
   return (
     <>
@@ -85,7 +85,7 @@ export default function ModalSelectAddress(val) {
               <></>
             )}
           </Flex>
-          {val.userSelector.address?.id == val.address?.id ? (
+          {val.userSelector?.address?.id == val.address?.id ? (
             <Icon
               fontSize={"30px"}
               color={"green"}

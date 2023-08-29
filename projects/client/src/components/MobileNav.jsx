@@ -23,12 +23,20 @@ import logo from "../assets/images/gramedia-icon-2.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import ModalSelectAddress from "./Navbar/ModalSelectAddress";
 
-import ModalSelectAddress from "../pages/ProfilePage/ModalSelectAddress";
-export default function MobileNav({ category }) {
+export default function MobileNav({
+  category,
+  userAddress,
+  setUserAddress,
+  userAddresses,
+  setuserAddresses,
+  modalSelectAddress,
+}) {
   const nav = useNavigate();
+  const dispatch = useDispatch();
   const { isOpen, onToggle } = useDisclosure();
-
+  const userSelector = useSelector((state) => state.login.auth);
   const [result, setResult] = useState([]);
   const [input, setInput] = useState("");
   const orderSelector = useSelector((state) => state.login.order);
@@ -39,18 +47,30 @@ export default function MobileNav({ category }) {
       href: "#",
     },
     {
-      label: "Keranjang",
-      href: "/cart",
+      label: "Location / Change Location",
+      onOpen: modalSelectAddress.onOpen,
+    },
+
+    {
+      label: "My Orders",
+      href: `/orders`,
     },
     {
-      label: "Masuk",
-      href: `/login`,
+      label: "My Profile",
+      href: `/profile`,
     },
     {
+      label: userSelector.email ? "Logout" : "Login",
+      href: "/login",
+      onClick: "logout",
+    },
+    {
+      display: userSelector.email ? "none" : "block",
       label: "Registrasi",
       href: `/Register`,
     },
   ];
+
   const fetchData = async (value) => {
     try {
       const response = await api().get(
@@ -161,6 +181,7 @@ export default function MobileNav({ category }) {
           </Box>
         </Box>
       </Box>
+
       <Box
         display={"flex"}
         justifyContent={"space-evenly"}
@@ -234,14 +255,34 @@ export default function MobileNav({ category }) {
           </Box>
         </Box>
       </Box>
+      <ModalSelectAddress
+        userAddresses={userAddresses}
+        modalSelectAddress={modalSelectAddress}
+        userAddress={userAddress}
+        setUserAddress={setUserAddress}
+      />
     </>
   );
 }
 
-const MobileNavItem = ({ label, children, href }) => {
+const MobileNavItem = ({ label, children, href, display, onOpen, onClick }) => {
+  const dispatch = useDispatch();
+  const nav = useNavigate();
+  async function logout() {
+    localStorage.removeItem("auth");
+    localStorage.removeItem("address");
+    localStorage.removeItem("Latitude");
+    localStorage.removeItem("Longitude");
+    dispatch({
+      type: "logout",
+    });
+    nav("/login");
+    return;
+  }
+  const userSelector = useSelector((state) => state.login.auth);
   const { isOpen, onToggle } = useDisclosure();
   return (
-    <Stack spacing={4} onClick={children && onToggle}>
+    <Stack spacing={4} onClick={children && onToggle} display={display}>
       <Flex
         py={2}
         as={Link}
@@ -250,8 +291,15 @@ const MobileNavItem = ({ label, children, href }) => {
         _hover={{
           textDecoration: "none",
         }}
+        onClick={
+          userSelector.email && onClick == "logout"
+            ? logout
+            : onOpen
+            ? onOpen
+            : ""
+        }
       >
-        <Link to={`${href}`}>
+        <Link to={href ? `${href}` : ""}>
           <Text
             fontWeight={600}
             color={useColorModeValue("gray.600", "gray.200")}
@@ -268,7 +316,6 @@ const MobileNavItem = ({ label, children, href }) => {
           />
         )}
       </Flex>
-
       <Collapse in={isOpen} animateOpacity style={{ marginTop: "0!important" }}>
         <Stack
           borderStyle={"solid"}
