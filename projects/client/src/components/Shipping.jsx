@@ -1,6 +1,4 @@
 import {
-  Box,
-  Button,
   Flex,
   Icon,
   Select,
@@ -11,17 +9,13 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import { MdLocationOn } from "react-icons/md";
-import { AiOutlineDown } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 
 export default function Shipping(props) {
-  const dispatch = useDispatch();
   const [service, setService] = useState([]);
   const [etd, setEtd] = useState();
   const [citycode, setCityCode] = useState();
-  // console.log(etd);
 
   async function cityCode() {
     const result = await api().post("city/order", {
@@ -30,12 +24,8 @@ export default function Shipping(props) {
     });
     setCityCode(result.data);
   }
-  console.log(citycode);
-
   async function fetch() {
     try {
-      // console.log(props.courier);
-      // console.log(props.weight);
       const ship = await api().post("order/shipping", {
         origin: citycode.origin,
         destination: citycode.destination,
@@ -48,10 +38,6 @@ export default function Shipping(props) {
     }
   }
 
-  // console.log(service.costs[0].cost[0].values);
-  // console.log(service[0].cost[0].value);
-  console.log(service);
-
   useEffect(() => {
     cityCode();
     fetch();
@@ -60,7 +46,8 @@ export default function Shipping(props) {
   return (
     <Flex
       boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-      padding={"1rem 2rem"}
+      width={{ base: "19rem", md: "auto" }}
+      padding={{ base: "0.5rem", lg: "2rem" }}
       borderRadius={"0.7rem"}
       flexDir={"column"}
       justifyContent={"center"}
@@ -68,9 +55,13 @@ export default function Shipping(props) {
     >
       <Flex alignItems={"center"}>
         <Icon as={MdLocationOn}></Icon>
-        Alamat Tujuan Pengiriman
+        Destination: {citycode?.adress}
       </Flex>
-      <Flex flexDir={"column"} gap={".5rem"}>
+      <Flex
+        width={{ base: "18rem", md: "auto" }}
+        flexDir={"column"}
+        gap={".5rem"}
+      >
         <Select
           placeholder="Select shipping method"
           onChange={(e) => {
@@ -85,7 +76,6 @@ export default function Shipping(props) {
         <Select
           placeholder="Select shipping service"
           onChange={(e) => {
-            // setEst(e.target.value)
             setEtd(e.target.id);
             props.setShipping(e.target.value);
           }}
