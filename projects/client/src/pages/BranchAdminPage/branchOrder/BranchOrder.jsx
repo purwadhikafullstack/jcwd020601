@@ -61,10 +61,14 @@ export default function BranchOrder() {
   //
   return (
     <>
-      <Box marginLeft={60} h={"100%"} overflow={"auto"}>
+      <Box
+        marginLeft={{ base: 0, lg: 60 }}
+        h={"100%"}
+        overflow={{ base: "scroll", lg: "auto" }}
+      >
         <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
           <Greetings />
-          <TableContainer>
+          <TableContainer padding={{ base: 2, lg: 10 }}>
             <Table variant="simple">
               <Thead>
                 <Tr>

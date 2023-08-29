@@ -21,7 +21,7 @@ import {
   IconButton,
   Stack,
   useDisclosure,
-  Link,
+  // Link,
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -35,9 +35,10 @@ import { api } from "../../api/api";
 import logo from "../../assets/images/gramedia-icon-2.png";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+// import { useLocation, useNavigate, Link } from "react-router-dom";
 export default function Navbar() {
-  const [large] = useMediaQuery("(min-width: 768px)");
+  const [large] = useMediaQuery("(min-width: 992px)");
 
   return (
     <>
@@ -56,7 +57,15 @@ export default function Navbar() {
         borderBottomColor={useColorModeValue("gray.200", "gray.700")}
         bg={"#2c5282"}
       >
-        <DesktopNav />
+        {large ? (
+          <>
+            <DesktopNav />
+          </>
+        ) : (
+          <>
+            <MobileNav />
+          </>
+        )}
       </Box>
     </>
   );
@@ -89,7 +98,7 @@ function DesktopNav() {
         display={"flex"}
         justifyContent={"center"}
         h={"60px"}
-        marginRight={"100px"}
+        marginRight={{ base: "30px", lg: "100px" }}
         alignItems={"center"}
         gap={5}
       >
@@ -110,43 +119,11 @@ function DesktopNav() {
               my={5}
               p={0}
               position={"fixed"}
-              left={"-6em"}
+              left={{ base: "-10em", lg: "-6em" }}
               // bgColor={"yellow.100"}
               display={"flex"}
               flexDir={"column"}
             >
-              {/* <Flex
-                // padding={"0 0.5rem"}
-                flexDir={"column"}
-                gap={"0.4rem"}
-                p={0}
-                display={"flex"}
-                // flexDir={"column"}
-                position={"fixed"}
-                left={"-6em"}
-              >
-                <Flex
-                  gap={"1rem"}
-                  justifyContent={"center"}
-                  flexDir={"column"}
-                  alignItems={"center"}
-                >
-                  Halo, User
-                  <Box>Full Name</Box>
-                  <Box>Address</Box>
-                  <Box onClick={logout}>Logout</Box>
-                  <Box onClick={verify}>Verify Account</Box>
-                </Flex>
-                <Center
-                  bgColor={"blue.400"}
-                  cursor={"pointer"}
-                  _hover={{
-                    opacity: "0.9",
-                  }}
-                >
-                  Full Profile
-                </Center>
-              </Flex> */}
               <Box
                 onClick={logout}
                 cursor={"pointer"}
@@ -178,3 +155,215 @@ function DesktopNav() {
     </>
   );
 }
+
+function MobileNav() {
+  const nav = useNavigate();
+  const { isOpen, onToggle } = useDisclosure();
+
+  const [result, setResult] = useState([]);
+  const [input, setInput] = useState("");
+  const orderSelector = useSelector((state) => state.login.order);
+  const NAV_ITEMS = [
+    {
+      label: "Home",
+      // children: category,
+      href: "/admin",
+    },
+    {
+      label: "Stock",
+      href: "/admin/stock",
+    },
+    {
+      label: "Discount",
+      href: `/admin/discount`,
+    },
+    {
+      label: "Transaction",
+      href: `/admin/order`,
+    },
+  ];
+
+  return (
+    <>
+      <Box display={"flex"} justifyContent={"space-between"}>
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"space-evenly"}
+          h={"60px"}
+        >
+          <Box>
+            <Flex
+              // bg={useColorModeValue("white", "gray.800")}
+              // color={useColorModeValue("gray.600", "white")}
+              minH={"60px"}
+              py={{ base: 2 }}
+              px={{ base: 2 }}
+              // bgColor={"red.100"}
+              marginRight={"30px"}
+            >
+              <Flex>
+                <IconButton
+                  onClick={onToggle}
+                  icon={
+                    isOpen ? (
+                      <CloseIcon w={5} h={5} />
+                    ) : (
+                      <HamburgerIcon w={8} h={8} />
+                    )
+                  }
+                  variant={"ghost"}
+                  aria-label={"Toggle Navigation"}
+                />
+              </Flex>
+            </Flex>
+
+            <Collapse in={isOpen}>
+              <Stack
+                bg={useColorModeValue("white", "gray.800")}
+                p={4}
+                position={"absolute"}
+                left={0}
+                zIndex={10}
+                width={"100%"}
+                h={"100vh"}
+              >
+                {NAV_ITEMS.map((navItem) => (
+                  <MobileNavItem key={navItem.label} {...navItem} />
+                ))}
+              </Stack>
+            </Collapse>
+          </Box>
+        </Box>
+        <Box
+          display={"flex"}
+          alignItems={"center"}
+          justifyContent={"space-evenly"}
+          h={"60px"}
+        ></Box>
+      </Box>
+      {/* <Box
+        display={"flex"}
+        justifyContent={"space-evenly"}
+        alignItems={"center"}
+        h={"60px"}
+      >
+        <Box>
+          <InputGroup>
+            <InputRightElement pointerEvents="auto">
+              <Icon
+                cursor={"pointer"}
+                _hover={{ color: "blue.800" }}
+                as={GoSearch}
+                color="blue.700"
+              ></Icon>
+            </InputRightElement>
+            <Input
+              type="text"
+              border={"none"}
+              borderBottom={"1px solid #cccc"}
+              placeholder="Search Book or Author"
+              color="blue.700"
+              borderRadius={"0"}
+              value={input}
+              onChange={(e) => handleChange(e.target.value)}
+              style={{
+                placeholder: {
+                  color: "red.700",
+                },
+              }}
+              w={{ base: "22em", sm: "42em" }}
+              focusBorderColor="transparent"
+              _focus={{ borderBottom: "1.6px solid grey" }}
+            />
+          </InputGroup>
+          <Box
+            bgColor={"white"}
+            position={"absolute"}
+            top={"120px"}
+            w={{ base: "22em", md: "15em", lg: "30em" }}
+            boxShadow="0px 5px 10px skyblue"
+            display={"flex"}
+            flexDirection={"column"}
+            gap={3}
+            borderRadius={5}
+            maxH={"200px"}
+            overflowY={"scroll"}
+            sx={{
+              "&::-webkit-scrollbar": {
+                width: "5px",
+                borderRadius: "8px",
+                backgroundColor: `rgba(0, 0, 0, 0.05)`,
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: `#cce6ff`,
+              },
+            }}
+          >
+            {result.map((val) => (
+              <Link to={`/products/detail/${val.id}`}>
+                <Text
+                  key={val.id}
+                  p={3}
+                  cursor={"pointer"}
+                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
+                >
+                  {val.Book?.title}
+                </Text>
+              </Link>
+            ))}
+          </Box>
+        </Box>
+      </Box> */}
+    </>
+  );
+}
+
+const MobileNavItem = ({ label, children, href }) => {
+  const { isOpen, onToggle } = useDisclosure();
+  return (
+    <Stack spacing={4} onClick={children && onToggle}>
+      <Flex
+        py={2}
+        // as={Link}
+        justify={"space-between"}
+        align={"center"}
+        _hover={{
+          textDecoration: "none",
+        }}
+      >
+        <Link to={`${href}`}>
+          <Text
+            fontWeight={600}
+            color={useColorModeValue("gray.600", "gray.200")}
+          >
+            {label}
+          </Text>
+        </Link>
+        {children && (
+          <Icon
+            as={ChevronDownIcon}
+            transform={isOpen ? "rotate(180deg)" : ""}
+            w={6}
+            h={6}
+          />
+        )}
+      </Flex>
+
+      {/* <Collapse in={isOpen} animateOpacity style={{ marginTop: "0!important" }}>
+        <Stack
+          borderStyle={"solid"}
+          borderColor={useColorModeValue("gray.200", "gray.700")}
+          align={"start"}
+        >
+          {children &&
+            children.map((child) => (
+              <Link key={child.label} py={2} to={`${child.href}`}>
+                {child.category}
+              </Link>
+            ))}
+        </Stack>
+      </Collapse> */}
+    </Stack>
+  );
+};
