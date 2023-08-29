@@ -17,7 +17,6 @@ import { api } from "../../../api/api";
 import "../../../App.css";
 
 export default function Action({ id, name, getData }) {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: editModalOpen,
     onOpen: onEditModalOpen,

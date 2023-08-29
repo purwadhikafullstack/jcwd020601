@@ -36,6 +36,7 @@ import MobileNav from "./MobileNav";
 
 import ModalSelectAddress from "../pages/ProfilePage/ModalSelectAddress";
 import CartButton from "./CartButton";
+const IMGURL = process.env.REACT_APP_API_IMAGE_URL;
 
 export default function Navbar({ callback, keyword }) {
   const orderSelector = useSelector((state) => state.login.order);
@@ -103,7 +104,6 @@ function DesktopNav({ callback, keyword, category }) {
   const [userAddress, setUserAddress] = useState([]);
   const [trans, setTrans] = useState(true);
   const modalSelectAddress = useDisclosure();
-  // const [keyword, setkeyword] = useState("");
   const [value, setValue] = useState([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [input, setInput] = useState("");
@@ -140,7 +140,6 @@ function DesktopNav({ callback, keyword, category }) {
         .get("/address/user/" + userSelector.id)
         .then((res) => {
           setUserAddresses(res.data);
-          // console.log(res.data);
         })
         .catch((err) => {
           toast({
@@ -170,8 +169,6 @@ function DesktopNav({ callback, keyword, category }) {
           stock.Book.title.toLowerCase().includes(value.toLowerCase())
         );
       });
-
-      // console.log(result);
       setResult(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -318,11 +315,9 @@ function DesktopNav({ callback, keyword, category }) {
               type="text"
               border={"none"}
               borderBottom={"1px solid #cccc"}
-              placeholder="Search Book or Author"
+              placeholder="Search Book"
               color="blue.700"
               borderRadius={"0"}
-              // value={keyword}
-              // onChange={callback}
               value={input}
               onChange={(e) => handleChange(e.target.value)}
               style={{
@@ -541,7 +536,7 @@ function DesktopNav({ callback, keyword, category }) {
                   border={"2px #0060ae solid"}
                   src={
                     userSelector.avatar_url
-                      ? userSelector.avatar_url
+                      ? IMGURL + userSelector.avatar_url
                       : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT19eLyqRHQDO-VnXj1HhzL_9q8yHF-3ewIhA&usqp=CAU"
                   }
                 ></Image>
@@ -570,9 +565,6 @@ function DesktopNav({ callback, keyword, category }) {
                   p={3}
                 >
                   My Orders
-                </Text>
-                <Text _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }} p={3}>
-                  My Wishlist
                 </Text>
                 <Text
                   onClick={userSelector.email ? logout : login}

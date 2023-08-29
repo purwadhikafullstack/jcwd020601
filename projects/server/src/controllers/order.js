@@ -205,6 +205,9 @@ const orderController = {
             },
           ],
         },
+        include: {
+          model: db.Address,
+        },
       });
       return res.send(Order);
     } catch (err) {
@@ -222,6 +225,9 @@ const orderController = {
             { UserId: req.params.UserId },
             { status: { [Op.or]: ["delivery confirm", "canceled"] } },
           ],
+        },
+        include: {
+          model: db.Address,
         },
       });
       return res.send(Order);

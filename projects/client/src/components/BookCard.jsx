@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 export default function BookCard() {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   let t = localStorage.getItem("auth");
   const userSelector = useSelector((state) => state.login.auth);
   const orderSelector = useSelector((state) => state.login.order);
@@ -25,20 +26,17 @@ export default function BookCard() {
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(6);
-  console.log(orderSelector);
+
   async function fetchProduct() {
     let response = await api().get(
       `/stock?limit=${limit}&place=${orderSelector.BranchId}`
     );
-    console.log(response);
+
     setValue(response.data.result);
   }
   useEffect(() => {
     fetchProduct();
-    console.log("asd");
   }, [token, orderSelector.BranchId]);
-
-  console.log(value);
 
   const settings = {
     dots: true,
@@ -77,7 +75,7 @@ export default function BookCard() {
     let result = (a / 100) * b;
     return result;
   };
-  // console.log(value);
+
   return (
     <Flex
       justify={"center"}
@@ -201,7 +199,7 @@ export default function BookCard() {
                     <></>
                   )}
                   <Image
-                    src={val.Book?.book_url}
+                    src={IMG + val.Book?.book_url}
                     alt="Green double couch with wooden legs"
                     borderRadius="lg"
                     w={{ base: "240px", sm: "220px", md: "200px", lg: "160px" }}

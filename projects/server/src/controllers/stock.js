@@ -115,7 +115,15 @@ const stockController = {
       const place = req.query.place || 2;
       const price = req.query.price || null;
       const category = req.query.category || null;
-      const priceData = await stockServices.getPrice(place, price, category);
+      const page = parseInt(req.query.page) || 0;
+      const limit = parseInt(req.query.limit) || 10;
+      const priceData = await stockServices.getPrice(
+        place,
+        price,
+        category,
+        page,
+        limit
+      );
       return res.send(priceData);
     } catch (err) {
       console.log(err.message);

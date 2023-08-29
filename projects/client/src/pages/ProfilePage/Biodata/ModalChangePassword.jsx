@@ -16,7 +16,6 @@ import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
 import { api } from "../../../api/api";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AiOutlineClose,
@@ -77,7 +76,7 @@ export default function ModalChangePassword(props) {
     try {
       const token = JSON.parse(localStorage.getItem("auth"));
       await api()
-        .patch("http://localhost:2000/auth/v5?token=" + token, {
+        .patch("auth/v5?token=" + token, {
           email: values.email,
           oldPassword: values.oldPassword,
           user: values,
@@ -99,20 +98,28 @@ export default function ModalChangePassword(props) {
           // nav("/login");
         });
     } catch (err) {
-      console.log(err);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Login session has expired",
-      });
-      localStorage.removeItem("auth");
-      localStorage.removeItem("address");
-      localStorage.removeItem("Latitude");
-      localStorage.removeItem("Longitude");
-      dispatch({
-        type: "logout",
-      });
-      nav("/login");
+      if (err.response.data.message == "token has expired") {
+        console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Login session has expired",
+        });
+        localStorage.removeItem("auth");
+        localStorage.removeItem("address");
+        localStorage.removeItem("Latitude");
+        localStorage.removeItem("Longitude");
+        dispatch({
+          type: "logout",
+        });
+        nav("/login");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err.response.data.message,
+        });
+      }
     }
   }
   const dispatch = useDispatch();

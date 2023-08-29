@@ -34,21 +34,34 @@ export default function Pending(props) {
                       </Flex>
                       <Flex flexDir={"column"} w={"70%"}>
                         <Flex
-                          fontWeight={600}
-                          fontSize={"1.1rem"}
-                          color={"#385898"}
+                          justifyContent={"space-between"}
                           borderY={"1px solid #c4c4c4"}
                         >
-                          UUID
-                        </Flex>
-
-                        <Flex justifyContent={"space-between"} mt={"25px"}>
-                          <Flex fontWeight={"600"} color={"#ffb405"}>
-                            {val.status}
+                          <Flex
+                            fontWeight={600}
+                            fontSize={"1.1rem"}
+                            color={"#385898"}
+                          >
+                            {val.invoiceCode}
                           </Flex>
                           <Flex fontWeight={500} color={"#8f8d8d"}>
                             {moment(val.createdAt).format("LL")}
                           </Flex>
+                        </Flex>
+                        <Flex fontWeight={"600"}>
+                          {val.Address?.labelAlamat +
+                            " (" +
+                            val.Address?.city +
+                            ")"}
+                        </Flex>
+
+                        <Flex fontWeight={"600"} color={"#ffb405"}>
+                          {val.status.charAt(0).toUpperCase() +
+                            val.status.slice(1)}
+                        </Flex>
+
+                        <Flex fontWeight={500} color={"#8f8d8d"}>
+                          {moment(val.createdAt, "YYYYMMDD").fromNow()}
                         </Flex>
                       </Flex>
                     </Flex>
