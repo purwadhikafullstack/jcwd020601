@@ -9,7 +9,6 @@ const stockServices = {
         include: [
           {
             model: db.Book,
-            // include: [db.Discount],
             required: true, // Inner join
             where: {
               [Op.or]: [
@@ -68,7 +67,6 @@ const stockServices = {
     try {
       const offset = limit * page;
       const totalRows = await db.Stock.count({
-        // search: req.query.search_stock || "Demotivasi",
         include: [
           {
             model: db.Book,
@@ -121,14 +119,12 @@ const stockServices = {
         totalRows,
         totalPage,
       };
-      // return result2;
     } catch (err) {
       throw err;
     }
   },
   getById: async (id) => {
     try {
-      console.log(id);
       const Stock = await db.Stock.findOne({
         where: {
           id: id,
@@ -148,7 +144,6 @@ const stockServices = {
           },
         ],
       });
-      console.log(Stock);
       return Stock;
     } catch (err) {
       throw err;
@@ -221,8 +216,7 @@ const stockServices = {
         limit: limit,
         offset: offset,
       });
-      console.log(Stock);
-      // return Stock;
+
       return {
         Stock,
         page,
@@ -247,8 +241,6 @@ const stockServices = {
         //   transaction: transaction,
         // }
       );
-      console.log(data);
-      // add to stockHistory
       await db.StockHistory.create({
         subject: "update",
         type: "plus",
@@ -295,7 +287,6 @@ const stockServices = {
           transaction: transaction,
         }
       );
-      console.log(data);
       let types;
       if (stock >= Stock.stock) {
         types = "plus";

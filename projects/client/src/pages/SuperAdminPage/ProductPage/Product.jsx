@@ -46,7 +46,6 @@ export default function Product() {
         },
       }
     );
-    // setToken(JSON.parse(t));
     setValue(response.data.result);
     setPage(response.data.page);
     setRows(response.data.totalRows);
@@ -78,7 +77,6 @@ export default function Product() {
       currency: "IDR",
     }).format(number);
   };
-  console.log(value);
 
   return (
     <>

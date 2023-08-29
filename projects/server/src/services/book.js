@@ -97,8 +97,6 @@ const bookServices = {
     transaction
   ) => {
     try {
-      // const bookImage = "http://localhost:2000/bookImage/";
-      // console.log("this is" + filename);
       await db.Book.update(
         {
           title,

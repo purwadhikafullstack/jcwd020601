@@ -32,7 +32,6 @@ export default function FilterBook() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
-  // const history = useHistory();
   let t = localStorage.getItem("auth");
   const toast = useToast();
   const nav = useNavigate();
@@ -139,7 +138,6 @@ export default function FilterBook() {
     console.log(selected);
     setPage(selected);
   };
-  // console.log(categoryId);
 
   const onChange = (e) => {
     const value = e.target.value;
@@ -149,6 +147,8 @@ export default function FilterBook() {
     let result = (a / 100) * b;
     return result;
   };
+  console.log(pages);
+  console.log(page);
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -509,6 +509,7 @@ export default function FilterBook() {
                   nextLinkClassName="page-num"
                   activeLinkClassName="active"
                   pageRangeDisplayed={3}
+                  initialPage={page}
                 />
               </Box>
             )}

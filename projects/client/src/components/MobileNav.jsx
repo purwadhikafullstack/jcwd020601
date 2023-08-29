@@ -16,7 +16,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, ChevronDownIcon } from "@chakra-ui/icons";
-// import { , useNavigate } from "react-router-dom";
 import { BsChevronDown, BsCart } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
 import { api } from "../api/api";

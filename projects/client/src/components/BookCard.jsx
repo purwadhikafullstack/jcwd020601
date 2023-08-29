@@ -26,20 +26,17 @@ export default function BookCard() {
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(6);
-  console.log(orderSelector);
+
   async function fetchProduct() {
     let response = await api().get(
       `/stock?limit=${limit}&place=${orderSelector.BranchId}`
     );
-    console.log(response);
+
     setValue(response.data.result);
   }
   useEffect(() => {
     fetchProduct();
-    console.log("asd");
   }, [token, orderSelector.BranchId]);
-
-  console.log(value);
 
   const settings = {
     dots: true,
@@ -78,7 +75,7 @@ export default function BookCard() {
     let result = (a / 100) * b;
     return result;
   };
-  // console.log(value);
+
   return (
     <Flex
       justify={"center"}

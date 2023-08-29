@@ -60,8 +60,6 @@ export default function Add({ getData, token }) {
       setTimeout(getData, 1000);
     },
   });
-
-  console.log(formik.values);
   return (
     <>
       <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">

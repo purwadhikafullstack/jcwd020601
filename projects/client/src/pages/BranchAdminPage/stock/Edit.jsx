@@ -23,14 +23,12 @@ import Swal from "sweetalert2";
 import * as Yup from "yup";
 import { useEffect, useState, useRef } from "react";
 import moment from "moment";
-// import { api } from "../../../api/api";
-// api
 import "../../../App.css";
 import { useSelector } from "react-redux";
 import { api } from "../../../api/api";
 
 export default function Edit({ isOpen, onClose, id, getData, token }) {
-  // useSelector
+  // console.log(token);
   const userSelector = useSelector((state) => state.login.auth);
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const [book, setBook] = useState([]);
@@ -65,17 +63,16 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       //   Authorization: token,
       // },
     });
-    console.log(res);
     formik.setValues({
       ...formik.values,
       stock: res.data.stock,
       BookId: res.data.BookId,
       BranchId: res.data.BranchId,
+      DiscountId: res.data.DiscountId,
     });
     let response = await api().get("/book/all");
     let response2 = await api().get(`/discount?place=${userSelector.branchId}`);
     setBook(response.data);
-    // console.log(response2.data.Discount);
     setDiscount(response2.data.Discount);
   };
   useEffect(() => {
@@ -99,37 +96,19 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
             <ModalBody gap={5} display={"flex"} flexDirection={"column"}>
               <Box>
                 <FormLabel>Stock</FormLabel>
-                {/* <NumberInput max={50} min={10}> */}
-                {/* <Input
-                  placeholder="Jumlah Stock"
-                  name="stock"
-                  value={formik.values.stock}
-                  type="number"
-                  onChange={(e) => {
-                    formik.handleChange(e);
-                    // const stock = parseInt(e.target.value);
-                    formik.setFieldValue("stock", parseInt(e.target.value));
-                  }}
-                /> */}
                 <Input
                   placeholder="Jumlah Stock"
                   name="stock"
                   type="number"
                   value={formik.values.stock}
-                  // onChange={(e) => {
-                  //   formik.handleChange(e);
-                  //   const stock = parseInt(e.target.value);
-                  //   formik.setFieldValue("stock", stock);
-                  // }}
                   onChange={formik.handleChange}
                 />
-                {/* </NumberInput> */}
                 <Text color={"red.800"}>{formik.errors.stock}</Text>
               </Box>
               <Box>
                 <FormLabel>Nama Buku</FormLabel>
                 <Select
-                  placeholder="Select Book"
+                  placeholder="Pilih Buku"
                   name="BookId"
                   onChange={(e) => {
                     formik.handleChange(e);
@@ -149,7 +128,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
               <Box>
                 <FormLabel>Nama Diskon</FormLabel>
                 <Select
-                  placeholder="Select Book"
+                  placeholder="Pilih Diskon"
                   name="DiscountId"
                   onChange={(e) => {
                     formik.handleChange(e);
@@ -164,7 +143,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
                     </option>
                   ))}
                 </Select>
-                {/* <Text color={"red.800"}>{formik.errors.BookId}</Text> */}
               </Box>
             </ModalBody>
             <ModalFooter>

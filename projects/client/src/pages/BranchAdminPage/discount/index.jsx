@@ -40,7 +40,6 @@ export default function Discount() {
     setPage(response.data.page);
     setRows(response.data.totalRows);
     setPages(response.data.totalPage);
-    // console.log(response.data);
   }
 
   useEffect(() => {
@@ -125,7 +124,6 @@ export default function Discount() {
                   <Th fontSize={18}>No</Th>
                   <Th fontSize={18}>Nama</Th>
                   <Th fontSize={18}>Diskon</Th>
-                  {/* <Th fontSize={18}>Persen</Th> */}
                   <Th fontSize={18}>Mulai</Th>
                   <Th fontSize={18}>Berakhir</Th>
                 </Tr>
