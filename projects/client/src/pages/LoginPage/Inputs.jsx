@@ -65,6 +65,17 @@ export default function Inputs(props) {
           .then((res) => res.data)
           .catch((err) => console.log(err));
         if (user.email) {
+          //
+          const qty = await api().post("/cart/qty", {
+            UserId: user?.id,
+          });
+          props.dispatch({
+            type: "qty",
+            payload: {
+              quantity: qty.data.count,
+            },
+          });
+          //
           props.dispatch({
             type: "login",
             payload: { token, ...user },

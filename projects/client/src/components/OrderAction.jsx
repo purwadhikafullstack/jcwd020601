@@ -37,7 +37,7 @@ export default function OrderAction(props) {
             <ModalConfirm fetch={fetch} id={order[0].OrderId}></ModalConfirm>
             {/*  */}
           </>
-        ) : (
+        ) : status === "waiting for payment confirmation" ? (
           <>
             <Box ringColor={"red"} fontWeight={"semibold"} fontSize={"1.2rem"}>
               Order Status: {status}
@@ -51,7 +51,22 @@ export default function OrderAction(props) {
               Upload Payment Proof
             </Button>
             {/*  */}
-            <ModalConfirm fetch={fetch} id={order[0].OrderId}></ModalConfirm>
+            <ModalCancel fetch={fetch} id={order[0].OrderId}></ModalCancel>
+            {/*  */}
+          </>
+        ) : (
+          <>
+            <Box ringColor={"red"} fontWeight={"semibold"} fontSize={"1.2rem"}>
+              Order Status: {status}
+            </Box>
+            <Button
+              colorScheme={"blue"}
+              borderRadius={"1.5rem"}
+              width={"100%"}
+              onClick={() => inputFileRef.current.click()}
+            >
+              Upload Payment Proof
+            </Button>
             {/*  */}
             <ModalCancel fetch={fetch} id={order[0].OrderId}></ModalCancel>
             {/*  */}
