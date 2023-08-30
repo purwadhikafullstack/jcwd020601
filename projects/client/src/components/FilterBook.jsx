@@ -89,7 +89,7 @@ export default function FilterBook() {
   async function add(idx) {
     try {
       if (userSelector.username) {
-        await api.post("cart/v1", {
+        await api().post("cart/v1", {
           qty: 1,
           UserId: userSelector.id,
           StockId: value[idx].id,
