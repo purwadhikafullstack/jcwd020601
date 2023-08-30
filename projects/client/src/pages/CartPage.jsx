@@ -68,96 +68,98 @@ export default function CartPage() {
   }
 
   return (
-    <Container maxW={"size.xl"}>
+    <>
       <Navbar></Navbar>
-      <Box>
-        <Box padding={"1rem 2rem"} fontSize={"2xl"} fontWeight={"semibold"}>
-          Cart
-        </Box>
-        <Flex
-          flexWrap={"wrap"}
-          flexDir={{ base: "column", md: "row" }}
-          alignItems={{ base: "center", md: "start" }}
-          justifyContent={"center"}
-        >
+      <Container maxW={"size.xl"}>
+        <Box>
+          <Box padding={"1rem 2rem"} fontSize={"2xl"} fontWeight={"semibold"}>
+            Cart
+          </Box>
           <Flex
-            width={{ base: "22rem", lg: "65%" }}
-            flexDir={"column"}
-            gap={"1rem"}
-            padding={" 1rem 2rem"}
+            flexWrap={"wrap"}
+            flexDir={{ base: "column", md: "row" }}
+            alignItems={{ base: "center", md: "start" }}
             justifyContent={"center"}
-            alignItems={"center"}
           >
-            <CartBooks setWeight={setWeight} setTotal={setTotal}></CartBooks>
-          </Flex>
-          <Flex
-            width={{ base: "22rem", lg: "35%" }}
-            flexDir={"column"}
-            gap={"1rem"}
-            padding={"1rem 2rem"}
-          >
-            {/* Shipping */}
-            <Shipping
-              setShipping={setShipping}
-              shipping={shipping}
-              weight={weight}
-              total={total}
-              setCourier={setCourier}
-              courier={courier}
-              BranchId={orderSelector.BranchId}
-              AddressId={orderSelector.AddressId}
-            ></Shipping>
-            {/* Shipping */}
             <Flex
+              width={{ base: "22rem", lg: "65%" }}
               flexDir={"column"}
-              boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-              borderRadius={"0.7rem"}
-              padding={"0.5rem"}
+              gap={"1rem"}
+              padding={" 1rem 2rem"}
+              justifyContent={"center"}
+              alignItems={"center"}
             >
-              <Box
-                padding={"1rem"}
-                textAlign={"center"}
-                fontSize={"xl"}
-                fontWeight={"semibold"}
-              >
-                Order Details
-              </Box>
+              <CartBooks setWeight={setWeight} setTotal={setTotal}></CartBooks>
+            </Flex>
+            <Flex
+              width={{ base: "22rem", lg: "35%" }}
+              flexDir={"column"}
+              gap={"1rem"}
+              padding={"1rem 2rem"}
+            >
+              {/* Shipping */}
+              <Shipping
+                setShipping={setShipping}
+                shipping={shipping}
+                weight={weight}
+                total={total}
+                setCourier={setCourier}
+                courier={courier}
+                BranchId={orderSelector.BranchId}
+                AddressId={orderSelector.AddressId}
+              ></Shipping>
+              {/* Shipping */}
               <Flex
                 flexDir={"column"}
-                alignItems={"center"}
-                padding={"1rem"}
-                gap={"2rem"}
-                fontWeight={"semibold"}
+                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                borderRadius={"0.7rem"}
+                padding={"0.5rem"}
               >
-                <Flex gap={"1rem"}>
-                  <TableContainer>
-                    <Table size={{ base: "sm", lg: "md" }} variant="simple">
-                      <Tbody>
-                        <Th>Payment Summary</Th>
-                        <Tr>
-                          <Td>Price</Td>
-                          <Td>Rp {total.toLocaleString("id-ID")},-</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Shipping</Td>
-                          <Td>
-                            Rp {Number(shipping).toLocaleString("id-ID")},-
-                          </Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Total</Td>
-                          <Td>Rp {totalOr.toLocaleString("id-ID")},-</Td>
-                        </Tr>
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
+                <Box
+                  padding={"1rem"}
+                  textAlign={"center"}
+                  fontSize={"xl"}
+                  fontWeight={"semibold"}
+                >
+                  Order Details
+                </Box>
+                <Flex
+                  flexDir={"column"}
+                  alignItems={"center"}
+                  padding={"1rem"}
+                  gap={"2rem"}
+                  fontWeight={"semibold"}
+                >
+                  <Flex gap={"1rem"}>
+                    <TableContainer>
+                      <Table size={{ base: "sm", lg: "md" }} variant="simple">
+                        <Tbody>
+                          <Th>Payment Summary</Th>
+                          <Tr>
+                            <Td>Price</Td>
+                            <Td>Rp {total.toLocaleString("id-ID")},-</Td>
+                          </Tr>
+                          <Tr>
+                            <Td>Shipping</Td>
+                            <Td>
+                              Rp {Number(shipping).toLocaleString("id-ID")},-
+                            </Td>
+                          </Tr>
+                          <Tr>
+                            <Td>Total</Td>
+                            <Td>Rp {totalOr.toLocaleString("id-ID")},-</Td>
+                          </Tr>
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </Flex>
+                  <AlertOrder create={create} />
                 </Flex>
-                <AlertOrder create={create} />
               </Flex>
             </Flex>
           </Flex>
-        </Flex>
-      </Box>
-    </Container>
+        </Box>
+      </Container>
+    </>
   );
 }
