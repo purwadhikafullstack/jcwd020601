@@ -162,11 +162,29 @@ function MobileNav() {
 
   const [result, setResult] = useState([]);
   const [input, setInput] = useState("");
-  const orderSelector = useSelector((state) => state.login.order);
+  const dispatch = useDispatch();
+  const userSelector = useSelector((state) => state.login.auth);
+  // const orderSelector = useSelector((state) => state.login.order);
+  async function logout() {
+    localStorage.removeItem("auth");
+    dispatch({
+      type: "logout",
+    });
+    nav("/adminlogin");
+    return;
+  }
+  async function verify() {
+    await api
+      .get("auth/generate-token/emailverify", {
+        params: {
+          email: userSelector.email,
+        },
+      })
+      .then((res) => alert(res.data.message));
+  }
   const NAV_ITEMS = [
     {
       label: "Home",
-      // children: category,
       href: "/admin",
     },
     {
@@ -180,6 +198,16 @@ function MobileNav() {
     {
       label: "Transaction",
       href: `/admin/order`,
+    },
+    {
+      label: "Verify",
+      href: `#`,
+      click: verify,
+    },
+    {
+      label: "Logout",
+      href: `/adminlogin`,
+      click: logout,
     },
   ];
 
@@ -242,84 +270,11 @@ function MobileNav() {
           h={"60px"}
         ></Box>
       </Box>
-      {/* <Box
-        display={"flex"}
-        justifyContent={"space-evenly"}
-        alignItems={"center"}
-        h={"60px"}
-      >
-        <Box>
-          <InputGroup>
-            <InputRightElement pointerEvents="auto">
-              <Icon
-                cursor={"pointer"}
-                _hover={{ color: "blue.800" }}
-                as={GoSearch}
-                color="blue.700"
-              ></Icon>
-            </InputRightElement>
-            <Input
-              type="text"
-              border={"none"}
-              borderBottom={"1px solid #cccc"}
-              placeholder="Search Book or Author"
-              color="blue.700"
-              borderRadius={"0"}
-              value={input}
-              onChange={(e) => handleChange(e.target.value)}
-              style={{
-                placeholder: {
-                  color: "red.700",
-                },
-              }}
-              w={{ base: "22em", sm: "42em" }}
-              focusBorderColor="transparent"
-              _focus={{ borderBottom: "1.6px solid grey" }}
-            />
-          </InputGroup>
-          <Box
-            bgColor={"white"}
-            position={"absolute"}
-            top={"120px"}
-            w={{ base: "22em", md: "15em", lg: "30em" }}
-            boxShadow="0px 5px 10px skyblue"
-            display={"flex"}
-            flexDirection={"column"}
-            gap={3}
-            borderRadius={5}
-            maxH={"200px"}
-            overflowY={"scroll"}
-            sx={{
-              "&::-webkit-scrollbar": {
-                width: "5px",
-                borderRadius: "8px",
-                backgroundColor: `rgba(0, 0, 0, 0.05)`,
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: `#cce6ff`,
-              },
-            }}
-          >
-            {result.map((val) => (
-              <Link to={`/products/detail/${val.id}`}>
-                <Text
-                  key={val.id}
-                  p={3}
-                  cursor={"pointer"}
-                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-                >
-                  {val.Book?.title}
-                </Text>
-              </Link>
-            ))}
-          </Box>
-        </Box>
-      </Box> */}
     </>
   );
 }
 
-const MobileNavItem = ({ label, children, href }) => {
+const MobileNavItem = ({ label, children, href, click }) => {
   const { isOpen, onToggle } = useDisclosure();
   return (
     <Stack spacing={4} onClick={children && onToggle}>
@@ -336,6 +291,7 @@ const MobileNavItem = ({ label, children, href }) => {
           <Text
             fontWeight={600}
             color={useColorModeValue("gray.600", "gray.200")}
+            onClick={click}
           >
             {label}
           </Text>
@@ -349,21 +305,6 @@ const MobileNavItem = ({ label, children, href }) => {
           />
         )}
       </Flex>
-
-      {/* <Collapse in={isOpen} animateOpacity style={{ marginTop: "0!important" }}>
-        <Stack
-          borderStyle={"solid"}
-          borderColor={useColorModeValue("gray.200", "gray.700")}
-          align={"start"}
-        >
-          {children &&
-            children.map((child) => (
-              <Link key={child.label} py={2} to={`${child.href}`}>
-                {child.category}
-              </Link>
-            ))}
-        </Stack>
-      </Collapse> */}
     </Stack>
   );
 };
