@@ -27,8 +27,7 @@ export default function LoginPage() {
   useEffect(() => {
     /* global google */
     google.accounts.id.initialize({
-      client_id:
-        "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
+      client_id: client_id,
       callback: handleCallbackResponse,
     });
     google.accounts.id.renderButton(document.getElementById("signInDiv"), {
