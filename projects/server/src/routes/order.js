@@ -39,7 +39,6 @@ router.patch(
   getUserByToken,
   orderController.updateStatusUser
 );
-router.patch("/v2/:id", orderController.editOrder);
 router.delete("/v3/:id", orderController.deleteOrder);
 router.post("/shipping", orderController.getShipping);
 

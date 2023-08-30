@@ -1,7 +1,6 @@
 const db = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
-const moment = require("moment");
 const { default: axios } = require("axios");
 const fs = require("fs");
 const path = require("path");
@@ -166,38 +165,7 @@ const orderController = {
       });
     }
   },
-  editOrder: async (req, res) => {
-    try {
-      const { payment_url, status, total, UserId, BranchId, AddressId } =
-        req.body;
-      await db.Order.update(
-        {
-          payment_url,
-          status,
-          total,
-          UserId,
-          BranchId,
-          AddressId,
-        },
-        {
-          where: {
-            id: req.params.id,
-          },
-        }
-      );
 
-      return await db.Order.findOne({
-        where: {
-          id: req.params.id,
-        },
-      }).then((result) => res.send(result));
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
   insertOrder: async (req, res) => {
     const trans = await db.sequelize.transaction();
     try {
@@ -209,7 +177,11 @@ const orderController = {
       }
 
       // get the order from cart
-      const cart = await cartServices.getCartUserId({ UserId, BranchId });
+      const cart = await cartServices.getCartUserId({
+        UserId,
+        BranchId,
+        raw: true,
+      });
 
       // Order weight
       const weight = cart.reduce((prev, curr) => {
