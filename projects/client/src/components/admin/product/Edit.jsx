@@ -3,7 +3,6 @@ import {
   Image,
   Input,
   Button,
-  useDisclosure,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -18,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
 import "../../../App.css";
-import { GrFormAdd, GrPowerReset } from "react-icons/gr";
 import Swal from "sweetalert2";
 import icon from "../../../assets/images/icon.png";
 import { useFormik } from "formik";

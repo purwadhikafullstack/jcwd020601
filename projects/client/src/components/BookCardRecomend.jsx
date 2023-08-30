@@ -1,20 +1,4 @@
-import {
-  Box,
-  Flex,
-  Card,
-  CardBody,
-  Stack,
-  Heading,
-  Text,
-  CardFooter,
-  Button,
-  Image,
-  ButtonGroup,
-  Divider,
-  useMediaQuery,
-  useToast,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Image, useToast } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";

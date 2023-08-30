@@ -2,11 +2,7 @@ import {
   Box,
   Flex,
   Image,
-  Menu,
-  MenuButton,
-  MenuList,
   Icon,
-  Grid,
   InputGroup,
   Input,
   InputRightElement,
@@ -14,16 +10,8 @@ import {
   Text,
   useMediaQuery,
   useDisclosure,
-  ModalOverlay,
-  ModalContent,
-  Modal,
-  Button,
-  ModalBody,
-  ModalHeader,
   useToast,
 } from "@chakra-ui/react";
-
-import { BsChevronDown } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
 import { api } from "../../api/api";
 import logo from "../../assets/images/gramedia-icon-2.png";
@@ -31,13 +19,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, Link, useParams } from "react-router-dom";
 import { HiOutlineLocationMarker } from "react-icons/hi";
-import { MdClose } from "react-icons/md";
 import MobileNav from "../MobileNav";
-
 import ModalSelectAddress from "./ModalSelectAddress";
-import CartButton from "../CartButton";
-const IMGURL = process.env.REACT_APP_API_IMAGE_URL;
-
+import CartButtonAndMenu from "./CartButtonAndMenu";
+import MenuKategori from "./MenuKategori";
 export default function Navbar({ callback, keyword }) {
   const locatio = useLocation();
   const location = locatio.pathname.split("/")[1];
@@ -45,30 +30,23 @@ export default function Navbar({ callback, keyword }) {
   const toast = useToast();
   const [userAddresses, setUserAddresses] = useState([]);
   const [userAddress, setUserAddress] = useState([]);
-  const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   const [large] = useMediaQuery("(min-width: 768px)");
   const [category, setCategory] = useState([]);
-  const { categoryProduct } = useParams();
   async function fetchUserAddresses() {
     try {
-      await api()
-        .get("/address/user/" + userSelector.id)
-        .then((res) => {
-          setUserAddresses(res.data);
-        })
-        .catch((err) => {
-          toast({
-            position: "top",
-            title: "Something went a",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-        });
+      const fetchAddress = await api().get("/address/user/" + userSelector.id);
+      setUserAddresses(fetchAddress.data);
     } catch (err) {
       alert(err.data.message);
+      toast({
+        position: "top",
+        title: "Something went a",
+        description: err.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   }
   const fetchCategori = async () => {
@@ -79,7 +57,6 @@ export default function Navbar({ callback, keyword }) {
     if (userSelector.email) {
       fetchUserAddresses();
       setUserAddress(userSelector.address);
-      // fetchUserMainAddress();
     }
   }, []);
   useEffect(() => {
@@ -146,12 +123,9 @@ export default function Navbar({ callback, keyword }) {
 }
 
 function DesktopNav({
-  callback,
-  keyword,
   category,
   setUserAddress,
   userAddress,
-  setUserAddresses,
   userAddresses,
   modalSelectAddress,
   location,
@@ -160,8 +134,6 @@ function DesktopNav({
   const dispatch = useDispatch();
   const nav = useNavigate();
   const [trans, setTrans] = useState(true);
-  const [value, setValue] = useState([]);
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [input, setInput] = useState("");
   const [result, setResult] = useState([]);
   const orderSelector = useSelector((state) => state.login.order);
@@ -178,11 +150,9 @@ function DesktopNav({
       type: "logout",
     });
     nav("/login");
-    return;
   }
   async function login() {
     nav("/login");
-    return;
   }
 
   const fetchData = async (value) => {
@@ -204,7 +174,6 @@ function DesktopNav({
       console.error("Error fetching data:", error);
     }
   };
-
   const handleChange = (value) => {
     setInput(value);
     fetchData(value);
@@ -235,101 +204,13 @@ function DesktopNav({
         h={"60px"}
       >
         <Box>
-          <Menu>
-            <MenuButton onClick={handleTrans}>
-              <Flex alignItems={"center"} gap={"1rem"}>
-                <Text
-                  fontWeight={"bold"}
-                  fontSize={{ sm: "md", md: "xl" }}
-                  color={"blue.700"}
-                  display={{
-                    base: "none",
-                    sm: "none",
-                    md: "none",
-                    lg: "none",
-                    xl: "block",
-                  }}
-                >
-                  Kategori
-                </Text>
-                <Icon
-                  as={BsChevronDown}
-                  style={
-                    trans
-                      ? {
-                          color: "blue",
-                          fontSize: "25px",
-                          transform: "rotate(0deg)",
-                          transition: "transform 150ms ease",
-                        }
-                      : {
-                          color: "blue",
-                          fontSize: "25px",
-                          transform: "rotate(180deg)",
-                          transition: "transform 150ms ease",
-                        }
-                  }
-                />
-              </Flex>
-            </MenuButton>
-            <MenuList
-              my={"19px"}
-              w={{
-                base: "0",
-                sm: "0",
-                md: "48em",
-                lg: "70em",
-                xl: "93em",
-              }}
-              position={"fixed"}
-              left={{
-                base: "0",
-                sm: "0",
-                md: "-12em",
-                lg: "-15em",
-                xl: "-20em",
-              }}
-              boxShadow="0px 5px 10px skyblue"
-            >
-              <Flex justifyContent={"space-between"}>
-                <Flex
-                  flexDir={"column"}
-                  fontSize={"xl"}
-                  borderRightColor={"blue.700"}
-                  pr={"20px"}
-                  maxH={"200px"}
-                  overflowY={"scroll"}
-                  sx={{
-                    "&::-webkit-scrollbar": {
-                      width: "5px",
-                      borderRadius: "8px",
-                      backgroundColor: `rgba(0, 0, 0, 0.05)`,
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: `#cce6ff`,
-                    },
-                  }}
-                >
-                  {category.map((val) => (
-                    <Link key={val.id} to={`/products/filter/${val.id}`}>
-                      <Text
-                        cursor={"pointer"}
-                        w={"15em"}
-                        p={"10px"}
-                        pl={"30px"}
-                        _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-                      >
-                        {val.category}
-                      </Text>
-                    </Link>
-                  ))}
-                </Flex>
-                <Box>
-                  <Grid templateColumns="repeat(2, 1fr)" gap={3}></Grid>
-                </Box>
-              </Flex>
-            </MenuList>
-          </Menu>
+          <MenuKategori
+            handleTrans={handleTrans}
+            trans={trans}
+            category={category}
+            setTrans={setTrans}
+            nav={nav}
+          />
         </Box>
         <Box display={"flex"} flexDirection={"column"}>
           <InputGroup>
@@ -445,73 +326,7 @@ function DesktopNav({
           setUserAddress={setUserAddress}
         />
       </Box>
-
-      <Box
-        display={"flex"}
-        w={{ sm: "10em", md: "15em", lg: "20em" }}
-        alignItems={"center"}
-        justifyContent={"space-evenly"}
-        h={"60px"}
-        // bgColor={"green"}
-      >
-        {/* CartButton */}
-        <CartButton></CartButton>
-        {/* CartButton */}
-        <Box>
-          <Menu>
-            <MenuButton>
-              <Flex alignItems={"center"} gap={"0.1rem"} cursor={"pointer"}>
-                <Image
-                  w={"50px"}
-                  h="50px"
-                  borderRadius="full"
-                  objectFit={"fill"}
-                  border={"2px #0060ae solid"}
-                  src={
-                    userSelector.avatar_url
-                      ? IMGURL + userSelector.avatar_url
-                      : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT19eLyqRHQDO-VnXj1HhzL_9q8yHF-3ewIhA&usqp=CAU"
-                  }
-                ></Image>
-              </Flex>
-            </MenuButton>
-            <MenuList
-              my={"12px"}
-              position={"fixed"}
-              left={"-6em"}
-              // bgColor={"pink.100"}
-              p={0}
-            >
-              <Flex flexDir={"column"}>
-                <Text
-                  onClick={() => nav("/profile")}
-                  cursor={"pointer"}
-                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-                  p={3}
-                >
-                  My Account
-                </Text>
-                <Text
-                  onClick={() => nav("/orders")}
-                  cursor={"pointer"}
-                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-                  p={3}
-                >
-                  My Orders
-                </Text>
-                <Text
-                  onClick={userSelector.email ? logout : login}
-                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-                  p={3}
-                  cursor={"pointer"}
-                >
-                  {userSelector.email ? "Logout" : "Login"}
-                </Text>
-              </Flex>
-            </MenuList>
-          </Menu>
-        </Box>
-      </Box>
+      <CartButtonAndMenu logout={logout} login={login} nav={nav} />
     </>
   );
 }

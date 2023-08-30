@@ -9,7 +9,6 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
 import ModalAddAddress from "./ModalAddAddress";
 import { useEffect, useState } from "react";

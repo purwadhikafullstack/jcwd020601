@@ -12,7 +12,7 @@ import Biodata from "./Biodata";
 import DaftarAlamat from "./DaftarAlamat";
 import ProfileFooter from "./ProfileFooter";
 import { api } from "../../api/api";
-import Navbar from "../../components/Navbar/index";
+import Navbar from "../../components/Navbar2/index";
 export default function ProfilePage() {
   const [userAddresses, setUserAddresses] = useState([]);
   const userSelector = useSelector((state) => state.login.auth);

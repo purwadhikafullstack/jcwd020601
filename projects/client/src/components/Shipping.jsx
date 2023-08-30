@@ -66,7 +66,6 @@ export default function Shipping(props) {
           placeholder="Select shipping method"
           onChange={(e) => {
             props.setCourier(e.target.value);
-            // fetch();
           }}
         >
           <option value="jne">JNE</option>
@@ -80,7 +79,6 @@ export default function Shipping(props) {
             props.setShipping(e.target.value);
           }}
         >
-          {/* map */}
           {service.map((val, idx) => (
             <option
               id={service[idx].cost[0].etd}

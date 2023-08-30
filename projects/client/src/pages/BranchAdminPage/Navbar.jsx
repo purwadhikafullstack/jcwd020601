@@ -47,7 +47,6 @@ export default function Navbar() {
     </>
   );
 }
-
 function DesktopNav() {
   const nav = useNavigate();
   const dispatch = useDispatch();
@@ -59,7 +58,6 @@ function DesktopNav() {
     nav("/adminlogin");
     return;
   }
-
   return (
     <>
       <Box
@@ -109,7 +107,6 @@ function DesktopNav() {
     </>
   );
 }
-
 function MobileNav() {
   const nav = useNavigate();
   const { isOpen, onToggle } = useDisclosure();

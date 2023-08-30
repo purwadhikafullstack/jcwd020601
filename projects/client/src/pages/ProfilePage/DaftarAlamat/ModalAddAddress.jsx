@@ -1,7 +1,5 @@
 import { Button, Center, Flex, Icon, Input, Select } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { AiOutlineClose } from "react-icons/ai";
-
 import { api } from "../../../api/api";
 
 export default function ModalAddAddress(props) {
@@ -13,10 +11,7 @@ export default function ModalAddAddress(props) {
           props.setProvinces(res.data.result);
         });
     };
-    // call the function
     fetchData();
-    // make sure to catch any error
-    // .catch(console.error);
   }, []);
   return (
     <>

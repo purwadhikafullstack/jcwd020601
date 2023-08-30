@@ -7,8 +7,6 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
-  Img,
-  useToast,
   Icon,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";

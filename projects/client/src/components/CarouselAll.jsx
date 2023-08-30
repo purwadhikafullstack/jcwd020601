@@ -11,7 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useSelector } from "react-redux";
-import { BsChevronDown, BsCart } from "react-icons/bs";
 import { Link } from "react-router-dom";
 export default function CarouselAll() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
@@ -21,8 +20,6 @@ export default function CarouselAll() {
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(5);
-  const [keyword, setKeyword] = useState("");
-  // const place = 1;
   async function fetchProduct() {
     let response = await api().get(
       `/stock/Desc?limit=${limit}&place=${orderSelector.BranchId}`
@@ -272,7 +269,6 @@ export default function CarouselAll() {
           ))}
         </Box>
       </Box>
-
       <Divider w={"75%"} />
     </Flex>
   );

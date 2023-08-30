@@ -47,7 +47,6 @@ export default function Add({ getData, token }) {
       dimension: "",
       price: "",
       rating: "",
-      // DiscountId: 1,
       CategoryId: null,
     },
     validationSchema: Yup.object({

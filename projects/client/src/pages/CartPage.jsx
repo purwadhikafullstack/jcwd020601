@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CartBooks from "../components/CartBooks";
 import Shipping from "../components/Shipping";
 import AlertOrder from "../components/AlertOrder";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar2";
 
 export default function CartPage() {
   const toast = useToast();
@@ -69,7 +69,7 @@ export default function CartPage() {
 
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar />
       <Container maxW={"90rem"}>
         <Box>
           <Box padding={"1rem 2rem"} fontSize={"2xl"} fontWeight={"semibold"}>

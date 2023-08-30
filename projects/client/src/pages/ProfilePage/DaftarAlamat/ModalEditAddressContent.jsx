@@ -1,12 +1,4 @@
-import {
-  Button,
-  Center,
-  Flex,
-  Icon,
-  Input,
-  Select,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Button, Flex, Input, Select } from "@chakra-ui/react";
 export default function ModalEditAddressContent(props) {
   return (
     <>

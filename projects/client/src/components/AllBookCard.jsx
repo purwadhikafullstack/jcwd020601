@@ -1,15 +1,8 @@
 import {
   Box,
   Center,
-  Card,
-  CardBody,
-  CardFooter,
-  Image,
   Text,
   Spinner,
-  Flex,
-  Button,
-  ButtonGroup,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";

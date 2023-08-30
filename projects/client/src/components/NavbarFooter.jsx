@@ -6,13 +6,11 @@ export default function NavbarFooter() {
     <Box
       display={"flex"}
       flexDirection={{ base: "column", md: "row" }}
-      // bgColor={"blue.300"}
       boxShadow="0px -10px 25px skyblue"
       h={{ base: "12em", sm: "12em", md: "6em" }}
       justifyContent={"space-evenly"}
       alignItems={"center"}
       px="100px"
-      // position={"sticky"}
       bottom={0}
       zIndex={1000}
       bgColor={"white"}
