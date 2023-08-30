@@ -39,6 +39,8 @@ import CartButton from "../CartButton";
 const IMGURL = process.env.REACT_APP_API_IMAGE_URL;
 
 export default function Navbar({ callback, keyword }) {
+  const locatio = useLocation();
+  const location = locatio.pathname.split("/")[1];
   const modalSelectAddress = useDisclosure();
   const toast = useToast();
   const [userAddresses, setUserAddresses] = useState([]);
@@ -125,6 +127,7 @@ export default function Navbar({ callback, keyword }) {
             userAddress={userAddress}
             userAddresses={userAddresses}
             modalSelectAddress={modalSelectAddress}
+            location={location}
           />
         ) : (
           <MobileNav
@@ -134,6 +137,7 @@ export default function Navbar({ callback, keyword }) {
             setUserAddresses={setUserAddresses}
             userAddresses={userAddresses}
             modalSelectAddress={modalSelectAddress}
+            location={location}
           />
         )}
       </Box>
@@ -150,9 +154,8 @@ function DesktopNav({
   setUserAddresses,
   userAddresses,
   modalSelectAddress,
+  location,
 }) {
-  const locatio = useLocation();
-  const location = locatio.pathname.split("/")[1];
   const userSelector = useSelector((state) => state.login.auth);
   const dispatch = useDispatch();
   const nav = useNavigate();

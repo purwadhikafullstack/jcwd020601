@@ -14,6 +14,7 @@ import {
   BarChart,
   Legend,
   Bar,
+  ResponsiveContainer,
 } from "recharts";
 import Greetings from "./Greetings";
 import { useEffect, useState } from "react";
@@ -376,59 +377,56 @@ export default function ReportChart() {
                       Transactions from last month
                     </Flex>
                     <Flex bgColor={"#f2f2f2"}>
-                      <AreaChart
-                        // className="responsive-chart"
-                        width={350}
-                        height={250}
-                        css={{
-                          "@media (min-width: 992px)": {
-                            width: 800, // Adjust as needed
-                          },
-                        }}
-                        data={transactionChart?.sales}
-                        margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
-                        // margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
-                      >
-                        <defs>
-                          <linearGradient
-                            id="colorUva"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor="#ffa425"
-                              stopOpacity={1}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor="#ffa425"
-                              stopOpacity={0}
-                            />
-                          </linearGradient>
-                        </defs>
-                        <XAxis dataKey="date" />
-                        <YAxis
-                          type="number"
-                          domain={[
-                            0,
-                            parseInt(
-                              transactionChart?.highest?.total_transaction
-                            ),
-                          ]}
-                        />
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip />
-                        <Area
-                          type="monotone"
-                          dataKey="total_transaction"
-                          stroke="black"
-                          fillOpacity={1}
-                          fill="url(#colorUva)"
-                        />
-                      </AreaChart>
+                      <ResponsiveContainer width={"95%"} height={250}>
+                        <AreaChart
+                          // className="responsive-chart"
+                          width={350}
+                          height={250}
+                          data={transactionChart?.sales}
+                          margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+                          // margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+                        >
+                          <defs>
+                            <linearGradient
+                              id="colorUva"
+                              x1="0"
+                              y1="0"
+                              x2="0"
+                              y2="1"
+                            >
+                              <stop
+                                offset="5%"
+                                stopColor="#ffa425"
+                                stopOpacity={1}
+                              />
+                              <stop
+                                offset="95%"
+                                stopColor="#ffa425"
+                                stopOpacity={0}
+                              />
+                            </linearGradient>
+                          </defs>
+                          <XAxis dataKey="date" />
+                          <YAxis
+                            type="number"
+                            domain={[
+                              0,
+                              parseInt(
+                                transactionChart?.highest?.total_transaction
+                              ),
+                            ]}
+                          />
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <Tooltip />
+                          <Area
+                            type="monotone"
+                            dataKey="total_transaction"
+                            stroke="black"
+                            fillOpacity={1}
+                            fill="url(#colorUva)"
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
                     </Flex>
                   </Flex>
                 </Flex>
