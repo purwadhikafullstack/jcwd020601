@@ -3,7 +3,7 @@ import ModalCancel from "./ModalCancel";
 import ModalConfirm from "./ModalConfirm";
 
 export default function OrderAction(props) {
-  const { inputFileRef, status, order } = props;
+  const { inputFileRef, status, order, fetch } = props;
   return (
     <Flex
       flexDir={"column"}

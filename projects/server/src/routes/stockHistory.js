@@ -1,12 +1,8 @@
 const express = require("express");
+const getAdminByToken = require("../middlewares/getadminbytoken");
 const router = express.Router();
 const stockHistoryController = require("../controllers").stockHistoryController;
-//get
 
-router.get("/", stockHistoryController.getAll);
-router.post("/id", stockHistoryController.getById);
-router.post("/v1", stockHistoryController.insertStockHistory);
-router.patch("/v2/:id", stockHistoryController.editStockHistory);
-router.delete("/v3/:id", stockHistoryController.deleteStockHistory);
+router.post("/id", getAdminByToken, stockHistoryController.getById);
 
 module.exports = router;

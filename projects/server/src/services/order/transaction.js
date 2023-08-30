@@ -78,6 +78,18 @@ module.exports = {
       return error;
     }
   },
+  getOrderInvoice: async (body) => {
+    try {
+      const { invoiceCode } = body;
+      return await db.Order.findOne({
+        where: {
+          invoiceCode,
+        },
+      });
+    } catch (error) {
+      return error;
+    }
+  },
   updateStatus: async (body) => {
     try {
       const { OrderId, status } = body;
