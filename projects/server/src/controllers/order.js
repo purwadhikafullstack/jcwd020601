@@ -78,44 +78,12 @@ const orderController = {
   },
   getBranchOrder: async (req, res) => {
     try {
-      const { BranchId, status, search } = req.body;
-      let page = parseInt(req.query.page) || 0;
-      const limit = parseInt(req.query.limit) || 10;
-
-      const condition = {
-        BranchId,
-      };
-
-      if (status !== "all") {
-        console.log("NOT ALL NOT ALL NOT ALL");
-        condition.status = status;
-      }
-
-      if (search) {
-        console.log("SEARCH");
-        condition.invoiceCode = search;
-        delete condition.status;
-        page = 0;
-      }
-
-      const offset = limit * page;
-
-      // Count
-      const totalRows = await db.Order.count({
-        where: condition,
-      });
-      const totalPage = Math.ceil(totalRows / limit);
-
-      const Order = await db.Order.findAll({
-        where: condition,
-        offset: offset,
-        limit: limit,
-        order: [
-          ["createdAt", "DESC"], // Order by createdAt in descending order
-        ],
-      });
-
-      return res.send({ Order, page, limit, totalRows, totalPage });
+      const result = await orderServices.getBranchOrder(
+        req.body,
+        req.query.page,
+        req.query.limit
+      );
+      res.send(result);
     } catch (err) {
       console.log(err.message);
       res.status(500).send({
@@ -242,11 +210,7 @@ const orderController = {
       }
 
       // get the order from cart
-      const cart = await cartServices.getCartUserId({
-        UserId,
-        BranchId,
-        raw: true,
-      });
+      const cart = await cartServices.getCartUserId({ UserId, BranchId });
 
       // Order weight
       const weight = cart.reduce((prev, curr) => {
@@ -549,13 +513,7 @@ const orderController = {
   getShipping: async (req, res) => {
     try {
       const { origin, destination, weight, courier } = req.body;
-      console.log({ origin, destination, weight, courier });
-      const formData = new FormData();
-      formData.append("origin", origin);
-      formData.append("destination", destination);
-      formData.append("weight", weight);
-      formData.append("courier", courier);
-      console.log("dsa");
+
       const response = await axios.post(
         "https://api.rajaongkir.com/starter/cost",
         { origin, destination, weight, courier },
