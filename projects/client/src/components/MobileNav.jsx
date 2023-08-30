@@ -32,6 +32,7 @@ export default function MobileNav({
   userAddresses,
   setuserAddresses,
   modalSelectAddress,
+  location,
 }) {
   const nav = useNavigate();
   const dispatch = useDispatch();
@@ -47,8 +48,11 @@ export default function MobileNav({
       href: "#",
     },
     {
-      label: "Location / Change Location",
+      label: userSelector.address
+        ? "Location / Change Location (" + userSelector?.address?.city + ")"
+        : "Location / Change Location",
       onOpen: modalSelectAddress.onOpen,
+      display: location == "profile" || location == "orders" ? "none" : "block",
     },
 
     {
@@ -139,7 +143,11 @@ export default function MobileNav({
                 width={"100%"}
               >
                 {NAV_ITEMS.map((navItem) => (
-                  <MobileNavItem key={navItem.label} {...navItem} />
+                  <MobileNavItem
+                    location={location}
+                    key={navItem.label}
+                    {...navItem}
+                  />
                 ))}
               </Stack>
             </Collapse>
@@ -259,7 +267,16 @@ export default function MobileNav({
   );
 }
 
-const MobileNavItem = ({ label, children, href, display, onOpen, onClick }) => {
+const MobileNavItem = ({
+  label,
+  children,
+  href,
+  display,
+  onOpen,
+  onClick,
+  blocked,
+  location,
+}) => {
   const dispatch = useDispatch();
   const nav = useNavigate();
   async function logout() {
@@ -278,6 +295,11 @@ const MobileNavItem = ({ label, children, href, display, onOpen, onClick }) => {
   return (
     <Stack spacing={4} onClick={children && onToggle} display={display}>
       <Flex
+        display={
+          blocked && (location == "profile" || location == "orders")
+            ? "none"
+            : "block"
+        }
         py={2}
         as={Link}
         justify={"space-between"}
@@ -294,12 +316,12 @@ const MobileNavItem = ({ label, children, href, display, onOpen, onClick }) => {
         }
       >
         <Link to={href ? `${href}` : ""}>
-          <Text
+          <Box
             fontWeight={600}
             color={useColorModeValue("gray.600", "gray.200")}
           >
             {label}
-          </Text>
+          </Box>
         </Link>
         {children && (
           <Icon
