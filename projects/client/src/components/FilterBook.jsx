@@ -50,22 +50,18 @@ export default function FilterBook() {
   async function fetchProduct() {
     try {
       setIsLoading(true);
-      console.log(categoryId);
-      console.log(data);
-      console.log(value);
-      console.log(page);
-      console.log(pages);
+
       if (categoryId) {
         let url = `/stock/price?price=${price}&place=${orderSelector.BranchId}&category=${data}&page=${page}&limit=${limit}`;
         const response = await api().get(url);
-        console.log(url);
+
         setValue(response.data.Stock);
         setPage(response.data.page);
         setRows(response.data.totalRows);
         setPages(response.data.totalPage);
       } else {
         let url = `/stock/price?price=${price}&place=${orderSelector.BranchId}&page=${page}&limit=${limit}`;
-        console.log(url);
+
         const response = await api().get(url);
         setValue(response.data.Stock);
         setPage(response.data.page);
@@ -135,7 +131,6 @@ export default function FilterBook() {
   }, []);
 
   const changePage = ({ selected }) => {
-    console.log(selected);
     setPage(selected);
   };
 
@@ -147,8 +142,7 @@ export default function FilterBook() {
     let result = (a / 100) * b;
     return result;
   };
-  console.log(pages);
-  console.log(page);
+
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>

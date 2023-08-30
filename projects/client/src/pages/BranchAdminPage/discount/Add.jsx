@@ -62,8 +62,13 @@ export default function Add({ getData, token }) {
   });
   return (
     <>
-      <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">
-        Add Discount
+      <Button
+        onClick={onOpen}
+        leftIcon={<GrFormAdd />}
+        variant="outline"
+        size={"lg"}
+      >
+        <Text display={{ base: "none", lg: "block" }}>Add Discount</Text>
       </Button>
       <Modal
         onClose={onClose}

@@ -20,6 +20,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import Loading from "../../components/Loading";
 import ModalFilterSales from "./ModalFilter";
+import "../../App.css";
 const { nanoid } = require("nanoid");
 
 export default function ReportChart() {
@@ -98,7 +99,7 @@ export default function ReportChart() {
         bgColor={"#fbfbfb"}
         py={"10px"}
         // backgroundColor={"red.100"}
-        marginLeft={60}
+        marginLeft={{ base: 0, lg: 60 }}
       >
         <Flex
           ml={"10px"}
@@ -121,7 +122,15 @@ export default function ReportChart() {
                 borderBottom={"2px solid #787875"}
                 pb={"10px"}
               >
-                <Flex alignItems={"center"} w={"100%"}>
+                <Flex
+                  // alignItems={"center"}
+                  alignItems={{ base: "flex-start", lg: "center" }}
+                  w={"100%"}
+                  flexDir={{ base: "column", lg: "row" }}
+                  gap={3}
+                  p={{ base: 3, lg: 0 }}
+                  // w={"100%"}
+                >
                   <Flex flexDir={"column"}>
                     <Flex
                       fontSize={"1.2rem"}
@@ -152,17 +161,39 @@ export default function ReportChart() {
                 </Flex>
               </Flex>
               <Flex mt={"20px"}>
-                <Flex gap={"50px"}>
+                <Flex
+                  gap={"50px"}
+                  // bgColor={"yellow.100"}
+                  overflowX={{ base: "scroll", lg: "hidden" }}
+                  // overflow={""}
+                  overflowY={"hidden"}
+                  sx={{
+                    "&::-webkit-scrollbar": {
+                      width: "1px",
+                      height: "2px",
+                      borderRadius: "1px",
+                      backgroundColor: `rgba(0, 0, 0, 0.05)`,
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: `#cce6ff`,
+                    },
+                  }}
+                >
                   {objects.map((val, index) => {
                     return (
                       <Flex
                         p={"10px"}
                         boxShadow="0 0 5px #e0e0e0"
-                        bgColor={"white"}
-                        h={"100px"}
+                        // bgColor={"red.100"}
+                        h={{ base: "100px" }}
+                        w={{ base: "250px", lg: "280px" }}
                         gap={"30px"}
+                        // bgColor={}
                       >
-                        <Flex flexDir={"column"}>
+                        <Flex
+                          flexDir={"column"}
+                          w={{ base: "250px", lg: "280px" }}
+                        >
                           <Flex
                             fontWeight={"600"}
                             color={"#757575"}
@@ -217,12 +248,15 @@ export default function ReportChart() {
                     bgColor={"white"}
                     gap={"20px"}
                     mb={"20px"}
-                    alignItems={"center"}
+                    alignItems={{ base: "flex-start", lg: "center" }}
+                    // bgColor={"yellow.100"}
+                    flexDir={{ base: "column", lg: "row" }}
                   >
                     <Flex
                       gap={"10px"}
                       backgroundColor={"white"}
                       flexDir={"column"}
+                      // bgColor={"red.100"}
                     >
                       <Flex
                         pl={"10px"}
@@ -235,10 +269,15 @@ export default function ReportChart() {
                       </Flex>
                       <Flex bgColor={"#f2f2f2"}>
                         <AreaChart
-                          width={400}
+                          width={350}
                           height={250}
                           data={salesChart?.sales}
                           margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+                          css={{
+                            "@media (min-width: 992px)": {
+                              width: 450, // Adjust as needed
+                            },
+                          }}
                         >
                           <defs>
                             <linearGradient
@@ -294,9 +333,14 @@ export default function ReportChart() {
                       <Flex bgColor={"#f2f2f2"}>
                         <BarChart
                           margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
-                          width={400}
+                          width={350}
                           height={250}
                           data={quantityChart?.sales}
+                          css={{
+                            "@media (min-width: 992px)": {
+                              width: 450, // Adjust as needed
+                            },
+                          }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="date" />
@@ -333,10 +377,17 @@ export default function ReportChart() {
                     </Flex>
                     <Flex bgColor={"#f2f2f2"}>
                       <AreaChart
-                        width={800}
+                        // className="responsive-chart"
+                        width={350}
                         height={250}
+                        css={{
+                          "@media (min-width: 992px)": {
+                            width: 800, // Adjust as needed
+                          },
+                        }}
                         data={transactionChart?.sales}
                         margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+                        // margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
                       >
                         <defs>
                           <linearGradient
