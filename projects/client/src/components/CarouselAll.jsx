@@ -4,15 +4,9 @@ import {
   Card,
   CardBody,
   Image,
-  Stack,
-  Heading,
   Text,
-  CardFooter,
-  ButtonGroup,
-  Button,
   Divider,
   useMediaQuery,
-  Icon,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
