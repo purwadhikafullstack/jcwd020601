@@ -6,7 +6,6 @@ async function getSuperAdminByToken(req, res, next) {
 
   try {
     let token = req.headers["auth"];
-    // console.log(token);
     let payload = await db.Token.findOne({
       where: {
         token,
@@ -27,13 +26,10 @@ async function getSuperAdminByToken(req, res, next) {
     delete admin.dataValues.password;
 
     req.admin = admin;
-    // console.log(admin);
-    console.log("SUKESS");
 
     next();
   } catch (err) {
     console.log(err);
-    console.log("Not SUKES");
     return res.status(500).send({ message: err.message });
   }
 }

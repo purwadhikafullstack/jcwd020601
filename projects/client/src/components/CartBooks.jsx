@@ -15,8 +15,6 @@ export default function CartBooks(props) {
   const [total, setTotal] = useState(0);
   const [hapus, setHapus] = useState(false);
   const toast = useToast();
-
-  //GET
   async function fetch() {
     const data = await api().post("/cart/id", {
       UserId: userSelector.id,
@@ -32,10 +30,6 @@ export default function CartBooks(props) {
     props.setWeight(data.data.weight);
     return setCart(data.data.Cart);
   }
-
-  console.log(cart);
-
-  //PATCH
   async function edit(idx, type) {
     try {
       await api().patch("cart/v2", {
@@ -59,8 +53,6 @@ export default function CartBooks(props) {
       console.error("Error in edit():", error);
     }
   }
-
-  // Price maping (discount)
   const list = cart.map((val) => {
     if (val.Stock?.DiscountId) {
       if (val.Stock?.Discount?.isPercent) {
@@ -79,8 +71,6 @@ export default function CartBooks(props) {
       return val.Stock?.Book?.price * val.quantity;
     }
   });
-
-  // Total Order Price
   const totalPrice = list.reduce((prev, curr) => {
     return prev + curr;
   }, 0);
@@ -97,7 +87,6 @@ export default function CartBooks(props) {
     setTotal(totalPrice);
     props.setTotal(totalPrice);
   }, [totalPrice]);
-
   return (
     <>
       <Flex
@@ -109,11 +98,7 @@ export default function CartBooks(props) {
         {cart[0] ? (
           cart.map((val, idx) => (
             <>
-              <Flex
-                padding={"1rem"}
-                flexDir={"column"}
-                // justifyContent={"start"}
-              >
+              <Flex padding={"1rem"} flexDir={"column"}>
                 <Box textAlign={"start"} fontWeight={"semibold"}>
                   {`Order ${idx + 1}`}
                 </Box>
@@ -125,7 +110,6 @@ export default function CartBooks(props) {
               <Flex
                 justifyContent={"space-between"}
                 alignItems={"center"}
-                // padding={"1rem 2rem"}
                 padding={{ base: "0.5rem", md: "1rem 2rem" }}
                 flexDir={{ base: "column", lg: "row" }}
                 gap={"1rem"}
@@ -152,7 +136,6 @@ export default function CartBooks(props) {
                   )},-`}</Box>
                   <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
                 </Flex>
-
                 <Flex gap={"1rem"} flexDir={{ md: "column" }}>
                   <Flex alignItems={"center"} gap={"1rem"}>
                     <Icon
@@ -209,7 +192,6 @@ export default function CartBooks(props) {
                   </Flex>
                 </Flex>
                 <Flex alignItems={"center"}>
-                  {/* Delete */}
                   <DeleteModal setHapus={setHapus} cartId={val.id} />
                 </Flex>
               </Flex>

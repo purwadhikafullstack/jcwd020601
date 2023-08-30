@@ -32,7 +32,6 @@ export default function Shipping(props) {
         weight: props.weight,
         courier: props.courier,
       });
-      console.log(ship.data);
       return setService(ship.data);
     } catch (error) {
       console.log(error);

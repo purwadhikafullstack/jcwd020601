@@ -36,9 +36,6 @@ const cartController = {
         raw: false,
       });
 
-      // console.log({ Cart: Cart });
-
-      // Sum Weight
       const weight = Cart.reduce((prev, curr) => {
         return (
           prev +
@@ -47,7 +44,6 @@ const cartController = {
         );
       }, 0);
 
-      // Count Quantity
       const quantity = Cart.reduce((prev, curr) => {
         return prev + curr.dataValues.quantity;
       }, 0);
@@ -124,7 +120,6 @@ const cartController = {
         });
 
         if (check) {
-          console.log("MASUK CEK");
           const k = check.dataValues.quantity + qty;
           if (avail >= k) {
             await cartServices.updateCartById({ k, StockId, UserId, trans });
@@ -133,8 +128,6 @@ const cartController = {
             return res.status(400).send("Stock Insufficient");
           }
         } else {
-          console.log("MASUK INSERT");
-          console.log({ qty, UserId, StockId });
           await cartServices.insertCart({ qty, UserId, StockId, trans });
         }
         await trans.commit();

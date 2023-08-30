@@ -19,7 +19,6 @@ module.exports = {
   createStockHistory: async (body) => {
     try {
       const { updatedStock, quantity, tB, StockId } = body;
-      console.log({ tB, updatedStock, quantity, StockId });
       return await db.StockHistory.create(
         {
           StockId,

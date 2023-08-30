@@ -10,7 +10,6 @@ export default function NavbarFooter() {
       borderTopColor={useColorModeValue("gray.200", "gray.700")}
       h={{ base: "6em" }}
       alignItems={"center"}
-      position={"fixed"}
       w="100%"
       zIndex={1}
       justifyContent={"center"}

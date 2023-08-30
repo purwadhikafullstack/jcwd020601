@@ -39,7 +39,7 @@ export default function Action({ id, name, getData, token }) {
       }
     });
   };
-  // console.log(id);
+
   return (
     <>
       <Menu>

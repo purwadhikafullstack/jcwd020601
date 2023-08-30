@@ -33,10 +33,10 @@ router.post(
 router.patch("/v4", userController.getByToken, userController.changePassword);
 router.patch(
   "/v5",
-
+  getUserByToken,
   userController.checkOldPassword,
   userController.changePasswordNoToken
 );
-router.patch("/update", userController.updateProfile);
+router.patch("/update", getUserByToken, userController.updateProfile);
 
 module.exports = router;

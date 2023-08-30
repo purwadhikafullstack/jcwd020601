@@ -42,7 +42,6 @@ export default function Sidebar() {
 }
 
 const SidebarContent = ({ LinkItems }) => {
-  console.log(LinkItems);
   return (
     <Box
       bg={useColorModeValue("white", "gray.900")}

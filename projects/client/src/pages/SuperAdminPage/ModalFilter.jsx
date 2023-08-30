@@ -18,15 +18,12 @@ import { api } from "../../api/api";
 
 export default function ModalFilterSales(props) {
   const [branch, setBranch] = useState([]);
-  const [filter, setFilter] = useState({
-    time: "allTime",
-    BranchId: "",
-  });
+
   function inputHandler(input) {
     const { value, id } = input.target;
-    const tempobject = { ...filter };
+    const tempobject = { ...props.filter };
     tempobject[id] = value;
-    setFilter(tempobject);
+    props.setFilter(tempobject);
     console.log(tempobject);
   }
   async function fetchBranchName() {
@@ -64,7 +61,7 @@ export default function ModalFilterSales(props) {
                 w={"30px"}
                 onClick={() => {
                   props.modalFilter.onClose();
-                  setFilter({});
+                  props.setFilter({});
                 }}
               >
                 <Icon fontSize={"30px"} as={MdClose}></Icon>
@@ -111,7 +108,7 @@ export default function ModalFilterSales(props) {
                 <Flex mt={"20px"} flexDir={"row-reverse"} gap={"20px"}>
                   <Button
                     onClick={() => {
-                      setFilter({});
+                      props.setFilter({});
                       props.modalFilter.onClose();
                     }}
                   >
@@ -120,7 +117,7 @@ export default function ModalFilterSales(props) {
                   <Button
                     onClick={() => {
                       props.modalFilter.onClose();
-                      props.submitFilter(filter);
+                      props.submitFilter(props.filter);
                     }}
                     bgColor={"#385898"}
                     color={"white"}

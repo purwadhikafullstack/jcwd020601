@@ -126,7 +126,6 @@ export default function Biodata(props) {
           formData
         )
         .then((res) => {
-          console.log(res.data);
           return res.data;
         })
         .catch((err) => {
@@ -163,8 +162,6 @@ export default function Biodata(props) {
         position: "top",
         isClosable: false,
       });
-      console.log(user);
-
       setSelectedFile(null);
     } catch (err) {
       setSelectedFile(null);
@@ -316,13 +313,7 @@ export default function Biodata(props) {
         </RadioGroup>
       </Flex>
       <Flex flexDir={"column"}>
-        <Flex
-          color={"grey"}
-          fontSize={"0.8rem"}
-          onClick={() => {
-            console.log(formik.errors);
-          }}
-        >
+        <Flex color={"grey"} fontSize={"0.8rem"}>
           No. Telp
         </Flex>
         <Flex

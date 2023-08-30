@@ -22,10 +22,6 @@ export default function Greetings() {
               fontWeight={"700"}
               width={"200px"}
               color={"#2c5282"}
-              onClick={() => {
-                console.log(userSelector);
-                console.log(location);
-              }}
             >
               {"Welcome, " + userSelector.admin_name}
             </Flex>

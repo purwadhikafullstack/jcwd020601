@@ -60,7 +60,6 @@ const orderDetailController = {
           id: OrderId,
         },
       });
-      console.log();
       const OrderDetail = await db.OrderDetail.findAll({
         where: {
           OrderId,
@@ -91,7 +90,6 @@ const orderDetailController = {
   },
   editOrderDetail: async (req, res) => {
     try {
-      console.log("test");
       const { quantity, price, OrderId, StockId } = req.body;
       await db.OrderDetail.update(
         { quantity, price, OrderId, StockId },

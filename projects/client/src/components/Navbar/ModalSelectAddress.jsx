@@ -56,13 +56,7 @@ export default function ModalSelectAddress({
             </Flex>
           </ModalHeader>
 
-          <ModalBody
-            maxW="500px"
-            py={"20px"}
-            onClick={() => {
-              console.log(userAddresses);
-            }}
-          >
+          <ModalBody maxW="500px" py={"20px"}>
             {userAddresses[0] ? (
               <Flex flexDir={"column"} gap={"20px"} pr={"50px"}>
                 {userAddresses.map((val) => {

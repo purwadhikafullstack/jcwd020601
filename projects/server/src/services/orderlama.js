@@ -31,7 +31,6 @@ module.exports = {
   uploadPayment: async (body) => {
     try {
       const { payment_url, id } = body;
-      console.log({ service: payment_url, id });
       return await db.Order.update(
         {
           payment_url,
@@ -50,7 +49,6 @@ module.exports = {
   deletePayment: async (body) => {
     try {
       const { id } = body;
-      console.log({ service: id });
       return await db.Order.update(
         {
           payment_url: null,
@@ -81,7 +79,6 @@ module.exports = {
   updateStatus: async (body) => {
     try {
       const { OrderId, status } = body;
-      console.log({ service: status });
       return await db.Order.update(
         {
           status,
