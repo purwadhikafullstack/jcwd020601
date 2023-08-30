@@ -10,6 +10,7 @@ import NotFoundPage from "./NotFoundPage";
 import OrderStatus from "../components/OrderStatus";
 import OrderCard from "../components/OrderCard";
 import OrderAction from "../components/OrderAction";
+import Swal from "sweetalert2";
 
 export default function OrderPage() {
   const [order, setOrder] = useState();
@@ -51,6 +52,12 @@ export default function OrderPage() {
         OrderId: order[0].OrderId,
         status: "waiting for payment confirmation",
       });
+
+      Swal.fire(
+        "Good job!",
+        "Your payment proof has been uploaded.",
+        "success"
+      );
 
       return fetch();
     } catch (error) {
@@ -148,6 +155,7 @@ export default function OrderPage() {
                 inputFileRef={inputFileRef}
                 status={status}
                 order={order}
+                fetch={fetch}
               />
             </Flex>
           </Flex>
