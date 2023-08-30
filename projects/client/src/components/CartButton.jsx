@@ -13,7 +13,6 @@ export default function CartButton(props) {
   const qtySelector = useSelector((state) => state.login.qty);
 
   console.log(qtySelector.quantity);
-  console.log(orderSelector.BranchId);
 
   // dispatch({
   //   type: "order",

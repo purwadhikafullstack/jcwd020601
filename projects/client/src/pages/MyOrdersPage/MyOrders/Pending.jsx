@@ -6,7 +6,13 @@ export default function Pending(props) {
   const nav = useNavigate();
   return (
     <>
-      <Flex w={"100%"} mt={"20px"} gap={"30px"} flexDir={"column"}>
+      <Flex
+        mb={{ base: "100px", sm: "100px", md: "100px" }}
+        w={"100%"}
+        mt={"20px"}
+        gap={"30px"}
+        flexDir={"column"}
+      >
         {props.pending[0] ? (
           props.pending.map((val) => (
             <Flex
@@ -27,7 +33,10 @@ export default function Pending(props) {
                     <Flex gap={"10px"}>
                       <Flex border={"3px solid #385898"}>
                         <Image
-                          src={val.payment_url}
+                          src={
+                            process.env.REACT_APP_API_IMAGE_URL +
+                            val.payment_url
+                          }
                           h={"100px"}
                           w={"100px"}
                         ></Image>
@@ -85,10 +94,12 @@ export default function Pending(props) {
         ) : (
           <>
             <Center w={"100%"} flexDir={"column"}>
-              <Center fontSize={"1.2rem"} color={"#0060ae"} fontWeight={600}>
+              <Center fontSize={"1.3rem"} color={"#0060ae"} fontWeight={600}>
                 There Are No Orders Here
               </Center>
-              <Center color={"#0095d8"}>Your Orders Would Go Here</Center>
+              <Center fontSize={"1.1rem"} color={"#0095d8"}>
+                Your Orders Would Go Here
+              </Center>
             </Center>
           </>
         )}

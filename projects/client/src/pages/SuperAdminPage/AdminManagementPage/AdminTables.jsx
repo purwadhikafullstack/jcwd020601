@@ -158,12 +158,14 @@ export default function AdminTables(props) {
           />
         </TableContainer>
         <ModalFilter
+          setPage={props.setPage}
           filter={props.filter}
           setFilter={props.setFilter}
           modalFilter={props.modalFilter}
           submitFilter={props.submitFilter}
         />
         <ModalSort
+          setPage={props.setPage}
           sort={props.sort}
           setSort={props.setSort}
           modalSort={props.modalSort}

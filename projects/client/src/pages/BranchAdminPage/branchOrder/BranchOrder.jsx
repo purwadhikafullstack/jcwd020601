@@ -4,15 +4,12 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
   Icon,
   Select,
-  useDisclosure,
   Input,
   InputGroup,
   InputRightElement,
@@ -31,16 +28,13 @@ export default function BranchOrder() {
   const userSelector = useSelector((state) => state.login.auth);
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(0);
-  // const [limit, setLimit] = useState(6);
   const [rows, setRows] = useState(0);
   const [status, setStatus] = useState("all");
   const [search, setSearch] = useState();
 
-  // console.log(status);
   function inputHandler(e) {
     setSearch(e.target.value);
   }
-  console.log(search);
 
   // GET
   async function fetch() {
@@ -54,18 +48,14 @@ export default function BranchOrder() {
     setPage(result.data.page);
     setRows(result.data.totalRows);
     setPages(result.data.totalPage);
-    console.log(result);
     setTrans(result.data.Order);
   }
-  console.log(pages);
-  console.log(page);
   useEffect(() => {
     fetch();
   }, [page, status]);
 
   //
   const changePage = ({ selected }) => {
-    // console.log(selected);
     setPage(selected);
   };
   //

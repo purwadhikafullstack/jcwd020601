@@ -28,10 +28,11 @@ export default function BookCard() {
   const [limit, setLimit] = useState(6);
 
   async function fetchProduct() {
+    console.log(orderSelector.BranchId);
     let response = await api().get(
       `/stock?limit=${limit}&place=${orderSelector.BranchId}`
     );
-
+    console.log(response.data.result);
     setValue(response.data.result);
   }
   useEffect(() => {
