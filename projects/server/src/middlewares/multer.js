@@ -20,8 +20,6 @@ const fileUploader = ({
   const uploader = multer({
     storage: storageConfig,
     fileFilter: (req, file, cb) => {
-      console.log(file);
-
       if (file.mimetype.split("/")[0] != fileType) {
         return cb(null, false);
       }
@@ -35,7 +33,6 @@ const upload = multer({
     fileSize: 10000000,
   },
   fileFilter: (req, file, cb) => {
-    console.log(file);
     const file_type = file.mimetype.split("/")[0];
     const format_file = file.mimetype.split("/")[1];
 

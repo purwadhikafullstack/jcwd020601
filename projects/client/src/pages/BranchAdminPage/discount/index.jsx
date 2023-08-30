@@ -64,7 +64,6 @@ export default function Discount() {
     setQuery("");
   };
 
-  // console.log(value);
   const rupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -76,7 +75,6 @@ export default function Discount() {
       <Box
         marginLeft={{ base: 0, lg: 60 }}
         h={"80vh"}
-        // bgColor={"red"}
         overflow={{ base: "scroll", lg: "auto" }}
       >
         <Flex

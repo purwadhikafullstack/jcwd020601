@@ -105,7 +105,6 @@ export default function LoginPage() {
               AddressId: userMainAddress?.id,
             },
           });
-          console.log("lol");
           nav("/");
         }
       }
@@ -140,7 +139,6 @@ export default function LoginPage() {
                 className={"loginpage-container"}
                 flexDir={"column"}
                 border={"1px solid #dbdbdb"}
-                onClick={() => console.log(process.env)}
               >
                 <Img src={logo} width={"300px"} py={"40px"}></Img>
                 <Inputs

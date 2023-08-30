@@ -31,12 +31,10 @@ export default function ModalFilter(props) {
     const tempobject = { ...props.filter };
     tempobject[id] = value;
     props.setFilter(tempobject);
-    console.log(tempobject);
   }
   async function fetchBranchName() {
     const result = await api().get(`/branch`);
     setBranch(result.data);
-    console.log(result.data);
   }
   useEffect(() => {
     fetchBranchName();

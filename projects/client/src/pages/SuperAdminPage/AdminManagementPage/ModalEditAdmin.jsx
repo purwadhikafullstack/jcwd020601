@@ -42,7 +42,6 @@ export default function ModalEditAdmin(props) {
     const tempobject = { name, email, phone };
     tempobject[id] = value;
     setState((prevState) => ({ ...prevState, [id]: value }));
-    console.log(tempobject);
   }
   return (
     <>
@@ -90,13 +89,7 @@ export default function ModalEditAdmin(props) {
               <Flex mb={"10px"}>
                 <Flex flexDir={"column"} gap={"10px"} w={"100%"}>
                   <Flex flexDir={"column"} gap={"5px"} w={"100%"}>
-                    <Flex
-                      onClick={() => {
-                        console.log(name);
-                      }}
-                      fontWeight={"600"}
-                      fontSize={"1.1rem"}
-                    >
+                    <Flex fontWeight={"600"} fontSize={"1.1rem"}>
                       Name
                     </Flex>
                     <Input

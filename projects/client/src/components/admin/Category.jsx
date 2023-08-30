@@ -52,7 +52,6 @@ export default function Category() {
   const changePage = ({ selected }) => {
     setPage(selected);
   };
-
   const searchData = () => {
     setPage(0);
     setKeyword(query);
@@ -60,13 +59,11 @@ export default function Category() {
   useEffect(() => {
     fetchCategori();
   }, [page, keyword]);
-
   const resetKeyWord = () => {
     setKeyword("");
     fetchCategori();
     setQuery("");
   };
-  console.log(value);
   return (
     <>
       <Box marginLeft={30}>

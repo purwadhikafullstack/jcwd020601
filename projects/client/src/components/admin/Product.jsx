@@ -75,8 +75,6 @@ export default function Product() {
       currency: "IDR",
     }).format(number);
   };
-  console.log(value);
-
   return (
     <>
       <Box marginLeft={0}>

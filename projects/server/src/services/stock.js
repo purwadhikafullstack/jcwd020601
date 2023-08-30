@@ -358,8 +358,7 @@ const stockServices = {
   updateStock: async (body) => {
     try {
       const updateClouse = {};
-      // console.log(body);
-      // console.log(body.bucket);
+
       if (body.quantity) {
         updateClouse.quantity = body.quantity;
         updateClouse.bucket = body.bucket;
@@ -368,8 +367,7 @@ const stockServices = {
       if (body.bucket >= 0) {
         updateClouse.bucket = body.bucket;
       }
-      console.log({ stockServoce: updateClouse });
-      console.log(body.trans);
+
       return await db.Stock.update(updateClouse, {
         where: {
           id: body.StockId,

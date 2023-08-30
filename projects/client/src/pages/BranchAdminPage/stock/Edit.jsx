@@ -28,7 +28,6 @@ import { useSelector } from "react-redux";
 import { api } from "../../../api/api";
 
 export default function Edit({ isOpen, onClose, id, getData, token }) {
-  // console.log(token);
   const userSelector = useSelector((state) => state.login.auth);
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const [book, setBook] = useState([]);

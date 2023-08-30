@@ -17,8 +17,6 @@ export default function ModalCancel(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
   const [status, setStatus] = useState();
-
-  // Update Status
   async function update() {
     try {
       await api().patch("/order/v2/userstatus", {
@@ -29,7 +27,6 @@ export default function ModalCancel(props) {
       return props.fetch();
     } catch (error) {
       alert(error.response.data);
-      console.log(error);
     }
   }
 

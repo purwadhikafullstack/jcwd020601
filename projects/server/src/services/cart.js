@@ -52,7 +52,6 @@ module.exports = {
   },
   destroyCartId: async (body) => {
     try {
-      console.log("HAPUS CART");
       const { id, trans } = body;
       return await db.Cart.destroy({
         where: {

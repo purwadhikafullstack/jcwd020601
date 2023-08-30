@@ -24,12 +24,10 @@ async function getUserByToken(req, res, next) {
     delete user.dataValues.password;
 
     req.user = user;
-    console.log("SUKESS");
 
     next();
   } catch (err) {
     console.log(err);
-    console.log("Not SUKES");
     return res.status(500).send({ message: err.message });
   }
 }

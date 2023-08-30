@@ -35,7 +35,6 @@ export default function Inputs(props) {
         });
       if (loggingIn) {
         const token = JSON.parse(localStorage.getItem("auth"));
-        console.log(token);
         const user = await api()
           .get("/auth/v3?token=" + token)
           .then((res) => res.data)
