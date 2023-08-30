@@ -1,18 +1,4 @@
-import {
-  Box,
-  Center,
-  Text,
-  Image,
-  List,
-  ListItem,
-  ListIcon,
-  Button,
-  OrderedList,
-  UnorderedList,
-  useToast,
-  Input,
-  Flex,
-} from "@chakra-ui/react";
+import { Box, Text, Image, List, ListItem, ListIcon } from "@chakra-ui/react";
 import { MdCheckCircle, MdSettings } from "react-icons/md";
 export default function ValueImgCapDetailBook({ value, percent }) {
   return (
@@ -138,11 +124,9 @@ export default function ValueImgCapDetailBook({ value, percent }) {
                   )}
                 </>
               ) : (
-                <>
-                  <Text fontSize="xl">
-                    Rp. {Intl.NumberFormat().format(value.Book?.price)}
-                  </Text>
-                </>
+                <Text fontSize="xl">
+                  Rp. {Intl.NumberFormat().format(value.Book?.price)}
+                </Text>
               )}
             </Text>
           </Text>

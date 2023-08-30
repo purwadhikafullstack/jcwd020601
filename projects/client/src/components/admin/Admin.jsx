@@ -38,7 +38,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 export default function Navbar() {
   const [large] = useMediaQuery("(min-width: 768px)");
-
   return (
     <>
       <Box

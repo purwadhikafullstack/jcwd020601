@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { api } from "../api/api";
 import Loading from "../components/Loading";
-
 export default function AuthProvider({ children }) {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);

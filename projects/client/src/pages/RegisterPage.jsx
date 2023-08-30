@@ -23,6 +23,7 @@ import { api } from "../api/api";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useDispatch } from "react-redux";
+import Options from "./LoginPage/Options";
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
@@ -87,7 +88,6 @@ export default function RegisterPage() {
       console.log(err);
       alert(err.response.data.message);
     }
-    // document.getElementById("signInDiv").hidden = true;
   }
   YupPassword(Yup);
   const [seepassword, setSeePassword] = useState(false);
@@ -400,64 +400,9 @@ export default function RegisterPage() {
                   </Flex>
                 </Center>
               </Center>
-
-              {/* <Flex gap={"10px"}>
-                <Img
-                  cursor={"pointer"}
-                  src={logo2}
-                  width={"130px"}
-                  h={"40px"}
-                ></Img>
-                <Img
-                  cursor={"pointer"}
-                  src={logo3}
-                  width={"130px"}
-                  h={"40px"}
-                ></Img>
-              </Flex> */}
             </Center>
           </Center>
-          <Center flexWrap={"wrap"} color={"blackAlpha.700"} gap={"16px"}>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Meta
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              About
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Blog
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Jobs
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Help
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              API
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Privacy
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Terms
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Top Accounts
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Locations
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Gramedia Lite
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Contact Uploading & Non-Users
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Meta Verified
-            </Flex>
-          </Center>
+          <Options />
         </Center>
         <Center color={"blackAlpha.700"} gap={"20px"}>
           <Flex fontSize={"13px"}> English</Flex>

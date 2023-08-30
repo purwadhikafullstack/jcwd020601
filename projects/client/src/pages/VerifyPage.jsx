@@ -29,7 +29,6 @@ export default function VerifyEmail() {
       })
       .then((res) => {
         alert(res.data.message);
-        // window.location.reload(false);
         nav("/login");
       })
       .catch((err) => {

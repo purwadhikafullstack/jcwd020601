@@ -1,12 +1,5 @@
 import logo from "../../assets/images/gramedia-icon-2.png";
-import {
-  Box,
-  Flex,
-  Icon,
-  useColorModeValue,
-  Text,
-  Image,
-} from "@chakra-ui/react";
+import { Box, Flex, Icon, useColorModeValue, Image } from "@chakra-ui/react";
 import {
   FiHome,
   FiTrendingUp,
@@ -16,10 +9,7 @@ import {
 } from "react-icons/fi";
 
 import { GrTransaction } from "react-icons/gr";
-
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-
 const LinkItems = [
   { name: "Home", icon: FiHome, address: "/admin" },
   { name: "Product", icon: FiTrendingUp, address: "/admin/product" },
@@ -28,7 +18,6 @@ const LinkItems = [
   { name: "Favourites", icon: FiStar, address: "/favorites" },
   { name: "Settings", icon: FiSettings, address: "/settings" },
 ];
-
 export default function Sidebar() {
   return (
     <Box
@@ -40,7 +29,6 @@ export default function Sidebar() {
     </Box>
   );
 }
-
 const SidebarContent = ({ LinkItems }) => {
   return (
     <Box
@@ -56,27 +44,15 @@ const SidebarContent = ({ LinkItems }) => {
       </Flex>
       {LinkItems.map((link) => (
         <NavItem icon={link.icon} key={link.name}>
-          <Link to={link.address}>
-            {link.name}
-            {/* {link.address}{" "} */}
-          </Link>
-          {/* asdasd */}
+          <Link to={link.address}>{link.name}</Link>
         </NavItem>
-        // {/* </Link> */}
       ))}
     </Box>
   );
 };
 
 const NavItem = ({ icon, children, address }) => {
-  // const nav = useNavigate();
   return (
-    // <Link
-    //   to={address}
-    // style={{ textDecoration: "none" }}
-    // _focus={{ boxShadow: "none" }}
-    // bgColor={"red"}
-    // >
     <Flex
       align="center"
       p="4"
@@ -101,6 +77,5 @@ const NavItem = ({ icon, children, address }) => {
       )}
       {children}
     </Flex>
-    // </Link>
   );
 };

@@ -20,6 +20,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useCallback } from "react";
+import Options from "./LoginPage/Options";
 
 export default function LoginPage() {
   async function submitLogin() {
@@ -181,54 +182,7 @@ export default function LoginPage() {
             </Center>
           </Center>
 
-          <Center
-            flexWrap={"wrap"}
-            className="loginpage-about"
-            display={"flex"}
-            color={"blackAlpha.700"}
-            px={"10px"}
-            gap={"20px"}
-          >
-            <Box fontSize={"13px"} cursor={"pointer"}>
-              Meta
-            </Box>{" "}
-            <Box fontSize={"13px"} cursor={"pointer"}>
-              About
-            </Box>
-            <Box fontSize={"13px"} cursor={"pointer"}>
-              Blog
-            </Box>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Jobs
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Help
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              API
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Privacy
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Terms
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Top Accounts
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Locations
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Gramedia Lite
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Contact Uploading & Non-Users
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Meta Verified
-            </Flex>
-          </Center>
+          <Options />
         </Center>
         <Center color={"blackAlpha.700"} gap={"20px"}>
           <Flex fontSize={"13px"}> English</Flex>

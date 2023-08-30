@@ -52,6 +52,7 @@ const SidebarContent = (props) => {
       borderRight="1px"
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={60}
+      display={{ base: "none", lg: "block" }}
       position={"fixed"}
       zIndex={100}
       h="100vh"

@@ -1,19 +1,16 @@
 import {
   Box,
-  Center,
   Card,
   CardBody,
   CardFooter,
   Image,
   Text,
-  Spinner,
   Flex,
   Button,
   ButtonGroup,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";

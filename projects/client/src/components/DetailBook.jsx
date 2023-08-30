@@ -2,13 +2,7 @@ import {
   Box,
   Center,
   Text,
-  Image,
-  List,
-  ListItem,
-  ListIcon,
   Button,
-  OrderedList,
-  UnorderedList,
   useToast,
   Input,
   Flex,
@@ -20,10 +14,8 @@ import { api } from "../api/api";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import tooFarModal from "./TooFarModal";
-
 export default function DetailBookPage() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
-
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   const toast = useToast();
@@ -38,8 +30,6 @@ export default function DetailBookPage() {
   useEffect(() => {
     fetchProduct();
   }, [id]);
-
-  // Add to Cart
   async function add() {
     try {
       if (userSelector.username) {

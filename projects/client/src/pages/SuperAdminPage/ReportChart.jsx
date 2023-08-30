@@ -15,13 +15,10 @@ import {
   Legend,
   Bar,
 } from "recharts";
-import Greetings from "./Greetings";
 import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import Loading from "../../components/Loading";
 import ModalFilterSales from "./ModalFilter";
-const { nanoid } = require("nanoid");
-
 export default function ReportChart() {
   const [loading, setLoading] = useState(true);
   const [salesCardData, setSalesCardData] = useState([]);
@@ -105,12 +102,7 @@ export default function ReportChart() {
   }, []);
   return (
     <>
-      <Flex
-        bgColor={"#fbfbfb"}
-        py={"10px"}
-        // backgroundColor={"red.100"}
-        marginLeft={60}
-      >
+      <Flex bgColor={"#fbfbfb"} py={"10px"} marginLeft={{ base: 0, lg: 60 }}>
         <Flex
           ml={"10px"}
           px={"10px"}
@@ -125,7 +117,13 @@ export default function ReportChart() {
           ) : (
             <Flex flexDir={"column"}>
               <Flex w={"100%"} borderBottom={"2px solid #787875"} pb={"10px"}>
-                <Flex alignItems={"center"} w={"100%"}>
+                <Flex
+                  alignItems={{ base: "flex-start", lg: "center" }}
+                  w={"100%"}
+                  // bgColor={"red.100"}
+                  gap={3}
+                  flexDir={{ base: "column", lg: "row" }}
+                >
                   <Flex flexDir={"column"}>
                     <Flex
                       fontSize={"1.2rem"}
@@ -155,10 +153,17 @@ export default function ReportChart() {
                   </Center>
                 </Flex>
               </Flex>
-              <Flex mt={"20px"}>
+              <Flex
+                mt={"20px"}
+                justifyContent={{ base: "flex-start", lg: "flex-start" }}
+              >
                 <Flex
                   gap={{ base: "20px", lg: "50px" }}
                   flexDir={{ base: "column", lg: "row" }}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  // bgColor={"red.100"}
+
                 >
                   {objects.map((val, index) => {
                     return (

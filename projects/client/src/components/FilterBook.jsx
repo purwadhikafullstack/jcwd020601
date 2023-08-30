@@ -16,7 +16,6 @@ import "../App.css";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import ValueFilterBook from "./valueFilterBook";
-
 export default function FilterBook() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const orderSelector = useSelector((state) => state.login.order);
@@ -27,9 +26,7 @@ export default function FilterBook() {
   const toast = useToast();
   const nav = useNavigate();
   const { categoryId } = useParams();
-  const tooFarModal = useDisclosure();
   const [value, setValue] = useState([]);
-  const [token, setToken] = useState(JSON.parse(t));
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(8);
   const [rows, setRows] = useState(0);
@@ -41,18 +38,15 @@ export default function FilterBook() {
   async function fetchProduct() {
     try {
       setIsLoading(true);
-
       if (categoryId) {
         let url = `/stock/price?price=${price}&place=${orderSelector.BranchId}&category=${data}&page=${page}&limit=${limit}`;
         const response = await api().get(url);
-
         setValue(response.data.Stock);
         setPage(response.data.page);
         setRows(response.data.totalRows);
         setPages(response.data.totalPage);
       } else {
         let url = `/stock/price?price=${price}&place=${orderSelector.BranchId}&page=${page}&limit=${limit}`;
-
         const response = await api().get(url);
         setValue(response.data.Stock);
         setPage(response.data.page);
@@ -109,14 +103,11 @@ export default function FilterBook() {
       console.error(error);
     }
   }
-
   const onChangeCategory = (e) => {
     setData(parseInt(e));
-    // setPage(0);
     nav(`/products/filter/${parseInt(e)}`);
     if (e == "") {
       setData(null);
-      // setPage(0);
       nav(`/products/filter`);
     }
   };
@@ -127,11 +118,9 @@ export default function FilterBook() {
   useEffect(() => {
     fetchCategori();
   }, []);
-
   const changePage = ({ selected }) => {
     setPage(selected);
   };
-
   const onChange = (e) => {
     const value = e.target.value;
     setPrice(value);
@@ -140,7 +129,6 @@ export default function FilterBook() {
     let result = (a / 100) * b;
     return result;
   };
-
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -149,7 +137,6 @@ export default function FilterBook() {
           flexDir={{ base: "column", sm: "column", md: "column", lg: "row" }}
           h={"78vh"}
           overflowY={"scroll"}
-          // bgColor={"yellow.100"}
           sx={{
             "&::-webkit-scrollbar": {
               width: "5px",

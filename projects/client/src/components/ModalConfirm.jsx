@@ -5,10 +5,8 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
-  AlertDialogCloseButton,
   useDisclosure,
   Button,
-  Select,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 import { api } from "../api/api";
@@ -16,7 +14,6 @@ import { api } from "../api/api";
 export default function ModalConfirm(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef();
-  const [status, setStatus] = useState();
 
   // Update Status
   async function update() {

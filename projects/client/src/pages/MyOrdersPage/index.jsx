@@ -1,9 +1,7 @@
 import { Center, Flex, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/Navbar2";
 import ProfileSidebar from "../ProfilePage/ProfileSidebar";
-import YupPassword from "yup-password";
-import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import NavbarFooter from "../../components/NavbarFooter";
@@ -11,7 +9,6 @@ import Footer from "../../components/Footer";
 import ProfileFooter from "../ProfilePage/ProfileFooter";
 import { api } from "../../api/api";
 import MyOrders from "./MyOrders";
-import Loading from "./";
 export default function MyOrdersPage() {
   const userSelector = useSelector((state) => state.login.auth);
   const toast = useToast();

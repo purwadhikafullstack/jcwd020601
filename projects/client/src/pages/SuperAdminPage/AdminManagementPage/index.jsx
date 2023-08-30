@@ -54,7 +54,11 @@ export default function SuperAdminPageBranchAdmin() {
           <Navbar />
           {admins ? (
             <Flex>
-              <Flex marginLeft={60} bgColor={"#fbfbfb"} w={"100%"}>
+              <Flex
+                marginLeft={{ base: 0, lg: 60 }}
+                bgColor={"#fbfbfb"}
+                w={"100%"}
+              >
                 <Flex flexDir={"column"} w={"100%"}>
                   <Flex w={"100%"}>
                     <AdminTables

@@ -1,7 +1,4 @@
 import { Box, Image, Text, Icon, useColorModeValue } from "@chakra-ui/react";
-// import logo from "../assets/images/gramedia-icon-2.png";
-import logo from "../../assets/images/gramedia-icon-2.png";
-import { FaInstagram, FaSquareTwitter, FaFacebook } from "react-icons/fa6";
 export default function NavbarFooter() {
   return (
     <Box

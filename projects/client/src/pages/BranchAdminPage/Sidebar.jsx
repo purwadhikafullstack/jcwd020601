@@ -1,4 +1,3 @@
-import { useState } from "react";
 import logo from "../../assets/images/gramedia-icon-2.png";
 import {
   Box,
@@ -8,14 +7,7 @@ import {
   Link,
   Image,
 } from "@chakra-ui/react";
-import { AiOutlineUsergroupAdd } from "react-icons/ai";
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-} from "react-icons/fi";
+import { FiHome } from "react-icons/fi";
 import { TbDiscount } from "react-icons/tb";
 import { BiArchiveIn } from "react-icons/bi";
 import { GrTransaction } from "react-icons/gr";
@@ -45,7 +37,6 @@ const SidebarContent = (props) => {
     <Box
       bg={useColorModeValue("white", "gray.900")}
       display={{ base: "none", lg: "block" }}
-      // bgColor={"red.100"}
       borderRight="1px"
       borderRightColor={useColorModeValue("gray.200", "gray.700")}
       w={60}
