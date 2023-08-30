@@ -5,17 +5,6 @@ const moment = require("moment");
 const { cartServices, stockServices } = require("../services");
 
 const cartController = {
-  getAll: async (req, res) => {
-    try {
-      const Cart = cartServices.getAll();
-      return res.send(Cart);
-    } catch (err) {
-      console.log(err.message);
-      res.status(500).send({
-        message: err.message,
-      });
-    }
-  },
   getQty: async (req, res) => {
     try {
       const { UserId } = req.body;
