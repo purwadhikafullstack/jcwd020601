@@ -6,7 +6,7 @@ const router = express.Router();
 const orderController = require("../controllers").orderController;
 //get
 
-router.get("/", orderController.getAll);
+// router.get("/", orderController.getAll);
 router.get("/totalsales/week", orderController.getTotalSalesOnLastWeek);
 router.get("/sales", orderController.getSalesOnTime);
 router.get("/sales/:BranchId", orderController.getSalesFromBranchIdOnTime);
@@ -23,8 +23,6 @@ router.get(
 
 router.get("/pending/:UserId", orderController.getPendingByUserId);
 router.get("/history/:UserId", orderController.getHistoryByUserId);
-
-router.get("/:id", orderController.getByUserId);
 
 router.post("/branch", orderController.getBranchOrder);
 router.post("/filter", orderController.getByFilter);

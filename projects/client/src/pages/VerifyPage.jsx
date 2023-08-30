@@ -1,8 +1,8 @@
 import { Center, Flex, Button } from "@chakra-ui/react";
-import axios, { Axios } from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { api } from "../api/api";
 
 export default function VerifyEmail() {
   const location = useLocation();
@@ -10,8 +10,8 @@ export default function VerifyEmail() {
   const [token, setToken] = useState();
 
   async function fetchUser(token) {
-    await axios
-      .get("http://localhost:2000/auth/v3?token=" + token, {
+    await api()
+      .get("auth/v3?token=" + token, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -25,8 +25,8 @@ export default function VerifyEmail() {
   }
 
   async function Verify() {
-    await axios
-      .get("http://localhost:2000/auth/token/verifyemail?token=" + token, {
+    await api()
+      .get("auth/token/verifyemail?token=" + token, {
         user,
       })
       .then((res) => {

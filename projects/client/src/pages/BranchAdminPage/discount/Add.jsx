@@ -60,12 +60,15 @@ export default function Add({ getData, token }) {
       setTimeout(getData, 1000);
     },
   });
-
-  console.log(formik.values);
   return (
     <>
-      <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">
-        Add Discount
+      <Button
+        onClick={onOpen}
+        leftIcon={<GrFormAdd />}
+        variant="outline"
+        size={"lg"}
+      >
+        <Text display={{ base: "none", lg: "block" }}>Add Discount</Text>
       </Button>
       <Modal
         onClose={onClose}

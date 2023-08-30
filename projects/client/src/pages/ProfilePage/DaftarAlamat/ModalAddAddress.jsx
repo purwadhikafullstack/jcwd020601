@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
 import { api } from "../../../api/api";
-import axios from "axios";
 
 export default function ModalAddAddress(props) {
   useEffect(() => {
     const fetchData = async () => {
-      const data = await axios
-        .get("http://localhost:2000/province")
+      const data = await api()
+        .get("/province")
         .then((res) => {
+          console.log(res);
           props.setProvinces(res.data.result);
         });
     };

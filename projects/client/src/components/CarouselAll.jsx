@@ -4,15 +4,9 @@ import {
   Card,
   CardBody,
   Image,
-  Stack,
-  Heading,
   Text,
-  CardFooter,
-  ButtonGroup,
-  Button,
   Divider,
   useMediaQuery,
-  Icon,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
@@ -20,6 +14,7 @@ import { useSelector } from "react-redux";
 import { BsChevronDown, BsCart } from "react-icons/bs";
 import { Link } from "react-router-dom";
 export default function CarouselAll() {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const [large] = useMediaQuery("(min-width: 1280px)");
   let t = localStorage.getItem("auth");
   const orderSelector = useSelector((state) => state.login.order);
@@ -37,8 +32,11 @@ export default function CarouselAll() {
   useEffect(() => {
     fetchProduct();
   }, [token, orderSelector.BranchId]);
-  console.log(value);
 
+  const percent = (a, b) => {
+    let result = (a / 100) * b;
+    return result;
+  };
   return (
     <Flex
       justify={"center"}
@@ -182,7 +180,7 @@ export default function CarouselAll() {
                       <></>
                     )}
                     <Image
-                      src={val.Book?.book_url}
+                      src={IMG + val.Book?.book_url}
                       alt="Green double couch with wooden legs"
                       borderRadius="lg"
                       w={{
@@ -215,9 +213,27 @@ export default function CarouselAll() {
                         <>
                           {val.Discount?.isPercent ? (
                             <>
-                              <Text fontSize="xl">
-                                Rp.{Intl.NumberFormat().format(val.Book?.price)}
-                              </Text>
+                              <Box gap={3} display={"flex"} flexDir={"column"}>
+                                <Text
+                                  fontSize="md"
+                                  my={0}
+                                  as={"del"}
+                                  color={"blackAlpha.500"}
+                                >
+                                  Rp.
+                                  {Intl.NumberFormat().format(val.Book?.price)}
+                                </Text>
+                                <Text fontSize="xl">
+                                  Rp.
+                                  {Intl.NumberFormat().format(
+                                    val.Book?.price -
+                                      percent(
+                                        val.Discount?.discount,
+                                        val.Book?.price
+                                      )
+                                  )}
+                                </Text>
+                              </Box>
                             </>
                           ) : (
                             <>

@@ -1,55 +1,65 @@
 import {
   Box,
   Center,
-  Card,
-  CardBody,
-  CardFooter,
-  Image,
   Text,
   Spinner,
-  Flex,
-  Button,
-  ButtonGroup,
   useDisclosure,
-  List,
-  ListItem,
-  Input,
   Select,
   Heading,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { MdCheckCircle, MdSettings } from "react-icons/md";
 import { api } from "../api/api";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import TooFarModal from "./TooFarModal";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import ReactPaginate from "react-paginate";
+import "../App.css";
+import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
+import ValueFilterBook from "./valueFilterBook";
 
 export default function FilterBook() {
+  const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
+  const quantitySelector = useSelector((state) => state.login.qty);
+  const dispatch = useDispatch();
   let t = localStorage.getItem("auth");
   const toast = useToast();
   const nav = useNavigate();
+  const { categoryId } = useParams();
   const tooFarModal = useDisclosure();
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(8);
+  const [rows, setRows] = useState(0);
+  const [pages, setPages] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [category, setCategory] = useState([]);
   const [price, setPrice] = useState("");
-  const [data, setData] = useState(null);
+  const [data, setData] = useState(parseInt(categoryId));
   async function fetchProduct() {
     try {
       setIsLoading(true);
-      let url = `/stock/price?price=${price}&place=${orderSelector.BranchId}`;
-      if (data !== null) {
-        url += `&category=${data}`;
+
+      if (categoryId) {
+        let url = `/stock/price?price=${price}&place=${orderSelector.BranchId}&category=${data}&page=${page}&limit=${limit}`;
+        const response = await api().get(url);
+
+        setValue(response.data.Stock);
+        setPage(response.data.page);
+        setRows(response.data.totalRows);
+        setPages(response.data.totalPage);
+      } else {
+        let url = `/stock/price?price=${price}&place=${orderSelector.BranchId}&page=${page}&limit=${limit}`;
+
+        const response = await api().get(url);
+        setValue(response.data.Stock);
+        setPage(response.data.page);
+        setRows(response.data.totalRows);
+        setPages(response.data.totalPage);
       }
 
-      const response = await api().get(url);
-      console.log(response);
-      setValue(response.data);
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -58,17 +68,28 @@ export default function FilterBook() {
     }
   }
   useEffect(() => {
+    if (categoryId) {
+      setData(parseInt(categoryId));
+    }
+  }, [categoryId, data, page]);
+
+  useEffect(() => {
     fetchProduct();
-    // fetchCategori();
-  }, [price, data]);
+  }, [price, data, categoryId, page]);
 
   async function add(idx) {
     try {
       if (userSelector.username) {
-        await api.post("cart/v1", {
+        await api().post("cart/v1", {
           qty: 1,
           UserId: userSelector.id,
           StockId: value[idx].id,
+        });
+        dispatch({
+          type: "qty",
+          payload: {
+            quantity: quantitySelector.quantity + 1,
+          },
         });
       } else {
         Swal.fire("You need to login first?", "", "question");
@@ -88,9 +109,16 @@ export default function FilterBook() {
       console.error(error);
     }
   }
+
   const onChangeCategory = (e) => {
-    const value = e.target.value;
-    setData(value);
+    setData(parseInt(e));
+    // setPage(0);
+    nav(`/products/filter/${parseInt(e)}`);
+    if (e == "") {
+      setData(null);
+      // setPage(0);
+      nav(`/products/filter`);
+    }
   };
   const fetchCategori = async () => {
     let response = await api().get(`/category`);
@@ -100,12 +128,19 @@ export default function FilterBook() {
     fetchCategori();
   }, []);
 
+  const changePage = ({ selected }) => {
+    setPage(selected);
+  };
+
   const onChange = (e) => {
     const value = e.target.value;
     setPrice(value);
   };
-  console.log(data);
-  console.log(price);
+  const percent = (a, b) => {
+    let result = (a / 100) * b;
+    return result;
+  };
+
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>
@@ -165,7 +200,7 @@ export default function FilterBook() {
                   Kategori
                 </Heading>
                 <Select
-                  onChange={onChangeCategory}
+                  onChange={(e) => onChangeCategory(e.target.value)}
                   placeholder="Pilih Kategori"
                   value={data}
                   w={"200px"}
@@ -231,175 +266,57 @@ export default function FilterBook() {
                 />
               </Box>
             ) : (
-              <>
-                {value.map((val, idx) => (
-                  <Card
-                    key={idx}
-                    w={{ base: "250px", sm: "250px", md: "250px", lg: "200px" }}
-                    h={{ base: "520px", lg: "440px" }}
-                  >
-                    <CardBody>
-                      <Link
-                        to={`/products/detail/${val.id}`}
-                        cursor={"pointer"}
-                      >
-                        <Box>
-                          {val.Discount?.discount ? (
-                            <>
-                              {val.Discount?.isPercent ? (
-                                <>
-                                  <Box
-                                    w={14}
-                                    h={8}
-                                    position={"absolute"}
-                                    left={{
-                                      base: "195px",
-                                      md: "195px",
-                                      lg: "145px",
-                                    }}
-                                    borderTopRightRadius={"5px"}
-                                    top={"0px"}
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    bgColor={"blue.100"}
-                                  >
-                                    <Text color={"blue.900"}>
-                                      -{val.Discount?.discount}%
-                                    </Text>
-                                  </Box>
-                                </>
-                              ) : (
-                                <>
-                                  <Box
-                                    w={20}
-                                    h={8}
-                                    position={"absolute"}
-                                    left={{
-                                      base: "170px",
-                                      md: "170px",
-                                      lg: "122px",
-                                    }}
-                                    borderTopRightRadius={"5px"}
-                                    top={"0px"}
-                                    display="flex"
-                                    alignItems="center"
-                                    justifyContent="center"
-                                    bgColor={"blue.100"}
-                                  >
-                                    <Text fontSize="md">
-                                      {Intl.NumberFormat().format(
-                                        "-" + val.Discount?.discount
-                                      )}
-                                    </Text>
-                                  </Box>
-                                </>
-                              )}
-                            </>
-                          ) : (
-                            <></>
-                          )}
-                          <Image
-                            src={val.Book?.book_url}
-                            alt=""
-                            borderRadius="lg"
-                            w={{
-                              base: "240px",
-                              sm: "220px",
-                              md: "200px",
-                              lg: "160px",
-                            }}
-                            h={{
-                              base: "240px",
-                              sm: "220px",
-                              md: "200px",
-                              lg: "160px",
-                            }}
-                          />
-                        </Box>
-                        <Flex flexDir={"column"} mt={5} gap={3}>
-                          <Text color="#4A5568" as={"i"}>
-                            {val.Book?.author.length > 15
-                              ? val.Book?.author.slice(0, 15) + "..."
-                              : val.Book?.author}
-                          </Text>
-                          <Text fontSize="lg">
-                            {val.Book?.title.length > 15
-                              ? val.Book?.title.slice(0, 15) + "..."
-                              : val.Book?.title}
-                          </Text>
-                          <Text fontSize="xl" color="blue.600">
-                            {val.Discount?.discount ? (
-                              <>
-                                {val.Discount?.isPercent ? (
-                                  <>
-                                    <Text fontSize="xl">
-                                      Rp.
-                                      {Intl.NumberFormat().format(
-                                        val.Book?.price
-                                      )}
-                                    </Text>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Box
-                                      gap={2}
-                                      display={"flex"}
-                                      flexDir={"column"}
-                                    >
-                                      <Text
-                                        fontSize="md"
-                                        my={0}
-                                        as={"del"}
-                                        color={"blackAlpha.500"}
-                                      >
-                                        Rp.{" "}
-                                        {Intl.NumberFormat().format(
-                                          val.Book?.price
-                                        )}
-                                      </Text>
-                                      <Text fontSize="xl">
-                                        Rp.{" "}
-                                        {Intl.NumberFormat().format(
-                                          val.Book?.price -
-                                            val.Discount?.discount
-                                        )}
-                                      </Text>
-                                    </Box>
-                                  </>
-                                )}
-                              </>
-                            ) : (
-                              <>
-                                <Text fontSize="xl">
-                                  Rp.{" "}
-                                  {Intl.NumberFormat().format(val.Book?.price)}
-                                </Text>
-                              </>
-                            )}
-                          </Text>
-                        </Flex>
-                      </Link>
-                    </CardBody>
-                    <CardFooter>
-                      <ButtonGroup justifyContent={"center"}>
-                        <Button
-                          variant="solid"
-                          colorScheme="blue"
-                          onClick={
-                            orderSelector.TooFar
-                              ? () => tooFarModal.onOpen()
-                              : () => add(idx)
-                          }
-                        >
-                          Add to cart
-                        </Button>
-                      </ButtonGroup>
-                    </CardFooter>
-                    <TooFarModal tooFarModal={tooFarModal} />
-                  </Card>
-                ))}
-              </>
+              <Box
+                display={"flex"}
+                flexDir={"column"}
+                gap={5}
+                w={"900px"}
+                justifyContent={{
+                  base: "center",
+                  sm: "center",
+                  md: "center",
+                  lg: "center",
+                }}
+              >
+                <Box
+                  display={"flex"}
+                  flexWrap={"wrap"}
+                  gap={5}
+                  justifyContent={{
+                    base: "center",
+                    sm: "center",
+                    md: "center",
+                    lg: "flex-start",
+                  }}
+                >
+                  {value.map((val, idx) => (
+                    <ValueFilterBook
+                      val={val}
+                      idx={idx}
+                      add={add}
+                      percent={percent}
+                    />
+                  ))}
+                </Box>
+                <Text>
+                  Total Data: {rows} Page: {rows ? page + 1 : 0} of {pages}
+                </Text>
+                <ReactPaginate
+                  previousLabel={"< Prev"}
+                  nextLabel={"Next >"}
+                  pageCount={pages}
+                  onPageChange={changePage}
+                  breakLabel="..."
+                  containerClassName="pagination"
+                  pageLinkClassName="page-num"
+                  renderOnZeroPageCount={null}
+                  previousLinkClassName="page-num"
+                  nextLinkClassName="page-num"
+                  activeLinkClassName="active"
+                  pageRangeDisplayed={3}
+                  initialPage={page}
+                />
+              </Box>
             )}
           </Box>
         </Box>

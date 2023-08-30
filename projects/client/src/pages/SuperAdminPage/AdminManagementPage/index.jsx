@@ -23,7 +23,8 @@ export default function SuperAdminPageBranchAdmin() {
       ...filter,
       sort,
     });
-    setPage(result.data.page);
+    console.log(page);
+    console.log(result.data);
     setRows(result.data.totalRows);
     setPages(result.data.totalPage);
     setAdmins(result.data.Admin);
@@ -37,7 +38,10 @@ export default function SuperAdminPageBranchAdmin() {
     setAdmins(result.data.Admin);
   }
   useEffect(() => {
+    console.log("sad");
+    console.log(filter);
     if (filter) {
+      console.log("saldsa");
       submitFilter();
     } else {
       getAllAdminBranch();
@@ -70,7 +74,9 @@ export default function SuperAdminPageBranchAdmin() {
                       modalFilter={modalFilter}
                       submitFilter={submitFilter}
                       pages={pages}
+                      setPages={setPages}
                       page={page}
+                      setPage={setPage}
                       changePage={changePage}
                       admins={admins}
                       setAdmins={setAdmins}

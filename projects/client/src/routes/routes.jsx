@@ -84,6 +84,14 @@ const routes = [
     }
   ></Route>,
   <Route
+    path="/products/filter/:categoryId"
+    element={
+      <ProtectedPage>
+        <FIlterPage />
+      </ProtectedPage>
+    }
+  ></Route>,
+  <Route
     path="/products/detail/:id"
     element={
       <ProtectedPage>

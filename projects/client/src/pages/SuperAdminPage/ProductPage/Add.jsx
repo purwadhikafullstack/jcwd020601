@@ -32,7 +32,6 @@ export default function Add({ getData }) {
   const inputFileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [image, setImage] = useState(icon);
-  // const [diskon, setDiskon] = useState([]);
   const [category, setCategory] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const formik = useFormik({
@@ -49,7 +48,6 @@ export default function Add({ getData }) {
       dimension: "",
       price: "",
       rating: "",
-      // DiscountId: 1,
       CategoryId: null,
     },
     validationSchema: Yup.object({
@@ -96,7 +94,6 @@ export default function Add({ getData }) {
       formData.append("dimension", values.dimension);
       formData.append("price", values.price);
       formData.append("rating", values.rating);
-      // formData.append("DiscountId", values.DiscountId);
       formData.append("CategoryId", values.CategoryId);
       await api().post("/book/v1", formData, {
         headers: {
@@ -106,6 +103,7 @@ export default function Add({ getData }) {
       onClose();
       resetForm({ values: "" });
       setSelectedFile(null);
+      setImage(icon);
       Swal.fire("Good job!", "Your data has been Added.", "success");
       setTimeout(getData, 1000);
     },
@@ -113,15 +111,11 @@ export default function Add({ getData }) {
   const fetchCategory = async () => {
     let response = await api().get("/category");
     setCategory(response.data.result);
-    console.log(response);
   };
 
   useEffect(() => {
     fetchCategory();
   }, [token]);
-  console.log(category);
-
-  console.log(token);
   return (
     <>
       <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">
@@ -294,23 +288,12 @@ export default function Add({ getData }) {
                     inputFileRef.current.click();
                   }}
                 />
-                {/* )} */}
                 <Text color={"red.800"}>{formik.errors.book_url}</Text>
               </Box>
             </ModalBody>
             <ModalFooter>
               <Box gap={5} display={"flex"} my={5}>
                 <Button type="submit">Submit</Button>
-                {/* <Button
-									colorScheme="blue"
-									mr={3}
-									onClick={(e) => {
-										onClose();
-										getData();
-									}}
-								>
-									Close
-								</Button> */}
               </Box>
             </ModalFooter>
           </ModalContent>

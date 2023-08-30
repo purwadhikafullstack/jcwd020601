@@ -16,7 +16,6 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, ChevronDownIcon } from "@chakra-ui/icons";
-// import { , useNavigate } from "react-router-dom";
 import { BsChevronDown, BsCart } from "react-icons/bs";
 import { GoSearch } from "react-icons/go";
 import { api } from "../api/api";
@@ -24,12 +23,21 @@ import logo from "../assets/images/gramedia-icon-2.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import ModalSelectAddress from "./Navbar/ModalSelectAddress";
 
-import ModalSelectAddress from "../pages/ProfilePage/ModalSelectAddress";
-export default function MobileNav({ category }) {
+export default function MobileNav({
+  category,
+  userAddress,
+  setUserAddress,
+  userAddresses,
+  setuserAddresses,
+  modalSelectAddress,
+  location,
+}) {
   const nav = useNavigate();
+  const dispatch = useDispatch();
   const { isOpen, onToggle } = useDisclosure();
-
+  const userSelector = useSelector((state) => state.login.auth);
   const [result, setResult] = useState([]);
   const [input, setInput] = useState("");
   const orderSelector = useSelector((state) => state.login.order);
@@ -40,18 +48,33 @@ export default function MobileNav({ category }) {
       href: "#",
     },
     {
-      label: "Keranjang",
-      href: "/cart",
+      label: userSelector.address
+        ? "Location / Change Location (" + userSelector?.address?.city + ")"
+        : "Location / Change Location",
+      onOpen: modalSelectAddress.onOpen,
+      display: location == "profile" || location == "orders" ? "none" : "block",
+    },
+
+    {
+      label: "My Orders",
+      href: `/orders`,
     },
     {
-      label: "Masuk",
-      href: `/login`,
+      label: "My Profile",
+      href: `/profile`,
     },
     {
+      label: userSelector.email ? "Logout" : "Login",
+      href: "/login",
+      onClick: "logout",
+    },
+    {
+      display: userSelector.email ? "none" : "block",
       label: "Registrasi",
       href: `/Register`,
     },
   ];
+
   const fetchData = async (value) => {
     try {
       const response = await api().get(
@@ -120,7 +143,11 @@ export default function MobileNav({ category }) {
                 width={"100%"}
               >
                 {NAV_ITEMS.map((navItem) => (
-                  <MobileNavItem key={navItem.label} {...navItem} />
+                  <MobileNavItem
+                    location={location}
+                    key={navItem.label}
+                    {...navItem}
+                  />
                 ))}
               </Stack>
             </Collapse>
@@ -162,6 +189,7 @@ export default function MobileNav({ category }) {
           </Box>
         </Box>
       </Box>
+
       <Box
         display={"flex"}
         justifyContent={"space-evenly"}
@@ -239,11 +267,39 @@ export default function MobileNav({ category }) {
   );
 }
 
-const MobileNavItem = ({ label, children, href }) => {
+const MobileNavItem = ({
+  label,
+  children,
+  href,
+  display,
+  onOpen,
+  onClick,
+  blocked,
+  location,
+}) => {
+  const dispatch = useDispatch();
+  const nav = useNavigate();
+  async function logout() {
+    localStorage.removeItem("auth");
+    localStorage.removeItem("address");
+    localStorage.removeItem("Latitude");
+    localStorage.removeItem("Longitude");
+    dispatch({
+      type: "logout",
+    });
+    nav("/login");
+    return;
+  }
+  const userSelector = useSelector((state) => state.login.auth);
   const { isOpen, onToggle } = useDisclosure();
   return (
-    <Stack spacing={4} onClick={children && onToggle}>
+    <Stack spacing={4} onClick={children && onToggle} display={display}>
       <Flex
+        display={
+          blocked && (location == "profile" || location == "orders")
+            ? "none"
+            : "block"
+        }
         py={2}
         as={Link}
         justify={"space-between"}
@@ -251,14 +307,21 @@ const MobileNavItem = ({ label, children, href }) => {
         _hover={{
           textDecoration: "none",
         }}
+        onClick={
+          userSelector.email && onClick == "logout"
+            ? logout
+            : onOpen
+            ? onOpen
+            : ""
+        }
       >
-        <Link to={`${href}`}>
-          <Text
+        <Link to={href ? `${href}` : ""}>
+          <Box
             fontWeight={600}
             color={useColorModeValue("gray.600", "gray.200")}
           >
             {label}
-          </Text>
+          </Box>
         </Link>
         {children && (
           <Icon
@@ -269,7 +332,6 @@ const MobileNavItem = ({ label, children, href }) => {
           />
         )}
       </Flex>
-
       <Collapse in={isOpen} animateOpacity style={{ marginTop: "0!important" }}>
         <Stack
           borderStyle={"solid"}
@@ -278,7 +340,11 @@ const MobileNavItem = ({ label, children, href }) => {
         >
           {children &&
             children.map((child) => (
-              <Link key={child.label} py={2} to={`${child.href}`}>
+              <Link
+                key={child.label}
+                py={2}
+                to={`/products/filter/${child.id}`}
+              >
                 {child.category}
               </Link>
             ))}

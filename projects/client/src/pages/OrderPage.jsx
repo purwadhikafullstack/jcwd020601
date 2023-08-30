@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Icon,
-  Image,
-  Input,
-} from "@chakra-ui/react";
+import { Box, Container, Flex, Icon, Image, Input } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import { AiOutlineBank } from "react-icons/ai";
 import { FcAddImage } from "react-icons/fc";
@@ -15,9 +7,9 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Loading from "../components/Loading";
 import NotFoundPage from "./NotFoundPage";
-import ModalCancel from "../components/ModalCancel";
-import ModalConfirm from "../components/ModalConfirm";
-// import { useSelector } from "react-redux";
+import OrderStatus from "../components/OrderStatus";
+import OrderCard from "../components/OrderCard";
+import OrderAction from "../components/OrderAction";
 
 export default function OrderPage() {
   const [order, setOrder] = useState();
@@ -28,7 +20,6 @@ export default function OrderPage() {
   const locatio = useLocation();
   const location = locatio.pathname.split("/")[2];
   const token = JSON.parse(localStorage.getItem("auth"));
-  // const [selectFile, setSelectFile] = useState();
 
   // GET
   async function fetch() {
@@ -54,7 +45,7 @@ export default function OrderPage() {
       const formData = new FormData();
       formData.append("paymentImg", file);
       formData.append("id", order[0].OrderId);
-      const pay = await api().post("/order", formData);
+      await api().post("/order", formData);
 
       await api().patch("/order/v2/userstatus", {
         OrderId: order[0].OrderId,
@@ -75,102 +66,16 @@ export default function OrderPage() {
     <Container maxW={"size.lg"}>
       <Navbar></Navbar>
       <Box>
-        <Flex alignItems={"center"}>
-          <Box
-            // onClick={() => console.log(order)}
-            padding={"1rem 2rem"}
-            fontSize={"2xl"}
-            fontWeight={"semibold"}
-          >
-            {order ? `Invoice Code: ${order[0].Order.invoiceCode}` : null}
-          </Box>
-          <Box
-            padding={"0.2rem"}
-            border={"3px solid"}
-            boxShadow={
-              "1px 1px 0px 0px, 2px 2px 0px 0px, 3px 3px 0px 0px, 4px 4px 0px 0px, 5px 5px 0px 0px"
-            }
-            ringColor={"red"}
-            fontWeight={"semibold"}
-            fontSize={"1.3rem"}
-            color={
-              status === "process" || status === "sending"
-                ? "green.500"
-                : status === "delivery confirm"
-                ? "blue.500"
-                : status === "waiting for payment confirmation"
-                ? "yellow.500"
-                : status === "canceled"
-                ? "red.500"
-                : "gray.900"
-            }
-          >
-            {status
-              ?.toLowerCase()
-              .split(" ")
-              .map(function (word) {
-                return word.charAt(0).toUpperCase() + word.slice(1);
-              })
-              .join(" ")}
-          </Box>
-        </Flex>
+        <OrderStatus status={status} order={order} />
+        {/* loading */}
         {isLoading ? (
           <Loading />
         ) : order ? (
-          <Flex>
+          <Flex flexDir={{ base: "column", md: "row" }}>
+            <OrderCard order={order} />
+            {/* --- */}
             <Flex
-              width={"65%"}
-              flexDir={"column"}
-              gap={"1rem"}
-              padding={" 1rem 2rem"}
-            >
-              <Flex
-                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-                padding={"1rem 2rem"}
-                borderRadius={"0.7rem"}
-                flexDir={"column"}
-                justifyContent={"center"}
-                gap={"1rem"}
-              >
-                {order?.map((val) => {
-                  return (
-                    <Flex
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                      padding={"1rem 2rem"}
-                    >
-                      <Image
-                        maxHeight={"100px"}
-                        src={val.Stock.Book.book_url}
-                      ></Image>
-                      <Flex
-                        w={"45%"}
-                        flexDir={"column"}
-                        justifyContent={"space-evenly"}
-                      >
-                        <Box>{val.Stock.Book.title}</Box>
-                        <Box>
-                          {val.Stock.Book.author} -{" "}
-                          {val.Stock.Book.publish_date.slice(0, 4)}
-                        </Box>
-                        <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
-                        <Box fontWeight={"semibold"}>{`X ${val.quantity}`}</Box>
-                      </Flex>
-                      <Flex
-                        flexDir={"column"}
-                        gap={"8px"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                      >
-                        {`Rp ${val.price.toLocaleString("id-ID")},-`}
-                      </Flex>
-                    </Flex>
-                  );
-                })}
-              </Flex>
-            </Flex>
-            <Flex
-              width={"35%"}
+              width={{ base: "22rem", md: "35%" }}
               padding={"1rem 2rem"}
               flexDir={"column"}
               gap={"1rem"}
@@ -220,7 +125,7 @@ export default function OrderPage() {
                     // height={"200px"}
                     maxH={"200px"}
                     // onClick={() => inputFileRef.current.click()}
-                    src={process.env.REACT_APP_API_BASE_URL + link}
+                    src={process.env.REACT_APP_API_IMAGE_URL + link}
                   ></Image>
                 ) : (
                   <Icon
@@ -237,89 +142,13 @@ export default function OrderPage() {
                   onChange={handleFile}
                 ></Input>
               </Flex>
-              <Flex
-                flexDir={"column"}
-                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-                borderRadius={"0.7rem"}
-              >
-                <Flex
-                  flexDir={"column"}
-                  // justifyContent={"center"}
-                  alignItems={"center"}
-                  padding={"2rem"}
-                  gap={"1rem"}
-                  fontWeight={"semibold"}
-                >
-                  {status === "delivery confirm" || status === "canceled" ? (
-                    <Box
-                      ringColor={"red"}
-                      fontWeight={"semibold"}
-                      fontSize={"1.2rem"}
-                    >
-                      Order Status: {status}
-                    </Box>
-                  ) : status === "process" ? (
-                    <>
-                      <Box
-                        ringColor={"red"}
-                        fontWeight={"semibold"}
-                        fontSize={"1.2rem"}
-                      >
-                        Order Status: {status}
-                      </Box>
-                      <ModalCancel
-                        fetch={fetch}
-                        id={order[0].OrderId}
-                      ></ModalCancel>
-                      {/*  */}
-                    </>
-                  ) : status === "sending" ? (
-                    <>
-                      <Box
-                        ringColor={"red"}
-                        fontWeight={"semibold"}
-                        fontSize={"1.2rem"}
-                      >
-                        Order Status: {status}
-                      </Box>
-                      <ModalConfirm
-                        fetch={fetch}
-                        id={order[0].OrderId}
-                      ></ModalConfirm>
-                      {/*  */}
-                    </>
-                  ) : (
-                    <>
-                      <Box
-                        ringColor={"red"}
-                        fontWeight={"semibold"}
-                        fontSize={"1.2rem"}
-                      >
-                        Order Status: {status}
-                      </Box>
-                      <Button
-                        colorScheme={"blue"}
-                        borderRadius={"1.5rem"}
-                        width={"100%"}
-                        onClick={() => inputFileRef.current.click()}
-                      >
-                        Upload Payment Proof
-                      </Button>
-                      {/*  */}
-                      <ModalConfirm
-                        fetch={fetch}
-                        id={order[0].OrderId}
-                      ></ModalConfirm>
-                      {/*  */}
-                      <ModalCancel
-                        fetch={fetch}
-                        id={order[0].OrderId}
-                      ></ModalCancel>
-                      {/*  */}
-                    </>
-                  )}
-                </Flex>
-              </Flex>
+
+              {/* Action */}
+              <OrderAction
+                inputFileRef={inputFileRef}
+                status={status}
+                order={order}
+              />
             </Flex>
           </Flex>
         ) : (

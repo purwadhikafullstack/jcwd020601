@@ -11,6 +11,7 @@ import {
   Th,
   Td,
   Flex,
+  Text,
 } from "@chakra-ui/react";
 import ReactPaginate from "react-paginate";
 import { BiSearchAlt } from "react-icons/bi";
@@ -40,7 +41,6 @@ export default function Discount() {
     setPage(response.data.page);
     setRows(response.data.totalRows);
     setPages(response.data.totalPage);
-    // console.log(response.data);
   }
 
   useEffect(() => {
@@ -74,25 +74,30 @@ export default function Discount() {
   return (
     <>
       <Box
-        marginLeft={60}
+        marginLeft={{ base: 0, lg: 60 }}
         h={"80vh"}
         // bgColor={"red"}
-        overflow={"auto"}
+        overflow={{ base: "scroll", lg: "auto" }}
       >
-        <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
+        <Flex
+          flexDir={"column"}
+          ml={{ base: 0, lg: "10px" }}
+          px={{ base: 0, lg: "10px" }}
+          py={{ base: 0, lg: "10px" }}
+        >
           <Greetings />
-          <TableContainer padding={10}>
+          <TableContainer padding={{ base: 2, lg: 10 }}>
             <Box
               display={"flex"}
               alignItems={"center"}
               justifyContent={"space-between"}
               px={5}
             >
-              <Box display={"flex"} py={3} gap={3}>
+              <Box display={"flex"} py={3} pr={3} gap={3}>
                 <Input
                   placeholder="Search Discount"
                   variant={"outline"}
-                  w={"30em"}
+                  w={{ base: "15em", lg: "30em" }}
                   size="lg"
                   onChange={inputSearch}
                   value={query}
@@ -103,7 +108,7 @@ export default function Discount() {
                   variant="outline"
                   size={"lg"}
                 >
-                  Search
+                  <Text display={{ base: "none", lg: "block" }}>Search</Text>
                 </Button>
                 <Button
                   leftIcon={<GrPowerReset />}
@@ -111,13 +116,17 @@ export default function Discount() {
                   variant="outline"
                   size={"lg"}
                 >
-                  Reset
+                  <Text display={{ base: "none", lg: "block" }}>Reset</Text>
                 </Button>
               </Box>
               <Add getData={fetchDiscount} />
             </Box>
             <Table variant="simple">
-              <TableCaption my={5}>
+              <TableCaption
+                my={5}
+                w={{ base: "27em", lg: "100%" }}
+                textAlign="center"
+              >
                 Total Rows: {rows} Page: {rows ? page + 1 : 0} of {pages}
               </TableCaption>
               <Thead>
@@ -125,7 +134,6 @@ export default function Discount() {
                   <Th fontSize={18}>No</Th>
                   <Th fontSize={18}>Nama</Th>
                   <Th fontSize={18}>Diskon</Th>
-                  {/* <Th fontSize={18}>Persen</Th> */}
                   <Th fontSize={18}>Mulai</Th>
                   <Th fontSize={18}>Berakhir</Th>
                 </Tr>

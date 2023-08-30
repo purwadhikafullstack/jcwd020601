@@ -10,7 +10,6 @@ import {
   Button,
   Flex,
   Icon,
-  Image,
   Table,
   Thead,
   Tbody,
@@ -18,11 +17,10 @@ import {
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { FcImageFile, FcViewDetails } from "react-icons/fc";
+import { FcViewDetails } from "react-icons/fc";
 import { api } from "../../../api/api";
 
 export default function ModalDetails(props) {
@@ -35,9 +33,6 @@ export default function ModalDetails(props) {
     });
     return setData(result.data);
   }
-
-  // console.log(data);
-  // console.log(props.val.id);
 
   useEffect(() => {
     if (isOpen) {
@@ -70,7 +65,6 @@ export default function ModalDetails(props) {
                     <Th>No.</Th>
                     <Th>Buku</Th>
                     <Th>Courier</Th>
-                    {/* <Th>Shipping Cost</Th> */}
                     <Th isNumeric>Price</Th>
                     <Th isNumeric>Quantity</Th>
                   </Tr>
@@ -82,7 +76,6 @@ export default function ModalDetails(props) {
                         <Td>{idx + 1}</Td>
                         <Td>{val.Stock.Book.title}</Td>
                         <Td>{val.Order.courier}</Td>
-                        {/* <Td>{val.Order.shipping}</Td> */}
                         <Td isNumeric>{val.Stock.Book.price}</Td>
                         <Td isNumeric>{val.quantity}</Td>
                       </Tr>
@@ -91,7 +84,6 @@ export default function ModalDetails(props) {
                 </Tbody>
                 <Tfoot>
                   <Tr>
-                    {/* <Th></Th> */}
                     <Td></Td>
                     <Td isNumeric></Td>
                     <Td isNumeric>Shipping Cost:</Td>
@@ -99,7 +91,6 @@ export default function ModalDetails(props) {
                     <Td isNumeric> </Td>
                   </Tr>
                   <Tr>
-                    {/* <Th></Th> */}
                     <Td></Td>
                     <Td isNumeric></Td>
                     <Td isNumeric fontWeight={"semibold"}>

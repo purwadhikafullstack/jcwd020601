@@ -2,22 +2,41 @@ import { Center, Flex } from "@chakra-ui/react";
 
 export default function TabBar(props) {
   return (
-    <Flex mt={"80px"} h={"48px"} borderBottom={"1px #e0e0e0 solid"}>
+    <Flex
+      mt={{
+        base: "30px",
+        sm: "30px",
+        md: "40px",
+        lg: "50px",
+        xl: "70px",
+        "2xl": "80px",
+      }}
+      h={"48px"}
+      borderBottom={"1px #e0e0e0 solid"}
+    >
       <Flex>
         <Center
+          w={{
+            base: "180px",
+            sm: "200px",
+            md: "230px",
+            lg: "270px",
+            xl: "300px",
+            "2xl": "400px",
+          }}
           fontSize={{
-            base: "0.8rem",
+            base: "1rem",
             sm: "1rem",
             md: "1rem",
             lg: "1rem",
             xl: "1.2rem",
-            "2xl": "1.4rem",
+            "2xl": "1.3rem",
           }}
           py={"10px"}
           px={{
-            base: "30px",
-            sm: "40px",
-            md: "60px",
+            base: "40px",
+            sm: "60px",
+            md: "70px",
             lg: "100px",
             xl: "130px",
             "2xl": "170px",
@@ -36,8 +55,16 @@ export default function TabBar(props) {
       </Flex>
       <Flex>
         <Center
+          w={{
+            base: "180px",
+            sm: "200px",
+            md: "230px",
+            lg: "270px",
+            xl: "300px",
+            "2xl": "400px",
+          }}
           fontSize={{
-            base: "0.8rem",
+            base: "1rem",
             sm: "1rem",
             md: "1rem",
             lg: "1rem",
@@ -66,7 +93,6 @@ export default function TabBar(props) {
           History
         </Center>
       </Flex>
-      <Flex></Flex>
     </Flex>
   );
 }

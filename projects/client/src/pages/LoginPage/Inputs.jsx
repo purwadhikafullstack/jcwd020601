@@ -26,10 +26,11 @@ export default function Inputs(props) {
           return res.data.message;
         })
         .catch((err) => {
+          console.log(err);
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: err.data.message,
+            text: err.response.data.message,
           });
         });
       if (loggingIn) {
@@ -64,36 +65,32 @@ export default function Inputs(props) {
           .then((res) => res.data)
           .catch((err) => console.log(err));
         if (user.email) {
-          console.log({ token, ...user });
-          console.log(user);
-          if (closestBranch.message) {
-            props.dispatch({
-              type: "login",
-              payload: { token, ...user },
-              address: userMainAddress,
-            });
-            props.dispatch({
-              type: "order",
-              payload: {
-                BranchId: closestBranch.BranchId,
-                AddressId: userMainAddress?.id,
-                TooFar: true,
-              },
-            });
-          } else {
-            props.dispatch({
-              type: "login",
-              payload: { token, ...user },
-              address: userMainAddress,
-            });
-            props.dispatch({
-              type: "order",
-              payload: {
-                BranchId: closestBranch.BranchId,
-                AddressId: userMainAddress?.id,
-              },
-            });
-          }
+          //
+          const qty = await api().post("/cart/qty", {
+            UserId: user?.id,
+          });
+          props.dispatch({
+            type: "qty",
+            payload: {
+              quantity: qty.data.count,
+            },
+          });
+          //
+          props.dispatch({
+            type: "login",
+            payload: { token, ...user },
+            address: userMainAddress,
+            closestBranch,
+          });
+          props.dispatch({
+            type: "order",
+            payload: {
+              BranchId: closestBranch.BranchId,
+              TooFar: closestBranch.TooFar,
+              AddressId: userMainAddress?.id,
+            },
+          });
+
           props.nav("/");
         }
       }

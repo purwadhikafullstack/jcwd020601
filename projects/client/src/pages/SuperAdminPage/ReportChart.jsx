@@ -264,7 +264,7 @@ export default function ReportChart() {
                             type="number"
                             domain={[
                               0,
-                              parseInt(salesChart?.highest.total_sales),
+                              parseInt(salesChart?.highest?.total_sales),
                             ]}
                           />
                           <CartesianGrid strokeDasharray="3 3" />

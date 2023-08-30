@@ -21,7 +21,6 @@ import * as Yup from "yup";
 import { api } from "../../../api/api.js";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 export default function AddAdminButton(props) {
   const phoneRegExp =

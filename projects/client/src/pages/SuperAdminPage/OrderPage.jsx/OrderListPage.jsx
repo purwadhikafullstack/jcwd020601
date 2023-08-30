@@ -24,7 +24,9 @@ import ModalSort from "./ModalSort";
 export default function BranchOrder() {
   const [trans, setTrans] = useState();
   const [filter, setFilter] = useState();
-  const [sort, setSort] = useState();
+  const [sort, setSort] = useState({
+    asc: "ASC",
+  });
   const [filtered, setFiltered] = useState(false);
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(0);
@@ -146,7 +148,7 @@ export default function BranchOrder() {
                     </Td>
                     <Td>
                       <Flex gap={"0.6rem"}>
-                        <ModalPayment val={val} />
+                        <ModalPayment noEdit={true} val={val} />
                         <ModalDetails val={val} />
                       </Flex>
                     </Td>

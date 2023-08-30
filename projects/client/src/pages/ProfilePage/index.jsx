@@ -1,6 +1,5 @@
 import { Center, Flex, useToast } from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import Navbar from "../../components/Navbar";
 import ProfileSidebar from "./ProfileSidebar";
 import YupPassword from "yup-password";
 import * as Yup from "yup";
@@ -13,6 +12,7 @@ import Biodata from "./Biodata";
 import DaftarAlamat from "./DaftarAlamat";
 import ProfileFooter from "./ProfileFooter";
 import { api } from "../../api/api";
+import Navbar from "../../components/Navbar/index";
 export default function ProfilePage() {
   const [userAddresses, setUserAddresses] = useState([]);
   const userSelector = useSelector((state) => state.login.auth);
@@ -72,7 +72,7 @@ export default function ProfilePage() {
                   userSelector={userSelector}
                 />
               ) : (
-                <Flex>djas</Flex>
+                <></>
               )}
             </Flex>
           </Flex>

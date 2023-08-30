@@ -9,22 +9,23 @@ export default function MyOrders(props) {
   const [tab, setTab] = useState("Pending");
   return (
     <>
-      <Flex flexDir={"column"}>
-        <TabBar setTab={setTab} tab={tab} />
-
-        {props.isLoading ? (
-          <Box mt={"50px"}>
-            <Loading />
-          </Box>
-        ) : tab == "Pending" ? (
-          <Pending pending={props.pending} setPending={props.setPending} />
-        ) : tab == "History" ? (
-          <>
-            <History history={props.history} setHistory={props.setHistory} />
-          </>
-        ) : (
-          <></>
-        )}
+      <Flex>
+        <Flex flexDir={"column"}>
+          <TabBar setTab={setTab} tab={tab} />
+          {props.isLoading ? (
+            <Box mt={"50px"}>
+              <Loading />
+            </Box>
+          ) : tab == "Pending" ? (
+            <Pending pending={props.pending} setPending={props.setPending} />
+          ) : tab == "History" ? (
+            <>
+              <History history={props.history} setHistory={props.setHistory} />
+            </>
+          ) : (
+            <></>
+          )}
+        </Flex>
       </Flex>
     </>
   );

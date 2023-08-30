@@ -1,8 +1,6 @@
 import { Button, Center, Flex, Icon, Input, Select } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { AiOutlineClose } from "react-icons/ai";
 import { api } from "../api/api";
-import axios from "axios";
 
 export default function ModalAddAdmin(props) {
   useEffect(() => {
