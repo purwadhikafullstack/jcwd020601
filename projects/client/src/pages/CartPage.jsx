@@ -10,7 +10,7 @@ import {
   Th,
   useToast,
 } from "@chakra-ui/react";
-import Navbar from "../components/Navbar";
+
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CartBooks from "../components/CartBooks";
 import Shipping from "../components/Shipping";
 import AlertOrder from "../components/AlertOrder";
+import Navbar from "../components/Navbar";
 
 export default function CartPage() {
   const toast = useToast();
