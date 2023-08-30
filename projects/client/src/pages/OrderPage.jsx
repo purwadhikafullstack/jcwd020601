@@ -72,7 +72,7 @@ export default function OrderPage() {
   return (
     <>
       <Navbar></Navbar>
-      <Container maxW={"size.lg"}>
+      <Container maxW={"90rem"}>
         <Box>
           <OrderStatus status={status} order={order} />
           {/* loading */}
