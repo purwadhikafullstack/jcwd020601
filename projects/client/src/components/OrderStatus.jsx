@@ -3,8 +3,16 @@ import { Box, Flex } from "@chakra-ui/react";
 export default function OrderStatus(props) {
   const { order, status } = props;
   return (
-    <Flex alignItems={"center"}>
-      <Box padding={"1rem 2rem"} fontSize={"2xl"} fontWeight={"semibold"}>
+    <Flex
+      alignItems={"center"}
+      flexDir={{ base: "column", md: "row" }}
+      padding={{ base: "1rem", md: "none" }}
+    >
+      <Box
+        padding={"1rem 2rem"}
+        fontSize={{ base: "lg", md: "2xl" }}
+        fontWeight={"semibold"}
+      >
         {order ? `Invoice Code: ${order[0].Order.invoiceCode}` : null}
       </Box>
       <Box
@@ -15,7 +23,7 @@ export default function OrderStatus(props) {
         }
         ringColor={"red"}
         fontWeight={"semibold"}
-        fontSize={"1.3rem"}
+        fontSize={{ base: "1rem", md: "1.3rem" }}
         color={
           status === "process" || status === "sending"
             ? "green.500"

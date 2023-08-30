@@ -37,7 +37,11 @@ export default function AuthProvider({ children }) {
         } else if (!auth?.role) {
           console.log("login user");
           console.log(address);
-
+          //
+          const qty = await api().post("/cart/qty", {
+            UserId: auth?.id,
+          });
+          //
           const closestBranch = await api()
             .post(
               "/address/closest",
@@ -64,6 +68,12 @@ export default function AuthProvider({ children }) {
               BranchId: closestBranch.BranchId,
               TooFar: closestBranch.TooFar,
               AddressId: address.id || userMainAddress.id,
+            },
+          });
+          dispatch({
+            type: "qty",
+            payload: {
+              quantity: qty.data.count,
             },
           });
         } else {
