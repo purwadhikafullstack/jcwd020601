@@ -1,5 +1,5 @@
 import { Box, Container, Flex, Icon, Image, Input } from "@chakra-ui/react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar2";
 import { AiOutlineBank } from "react-icons/ai";
 import { FcAddImage } from "react-icons/fc";
 import { api } from "../api/api";
@@ -75,7 +75,6 @@ export default function OrderPage() {
       <Container maxW={"90rem"}>
         <Box>
           <OrderStatus status={status} order={order} />
-          {/* loading */}
           {isLoading ? (
             <Loading />
           ) : order ? (
@@ -130,9 +129,7 @@ export default function OrderPage() {
                   </Box>
                   {link ? (
                     <Image
-                      // height={"200px"}
                       maxH={"200px"}
-                      // onClick={() => inputFileRef.current.click()}
                       src={process.env.REACT_APP_API_IMAGE_URL + link}
                     ></Image>
                   ) : (
@@ -151,7 +148,6 @@ export default function OrderPage() {
                   ></Input>
                 </Flex>
 
-                {/* Action */}
                 <OrderAction
                   inputFileRef={inputFileRef}
                   status={status}

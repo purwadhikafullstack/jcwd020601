@@ -27,7 +27,6 @@ export default function OrderAction(props) {
               Order Status: {status}
             </Box>
             <ModalCancel fetch={fetch} id={order[0].OrderId}></ModalCancel>
-            {/*  */}
           </>
         ) : status === "sending" ? (
           <>
@@ -35,7 +34,6 @@ export default function OrderAction(props) {
               Order Status: {status}
             </Box>
             <ModalConfirm fetch={fetch} id={order[0].OrderId}></ModalConfirm>
-            {/*  */}
           </>
         ) : status === "waiting for payment confirmation" ? (
           <>
@@ -67,9 +65,7 @@ export default function OrderAction(props) {
             >
               Upload Payment Proof
             </Button>
-            {/*  */}
             <ModalCancel fetch={fetch} id={order[0].OrderId}></ModalCancel>
-            {/*  */}
           </>
         )}
       </Flex>

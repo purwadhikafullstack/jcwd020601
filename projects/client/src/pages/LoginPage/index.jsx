@@ -1,15 +1,4 @@
-import {
-  Button,
-  Center,
-  Flex,
-  IconButton,
-  Img,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Box,
-  useToast,
-} from "@chakra-ui/react";
+import { Center, Flex, Img, useToast } from "@chakra-ui/react";
 import logo from "../../assets/images/gramedia-icon-2.png";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
@@ -23,7 +12,6 @@ import Inputs from "./Inputs";
 import Swal from "sweetalert2";
 const client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 export default function LoginPage() {
-  // "417414378341-5iq94ontj89hqcfu7649s67bveqsfagb.apps.googleusercontent.com";
   useEffect(() => {
     /* global google */
     google.accounts.id.initialize({

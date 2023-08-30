@@ -13,9 +13,7 @@ export default function StockProduct() {
           display={"flex"}
           flexDirection={"column"}
           width={"100%"}
-          // position={"absolute"}
           overflow={"hidden"}
-          // zIndex={-10}
         >
           <Navbar />
           <Stock />

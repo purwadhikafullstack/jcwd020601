@@ -33,7 +33,6 @@ export default function OrderCard(props) {
                   process.env.REACT_APP_API_IMAGE_URL + val.Stock.Book.book_url
                 }
               ></Image>
-              {/* <Flex> */}
               <Flex
                 w={{ base: "auto", md: "45%" }}
                 flexDir={"column"}
@@ -48,7 +47,6 @@ export default function OrderCard(props) {
                 <Box fontWeight={"semibold"}>{`X ${val.quantity}`}</Box>
               </Flex>
               <Flex>{`Rp ${val.price.toLocaleString("id-ID")},-`}</Flex>
-              {/* </Flex> */}
             </Flex>
           );
         })}

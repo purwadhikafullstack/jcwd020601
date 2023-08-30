@@ -11,7 +11,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useSelector } from "react-redux";
-
 export default function BookCard() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
   let t = localStorage.getItem("auth");
@@ -19,7 +18,6 @@ export default function BookCard() {
   const [value, setValue] = useState([]);
   const [token, setToken] = useState(JSON.parse(t));
   const [limit, setLimit] = useState(6);
-
   async function fetchProduct() {
     let response = await api().get(
       `/stock?limit=${limit}&place=${orderSelector.BranchId}`

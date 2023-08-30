@@ -12,9 +12,7 @@ import {
   Text,
   Select,
   ModalFooter,
-  NumberInput,
   ModalCloseButton,
-  NumberInputField,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
 import Swal from "sweetalert2";
@@ -26,8 +24,6 @@ import "../../../App.css";
 import { useSelector } from "react-redux";
 
 export default function Add({ getData }) {
-  // { getData, token }
-
   const userSelector = useSelector((state) => state.login.auth);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [scrollBehavior, setScrollBehavior] = useState("inside");
@@ -46,11 +42,7 @@ export default function Add({ getData }) {
       BookId: Yup.number().required("Pilih buku"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api().post("/stock/v1", values, {
-        // headers: {
-        //   Authorization: token,
-        // },
-      });
+      await api().post("/stock/v1", values, {});
       onClose();
       resetForm({ values: "" });
       Swal.fire("Good job!", "Your data stock has been Added.", "success");
@@ -139,7 +131,6 @@ export default function Add({ getData }) {
                     </option>
                   ))}
                 </Select>
-                {/* <Text color={"red.800"}>{formik.errors.BookId}</Text> */}
               </Box>
             </ModalBody>
             <ModalFooter>

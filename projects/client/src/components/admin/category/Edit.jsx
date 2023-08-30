@@ -1,5 +1,4 @@
 import {
-  Box,
   Input,
   Button,
   Modal,
@@ -8,11 +7,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  FormLabel,
   ModalCloseButton,
-  useEditableControls,
-  Flex,
-  Editable,
   Text,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";

@@ -1,6 +1,5 @@
 import { Button, Center, Flex, Icon, useDisclosure } from "@chakra-ui/react";
 import { AiFillApple, AiFillCalendar } from "react-icons/ai";
-import { BiSolidUser } from "react-icons/bi";
 import { FaCartShopping } from "react-icons/fa6";
 import { RxLoop } from "react-icons/rx";
 import { useSelector } from "react-redux";
@@ -14,15 +13,12 @@ import {
   BarChart,
   Legend,
   Bar,
-  ResponsiveContainer,
 } from "recharts";
-import Greetings from "./Greetings";
 import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import Loading from "../../components/Loading";
 import ModalFilterSales from "./ModalFilter";
 import "../../App.css";
-const { nanoid } = require("nanoid");
 
 export default function ReportChart() {
   const [loading, setLoading] = useState(true);
@@ -98,12 +94,7 @@ export default function ReportChart() {
   }, []);
   return (
     <>
-      <Flex
-        bgColor={"#fbfbfb"}
-        py={"10px"}
-        // backgroundColor={"red.100"}
-        marginLeft={{ base: 0, lg: 60 }}
-      >
+      <Flex bgColor={"#fbfbfb"} py={"10px"} marginLeft={{ base: 0, lg: 60 }}>
         <Flex
           ml={"10px"}
           px={"10px"}
@@ -117,19 +108,13 @@ export default function ReportChart() {
             </Center>
           ) : (
             <Flex flexDir={"column"}>
-              <Flex
-                w={"100%"}
-                borderBottom={"2px solid #787875"}
-                pb={"10px"}
-              >
+              <Flex w={"100%"} borderBottom={"2px solid #787875"} pb={"10px"}>
                 <Flex
-                  // alignItems={"center"}
                   alignItems={{ base: "flex-start", lg: "center" }}
                   w={"100%"}
                   flexDir={{ base: "column", lg: "row" }}
                   gap={3}
                   p={{ base: 3, lg: 0 }}
-                  // w={"100%"}
                 >
                   <Flex flexDir={"column"}>
                     <Flex
@@ -170,12 +155,10 @@ export default function ReportChart() {
                       <Flex
                         p={"10px"}
                         boxShadow="0 0 5px #e0e0e0"
-                        // bgColor={"red.100"}
                         h={{ base: "100px" }}
                         w={{ base: "250px", lg: "280px" }}
                         fontSize={{ base: "0.8rem", lg: "1rem" }}
                         gap={"30px"}
-                        // bgColor={}
                       >
                         <Flex
                           flexDir={"column"}
@@ -241,14 +224,12 @@ export default function ReportChart() {
                       gap={"20px"}
                       mb={"20px"}
                       alignItems={{ base: "flex-start", lg: "center" }}
-                      // bgColor={"yellow.100"}
                       flexDir={"column"}
                     >
                       <Flex
                         gap={"10px"}
                         backgroundColor={"white"}
                         flexDir={"column"}
-                        // bgColor={"red.100"}
                       >
                         <Flex
                           pl={"10px"}
@@ -335,7 +316,6 @@ export default function ReportChart() {
                         </Flex>
                         <Flex bgColor={"#f2f2f2"}>
                           <AreaChart
-                            // className="responsive-chart"
                             width={350}
                             height={250}
                             data={transactionChart?.sales}
@@ -345,7 +325,6 @@ export default function ReportChart() {
                               left: 30,
                               bottom: 0,
                             }}
-                            // margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
                           >
                             <defs>
                               <linearGradient

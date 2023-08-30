@@ -313,7 +313,6 @@ export function RequestForgotPassword() {
               Register
             </Box>
           </Flex>
-          {/* </Link> */}
         </Flex>
       </Box>
     </Box>

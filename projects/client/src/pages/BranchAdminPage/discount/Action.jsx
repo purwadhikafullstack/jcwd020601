@@ -18,11 +18,7 @@ import Edit from "./Edit";
 export default function Action({ id, name, getData }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const deleteData = async () => {
-    await api().delete(`/discount/v3/${id}`, {
-      // headers: {
-      //   Authorization: token,
-      // },
-    });
+    await api().delete(`/discount/v3/${id}`, {});
   };
   const handleClick = () => {
     Swal.fire({
@@ -61,13 +57,7 @@ export default function Action({ id, name, getData }) {
               onOpen();
             }}
           >
-            <Edit
-              isOpen={isOpen}
-              onClose={onClose}
-              id={id}
-              getData={getData}
-              // token={token}
-            />
+            <Edit isOpen={isOpen} onClose={onClose} id={id} getData={getData} />
           </MenuItem>
         </MenuList>
       </Menu>

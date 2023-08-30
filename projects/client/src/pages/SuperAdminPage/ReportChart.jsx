@@ -15,13 +15,10 @@ import {
   Legend,
   Bar,
 } from "recharts";
-import Greetings from "./Greetings";
 import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import Loading from "../../components/Loading";
 import ModalFilterSales from "./ModalFilter";
-const { nanoid } = require("nanoid");
-
 export default function ReportChart() {
   const [loading, setLoading] = useState(true);
   const [salesCardData, setSalesCardData] = useState([]);
