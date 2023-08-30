@@ -1,15 +1,39 @@
 import {
   Box,
   Flex,
+  Image,
   Menu,
   MenuButton,
   MenuList,
+  Container,
+  Icon,
+  Collapse,
+  Grid,
+  GridItem,
+  InputGroup,
+  Input,
+  InputRightElement,
   Avatar,
+  Center,
   Text,
   useMediaQuery,
   useColorModeValue,
+  IconButton,
+  Stack,
+  useDisclosure,
+  Link,
 } from "@chakra-ui/react";
-
+import {
+  HamburgerIcon,
+  CloseIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+} from "@chakra-ui/icons";
+import { BsChevronDown, BsCart } from "react-icons/bs";
+import { GoSearch } from "react-icons/go";
+import { api } from "../../api/api";
+import logo from "../../assets/images/gramedia-icon-2.png";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 export default function Navbar() {
