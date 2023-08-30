@@ -272,10 +272,8 @@ const orderController = {
   uploadPayment: async (req, res) => {
     const trans = await db.sequelize.transaction();
     try {
-      console.log("masuk");
       const { id } = req.body;
       const { filename } = req.file;
-      console.log(filename);
       const payment_url = process.env.payment_img + filename;
       await orderServices.uploadPayment({ payment_url, id, trans });
       await trans.commit();
@@ -295,14 +293,11 @@ const orderController = {
     const trans = await db.sequelize.transaction();
     try {
       const { status, OrderId } = req.body;
-      console.log({ this: status });
       //
       const data = await orderDetailServices.getOrderDetail({ OrderId });
-      // console.log(data);
 
       const data2 = await orderServices.getOrder({ OrderId });
 
-      console.log(data2.status);
       if (data2.status === "delivery confirm") {
         return res.status(400).send("The order has completed");
       } else if (data2.status === "canceled") {
@@ -315,17 +310,12 @@ const orderController = {
         }
       } else {
         // check if cancel
-        console.log("MMMMMAUSK");
         if (status === "canceled") {
           // update multiple buckets on stock
-          console.log("masuk-cancel");
           for (const detail of data) {
             const { quantity, StockId } = detail;
-            console.log({ quantity, StockId });
             const stock = await stockServices.getStockById({ StockId });
-            console.log({ bucket: stock.bucket });
             const bucket = stock.bucket - quantity;
-            console.log({ bucket });
             await stockServices.updateStock({ bucket, StockId, trans });
           }
           // update status
@@ -333,17 +323,14 @@ const orderController = {
         } else if (status === "sending") {
           // update multiple stocks
           // update multiple stocksHistory
-          console.log("masuk-sending");
           for (const detail of data) {
             const { quantity, StockId } = detail;
-            console.log({ quantity, StockId });
 
             const stock = await stockServices.getStockById({ StockId });
             const updatedStock = stock.stock - quantity;
             const bucket = stock.bucket - quantity;
 
             const sH = await stockHistoryServices.getStockHistory({ StockId });
-            console.log(sH);
 
             await stockServices.updateStock({
               updatedStock,
@@ -364,21 +351,17 @@ const orderController = {
           // update status
           await orderServices.updateStatus({ OrderId, status, trans });
         } else if (status === "waiting for payment") {
-          console.log("masuk-WFP");
-          console.log(status);
           await orderServices.updateStatus({ OrderId, status, trans });
 
           // delete image payment
           // Find the order to get the payment image URL
           const order = await orderServices.getOrder({ OrderId });
-          console.log(order);
           if (!order) {
             return res.status(404).send({ message: "Order not found" });
           }
 
           // Extract the filename from the payment_url
           const paymentImageUrl = order.payment_url;
-          console.log(paymentImageUrl);
           const filename = paymentImageUrl.split("/").pop();
 
           // Construct the file path
@@ -394,7 +377,6 @@ const orderController = {
           // Update the order's payment_url to null
           await orderServices.deletePayment({ id: OrderId, trans });
         } else {
-          console.log("masuk-else");
           await orderServices.updateStatus({ OrderId, status, trans });
         }
       }
@@ -414,12 +396,10 @@ const orderController = {
     const trans = await db.sequelize.transaction();
     try {
       const { status, OrderId } = req.body;
-      console.log(status);
 
       const data = await orderDetailServices.getOrderDetail({ OrderId });
       const data2 = await orderServices.getOrder({ OrderId });
 
-      console.log(data2.status);
       if (data2.status === "delivery confirm") {
         return res.status(400).send("The order has completed");
       } else if (data2.status === "canceled") {
@@ -436,11 +416,8 @@ const orderController = {
           // update multiple buckets on stock
           for (const detail of data) {
             const { quantity, StockId } = detail;
-            console.log({ quantity, StockId });
             const stock = await stockServices.getStockById({ StockId });
-            console.log({ bucket: stock.bucket });
             const bucket = stock.bucket - quantity;
-            console.log({ bucket });
             await stockServices.updateStock({ bucket, StockId, trans });
           }
           // update status
