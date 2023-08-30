@@ -19,7 +19,6 @@ import Swal from "sweetalert2";
 import * as Yup from "yup";
 import { GrFormAdd } from "react-icons/gr";
 import { useState } from "react";
-
 import { api } from "../../../api/api";
 import "../../../App.css";
 import { useSelector } from "react-redux";
@@ -49,11 +48,7 @@ export default function Add({ getData, token }) {
       end: Yup.string().required("Required!"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api().post("/discount/v1", values, {
-        // headers: {
-        //   Authorization: token,
-        // },
-      });
+      await api().post("/discount/v1", values, {});
       onClose();
       resetForm({ values: "" });
       Swal.fire("Good job!", "Your data category has been Added.", "success");

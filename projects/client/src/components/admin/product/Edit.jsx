@@ -3,7 +3,6 @@ import {
   Image,
   Input,
   Button,
-  useDisclosure,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -18,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState, useRef } from "react";
 import "../../../App.css";
-import { GrFormAdd, GrPowerReset } from "react-icons/gr";
 import Swal from "sweetalert2";
 import icon from "../../../assets/images/icon.png";
 import { useFormik } from "formik";
@@ -32,7 +30,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
   const [image, setImage] = useState(icon);
   const [diskon, setDiskon] = useState([]);
   const [category, setCategory] = useState([]);
-  // console.log(id);
   const formik = useFormik({
     initialValues: {
       title: "",
@@ -114,14 +111,12 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
         Authorization: token,
       },
     });
-    // console.log(res);
     async function getImage(a) {
       let value = await fetch(a)
         .then((res) => res.blob())
         .then((blob) => {
           return new File([blob], "image", { type: blob.type });
         });
-      // console.log(value);
       return value;
     }
     let imageData;
@@ -162,7 +157,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     getDataDetail();
     fetchDiskon();
   }, [id]);
-  console.log(formik.values);
   return (
     <>
       <Text>Edit Data</Text>
@@ -177,7 +171,6 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
           <ModalContent>
             <ModalHeader>Edit Buku</ModalHeader>
             <ModalCloseButton />
-            {/* {console.log(formik.values.book_url)} */}
             <ModalBody gap={5} display={"flex"} flexDirection={"column"}>
               <Box display={"flex"} flexDirection={"column"} gap={2}>
                 <FormLabel>Judul Buku</FormLabel>

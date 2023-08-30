@@ -60,10 +60,7 @@ export default function BranchOrder() {
       fetch();
     }
   }, [page]);
-
-  //
   const changePage = ({ selected }) => {
-    // console.log(selected);
     setPage(selected);
   };
   //

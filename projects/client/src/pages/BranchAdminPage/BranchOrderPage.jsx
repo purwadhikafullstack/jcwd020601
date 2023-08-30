@@ -1,8 +1,6 @@
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-import NavbarFooter from "./NavbarFooter";
-// import Discount from "./discount";
-// import BranchOrder from "./branchOrder";
+
 import { Box, Flex } from "@chakra-ui/react";
 import BranchOrder from "./branchOrder/BranchOrder";
 
@@ -19,7 +17,6 @@ export default function BranchOrderPage() {
         >
           <Navbar />
           <BranchOrder />
-          {/* <NavbarFooter /> */}
         </Box>
       </Flex>
     </>

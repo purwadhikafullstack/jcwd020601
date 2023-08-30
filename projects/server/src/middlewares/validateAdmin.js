@@ -16,12 +16,10 @@ const verifyToken = async (req, res, next) => {
         },
         valid: true,
       },
-      // include: [db.Admin],
     });
     if (!payload) {
       return res.status(400).json({ message: "Token has expired" });
     }
-    // console.log(payload.dataValues.AdminId.name);
     next();
   } catch (error) {
     console.error("Error verifying token:", error);

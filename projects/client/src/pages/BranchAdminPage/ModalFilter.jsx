@@ -3,14 +3,12 @@ import {
   Center,
   Flex,
   Icon,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalHeader,
   ModalOverlay,
   Select,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
@@ -28,12 +26,10 @@ export default function ModalFilterSales(props) {
     const tempobject = { ...filter };
     tempobject[id] = value;
     setFilter(tempobject);
-    console.log(tempobject);
   }
   async function fetchBranchName() {
     const result = await api().get(`/branch`);
     setBranch(result.data);
-    console.log(result.data);
   }
   useEffect(() => {
     fetchBranchName();

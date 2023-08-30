@@ -1,5 +1,4 @@
 import {
-  Box,
   Input,
   Button,
   Modal,
@@ -8,11 +7,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  FormLabel,
   ModalCloseButton,
-  useEditableControls,
-  Flex,
-  Editable,
   Text,
 } from "@chakra-ui/react";
 import { useFormik } from "formik";
@@ -49,15 +44,12 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
         Authorization: token,
       },
     });
-    console.log(res);
     formik.setValues({ ...formik.values, category: res.data.result.category });
   };
   useEffect(() => {
     getDataDetail();
   }, [id]);
 
-  console.log(formik.values);
-  console.log(id);
   return (
     <>
       <Text>Edit Data</Text>

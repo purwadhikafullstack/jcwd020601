@@ -1,6 +1,6 @@
 import { Box, Flex } from "@chakra-ui/react";
 import CarouselShow from "../components/CarouselShow";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar2";
 import CarouselBooks from "../components/CarouselBooks";
 import BookCard from "../components/BookCard";
 import CarouselAll from "../components/CarouselAll";
@@ -39,14 +39,6 @@ export default function HomePage() {
   }
   return (
     <Flex display={"columns"}>
-      {/* <Flex
-        onClick={() => {
-          console.log(orderSelector);
-          console.log(userSelector);
-        }}
-      >
-        lol
-      </Flex> */}
       <Navbar />
       <CarouselShow />
       <CarouselBooks />

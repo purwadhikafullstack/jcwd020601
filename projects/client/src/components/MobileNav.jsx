@@ -23,19 +23,14 @@ import logo from "../assets/images/gramedia-icon-2.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import ModalSelectAddress from "./Navbar/ModalSelectAddress";
 
 export default function MobileNav({
   category,
-  userAddress,
-  setUserAddress,
-  userAddresses,
-  setuserAddresses,
+
   modalSelectAddress,
   location,
 }) {
   const nav = useNavigate();
-  const dispatch = useDispatch();
   const { isOpen, onToggle } = useDisclosure();
   const userSelector = useSelector((state) => state.login.auth);
   const [result, setResult] = useState([]);
@@ -174,7 +169,6 @@ export default function MobileNav({
             <Menu>
               <MenuButton onClick={() => nav("/cart")}>
                 <Flex alignItems={"center"} gap={"0.1rem"}>
-                  {/* <Link to={`/cart`}> */}
                   <Icon
                     as={BsCart}
                     w={{ base: "5em", sm: "5em" }}
@@ -182,7 +176,6 @@ export default function MobileNav({
                     color="blue.700"
                     cursor={"pointer"}
                   />
-                  {/* </Link> */}
                 </Flex>
               </MenuButton>
             </Menu>

@@ -1,12 +1,4 @@
-import {
-  Button,
-  Center,
-  Flex,
-  Icon,
-  Input,
-  Select,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Button, Flex, Input, Select } from "@chakra-ui/react";
 export default function ModalEditAddressContent(props) {
   return (
     <>
@@ -103,14 +95,7 @@ export default function ModalEditAddressContent(props) {
             </Flex>
           </Flex>
           <Flex flexDir={"column"}>
-            <Flex
-              onClick={() => {
-                console.log(props.formikAddress.values);
-              }}
-              fontWeight={"500"}
-            >
-              City
-            </Flex>
+            <Flex fontWeight={"500"}>City</Flex>
             <Select
               id="city"
               onChange={async (val) => {

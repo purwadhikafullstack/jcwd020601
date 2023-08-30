@@ -17,11 +17,8 @@ import {
 import { FcImageFile } from "react-icons/fc";
 import { MdCancelPresentation } from "react-icons/md";
 import { api } from "../../../api/api";
-
 export default function ModalPayment(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // Update Status
   async function update(status) {
     try {
       await api().patch("/order/v2/status", {
@@ -32,7 +29,6 @@ export default function ModalPayment(props) {
       onClose();
       return props.fetch();
     } catch (error) {
-      console.log(error);
       alert(error.response.data);
     }
   }

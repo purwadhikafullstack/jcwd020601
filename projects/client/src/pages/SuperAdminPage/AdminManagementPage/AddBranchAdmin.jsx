@@ -36,17 +36,14 @@ export default function AddAdminButton(props) {
   YupPassword(Yup);
   async function inputHandlerAddress(input) {
     const { value, id } = input.target;
-    console.log(value);
-    console.log(id);
+
     const tempobject = {};
     tempobject[id] = value;
-    console.log(tempobject);
     formikAddress.setFieldValue(id, value);
     if (id == "province") {
       setProvinceId(value.split("#")[0]);
       formikAddress.setFieldValue(id, value.split("#")[1]);
     } else if (id == "city") {
-      console.log("safjas");
       setCityId(value.split("#")[0]);
       formikAddress.setFieldValue(id, value.split("#")[1]);
     } else formikAddress.setFieldValue(id, value);
@@ -145,11 +142,9 @@ export default function AddAdminButton(props) {
 
   useEffect(() => {
     fetchCity();
-    console.log(formikAddress.values.province);
   }, [formikAddress.values.province]);
   useEffect(() => {
     fetchPos();
-    console.log(formikAddress.values);
   }, [formikAddress.values.city]);
 
   async function fetchCity() {

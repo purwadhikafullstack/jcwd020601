@@ -1,6 +1,5 @@
 import { Button, Center, Flex, Icon, useDisclosure } from "@chakra-ui/react";
 import { AiFillApple, AiFillCalendar } from "react-icons/ai";
-import { BiSolidUser } from "react-icons/bi";
 import { FaCartShopping } from "react-icons/fa6";
 import { RxLoop } from "react-icons/rx";
 import { useSelector } from "react-redux";
@@ -14,21 +13,19 @@ import {
   BarChart,
   Legend,
   Bar,
-  ResponsiveContainer,
 } from "recharts";
-import Greetings from "./Greetings";
 import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import Loading from "../../components/Loading";
 import ModalFilterSales from "./ModalFilter";
 import "../../App.css";
-const { nanoid } = require("nanoid");
 
 export default function ReportChart() {
   const [loading, setLoading] = useState(true);
   const [salesCardData, setSalesCardData] = useState([]);
   const [filtered, setFiltered] = useState(false);
   const [salesChart, setSalesChart] = useState();
+  const [time, setTime] = useState("allTime");
   const [quantityChart, setQuantityChart] = useState();
   const [transactionChart, setTransactionChart] = useState();
   const userSelector = useSelector((state) => state.login.auth);
@@ -44,23 +41,23 @@ export default function ReportChart() {
 
   const objects = [
     {
-      No1: "EARNINGS (WEEKLY)",
+      No1: `EARNINGS (${time?.toUpperCase() || ""})`,
       No2: salesCardData.TotalSales,
-      No3: "3.48% since last week",
+      No3: `Earnings from ${time?.toLowerCase() || ""}`,
       No4: AiFillCalendar,
       No4Color: "#6777ef",
     },
     {
-      No1: "PRODUCTS SOLD (WEEKLY)",
+      No1: `PRODUCT SOLD (${time?.toUpperCase() || ""})`,
       No2: salesCardData.TotalSold,
-      No3: "3.48% since last week",
+      No3: `Product sold from ${time?.toLowerCase() || ""}`,
       No4: FaCartShopping,
       No4Color: "#3cde50",
     },
     {
-      No1: "TRANSACTIONS",
+      No1: `TRANSACTIONS (${time?.toUpperCase() || ""})`,
       No2: salesCardData.TotalTransaction,
-      No3: "3.48% since last week",
+      No3: `Transactions from ${time?.toLowerCase() || ""}`,
       No4: RxLoop,
       No4Color: "#ffa425",
     },
@@ -82,6 +79,7 @@ export default function ReportChart() {
     const transaction = await api().get(
       `/order/transaction/` + userSelector.branchId + "?time=" + val.time
     );
+    setTime(val.time);
     setSalesChart(sales.data);
     setQuantityChart(quantity.data);
     setTransactionChart(transaction.data);
@@ -96,12 +94,7 @@ export default function ReportChart() {
   }, []);
   return (
     <>
-      <Flex
-        bgColor={"#fbfbfb"}
-        py={"10px"}
-        // backgroundColor={"red.100"}
-        marginLeft={{ base: 0, lg: 60 }}
-      >
+      <Flex bgColor={"#fbfbfb"} py={"10px"} marginLeft={{ base: 0, lg: 60 }}>
         <Flex
           ml={"10px"}
           px={"10px"}
@@ -115,22 +108,13 @@ export default function ReportChart() {
             </Center>
           ) : (
             <Flex flexDir={"column"}>
-              <Flex
-                onClick={() => {
-                  console.log(userSelector);
-                }}
-                w={"100%"}
-                borderBottom={"2px solid #787875"}
-                pb={"10px"}
-              >
+              <Flex w={"100%"} borderBottom={"2px solid #787875"} pb={"10px"}>
                 <Flex
-                  // alignItems={"center"}
                   alignItems={{ base: "flex-start", lg: "center" }}
                   w={"100%"}
                   flexDir={{ base: "column", lg: "row" }}
                   gap={3}
                   p={{ base: 3, lg: 0 }}
-                  // w={"100%"}
                 >
                   <Flex flexDir={"column"}>
                     <Flex
@@ -163,33 +147,18 @@ export default function ReportChart() {
               </Flex>
               <Flex mt={"20px"}>
                 <Flex
-                  gap={"50px"}
-                  // bgColor={"yellow.100"}
-                  overflowX={{ base: "scroll", lg: "hidden" }}
-                  // overflow={""}
-                  overflowY={"hidden"}
-                  sx={{
-                    "&::-webkit-scrollbar": {
-                      width: "1px",
-                      height: "2px",
-                      borderRadius: "1px",
-                      backgroundColor: `rgba(0, 0, 0, 0.05)`,
-                    },
-                    "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: `#cce6ff`,
-                    },
-                  }}
+                  gap={{ base: "20px", lg: "50px" }}
+                  flexDir={{ base: "column", lg: "row" }}
                 >
                   {objects.map((val, index) => {
                     return (
                       <Flex
                         p={"10px"}
                         boxShadow="0 0 5px #e0e0e0"
-                        // bgColor={"red.100"}
                         h={{ base: "100px" }}
                         w={{ base: "250px", lg: "280px" }}
+                        fontSize={{ base: "0.8rem", lg: "1rem" }}
                         gap={"30px"}
-                        // bgColor={}
                       >
                         <Flex
                           flexDir={"column"}
@@ -231,8 +200,9 @@ export default function ReportChart() {
                       w={"150px"}
                       color={"white"}
                       bgColor={"#2c5282"}
+                      fontSize={"0.9rem"}
                     >
-                      Filter By Month
+                      Filter By Date Format
                     </Button>
                     <Button
                       isDisabled={filtered ? false : true}
@@ -244,98 +214,180 @@ export default function ReportChart() {
                       Close Filter
                     </Button>
                   </Flex>
-
                   <Flex
-                    bgColor={"white"}
                     gap={"20px"}
-                    mb={"20px"}
-                    alignItems={{ base: "flex-start", lg: "center" }}
-                    // bgColor={"yellow.100"}
                     flexDir={{ base: "column", lg: "row" }}
+                    alignItems={{ base: "column", lg: "column" }}
                   >
                     <Flex
-                      gap={"10px"}
-                      backgroundColor={"white"}
+                      bgColor={"white"}
+                      gap={"20px"}
+                      mb={"20px"}
+                      alignItems={{ base: "flex-start", lg: "center" }}
                       flexDir={"column"}
-                      // bgColor={"red.100"}
                     >
                       <Flex
-                        pl={"10px"}
-                        fontSize={"1.2rem"}
-                        textDecor={"underline"}
-                        color={"#2c5282"}
-                        fontWeight={"600"}
+                        gap={"10px"}
+                        backgroundColor={"white"}
+                        flexDir={"column"}
                       >
-                        Sales from last month
-                      </Flex>
-                      <Flex bgColor={"#f2f2f2"}>
-                        <AreaChart
-                          width={350}
-                          height={250}
-                          data={salesChart?.sales}
-                          margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
-                          css={{
-                            "@media (min-width: 992px)": {
-                              width: 450, // Adjust as needed
-                            },
-                          }}
+                        <Flex
+                          pl={"10px"}
+                          fontSize={"1.2rem"}
+                          color={"#2c5282"}
+                          fontWeight={"600"}
                         >
-                          <defs>
-                            <linearGradient
-                              id="colorUv"
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                            >
-                              <stop
-                                offset="5%"
-                                stopColor="#8884d8"
-                                stopOpacity={1}
-                              />
-                              <stop
-                                offset="95%"
-                                stopColor="8884d8"
-                                stopOpacity={0}
-                              />
-                            </linearGradient>
-                          </defs>
-                          <XAxis dataKey="date" />
-                          <YAxis
-                            tick={CustomYAxisTick}
-                            type="number"
-                            domain={[
-                              0,
-                              parseInt(salesChart?.highest?.total_sales),
-                            ]}
-                          />
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <Tooltip />
-                          <Area
-                            type="monotone"
-                            dataKey="total_sales"
-                            stroke="#8884d8"
-                            fillOpacity={1}
-                            fill="url(#colorUv)"
-                          />
-                        </AreaChart>
+                          Sales from{" "}
+                          {time == "monthly"
+                            ? "last month"
+                            : time == "weekly"
+                            ? "last week"
+                            : "All Time"}
+                        </Flex>
+                        <Flex bgColor={"#f2f2f2"}>
+                          <AreaChart
+                            width={350}
+                            height={250}
+                            data={salesChart?.sales}
+                            margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+                            css={{
+                              "@media (min-width: 992px)": {
+                                width: 450, // Adjust as needed
+                              },
+                            }}
+                          >
+                            <defs>
+                              <linearGradient
+                                id="colorUv"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                              >
+                                <stop
+                                  offset="5%"
+                                  stopColor="#8884d8"
+                                  stopOpacity={1}
+                                />
+                                <stop
+                                  offset="95%"
+                                  stopColor="8884d8"
+                                  stopOpacity={0}
+                                />
+                              </linearGradient>
+                            </defs>
+                            <XAxis dataKey="date" />
+                            <YAxis
+                              tick={CustomYAxisTick}
+                              type="number"
+                              domain={[
+                                0,
+                                parseInt(salesChart?.highest?.total_sales),
+                              ]}
+                            />
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <Tooltip />
+                            <Area
+                              type="monotone"
+                              dataKey="total_sales"
+                              stroke="#8884d8"
+                              fillOpacity={1}
+                              fill="url(#colorUv)"
+                            />
+                          </AreaChart>
+                        </Flex>
+                      </Flex>
+                      <Flex
+                        flexDir={"column"}
+                        mb={{ base: "20px", lg: "100px" }}
+                      >
+                        <Flex
+                          pl={"10px"}
+                          fontSize={"1.2rem"}
+                          color={"#2c5282"}
+                          fontWeight={"600"}
+                        >
+                          Transactions from{" "}
+                          {time == "monthly"
+                            ? "last month"
+                            : time == "weekly"
+                            ? "last week"
+                            : "All Time"}
+                        </Flex>
+                        <Flex bgColor={"#f2f2f2"}>
+                          <AreaChart
+                            width={350}
+                            height={250}
+                            data={transactionChart?.sales}
+                            margin={{
+                              top: 10,
+                              right: 30,
+                              left: 30,
+                              bottom: 0,
+                            }}
+                          >
+                            <defs>
+                              <linearGradient
+                                id="colorUva"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                              >
+                                <stop
+                                  offset="5%"
+                                  stopColor="#ffa425"
+                                  stopOpacity={1}
+                                />
+                                <stop
+                                  offset="95%"
+                                  stopColor="#ffa425"
+                                  stopOpacity={0}
+                                />
+                              </linearGradient>
+                            </defs>
+                            <XAxis dataKey="date" />
+                            <YAxis
+                              type="number"
+                              domain={[
+                                0,
+                                parseInt(
+                                  transactionChart?.highest?.total_transaction
+                                ),
+                              ]}
+                            />
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <Tooltip />
+                            <Area
+                              type="monotone"
+                              dataKey="total_transaction"
+                              stroke="black"
+                              fillOpacity={1}
+                              fill="url(#colorUva)"
+                            />
+                          </AreaChart>
+                        </Flex>
                       </Flex>
                     </Flex>
                     <Flex gap={"10px"} flexDir={"column"}>
                       <Flex
                         pl={"10px"}
                         fontSize={"1.2rem"}
-                        textDecor={"underline"}
                         color={"#2c5282"}
                         fontWeight={"600"}
                       >
-                        Product Qty Sold from last month
+                        Product Qty Sold from{" "}
+                        {time == "monthly"
+                          ? "last month"
+                          : time == "weekly"
+                          ? "last week"
+                          : "All Time"}
                       </Flex>
                       <Flex bgColor={"#f2f2f2"}>
                         <BarChart
-                          margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+                          margin={{ top: 20, right: 40, left: -10, bottom: 0 }}
                           width={350}
-                          height={250}
+                          height={550}
                           data={quantityChart?.sales}
                           css={{
                             "@media (min-width: 992px)": {
@@ -359,74 +411,6 @@ export default function ReportChart() {
                           <Bar dataKey="qty_sold" fill="#3cde50" />
                         </BarChart>
                       </Flex>
-                    </Flex>
-                  </Flex>
-                  <Flex
-                    gap={"10px"}
-                    mb={"100px"}
-                    backgroundColor={"white"}
-                    flexDir={"column"}
-                  >
-                    <Flex
-                      pl={"10px"}
-                      fontSize={"1.2rem"}
-                      textDecor={"underline"}
-                      color={"#2c5282"}
-                      fontWeight={"600"}
-                    >
-                      Transactions from last month
-                    </Flex>
-                    <Flex bgColor={"#f2f2f2"}>
-                      <ResponsiveContainer width={"95%"} height={250}>
-                        <AreaChart
-                          // className="responsive-chart"
-                          width={350}
-                          height={250}
-                          data={transactionChart?.sales}
-                          margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
-                          // margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
-                        >
-                          <defs>
-                            <linearGradient
-                              id="colorUva"
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                            >
-                              <stop
-                                offset="5%"
-                                stopColor="#ffa425"
-                                stopOpacity={1}
-                              />
-                              <stop
-                                offset="95%"
-                                stopColor="#ffa425"
-                                stopOpacity={0}
-                              />
-                            </linearGradient>
-                          </defs>
-                          <XAxis dataKey="date" />
-                          <YAxis
-                            type="number"
-                            domain={[
-                              0,
-                              parseInt(
-                                transactionChart?.highest?.total_transaction
-                              ),
-                            ]}
-                          />
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <Tooltip />
-                          <Area
-                            type="monotone"
-                            dataKey="total_transaction"
-                            stroke="black"
-                            fillOpacity={1}
-                            fill="url(#colorUva)"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
                     </Flex>
                   </Flex>
                 </Flex>

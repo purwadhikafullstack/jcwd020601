@@ -9,7 +9,6 @@ import {
   ModalHeader,
   ModalOverlay,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
 import ModalAddAddress from "./ModalAddAddress";
 import { useEffect, useState } from "react";
@@ -45,7 +44,6 @@ export default function DaftarAlamat(props) {
     initialValues: { UserId: props.userSelector.id },
     validationSchema: Helpers.validationSchemaAddress,
     onSubmit: async () => {
-      console.log("sadkasjdasjd");
       setCoolDown(true);
       await api().post("/address/v1", formikAddress.values);
       AddAddressHelpers.submit({
@@ -95,7 +93,6 @@ export default function DaftarAlamat(props) {
       setCityId(value.split("#")[0]);
       formikAddress.setFieldValue(id, value);
     } else formikAddress.setFieldValue(id, value);
-    console.log(formikAddress.values);
   }
   useEffect(() => {
     fetchCity();

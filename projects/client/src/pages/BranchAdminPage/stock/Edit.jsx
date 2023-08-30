@@ -10,11 +10,6 @@ import {
   ModalFooter,
   FormLabel,
   ModalCloseButton,
-  useEditableControls,
-  Flex,
-  Editable,
-  NumberInput,
-  NumberInputField,
   Select,
   Text,
 } from "@chakra-ui/react";
@@ -28,7 +23,6 @@ import { useSelector } from "react-redux";
 import { api } from "../../../api/api";
 
 export default function Edit({ isOpen, onClose, id, getData, token }) {
-  // console.log(token);
   const userSelector = useSelector((state) => state.login.auth);
   const [scrollBehavior, setScrollBehavior] = useState("inside");
   const [book, setBook] = useState([]);
@@ -46,11 +40,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
       BookId: Yup.number().required("Required!"),
     }),
     onSubmit: async (values, { resetForm }) => {
-      await api().patch(`/stock/v2/${id}`, values, {
-        // headers: {
-        //   Authorization: token,
-        // },
-      });
+      await api().patch(`/stock/v2/${id}`, values, {});
       onClose();
       resetForm({ values: "" });
       Swal.fire("Good job!", "Your data has been Updated.", "success");
@@ -58,11 +48,7 @@ export default function Edit({ isOpen, onClose, id, getData, token }) {
     },
   });
   const getDataDetail = async () => {
-    let res = await api().get(`/stock/${id}`, {
-      // headers: {
-      //   Authorization: token,
-      // },
-    });
+    let res = await api().get(`/stock/${id}`, {});
     formik.setValues({
       ...formik.values,
       stock: res.data.stock,

@@ -1,7 +1,5 @@
 import { Button, Center, Flex, Icon, Input, Select } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { AiOutlineClose } from "react-icons/ai";
-
 import { api } from "../../../api/api";
 
 export default function ModalAddAddress(props) {
@@ -10,14 +8,10 @@ export default function ModalAddAddress(props) {
       const data = await api()
         .get("/province")
         .then((res) => {
-          console.log(res);
           props.setProvinces(res.data.result);
         });
     };
-    // call the function
     fetchData();
-    // make sure to catch any error
-    // .catch(console.error);
   }, []);
   return (
     <>
@@ -46,15 +40,7 @@ export default function ModalAddAddress(props) {
             </Flex>
           </Flex>
           <Flex flexDir={"column"}>
-            <Flex
-              fontWeight={"500"}
-              onClick={() => {
-                console.log(props.val);
-                console.log(props.id);
-              }}
-            >
-              Nama Penerima
-            </Flex>
+            <Flex fontWeight={"500"}>Nama Penerima</Flex>
             <Flex>
               <Input
                 _placeholder={{ opacity: "1" }}
@@ -110,15 +96,7 @@ export default function ModalAddAddress(props) {
             </Flex>
           </Flex>
           <Flex flexDir={"column"}>
-            <Flex
-              fontWeight={"500"}
-              onClick={() => {
-                console.log(props.formikAddress.values);
-                console.log(props.pos);
-              }}
-            >
-              City
-            </Flex>
+            <Flex fontWeight={"500"}>City</Flex>
             <Select
               id="city"
               onChange={props.inputHandlerAddress}

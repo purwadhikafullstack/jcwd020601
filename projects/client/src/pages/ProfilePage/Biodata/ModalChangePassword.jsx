@@ -7,8 +7,6 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
-  Img,
-  useToast,
   Icon,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -82,13 +80,10 @@ export default function ModalChangePassword(props) {
           user: values,
         })
         .then((res) => {
-          console.log(res.data);
           alert(res.data.message);
-          // window.location.reload(false);
           props.onClose();
         })
         .catch((err) => {
-          console.log(err);
           props.onClose();
           Swal.fire({
             icon: "error",
@@ -131,7 +126,6 @@ export default function ModalChangePassword(props) {
     tempUser[id] = value;
     setUser(tempUser);
     formik.setFieldValue(id, value);
-    console.log(tempUser);
   };
   return (
     <>

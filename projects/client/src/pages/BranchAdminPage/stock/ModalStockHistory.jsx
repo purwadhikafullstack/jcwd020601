@@ -6,7 +6,6 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
   Button,
   Text,
   Table,
@@ -16,17 +15,14 @@ import {
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
   Center,
-  calc,
 } from "@chakra-ui/react";
 import { api } from "../../../api/api";
 import { useEffect } from "react";
 import { useState } from "react";
 
 export default function ModalStockHistory({ isOpen, onClose, id, name }) {
-  // const { isOpen, onOpen, onClose } = useDisclosure();
   const [stock, setStock] = useState();
   async function fetch() {
     const data = await api().post("/stockhistory/id", {
@@ -39,9 +35,6 @@ export default function ModalStockHistory({ isOpen, onClose, id, name }) {
       fetch();
     }
   }, [isOpen]);
-
-  // console.log(id);
-
   return (
     <>
       <Text>Stock History</Text>
@@ -55,9 +48,6 @@ export default function ModalStockHistory({ isOpen, onClose, id, name }) {
           <ModalBody>
             <TableContainer>
               <Table variant="simple">
-                {/* <TableCaption>
-                  Imperial to metric conversion factors
-                </TableCaption> */}
                 <Thead>
                   <Tr>
                     <Th>Date</Th>

@@ -31,15 +31,10 @@ export default function BranchOrder() {
   const [rows, setRows] = useState(0);
   const [status, setStatus] = useState("all");
   const [search, setSearch] = useState();
-
   function inputHandler(e) {
     setSearch(e.target.value);
   }
-
-  // GET
   async function fetch() {
-    console.log(status);
-    console.log(search);
     const result = await api().post(`/order/branch?page=${page}&limit=${6}`, {
       BranchId: userSelector.branchId,
       status: status,
@@ -54,11 +49,9 @@ export default function BranchOrder() {
     fetch();
   }, [page, status]);
 
-  //
   const changePage = ({ selected }) => {
     setPage(selected);
   };
-  //
   return (
     <>
       <Box

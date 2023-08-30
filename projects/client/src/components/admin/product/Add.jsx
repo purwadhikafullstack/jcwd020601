@@ -47,7 +47,6 @@ export default function Add({ getData, token }) {
       dimension: "",
       price: "",
       rating: "",
-      // DiscountId: 1,
       CategoryId: null,
     },
     validationSchema: Yup.object({
@@ -118,8 +117,6 @@ export default function Add({ getData, token }) {
   useEffect(() => {
     fetchDiskon();
   }, [token]);
-  // console.log(formik.values);
-  // console.log(category);
   return (
     <>
       <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">

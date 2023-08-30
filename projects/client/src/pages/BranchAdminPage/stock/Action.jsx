@@ -28,11 +28,7 @@ export default function Action({ id, name, getData }) {
     onClose: onHistoryModalClose,
   } = useDisclosure();
   const deleteData = async () => {
-    await api().delete(`/stock/v3/${id}`, {
-      // headers: {
-      //   Authorization: token,
-      // },
-    });
+    await api().delete(`/stock/v3/${id}`, {});
   };
   const handleClick = () => {
     Swal.fire({
@@ -76,7 +72,6 @@ export default function Action({ id, name, getData }) {
               onClose={onEditModalClose}
               id={id}
               getData={getData}
-              // token={token}
             />
           </MenuItem>
           <MenuItem

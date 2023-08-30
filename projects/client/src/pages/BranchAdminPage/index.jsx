@@ -1,7 +1,6 @@
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import NavbarFooter from "./NavbarFooter";
-// import Discount from "./discount";
 import ReportChart from "./ReportChart";
 import { Box, Flex } from "@chakra-ui/react";
 

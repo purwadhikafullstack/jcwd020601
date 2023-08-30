@@ -1,4 +1,4 @@
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar2";
 import NavbarFooter from "../components/NavbarFooter";
 import DetailBook from "../components/DetailBook";
 import BookCardRecomend from "../components/BookCardRecomend";

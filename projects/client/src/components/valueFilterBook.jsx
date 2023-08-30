@@ -1,51 +1,25 @@
 import {
   Box,
-  Center,
   Card,
   CardBody,
   CardFooter,
   Image,
   Text,
-  Spinner,
   Flex,
   Button,
   ButtonGroup,
   useDisclosure,
-  List,
-  ListItem,
-  Input,
-  Select,
-  Heading,
-  useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { MdCheckCircle, MdSettings } from "react-icons/md";
-import { api } from "../api/api";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ReactPaginate from "react-paginate";
 import "../App.css";
 import { useSelector } from "react-redux";
 import TooFarModal from "./TooFarModal";
-import Swal from "sweetalert2";
 export default function ValueFilterBook({ val, idx, add, percent }) {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const orderSelector = useSelector((state) => state.login.order);
-  const userSelector = useSelector((state) => state.login.auth);
   let t = localStorage.getItem("auth");
-  const toast = useToast();
-  const nav = useNavigate();
-  //   const { categoryId } = useParams();
   const tooFarModal = useDisclosure();
-  const [value, setValue] = useState([]);
-  const [token, setToken] = useState(JSON.parse(t));
-  //   const [page, setPage] = useState(0);
-  //   const [limit, setLimit] = useState(8);
-  //   const [rows, setRows] = useState(0);
-  //   const [pages, setPages] = useState(0);
-  //   const [isLoading, setIsLoading] = useState(true);
-  //   const [category, setCategory] = useState([]);
-  //   const [price, setPrice] = useState("");
-  //   const [data, setData] = useState(parseInt(categoryId));
+
   return (
     <>
       <Card

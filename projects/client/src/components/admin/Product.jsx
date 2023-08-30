@@ -2,7 +2,6 @@ import {
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
@@ -22,7 +21,6 @@ import { BiSearchAlt } from "react-icons/bi";
 import { GrFormAdd, GrPowerReset } from "react-icons/gr";
 import Add from "./product/Add";
 import Action from "./product/Action";
-
 export default function Product() {
   let t = localStorage.getItem("auth");
   const [value, setValue] = useState([]);
@@ -33,7 +31,6 @@ export default function Product() {
   const [keyword, setKeyword] = useState("");
   const [query, setQuery] = useState("");
   const [token, setToken] = useState(JSON.parse(t));
-
   async function fetchProduct() {
     let response = await api().get(
       `/book?search_query=${keyword}&page=${page}&limit=${limit}`,
@@ -43,7 +40,6 @@ export default function Product() {
         },
       }
     );
-    // setToken(JSON.parse(t));
     setValue(response.data.result);
     setPage(response.data.page);
     setRows(response.data.totalRows);
@@ -75,8 +71,6 @@ export default function Product() {
       currency: "IDR",
     }).format(number);
   };
-  console.log(value);
-
   return (
     <>
       <Box marginLeft={0}>
@@ -123,7 +117,6 @@ export default function Product() {
               <Tr>
                 <Th fontSize={18}>No</Th>
                 <Th fontSize={18}>Judul</Th>
-                {/* <Th fontSize={18}>Bahasa</Th> */}
                 <Th fontSize={18}>Penulis</Th>
                 <Th fontSize={18}>Diskon</Th>
                 <Th fontSize={18}>Lembar</Th>
@@ -136,7 +129,6 @@ export default function Product() {
                 <Tr key={val.id}>
                   <Td>{idx + 1 + page * limit}</Td>
                   <Td>{val.title}</Td>
-                  {/* <Td>{val.language}</Td> */}
                   <Td>{val.author}</Td>
                   <Td>
                     {val.Discount?.isPercent ? (

@@ -117,7 +117,6 @@ export default function Stock() {
                   <Text display={{ base: "none", lg: "block" }}>Reset</Text>
                 </Button>
               </Box>
-              {/* getData={fetchStock} */}
               <Box>
                 <Add getData={fetchStock} />
               </Box>

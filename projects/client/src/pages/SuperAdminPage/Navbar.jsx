@@ -1,20 +1,10 @@
 import {
   Box,
   Flex,
-  Image,
   Menu,
   MenuButton,
   MenuList,
-  Container,
-  Icon,
-  Collapse,
-  Grid,
-  GridItem,
-  InputGroup,
-  Input,
-  InputRightElement,
   Avatar,
-  Center,
   Text,
   useMediaQuery,
   useColorModeValue,
@@ -22,18 +12,9 @@ import {
   Stack,
   useDisclosure,
   // Link,
+
 } from "@chakra-ui/react";
-import {
-  HamburgerIcon,
-  CloseIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
-} from "@chakra-ui/icons";
-import { BsChevronDown, BsCart } from "react-icons/bs";
-import { GoSearch } from "react-icons/go";
-import { api } from "../../api/api";
-import logo from "../../assets/images/gramedia-icon-2.png";
-import { useState } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
 export default function Navbar() {
@@ -82,15 +63,6 @@ function DesktopNav() {
     nav("/adminlogin");
     return;
   }
-  async function verify() {
-    await api()
-      .get("auth/generate-token/emailverify", {
-        params: {
-          email: userSelector.email,
-        },
-      })
-      .then((res) => alert(res.data.message));
-  }
   return (
     <>
       <Box
@@ -119,7 +91,6 @@ function DesktopNav() {
               p={0}
               position={"fixed"}
               left={"-6em"}
-              // bgColor={"yellow.100"}
               display={"flex"}
               flexDir={"column"}
             >
@@ -135,59 +106,6 @@ function DesktopNav() {
               >
                 Logout
               </Box>
-              <Box
-                onClick={verify}
-                cursor={"pointer"}
-                w={"100%"}
-                h={12}
-                display={"flex"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-              >
-                Verify Account
-              </Box>
-              {/* <Flex flexDir={"column"} bgColor={"blue.100"} h={"100%"}> */}
-              {/* <Flex */}
-              {/* // gap={"2em"} */}
-              {/* justifyContent={"center"}
-                  flexDir={"column"}
-                  alignItems={"center"} */}
-              {/* > */}
-              {/* Halo, User */}
-              {/* <Box>Full Name</Box> */}
-              {/* <Box>Address</Box> */}
-              {/* <Text
-                    onClick={logout}
-                    cursor={"pointer"}
-                    w={"100%"}
-                    bgColor={"red.100"}
-                    _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-                  >
-                    Logout
-                  </Text>
-                  <Box onClick={verify}>Verify Account</Box> */}
-              {/* </Flex> */}
-              {/* <Center
-                  bgColor={"blue.400"}
-                  cursor={"pointer"}
-                  _hover={{
-                    opacity: "0.9",
-                  }}
-                >
-                  Full Profile
-                </Center> */}
-              {/* <Text
-                  onClick={logout}
-                  cursor={"pointer"}
-                  w={"100%"}
-                  bgColor={"red.100"}
-                  _hover={{ bgColor: "#BEE3F8", color: "#2C5282" }}
-                >
-                  Logout
-                </Text>
-                <Box onClick={verify}>Verify Account</Box> */}
-              {/* </Flex> */}
             </MenuList>
           </Menu>
         </Box>

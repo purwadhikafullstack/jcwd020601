@@ -23,6 +23,7 @@ import { api } from "../api/api";
 import { TbAlertCircleFilled } from "react-icons/tb";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { useDispatch } from "react-redux";
+import Options from "./LoginPage/Options";
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
@@ -45,7 +46,6 @@ export default function RegisterPage() {
 
   async function handleCallbackResponse(response) {
     var userObject = jwt_decode(response.credential);
-    console.log(userObject);
     try {
       let token;
       const loggingIn = await api()
@@ -73,12 +73,10 @@ export default function RegisterPage() {
             isClosable: true,
           });
         });
-      console.log(loggingIn);
       if (loggingIn) {
         await api()
           .get("/auth/v3?token=" + token)
           .then((res) => {
-            console.log(res.data);
             dispatch({
               type: "login",
               payload: res.data,
@@ -90,7 +88,6 @@ export default function RegisterPage() {
       console.log(err);
       alert(err.response.data.message);
     }
-    // document.getElementById("signInDiv").hidden = true;
   }
   YupPassword(Yup);
   const [seepassword, setSeePassword] = useState(false);
@@ -159,7 +156,6 @@ export default function RegisterPage() {
             return false;
           }
         });
-      console.log(checkemail);
       if (checkemail) {
         alert("Email has been used");
         formik.values.email = "";
@@ -404,64 +400,9 @@ export default function RegisterPage() {
                   </Flex>
                 </Center>
               </Center>
-
-              {/* <Flex gap={"10px"}>
-                <Img
-                  cursor={"pointer"}
-                  src={logo2}
-                  width={"130px"}
-                  h={"40px"}
-                ></Img>
-                <Img
-                  cursor={"pointer"}
-                  src={logo3}
-                  width={"130px"}
-                  h={"40px"}
-                ></Img>
-              </Flex> */}
             </Center>
           </Center>
-          <Center flexWrap={"wrap"} color={"blackAlpha.700"} gap={"16px"}>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Meta
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              About
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Blog
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Jobs
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Help
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              API
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Privacy
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Terms
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Top Accounts
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Locations
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Gramedia Lite
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Contact Uploading & Non-Users
-            </Flex>
-            <Flex fontSize={"13px"} cursor={"pointer"}>
-              Meta Verified
-            </Flex>
-          </Center>
+          <Options />
         </Center>
         <Center color={"blackAlpha.700"} gap={"20px"}>
           <Flex fontSize={"13px"}> English</Flex>

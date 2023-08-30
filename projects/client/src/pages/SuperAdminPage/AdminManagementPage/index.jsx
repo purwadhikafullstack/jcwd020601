@@ -23,8 +23,6 @@ export default function SuperAdminPageBranchAdmin() {
       ...filter,
       sort,
     });
-    console.log(page);
-    console.log(result.data);
     setRows(result.data.totalRows);
     setPages(result.data.totalPage);
     setAdmins(result.data.Admin);
@@ -38,17 +36,13 @@ export default function SuperAdminPageBranchAdmin() {
     setAdmins(result.data.Admin);
   }
   useEffect(() => {
-    console.log("sad");
-    console.log(filter);
     if (filter) {
-      console.log("saldsa");
       submitFilter();
     } else {
       getAllAdminBranch();
     }
   }, [page]);
   const changePage = ({ selected }) => {
-    // console.log(selected);
     setPage(selected);
   };
 
