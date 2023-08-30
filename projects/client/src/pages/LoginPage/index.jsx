@@ -138,7 +138,7 @@ export default function LoginPage() {
                 className={"loginpage-container"}
                 flexDir={"column"}
                 border={"1px solid #dbdbdb"}
-                onClick={() => console.log(client_id)}
+                onClick={() => console.log(process.env.REACT_APP_API_BASE_URL)}
               >
                 <Img src={logo} width={"300px"} py={"40px"}></Img>
                 <Inputs
