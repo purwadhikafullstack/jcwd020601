@@ -9,7 +9,13 @@ export default function Greetings() {
   return (
     <>
       <Flex w={"100%"} borderBottom={"2px solid #787875"} pb={"10px"}>
-        <Flex alignItems={"center"} w={"100%"}>
+        <Flex
+          alignItems={{ base: "flex-start", lg: "center" }}
+          w={"100%"}
+          flexDir={{ base: "column", lg: "row" }}
+          gap={3}
+          p={{ base: 3, lg: 0 }}
+        >
           <Flex flexDir={"column"}>
             <Flex
               fontSize={"1.2rem"}

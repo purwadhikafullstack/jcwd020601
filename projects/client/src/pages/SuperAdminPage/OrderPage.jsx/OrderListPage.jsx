@@ -73,7 +73,7 @@ export default function BranchOrder() {
         bgColor={"#fbfbfb"}
         // display={"flex"}
         // flexDirection={"column"}
-        marginLeft={60}
+        marginLeft={{ base: 0, lg: 60 }}
         // bgColor={"red"}
         py={"10px"}
         px={"10px"}
