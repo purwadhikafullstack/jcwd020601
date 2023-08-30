@@ -24,12 +24,13 @@ router.get(
 router.get("/pending/:UserId", orderController.getPendingByUserId);
 router.get("/history/:UserId", orderController.getHistoryByUserId);
 
-router.post("/branch", orderController.getBranchOrder);
+router.post("/branch", getAdminByToken, orderController.getBranchOrder);
 router.post("/filter", orderController.getByFilter);
 router.post("/allbranch", orderController.getAllBranchOrder);
-router.post("/v1", orderController.insertOrder);
+router.post("/v1", getUserByToken, orderController.insertOrder);
 router.post(
   "/",
+  getUserByToken,
   fileUploader({ destinationFolder: "paymentImg" }).single("paymentImg"),
   orderController.uploadPayment
 );
@@ -39,8 +40,6 @@ router.patch(
   getUserByToken,
   orderController.updateStatusUser
 );
-router.patch("/v2/:id", orderController.editOrder);
-router.delete("/v3/:id", orderController.deleteOrder);
 router.post("/shipping", orderController.getShipping);
 
 module.exports = router;
