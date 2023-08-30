@@ -11,6 +11,7 @@ import {
   Input,
   Button,
   Flex,
+  Text,
 } from "@chakra-ui/react";
 
 import ReactPaginate from "react-paginate";
@@ -70,7 +71,7 @@ export default function Category() {
   };
   return (
     <>
-      <Box marginLeft={60}>
+      <Box marginLeft={{ base: 0, lg: 60 }}>
         <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
           <Greetings />
           <TableContainer padding={5}>
@@ -84,7 +85,7 @@ export default function Category() {
                 <Input
                   placeholder="Search Category"
                   variant={"outline"}
-                  w={"30em"}
+                  w={{ base: "15em", lg: "30em" }}
                   size="lg"
                   onChange={inputSearch}
                   value={query}
@@ -95,7 +96,7 @@ export default function Category() {
                   variant="outline"
                   size={"lg"}
                 >
-                  Search
+                  <Text display={{ base: "none", lg: "block" }}>Search</Text>
                 </Button>
                 <Button
                   leftIcon={<GrPowerReset />}
@@ -103,7 +104,7 @@ export default function Category() {
                   variant="outline"
                   size={"lg"}
                 >
-                  Reset
+                  <Text display={{ base: "none", lg: "block" }}>Reset</Text>
                 </Button>
               </Box>
               <Add getData={fetchCategori} token={token} />

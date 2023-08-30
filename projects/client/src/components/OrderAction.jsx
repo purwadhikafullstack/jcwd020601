@@ -3,7 +3,7 @@ import ModalCancel from "./ModalCancel";
 import ModalConfirm from "./ModalConfirm";
 
 export default function OrderAction(props) {
-  const { inputFileRef, status, order, fetch } = props;
+  const { post, status, order, fetch } = props;
   return (
     <Flex
       flexDir={"column"}
@@ -40,14 +40,6 @@ export default function OrderAction(props) {
             <Box ringColor={"red"} fontWeight={"semibold"} fontSize={"1.2rem"}>
               Order Status: {status}
             </Box>
-            <Button
-              colorScheme={"blue"}
-              borderRadius={"1.5rem"}
-              width={"100%"}
-              onClick={() => inputFileRef.current.click()}
-            >
-              Upload Payment Proof
-            </Button>
             {/*  */}
             <ModalCancel fetch={fetch} id={order[0].OrderId}></ModalCancel>
             {/*  */}
@@ -61,9 +53,9 @@ export default function OrderAction(props) {
               colorScheme={"blue"}
               borderRadius={"1.5rem"}
               width={"100%"}
-              onClick={() => inputFileRef.current.click()}
+              onClick={() => post()}
             >
-              Upload Payment Proof
+              Submit Payment Proof
             </Button>
             <ModalCancel fetch={fetch} id={order[0].OrderId}></ModalCancel>
           </>

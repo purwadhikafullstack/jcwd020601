@@ -18,6 +18,7 @@ export default function OrderPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [link, setLink] = useState();
   const [status, setStatus] = useState();
+  const [file, setFile] = useState();
   const locatio = useLocation();
   const location = locatio.pathname.split("/")[2];
   const token = JSON.parse(localStorage.getItem("auth"));
@@ -39,10 +40,15 @@ export default function OrderPage() {
   }
 
   // POST Payment
-  const handleFile = async (event) => post(event.target.files[0]);
+  const handleFile = async (event) => {
+    setFile(event.target.files[0]);
+  };
 
-  async function post(file) {
+  async function post() {
     try {
+      if (!file) {
+        throw new Error("add file first");
+      }
       const formData = new FormData();
       formData.append("paymentImg", file);
       formData.append("id", order[0].OrderId);
@@ -61,6 +67,7 @@ export default function OrderPage() {
 
       return fetch();
     } catch (error) {
+      alert(error);
       console.log(error);
     }
   }
@@ -131,13 +138,21 @@ export default function OrderPage() {
                     <Image
                       maxH={"200px"}
                       src={process.env.REACT_APP_API_IMAGE_URL + link}
-                    ></Image>
+                    />
+                  ) : file ? (
+                    <Image
+                      maxH={"200px"}
+                      style={{ opacity: 0.5 }}
+                      onClick={() => inputFileRef.current.click()}
+                      src={URL.createObjectURL(file)}
+                    />
                   ) : (
                     <Icon
+                      onClick={() => inputFileRef.current.click()}
                       fontSize={"8xl"}
                       as={FcAddImage}
                       cursor={"pointer"}
-                    ></Icon>
+                    />
                   )}
 
                   <Input
@@ -149,7 +164,9 @@ export default function OrderPage() {
                 </Flex>
 
                 <OrderAction
-                  inputFileRef={inputFileRef}
+                  file={file}
+                  setStatus={setStatus}
+                  post={post}
                   status={status}
                   order={order}
                   fetch={fetch}
