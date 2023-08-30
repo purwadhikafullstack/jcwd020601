@@ -70,99 +70,101 @@ export default function OrderPage() {
   }, []);
 
   return (
-    <Container maxW={"size.lg"}>
+    <>
       <Navbar></Navbar>
-      <Box>
-        <OrderStatus status={status} order={order} />
-        {/* loading */}
-        {isLoading ? (
-          <Loading />
-        ) : order ? (
-          <Flex flexDir={{ base: "column", md: "row" }}>
-            <OrderCard order={order} />
-            {/* --- */}
-            <Flex
-              width={{ base: "22rem", md: "35%" }}
-              padding={"1rem 2rem"}
-              flexDir={"column"}
-              gap={"1rem"}
-            >
+      <Container maxW={"size.lg"}>
+        <Box>
+          <OrderStatus status={status} order={order} />
+          {/* loading */}
+          {isLoading ? (
+            <Loading />
+          ) : order ? (
+            <Flex flexDir={{ base: "column", md: "row" }}>
+              <OrderCard order={order} />
+              {/* --- */}
               <Flex
-                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                width={{ base: "22rem", md: "35%" }}
                 padding={"1rem 2rem"}
-                borderRadius={"0.7rem"}
                 flexDir={"column"}
                 gap={"1rem"}
               >
-                <Flex flexDir={"column"}>
-                  <Flex gap={"0.5rem"} fontWeight={"semibold"}>
-                    <Box>Shipping</Box>
-                    <Box>{order ? order[0].Order.shipping : null}</Box>
+                <Flex
+                  boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                  padding={"1rem 2rem"}
+                  borderRadius={"0.7rem"}
+                  flexDir={"column"}
+                  gap={"1rem"}
+                >
+                  <Flex flexDir={"column"}>
+                    <Flex gap={"0.5rem"} fontWeight={"semibold"}>
+                      <Box>Shipping</Box>
+                      <Box>{order ? order[0].Order.shipping : null}</Box>
+                    </Flex>
+                    <Flex gap={"0.5rem"} fontWeight={"bold"}>
+                      <Box>Total Order Payment</Box>
+                      <Box color={"blue.500"}>
+                        {order
+                          ? order[0].Order.total.toLocaleString("id-ID")
+                          : null}
+                      </Box>
+                    </Flex>
                   </Flex>
-                  <Flex gap={"0.5rem"} fontWeight={"bold"}>
-                    <Box>Total Order Payment</Box>
-                    <Box color={"blue.500"}>
-                      {order
-                        ? order[0].Order.total.toLocaleString("id-ID")
-                        : null}
-                    </Box>
+                  <Flex fontStyle={"italic"}>
+                    Complete the payment and upload the payment proof
                   </Flex>
+                  <Box fontWeight={"semibold"}>
+                    <Icon as={AiOutlineBank}></Icon> BCA 11223456789
+                  </Box>
                 </Flex>
-                <Flex fontStyle={"italic"}>
-                  Complete the payment and upload the payment proof
+                <Flex
+                  flexDir={"column"}
+                  boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
+                  borderRadius={"0.7rem"}
+                  alignItems={"center"}
+                  padding={"2rem"}
+                  gap={"2rem"}
+                  fontWeight={"semibold"}
+                >
+                  <Box fontSize={"xl"} fontWeight={"semibold"}>
+                    Payment Proof
+                  </Box>
+                  {link ? (
+                    <Image
+                      // height={"200px"}
+                      maxH={"200px"}
+                      // onClick={() => inputFileRef.current.click()}
+                      src={process.env.REACT_APP_API_IMAGE_URL + link}
+                    ></Image>
+                  ) : (
+                    <Icon
+                      fontSize={"8xl"}
+                      as={FcAddImage}
+                      cursor={"pointer"}
+                    ></Icon>
+                  )}
+
+                  <Input
+                    display={"none"}
+                    ref={inputFileRef}
+                    type="file"
+                    onChange={handleFile}
+                  ></Input>
                 </Flex>
-                <Box fontWeight={"semibold"}>
-                  <Icon as={AiOutlineBank}></Icon> BCA 11223456789
-                </Box>
-              </Flex>
-              <Flex
-                flexDir={"column"}
-                boxShadow={"rgba(0, 0, 0, 0.24) 0px 3px 8px"}
-                borderRadius={"0.7rem"}
-                alignItems={"center"}
-                padding={"2rem"}
-                gap={"2rem"}
-                fontWeight={"semibold"}
-              >
-                <Box fontSize={"xl"} fontWeight={"semibold"}>
-                  Payment Proof
-                </Box>
-                {link ? (
-                  <Image
-                    // height={"200px"}
-                    maxH={"200px"}
-                    // onClick={() => inputFileRef.current.click()}
-                    src={process.env.REACT_APP_API_IMAGE_URL + link}
-                  ></Image>
-                ) : (
-                  <Icon
-                    fontSize={"8xl"}
-                    as={FcAddImage}
-                    cursor={"pointer"}
-                  ></Icon>
-                )}
 
-                <Input
-                  display={"none"}
-                  ref={inputFileRef}
-                  type="file"
-                  onChange={handleFile}
-                ></Input>
+                {/* Action */}
+                <OrderAction
+                  inputFileRef={inputFileRef}
+                  status={status}
+                  order={order}
+                  fetch={fetch}
+                />
               </Flex>
-
-              {/* Action */}
-              <OrderAction
-                inputFileRef={inputFileRef}
-                status={status}
-                order={order}
-                fetch={fetch}
-              />
             </Flex>
-          </Flex>
-        ) : (
-          <NotFoundPage />
-        )}
-      </Box>
-    </Container>
+          ) : (
+            <NotFoundPage />
+          )}
+        </Box>
+      </Container>
+    </>
   );
 }
