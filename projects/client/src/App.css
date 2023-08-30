@@ -77,3 +77,14 @@
 .pagination .active {
   background-color: #5ab1bb;
 }
+
+.responsive-chart {
+  width: 800;
+}
+
+/* Media query for smaller screens (mobile) */
+@media (min-width: 992px) {
+  .responsive-chart {
+    width: 400; /* Full width for mobile screens */
+  }
+}

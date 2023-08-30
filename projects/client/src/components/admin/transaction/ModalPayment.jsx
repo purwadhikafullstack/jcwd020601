@@ -12,6 +12,7 @@ import {
   Icon,
   Image,
   Center,
+  Box,
 } from "@chakra-ui/react";
 import { FcImageFile } from "react-icons/fc";
 import { MdCancelPresentation } from "react-icons/md";
@@ -67,34 +68,36 @@ export default function ModalPayment(props) {
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              colorScheme="red"
-              mr={3}
-              onClick={() => {
-                return update("canceled");
-              }}
-            >
-              Cancel Order
-            </Button>
+            <Box w={"100%"} display={props.noEdit ? "none" : "inline-flex"}>
+              <Button
+                colorScheme="red"
+                mr={3}
+                onClick={() => {
+                  return update("canceled");
+                }}
+              >
+                Cancel Order
+              </Button>
 
-            <Button
-              colorScheme="orange"
-              mr={3}
-              onClick={() => {
-                return update("Waiting for Payment");
-              }}
-            >
-              Reject Payment
-            </Button>
-            <Button
-              colorScheme="green"
-              mr={3}
-              onClick={() => {
-                return update("process");
-              }}
-            >
-              Accept Payment
-            </Button>
+              <Button
+                colorScheme="orange"
+                mr={3}
+                onClick={() => {
+                  return update("Waiting for Payment");
+                }}
+              >
+                Reject Payment
+              </Button>
+              <Button
+                colorScheme="green"
+                mr={3}
+                onClick={() => {
+                  return update("process");
+                }}
+              >
+                Accept Payment
+              </Button>
+            </Box>
           </ModalFooter>
         </ModalContent>
       </Modal>

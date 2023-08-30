@@ -24,7 +24,7 @@ module.exports = {
   userServices: { ...fetchUser, ...userHandlers },
   orderServices: {
     ...orderTransactionServices,
-    //  ...orderReportServices
+    ...orderReportServices,
   },
   orderDetailServices,
   cartServices,

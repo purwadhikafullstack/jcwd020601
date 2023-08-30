@@ -24,7 +24,7 @@ import tooFarModal from "./TooFarModal";
 
 export default function DetailBookPage() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
-  console.log(IMG);
+
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   const toast = useToast();
@@ -35,15 +35,10 @@ export default function DetailBookPage() {
   async function fetchProduct() {
     let response = await api().get(`/stock/${parseInt(id)}`);
     setValue(response.data);
-    console.log(response);
   }
   useEffect(() => {
     fetchProduct();
   }, [id]);
-
-  // console.log(value.Book?.title);
-  // console.log(value.Book);
-  // console.log(value);
 
   // Add to Cart
   async function add() {
@@ -77,8 +72,7 @@ export default function DetailBookPage() {
     let result = (a / 100) * b;
     return result;
   };
-  console.log(value.Book?.book_url);
-  console.log(value.Book?.title);
+
   return (
     <>
       <Center my={3} display={"flex"} flexDirection={"column"}>

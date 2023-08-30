@@ -39,10 +39,8 @@ export default function LoginPage() {
     google.accounts.id.prompt();
   }, []);
   async function handleCallbackResponse(response) {
-    const latitude = JSON.parse(localStorage.getItem("Latitude") || "6.2088");
-    const longitude = JSON.parse(
-      localStorage.getItem("Longitude") || "106.8456"
-    );
+    const latitude = JSON.parse(localStorage.getItem("Latitude"));
+    const longitude = JSON.parse(localStorage.getItem("Longitude"));
     var userObject = jwt_decode(response.credential);
     try {
       let token;

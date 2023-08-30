@@ -72,21 +72,30 @@ export default function Stock() {
   };
   return (
     <>
-      <Box marginLeft={60} h={"80vh"} overflow={"auto"}>
-        <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
+      <Box
+        marginLeft={{ base: 0, lg: 60 }}
+        h={"80vh"}
+        overflow={{ base: "scroll", lg: "auto" }}
+      >
+        <Flex
+          flexDir={"column"}
+          ml={{ base: 0, lg: "10px" }}
+          px={{ base: 0, lg: "10px" }}
+          py={{ base: 0, lg: "10px" }}
+        >
           <Greetings />
-          <TableContainer padding={10}>
+          <TableContainer padding={{ base: 2, lg: 10 }}>
             <Box
               display={"flex"}
               alignItems={"center"}
               justifyContent={"space-between"}
               px={5}
             >
-              <Box display={"flex"} py={3} gap={3}>
+              <Box display={"flex"} py={3} pr={3} gap={3}>
                 <Input
                   placeholder="Search Stock Book By Name"
                   variant={"outline"}
-                  w={"30em"}
+                  w={{ base: "15em", lg: "30em" }}
                   size="lg"
                   onChange={inputSearch}
                   value={query}
@@ -97,7 +106,7 @@ export default function Stock() {
                   variant="outline"
                   size={"lg"}
                 >
-                  Search
+                  <Text display={{ base: "none", lg: "block" }}>Search</Text>
                 </Button>
                 <Button
                   leftIcon={<GrPowerReset />}
@@ -105,14 +114,20 @@ export default function Stock() {
                   variant="outline"
                   size={"lg"}
                 >
-                  Reset
+                  <Text display={{ base: "none", lg: "block" }}>Reset</Text>
                 </Button>
               </Box>
               {/* getData={fetchStock} */}
-              <Add getData={fetchStock} />
+              <Box>
+                <Add getData={fetchStock} />
+              </Box>
             </Box>
             <Table variant="simple">
-              <TableCaption my={5}>
+              <TableCaption
+                my={5}
+                w={{ base: "27em", lg: "100%" }}
+                textAlign="center"
+              >
                 Total Rows: {rows} Page: {rows ? page + 1 : 0} of {pages}
               </TableCaption>
               <Thead>

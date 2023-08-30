@@ -39,7 +39,10 @@ import CartButton from "../CartButton";
 const IMGURL = process.env.REACT_APP_API_IMAGE_URL;
 
 export default function Navbar({ callback, keyword }) {
+  const locatio = useLocation();
+  const location = locatio.pathname.split("/")[1];
   const modalSelectAddress = useDisclosure();
+  const toast = useToast();
   const [userAddresses, setUserAddresses] = useState([]);
   const [userAddress, setUserAddress] = useState([]);
   const orderSelector = useSelector((state) => state.login.order);
@@ -47,12 +50,38 @@ export default function Navbar({ callback, keyword }) {
   const [large] = useMediaQuery("(min-width: 768px)");
   const [category, setCategory] = useState([]);
   const { categoryProduct } = useParams();
-
+  async function fetchUserAddresses() {
+    try {
+      await api()
+        .get("/address/user/" + userSelector.id)
+        .then((res) => {
+          setUserAddresses(res.data);
+        })
+        .catch((err) => {
+          toast({
+            position: "top",
+            title: "Something went a",
+            description: err.response.data.message,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        });
+    } catch (err) {
+      alert(err.data.message);
+    }
+  }
   const fetchCategori = async () => {
     let response = await api().get(`/category`);
     setCategory(response.data.result);
   };
-
+  useEffect(() => {
+    if (userSelector.email) {
+      fetchUserAddresses();
+      setUserAddress(userSelector.address);
+      // fetchUserMainAddress();
+    }
+  }, []);
   useEffect(() => {
     fetchCategori();
   }, [keyword]);
@@ -82,6 +111,12 @@ export default function Navbar({ callback, keyword }) {
         bg={{ base: "white", md: "white" }}
         py={large ? "0px" : "60px"}
       >
+        <ModalSelectAddress
+          userAddresses={userAddresses}
+          modalSelectAddress={modalSelectAddress}
+          userAddress={userAddress}
+          setUserAddress={setUserAddress}
+        />
         {large ? (
           <DesktopNav
             callback={callback}
@@ -92,6 +127,7 @@ export default function Navbar({ callback, keyword }) {
             userAddress={userAddress}
             userAddresses={userAddresses}
             modalSelectAddress={modalSelectAddress}
+            location={location}
           />
         ) : (
           <MobileNav
@@ -101,6 +137,7 @@ export default function Navbar({ callback, keyword }) {
             setUserAddresses={setUserAddresses}
             userAddresses={userAddresses}
             modalSelectAddress={modalSelectAddress}
+            location={location}
           />
         )}
       </Box>
@@ -117,10 +154,8 @@ function DesktopNav({
   setUserAddresses,
   userAddresses,
   modalSelectAddress,
+  location,
 }) {
-  const toast = useToast();
-  const locatio = useLocation();
-  const location = locatio.pathname.split("/")[1];
   const userSelector = useSelector((state) => state.login.auth);
   const dispatch = useDispatch();
   const nav = useNavigate();
@@ -130,13 +165,7 @@ function DesktopNav({
   const [input, setInput] = useState("");
   const [result, setResult] = useState([]);
   const orderSelector = useSelector((state) => state.login.order);
-  useEffect(() => {
-    if (userSelector.email) {
-      fetchUserAddresses();
-      setUserAddress(userSelector.address);
-      // fetchUserMainAddress();
-    }
-  }, []);
+
   function handleTrans() {
     setTrans(!trans);
   }
@@ -155,27 +184,7 @@ function DesktopNav({
     nav("/login");
     return;
   }
-  async function fetchUserAddresses() {
-    try {
-      await api()
-        .get("/address/user/" + userSelector.id)
-        .then((res) => {
-          setUserAddresses(res.data);
-        })
-        .catch((err) => {
-          toast({
-            position: "top",
-            title: "Something went a",
-            description: err.response.data.message,
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-        });
-    } catch (err) {
-      alert(err.data.message);
-    }
-  }
+
   const fetchData = async (value) => {
     try {
       const response = await api().get(
@@ -404,7 +413,6 @@ function DesktopNav({
                 : "inline-flex"
             }
             onClick={() => {
-              console.log("sakdas");
               modalSelectAddress.onOpen();
             }}
           >

@@ -10,15 +10,19 @@ router.get(
   adminController.getByToken,
   adminController.getAdminOrUserByToken
 );
-router.post("/filter", adminController.getByFilter);
-router.post("/allAdminP", adminController.getAllBranchAdminWithPaginate);
+router.post("/filter", getSuperAdminByToken, adminController.getByFilter);
+router.post(
+  "/allAdminP",
+  getSuperAdminByToken,
+  adminController.getAllBranchAdminWithPaginate
+);
 router.post(
   "/v4",
   getSuperAdminByToken,
   adminController.insertBranchAdminAndBranch
 );
 router.post("/v2", adminController.loginV2);
-router.patch("/v2/:id", adminController.editAdmin);
-router.delete("/v3/:id", adminController.deleteAdmin);
+router.patch("/v2/:id", getSuperAdminByToken, adminController.editAdmin);
+router.delete("/v3/:id", getSuperAdminByToken, adminController.deleteAdmin);
 
 module.exports = router;

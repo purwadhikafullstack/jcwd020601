@@ -97,4 +97,47 @@ module.exports = {
       return error;
     }
   },
+  getBranchOrder: async (body, page1, limit1) => {
+    try {
+      const { BranchId, status, search } = body;
+      let page = parseInt(page1) || 0;
+      const limit = parseInt(limit1) || 10;
+
+      const condition = {
+        BranchId,
+      };
+
+      if (status !== "all") {
+        console.log("NOT ALL NOT ALL NOT ALL");
+        condition.status = status;
+      }
+
+      if (search) {
+        console.log("SEARCH");
+        condition.invoiceCode = search;
+        delete condition.status;
+        page = 0;
+      }
+
+      const offset = limit * page;
+
+      const totalRows = await db.Order.count({
+        where: condition,
+      });
+      const totalPage = Math.ceil(totalRows / limit);
+
+      const Order = await db.Order.findAll({
+        where: condition,
+        offset: offset,
+        limit: limit,
+        order: [
+          ["createdAt", "DESC"], // Order by createdAt in descending order
+        ],
+      });
+
+      return { Order, page, limit, totalRows, totalPage };
+    } catch (error) {
+      return error;
+    }
+  },
 };
