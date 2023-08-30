@@ -70,7 +70,7 @@ export default function CartPage() {
   return (
     <>
       <Navbar></Navbar>
-      <Container maxW={"size.xl"}>
+      <Container maxW={"90rem"}>
         <Box>
           <Box padding={"1rem 2rem"} fontSize={"2xl"} fontWeight={"semibold"}>
             Cart
