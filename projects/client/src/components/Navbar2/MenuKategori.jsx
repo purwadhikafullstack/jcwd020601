@@ -96,11 +96,6 @@ export default function MenuKategori(props) {
                   }}
                 >
                   <Text
-                    onClick={() => {
-                      console.log(props.handleTrans);
-                      console.log(props.category);
-                      console.log(props.trans);
-                    }}
                     cursor={"pointer"}
                     w={"15em"}
                     p={"10px"}
