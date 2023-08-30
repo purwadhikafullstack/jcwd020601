@@ -60,24 +60,13 @@ export default function BranchOrder() {
       fetch();
     }
   }, [page]);
-
-  //
   const changePage = ({ selected }) => {
-    // console.log(selected);
     setPage(selected);
   };
   //
   return (
     <>
-      <Box
-        bgColor={"#fbfbfb"}
-        // display={"flex"}
-        // flexDirection={"column"}
-        marginLeft={60}
-        // bgColor={"red"}
-        py={"10px"}
-        px={"10px"}
-      >
+      <Box bgColor={"#fbfbfb"} marginLeft={60} py={"10px"} px={"10px"}>
         <Flex ml={"10px"}>
           <Flex flexDir={"column"} gap={"10px"} w={"100%"}>
             <Greetings />

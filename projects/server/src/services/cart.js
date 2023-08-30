@@ -52,37 +52,12 @@ module.exports = {
   },
   destroyCartId: async (body) => {
     try {
-      console.log("HAPUS CART");
       const { id, trans } = body;
       return await db.Cart.destroy({
         where: {
           id,
         },
         transaction: trans,
-      });
-    } catch (error) {
-      return error;
-    }
-  },
-  getAll: async (body) => {
-    try {
-      return await db.Cart.findAll({
-        include: [
-          {
-            model: db.Stock,
-            required: true, // Inner join
-            include: [
-              {
-                model: db.Book,
-                required: true, // Inner join
-              },
-              {
-                model: db.Branch,
-                required: true,
-              },
-            ],
-          },
-        ],
       });
     } catch (error) {
       return error;

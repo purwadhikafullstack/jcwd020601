@@ -24,12 +24,10 @@ async function getAdminByToken(req, res, next) {
     delete admin.dataValues.password;
 
     req.admin = admin;
-    console.log("SUKESS");
 
     next();
   } catch (err) {
     console.log(err);
-    console.log("Not SUKES");
     return res.status(500).send({ message: err.message });
   }
 }

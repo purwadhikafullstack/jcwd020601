@@ -11,17 +11,6 @@ export default function CartButton(props) {
   const dispatch = useDispatch();
   const orderSelector = useSelector((state) => state.login.order);
   const qtySelector = useSelector((state) => state.login.qty);
-
-  console.log(qtySelector.quantity);
-
-  // dispatch({
-  //   type: "order",
-  //   payload: {
-  //     BranchId: closestBranch.BranchId,
-  //     AddressId: address.id || userMainAddress.id,
-  //   },
-  // });
-
   return (
     <Box>
       <Menu>

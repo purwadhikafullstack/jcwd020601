@@ -17,7 +17,6 @@ export default function ModalSort(props) {
     const tempobject = { ...props.sort };
     tempobject[id] = value;
     props.setSort(tempobject);
-    console.log(tempobject);
   }
   return (
     <>

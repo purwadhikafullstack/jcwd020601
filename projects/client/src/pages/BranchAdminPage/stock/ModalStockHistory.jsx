@@ -39,9 +39,6 @@ export default function ModalStockHistory({ isOpen, onClose, id, name }) {
       fetch();
     }
   }, [isOpen]);
-
-  // console.log(id);
-
   return (
     <>
       <Text>Stock History</Text>

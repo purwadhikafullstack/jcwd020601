@@ -17,9 +17,7 @@ export default function VerifyEmail() {
         },
       })
       .then((res) => {
-        console.log("lola");
         setUser(res.data);
-        console.log(res.data);
       })
       .catch((err) => console.log(err));
   }
@@ -30,7 +28,6 @@ export default function VerifyEmail() {
         user,
       })
       .then((res) => {
-        console.log(res.data);
         alert(res.data.message);
         // window.location.reload(false);
         nav("/login");
@@ -42,11 +39,7 @@ export default function VerifyEmail() {
   }
 
   useEffect(() => {
-    console.log(location);
-    //   "/","forgot-password", "sahkdjsahkdjsahjkdhsakjdsa"
     const token2 = location.pathname.split("/")[2]; // ini variable sementara untuk nampung
-    //   ["", forgot-password , setiPkRkDCbKGZ6aYy-fq]
-    //setiPkRkDCbKGZ6aYy-fq
     fetchUser(token2);
     setToken(token2);
   }, []);

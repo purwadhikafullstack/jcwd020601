@@ -10,7 +10,6 @@ export default function DetailBookCardPage() {
   const inputSearch = (e) => {
     setkeyword(e.target.value);
   };
-  console.log(keyword);
   return (
     <>
       <Box alignItems="center" justifyContent="center" height={"100vh"}>

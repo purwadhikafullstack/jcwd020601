@@ -41,7 +41,6 @@ export default function LoginPage() {
       await api()
         .get("/admin/v3?token=" + token)
         .then(async (res) => {
-          console.log(res.data);
           dispatch({
             type: "login",
             payload: res.data,
@@ -74,12 +73,10 @@ export default function LoginPage() {
   });
   const nav = useNavigate();
   function inputHandler(input) {
-    console.log(inputa);
     const { value, id } = input.target;
     const tempobject = { ...login };
     tempobject[id] = value;
     setLogin(tempobject);
-    console.log(tempobject);
   }
   return (
     <>

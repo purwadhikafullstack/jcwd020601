@@ -108,10 +108,8 @@ async function delAddress({ val, token, dispatch, Swal, modalEditAddress }) {
             : { lat: latitude, lon: longitude }
         )
         .then((res) => {
-          console.log(address);
           return res.data;
         });
-      console.log(closestBranch);
       dispatch({
         type: "login",
         payload: { token, ...user },

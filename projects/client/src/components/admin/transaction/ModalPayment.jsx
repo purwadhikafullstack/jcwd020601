@@ -32,7 +32,6 @@ export default function ModalPayment(props) {
       onClose();
       return props.fetch();
     } catch (error) {
-      console.log(error);
       alert(error.response.data);
     }
   }

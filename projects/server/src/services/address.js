@@ -146,16 +146,19 @@ const addressServices = {
       },
     });
   },
-  createAddress: async ({
-    labelAlamat,
-    namaPenerima,
-    no_Handphone,
-    province,
-    city,
-    alamatLengkap,
-    pos,
-    UserId,
-  },t) => {
+  createAddress: async (
+    {
+      labelAlamat,
+      namaPenerima,
+      no_Handphone,
+      province,
+      city,
+      alamatLengkap,
+      pos,
+      UserId,
+    },
+    t
+  ) => {
     let place = {};
     const Main = await db.Address.findOne({
       where: {

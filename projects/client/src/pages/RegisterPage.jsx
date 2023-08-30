@@ -45,7 +45,6 @@ export default function RegisterPage() {
 
   async function handleCallbackResponse(response) {
     var userObject = jwt_decode(response.credential);
-    console.log(userObject);
     try {
       let token;
       const loggingIn = await api()
@@ -73,12 +72,10 @@ export default function RegisterPage() {
             isClosable: true,
           });
         });
-      console.log(loggingIn);
       if (loggingIn) {
         await api()
           .get("/auth/v3?token=" + token)
           .then((res) => {
-            console.log(res.data);
             dispatch({
               type: "login",
               payload: res.data,
@@ -159,7 +156,6 @@ export default function RegisterPage() {
             return false;
           }
         });
-      console.log(checkemail);
       if (checkemail) {
         alert("Email has been used");
         formik.values.email = "";

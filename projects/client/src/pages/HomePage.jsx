@@ -39,14 +39,6 @@ export default function HomePage() {
   }
   return (
     <Flex display={"columns"}>
-      {/* <Flex
-        onClick={() => {
-          console.log(orderSelector);
-          console.log(userSelector);
-        }}
-      >
-        lol
-      </Flex> */}
       <Navbar />
       <CarouselShow />
       <CarouselBooks />

@@ -42,21 +42,13 @@ export default function ModalAddAdmin(props) {
             </Flex>
           </Flex>
           <Flex flexDir={"column"}>
-            <Flex
-              fontWeight={"500"}
-              onClick={() => {
-                console.log(props.formikAddress.values);
-              }}
-            >
-              Email
-            </Flex>
+            <Flex fontWeight={"500"}>Email</Flex>
             <Flex>
               <Input
                 _placeholder={{ opacity: "1" }}
                 onChange={props.inputHandlerAddress}
                 id="email"
                 variant={"flushed"}
-                // value={props.namaPenerima}
                 placeholder="Branch-Admin's Email"
               ></Input>
             </Flex>
@@ -150,15 +142,7 @@ export default function ModalAddAdmin(props) {
             </Flex>
           </Flex>
           <Flex flexDir={"column"}>
-            <Flex
-              fontWeight={"500"}
-              onClick={() => {
-                // console.log(props.formikAddress.values);
-                // console.log(props.pos);
-              }}
-            >
-              City
-            </Flex>
+            <Flex fontWeight={"500"}>City</Flex>
             <Select
               id="city"
               onChange={(val) => {

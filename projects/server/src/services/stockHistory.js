@@ -19,7 +19,6 @@ module.exports = {
   createStockHistory: async (body) => {
     try {
       const { updatedStock, quantity, tB, StockId } = body;
-      console.log({ tB, updatedStock, quantity, StockId });
       return await db.StockHistory.create(
         {
           StockId,
@@ -31,6 +30,18 @@ module.exports = {
         },
         { transaction: body.trans }
       );
+    } catch (error) {
+      return error;
+    }
+  },
+  getStockHistoryV2: async (body) => {
+    try {
+      const { StockId } = body;
+      return await db.StockHistory.findAll({
+        where: {
+          StockId,
+        },
+      });
     } catch (error) {
       return error;
     }
