@@ -39,7 +39,6 @@ router.patch(
   getUserByToken,
   orderController.updateStatusUser
 );
-router.delete("/v3/:id", orderController.deleteOrder);
 router.post("/shipping", orderController.getShipping);
 
 module.exports = router;

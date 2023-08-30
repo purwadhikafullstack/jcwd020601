@@ -439,25 +439,7 @@ const orderController = {
       res.status(500).send(err);
     }
   },
-  deleteOrder: async (req, res) => {
-    try {
-      await db.Order.destroy({
-        where: {
-          //  id: req.params.id
 
-          //   [Op.eq]: req.params.id
-
-          id: req.params.id,
-        },
-      });
-      return await db.Order.findAll().then((result) => res.send(result));
-    } catch (err) {
-      console.log(err.message);
-      return res.status(500).send({
-        error: err.message,
-      });
-    }
-  },
   getShipping: async (req, res) => {
     try {
       const { origin, destination, weight, courier } = req.body;
