@@ -49,48 +49,6 @@ const stockController = {
       const search = req.query.search_query || "";
       const place = req.query.place;
       const stockData = await stockServices.getAll(page, limit, search, place);
-
-      // const offset = limit * page;
-      // const totalRows = await db.Stock.count({
-      //   // search: req.query.search_stock || "Demotivasi",
-      //   include: [
-      //     {
-      //       model: db.Book,
-      //       where: {
-      //         title: {
-      //           [Op.like]: "%" + search + "%",
-      //         },
-      //       },
-      //     },
-      //   ],
-      // });
-      // const totalPage = Math.ceil(totalRows / limit);
-      // const result = await db.Stock.findAll({
-      //   include: [
-      //     {
-      //       model: db.Book,
-      //       where: {
-      //         title: {
-      //           [Op.like]: "%" + search + "%",
-      //         },
-      //       },
-      //     },
-      //     {
-      //       model: db.Branch,
-      //     },
-      //   ],
-      //   offset: offset,
-      //   limit: limit,
-      //   order: [["id"]],
-      // });
-
-      // return res.json({
-      //   result: result,
-      //   limit: limit,
-      //   page: page,
-      //   totalRows: totalRows,
-      //   totalPage: totalPage,
-      // });
       res.send(stockData);
     } catch (err) {
       console.log(err.message);

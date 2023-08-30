@@ -2,10 +2,30 @@ const db = require("../models");
 const { Op } = db.Sequelize;
 const bookImage = process.env.URL_BOOK_PROD;
 const bookServices = {
-  getAll: async (page, limit, search) => {
+  getAll: async (page, limit, search, category, list) => {
     try {
+      const order = [];
       const offset = limit * page;
+      const query = {
+        model: db.Category,
+        required: true,
+      };
+      if (category) {
+        query.where = {
+          id: category,
+        };
+      }
+      if (list === "alfabet") {
+        order.push(["title", "ASC"]); // ASC for ascending order, DESC for descending
+      } else if (list === "highest") {
+        order.push(["price", "DESC"]);
+      } else if (list === "lowest") {
+        order.push(["price", "ASC"]);
+      } else {
+        order.push(["id", "ASC"]);
+      }
       const totalRows = await db.Book.count({
+        include: [query],
         where: {
           [Op.or]: [
             {
@@ -23,7 +43,7 @@ const bookServices = {
       });
       const totalPage = Math.ceil(totalRows / limit);
       const result = await db.Book.findAll({
-        include: [{ model: db.Category }],
+        include: [query],
         where: {
           [Op.or]: [
             {
@@ -40,7 +60,7 @@ const bookServices = {
         },
         offset: offset,
         limit: limit,
-        order: [["id"]],
+        order: order,
       });
       return {
         result,
