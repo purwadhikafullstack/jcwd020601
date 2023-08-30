@@ -108,21 +108,30 @@ export default function Product() {
   };
   return (
     <>
-      <Box marginLeft={60}>
-        <Flex flexDir={"column"} ml={"10px"} px={"10px"} py={"10px"}>
+      <Box
+        marginLeft={{ base: 0, lg: 60 }}
+        h={"80vh"}
+        overflow={{ base: "scroll", lg: "auto" }}
+      >
+        <Flex
+          flexDir={"column"}
+          ml={{ base: 0, lg: "10px" }}
+          px={{ base: 0, lg: "10px" }}
+          py={{ base: 0, lg: "10px" }}
+        >
           <Greetings />
-          <TableContainer padding={5}>
+          <TableContainer padding={{ base: 2, lg: 10 }}>
             <Box
               display={"flex"}
               alignItems={"center"}
               justifyContent={"space-between"}
               px={5}
             >
-              <Box display={"flex"} py={3} gap={3}>
+              <Box display={"flex"} py={3} pr={3} gap={3}>
                 <Input
                   placeholder="Search Product"
                   variant={"outline"}
-                  w={"30em"}
+                  w={{ base: "15em", lg: "30em" }}
                   size="lg"
                   value={query}
                   onChange={inputSearch}
@@ -133,7 +142,7 @@ export default function Product() {
                   variant="outline"
                   size={"lg"}
                 >
-                  Search
+                  <Text display={{ base: "none", lg: "block" }}>Search</Text>
                 </Button>
                 <Button
                   leftIcon={<GrPowerReset />}
@@ -141,7 +150,7 @@ export default function Product() {
                   variant="outline"
                   size={"lg"}
                 >
-                  Reset
+                  <Text display={{ base: "none", lg: "block" }}>Reset</Text>
                 </Button>
                 <Select
                   onChange={(e) => onChangeCategory(e.target.value)}
@@ -173,7 +182,11 @@ export default function Product() {
               <Add getData={fetchProduct} token={token} />
             </Box>
             <Table variant="simple">
-              <TableCaption my={5}>
+              <TableCaption
+                my={5}
+                w={{ base: "27em", lg: "100%" }}
+                textAlign={"center"}
+              >
                 Total Rows: {rows} Page: {rows ? page + 1 : 0} of {pages}
               </TableCaption>
               <Thead>

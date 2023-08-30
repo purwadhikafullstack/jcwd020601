@@ -47,13 +47,13 @@ export default function Add({ getData, token }) {
   return (
     <>
       <Button onClick={onOpen} leftIcon={<GrFormAdd />} variant="outline">
-        Add Categori
+        <Text display={{ base: "none", lg: "block" }}>Add Categori</Text>
       </Button>
       <Modal
         onClose={onClose}
         isOpen={isOpen}
         scrollBehavior={scrollBehavior}
-        size={"xl"}
+        size={"lg"}
       >
         <ModalOverlay />
 

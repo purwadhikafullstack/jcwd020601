@@ -66,7 +66,15 @@ export default function BranchOrder() {
   //
   return (
     <>
-      <Box bgColor={"#fbfbfb"} marginLeft={60} py={"10px"} px={"10px"}>
+      <Box
+        bgColor={"#fbfbfb"}
+        // display={"flex"}
+        // flexDirection={"column"}
+        marginLeft={{ base: 0, lg: 60 }}
+        // bgColor={"red"}
+        py={"10px"}
+        px={"10px"}
+      >
         <Flex ml={"10px"}>
           <Flex flexDir={"column"} gap={"10px"} w={"100%"}>
             <Greetings />
