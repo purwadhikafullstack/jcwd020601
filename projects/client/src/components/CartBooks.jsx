@@ -33,6 +33,8 @@ export default function CartBooks(props) {
     return setCart(data.data.Cart);
   }
 
+  console.log(cart);
+
   //PATCH
   async function edit(idx, type) {
     try {

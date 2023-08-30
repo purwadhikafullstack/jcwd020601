@@ -81,6 +81,17 @@ export default function LoginPage() {
           .then((res) => res.data)
           .catch((err) => console.log(err));
         if (user.email) {
+          //
+          const qty = await api().post("/cart/qty", {
+            UserId: user?.id,
+          });
+          dispatch({
+            type: "qty",
+            payload: {
+              quantity: qty.data.count,
+            },
+          });
+          //
           dispatch({
             type: "login",
             payload: { token, ...user },

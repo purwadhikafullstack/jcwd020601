@@ -2,27 +2,12 @@ const db = require("../models");
 const Sequelize = require("sequelize");
 const { Op } = db.Sequelize;
 const moment = require("moment");
+const { cartServices, stockServices } = require("../services");
+
 const cartController = {
   getAll: async (req, res) => {
     try {
-      const Cart = await db.Cart.findAll({
-        include: [
-          {
-            model: db.Stock,
-            required: true, // Inner join
-            include: [
-              {
-                model: db.Book,
-                required: true, // Inner join
-              },
-              {
-                model: db.Branch,
-                required: true,
-              },
-            ],
-          },
-        ],
-      });
+      const Cart = cartServices.getAll();
       return res.send(Cart);
     } catch (err) {
       console.log(err.message);
@@ -31,43 +16,27 @@ const cartController = {
       });
     }
   },
+  getQty: async (req, res) => {
+    try {
+      const { UserId } = req.body;
+      const result = await cartServices.getQty({ UserId });
+      res.send(result);
+    } catch (error) {
+      res.status(500).send({
+        message: error.message,
+      });
+    }
+  },
   getById: async (req, res) => {
     try {
       const { UserId, BranchId } = req.body;
-      const Cart = await db.Cart.findAll({
-        where: {
-          UserId,
-        },
-        include: [
-          {
-            model: db.Stock,
-            required: true,
-            where: {
-              BranchId,
-            },
-            include: [
-              {
-                model: db.Book,
-                required: true,
-                // include: [
-                //   {
-                //     model: db.Discount,
-                //     required: false,
-                //   },
-                // ],
-              },
-              {
-                model: db.Discount,
-                required: false,
-              },
-              {
-                model: db.Branch,
-                required: true,
-              },
-            ],
-          },
-        ],
+      const Cart = await cartServices.getCartUserId({
+        UserId,
+        BranchId,
+        raw: false,
       });
+
+      // console.log({ Cart: Cart });
 
       // Sum Weight
       const weight = Cart.reduce((prev, curr) => {
@@ -93,14 +62,11 @@ const cartController = {
   },
   editCart: async (req, res) => {
     try {
+      const trans = await db.sequelize.transaction();
       const { StockId, type, id } = req.body;
 
       // get initial quantity from chart
-      const cart = await db.Cart.findOne({
-        where: {
-          id,
-        },
-      });
+      const cart = await cartServices.getOneCart({ id });
       const qty = cart.quantity;
 
       // operation type(condition)
@@ -111,34 +77,25 @@ const cartController = {
       }
 
       //condition for stocks availability
-      const stock = await db.Stock.findOne({
-        where: {
-          id: StockId,
-        },
-      });
+      const stock = await stockServices.getStockById({ StockId });
       const n = stock.stock - stock.bucket;
 
       if (quantity <= 0) {
+        await trans.rollback();
         return res
           .status(400)
           .send("Unable to order less than 1 product, please delete instead");
       } else if (n < quantity) {
+        await trans.rollback();
         return res.status(400).send("Stock Insufficient");
       } else {
         // update quantity
-        await db.Cart.update(
-          {
-            quantity,
-          },
-          {
-            where: {
-              id,
-            },
-          }
-        );
+        await cartServices.updateCart({ quantity, id, trans });
       }
+      await trans.commit();
       return res.send(`${type} ${quantity}`);
     } catch (err) {
+      await trans.rollback();
       console.log(err.message);
       res.status(500).send({
         message: err.message,
@@ -147,65 +104,49 @@ const cartController = {
   },
   insertCart: async (req, res) => {
     try {
+      const trans = await db.sequelize.transaction();
       const { qty, UserId, StockId } = req.body;
 
       //condition for stocks availability
-      const stock = await db.Stock.findOne({
-        where: {
-          id: StockId,
-        },
-      });
+      const stock = await stockServices.getStockById({ StockId });
       const avail = stock.stock - stock.bucket;
 
       if (qty <= 0) {
+        await trans.rollback();
         res
           .status(400)
           .send("Unable to order less than 1 product, please delete instead");
       } else if (avail >= qty) {
         // check to update or create cart
-        const check = await db.Cart.findOne({
-          where: {
-            StockId,
-            UserId,
-          },
+        const check = await cartServices.getCartStockIdUserId({
+          StockId,
+          UserId,
         });
 
         if (check) {
+          console.log("MASUK CEK");
           const k = check.dataValues.quantity + qty;
           if (avail >= k) {
-            await db.Cart.update(
-              {
-                quantity: k,
-              },
-              {
-                where: {
-                  StockId,
-                  UserId,
-                },
-              }
-            );
+            await cartServices.updateCartById({ k, StockId, UserId, trans });
           } else if (avail < k) {
+            await trans.rollback();
             return res.status(400).send("Stock Insufficient");
           }
         } else {
-          await db.Cart.create({
-            quantity: qty,
-            UserId,
-            StockId,
-          });
+          console.log("MASUK INSERT");
+          console.log({ qty, UserId, StockId });
+          await cartServices.insertCart({ qty, UserId, StockId, trans });
         }
-        const result = await db.Cart.findAll({
-          where: {
-            UserId,
-          },
-        });
-        return res.send(result);
+        await trans.commit();
+        return res.send("product inserted");
       } else if (avail < qty) {
         console.log({ masuk: avail, qty: qty });
+        await trans.rollback();
         res.status(400).send("Stock Insufficient");
       }
     } catch (err) {
       console.log(err);
+      await trans.rollback();
       return res.status(500).send({
         message: err.message,
       });
@@ -213,18 +154,14 @@ const cartController = {
   },
   deleteCart: async (req, res) => {
     try {
-      await db.Cart.destroy({
-        where: {
-          //  id: req.params.id
-
-          //   [Op.eq]: req.params.id
-
-          id: req.params.id,
-        },
-      });
+      const trans = await db.sequelize.transaction();
+      const id = req.params.id;
+      await cartServices.destroyCartId({ id, trans });
+      await trans.commit();
       return await db.Cart.findAll().then((result) => res.send(result));
     } catch (err) {
       console.log(err.message);
+      await trans.rollback();
       return res.status(500).send({
         error: err.message,
       });

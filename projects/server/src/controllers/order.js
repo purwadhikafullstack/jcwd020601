@@ -582,7 +582,11 @@ const orderController = {
       }
 
       // get the order from cart
-      const cart = await cartServices.getCartUserId({ UserId, BranchId });
+      const cart = await cartServices.getCartUserId({
+        UserId,
+        BranchId,
+        raw: true,
+      });
 
       // Order weight
       const weight = cart.reduce((prev, curr) => {
