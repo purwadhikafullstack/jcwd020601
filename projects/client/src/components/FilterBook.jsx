@@ -9,12 +9,11 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-
 import { api } from "../api/api";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import "../App.css";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import ValueFilterBook from "./valueFilterBook";
 
@@ -22,6 +21,8 @@ export default function FilterBook() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
+  const quantitySelector = useSelector((state) => state.login.qty);
+  const dispatch = useDispatch();
   let t = localStorage.getItem("auth");
   const toast = useToast();
   const nav = useNavigate();
@@ -83,6 +84,12 @@ export default function FilterBook() {
           qty: 1,
           UserId: userSelector.id,
           StockId: value[idx].id,
+        });
+        dispatch({
+          type: "qty",
+          payload: {
+            quantity: quantitySelector.quantity + 1,
+          },
         });
       } else {
         Swal.fire("You need to login first?", "", "question");
