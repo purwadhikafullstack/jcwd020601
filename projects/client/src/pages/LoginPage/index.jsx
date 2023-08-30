@@ -21,13 +21,14 @@ import { useCallback } from "react";
 import Options from "./Options";
 import Inputs from "./Inputs";
 import Swal from "sweetalert2";
-const client_id = process.env.GOOGLE_CLIENT_ID;
+const client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 export default function LoginPage() {
   // "417414378341-5iq94ontj89hqcfu7649s67bveqsfagb.apps.googleusercontent.com";
   useEffect(() => {
     /* global google */
     google.accounts.id.initialize({
       client_id:
+        client_id ||
         "417414378341-aaj9jcihblf9ek3mo6kh86cq5rmc7ebs.apps.googleusercontent.com",
       callback: handleCallbackResponse,
     });
@@ -139,7 +140,7 @@ export default function LoginPage() {
                 className={"loginpage-container"}
                 flexDir={"column"}
                 border={"1px solid #dbdbdb"}
-                onClick={() => console.log(client_id)}
+                onClick={() => console.log(process.env)}
               >
                 <Img src={logo} width={"300px"} py={"40px"}></Img>
                 <Inputs
