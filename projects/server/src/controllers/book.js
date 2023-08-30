@@ -11,7 +11,15 @@ const bookController = {
       const page = parseInt(req.query.page) || 0;
       const limit = parseInt(req.query.limit) || 10;
       const search = req.query.search_query || "";
-      const bookData = await bookServices.getAll(page, limit, search);
+      const category = req.query.category || null;
+      const list = req.query.list || null;
+      const bookData = await bookServices.getAll(
+        page,
+        limit,
+        search,
+        category,
+        list
+      );
       res.json(bookData);
     } catch (err) {
       res.status(500).send({

@@ -31,4 +31,30 @@ module.exports = {
       return error;
     }
   },
+  getAllOrderId: async (body) => {
+    try {
+      const { OrderId } = body;
+      return await db.OrderDetail.findAll({
+        where: {
+          OrderId,
+        },
+        include: [
+          {
+            model: db.Order,
+            required: true,
+          },
+          {
+            model: db.Stock,
+            include: [
+              {
+                model: db.Book,
+              },
+            ],
+          },
+        ],
+      });
+    } catch (error) {
+      return error;
+    }
+  },
 };

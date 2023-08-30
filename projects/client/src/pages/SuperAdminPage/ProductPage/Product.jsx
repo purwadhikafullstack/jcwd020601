@@ -12,6 +12,7 @@ import {
   Image,
   Input,
   Text,
+  Select,
   Flex,
   Button,
 } from "@chakra-ui/react";
@@ -35,17 +36,25 @@ export default function Product() {
   const [keyword, setKeyword] = useState("");
   const [query, setQuery] = useState("");
   const [token, setToken] = useState(JSON.parse(t));
-  const [category, setCategory] = useState(null);
+  const [category, setCategory] = useState([]);
+  const [test, setTest] = useState(false);
+  const [idCategory, setIdCategory] = useState(null);
+  const [list, setList] = useState(null);
 
   async function fetchProduct() {
-    let response = await api().get(
-      `/book?search_query=${keyword}&page=${page}&limit=${limit}&category=${category}`,
-      {
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    let url = `/book?search_query=${keyword}&page=${page}&limit=${limit}`;
+    if (idCategory !== null) {
+      url += `&category=${idCategory}`;
+    }
+    if (list !== null) {
+      url += `&list=${list}`;
+    }
+
+    let response = await api().get(url, {
+      headers: {
+        Authorization: token,
+      },
+    });
     setValue(response.data.result);
     setPage(response.data.page);
     setRows(response.data.totalRows);
@@ -53,7 +62,7 @@ export default function Product() {
   }
   useEffect(() => {
     fetchProduct();
-  }, [page, keyword]);
+  }, [page, keyword, idCategory, list]);
 
   const changePage = ({ selected }) => {
     setPage(selected);
@@ -77,7 +86,26 @@ export default function Product() {
       currency: "IDR",
     }).format(number);
   };
-
+  const fetchCategori = async () => {
+    let response = await api().get(`/category`);
+    setCategory(response.data.result);
+  };
+  useEffect(() => {
+    fetchProduct();
+    fetchCategori();
+  }, []);
+  const onChangeCategory = (e) => {
+    setIdCategory(parseInt(e));
+    if (e == "") {
+      setIdCategory(null);
+    }
+  };
+  const onChangeList = (e) => {
+    setList(e);
+    if (e == "") {
+      setList(null);
+    }
+  };
   return (
     <>
       <Box marginLeft={60}>
@@ -115,6 +143,32 @@ export default function Product() {
                 >
                   Reset
                 </Button>
+                <Select
+                  onChange={(e) => onChangeCategory(e.target.value)}
+                  placeholder="Category"
+                  value={idCategory}
+                  w={"150px"}
+                  size={"lg"}
+                  // mr={2}
+                >
+                  {category.map((cate, idx) => (
+                    <option key={idx} value={cate.id}>
+                      {cate.category}
+                    </option>
+                  ))}
+                </Select>
+                <Select
+                  onChange={(e) => onChangeList(e.target.value)}
+                  placeholder="Order By"
+                  value={list}
+                  w={"150px"}
+                  size={"lg"}
+                  // mr={8}
+                >
+                  <option value={"highest"}>Harga Tertinggi</option>
+                  <option value={"lowest"}>Harga Terendah</option>
+                  <option value={"alfabet"}>A-Z</option>
+                </Select>
               </Box>
               <Add getData={fetchProduct} token={token} />
             </Box>
@@ -126,9 +180,7 @@ export default function Product() {
                 <Tr>
                   <Th fontSize={18}>No</Th>
                   <Th fontSize={18}>Judul</Th>
-                  {/* <Th fontSize={18}>Bahasa</Th> */}
                   <Th fontSize={18}>Penulis</Th>
-                  {/* <Th fontSize={18}>Diskon</Th> */}
                   <Th fontSize={18}>Lembar</Th>
                   <Th fontSize={18}>Harga</Th>
                   <Th fontSize={18}>Gambar</Th>
@@ -139,11 +191,9 @@ export default function Product() {
                   <Tr key={val.id}>
                     <Td>{idx + 1 + page * limit}</Td>
                     <Td>{val.title}</Td>
-                    {/* <Td>{val.language}</Td> */}
                     <Td>{val.author}</Td>
                     <Td>{val.pages}</Td>
                     <Td>{rupiah(val.price)}</Td>
-
                     <Td>
                       <Image src={IMG + val.book_url} w={50} h={50} />
                     </Td>
