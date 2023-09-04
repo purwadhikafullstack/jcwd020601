@@ -6,6 +6,7 @@ import {
   useToast,
   Input,
   Flex,
+  useDisclosure,
 } from "@chakra-ui/react";
 import ValueImgCapDetailBook from "./valueImgCapDetailBook";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,12 +14,13 @@ import { useEffect, useState } from "react";
 import { api } from "../api/api";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
-import tooFarModal from "./TooFarModal";
+import TooFarModal from "./TooFarModal";
 export default function DetailBookPage() {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const orderSelector = useSelector((state) => state.login.order);
   const userSelector = useSelector((state) => state.login.auth);
   const toast = useToast();
+  const tooFarModal = useDisclosure();
   const nav = useNavigate();
   const { id } = useParams();
   const [value, setValue] = useState([]);
@@ -159,6 +161,7 @@ export default function DetailBookPage() {
             </Box>
           </Flex>
         </Box>
+        <TooFarModal tooFarModal={tooFarModal} />
       </Center>
     </>
   );

@@ -25,7 +25,6 @@ export default function ModalPayment(props) {
         OrderId: props.val.id,
         status: status.toLowerCase(),
       });
-
       onClose();
       return props.fetch();
     } catch (error) {

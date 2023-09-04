@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import TooFarModal from "./TooFarModal";
 import ValueAllBookCard from "./valueAllBookCard";
 import Swal from "sweetalert2";
-
 export default function AllBookCard({ keyword }) {
   const IMG = process.env.REACT_APP_API_IMAGE_URL;
   const dispatch = useDispatch();
