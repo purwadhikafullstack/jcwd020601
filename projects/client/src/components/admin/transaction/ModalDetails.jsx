@@ -22,24 +22,20 @@ import {
 import { useEffect, useState } from "react";
 import { FcViewDetails } from "react-icons/fc";
 import { api } from "../../../api/api";
-
 export default function ModalDetails(props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [data, setData] = useState();
-
   async function fetch() {
     const result = await api().post("/orderdetail/admin", {
       OrderId: props.val.id,
     });
     return setData(result.data);
   }
-
   useEffect(() => {
     if (isOpen) {
       fetch();
     }
   }, [isOpen]);
-
   return (
     <>
       <Flex
@@ -51,7 +47,6 @@ export default function ModalDetails(props) {
         <Icon fontSize={"4xl"} as={FcViewDetails}></Icon>
         details
       </Flex>
-
       <Modal size={"full"} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
@@ -105,7 +100,6 @@ export default function ModalDetails(props) {
               </Table>
             </TableContainer>
           </ModalBody>
-
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onClose}>
               Close

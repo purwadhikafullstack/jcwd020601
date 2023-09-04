@@ -63,22 +63,26 @@ export default function Shipping(props) {
         gap={".5rem"}
       >
         <Select
-          placeholder="Select shipping method"
           onChange={(e) => {
             props.setCourier(e.target.value);
           }}
         >
+          <option display="none" disabled selected hidden>
+            Select shipping method
+          </option>
           <option value="jne">JNE</option>
           <option value="pos">POS</option>
           <option value="tiki">TIKI</option>
         </Select>
         <Select
-          placeholder="Select shipping service"
           onChange={(e) => {
             setEtd(e.target.id);
             props.setShipping(e.target.value);
           }}
         >
+          <option display="none" disabled selected hidden>
+            Select shipping service
+          </option>
           {service.map((val, idx) => (
             <option
               id={service[idx].cost[0].etd}

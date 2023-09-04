@@ -21,9 +21,7 @@ import {
   IconButton,
   Stack,
   useDisclosure,
-
   Link,
-
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
@@ -31,13 +29,10 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
 } from "@chakra-ui/icons";
-import { BsChevronDown, BsCart } from "react-icons/bs";
-import { GoSearch } from "react-icons/go";
 import { api } from "../../api/api";
-import logo from "../../assets/images/gramedia-icon-2.png";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 export default function Navbar() {
   // const [large] = useMediaQuery("(min-width: 768px)");
   const [large] = useMediaQuery("(min-width: 992px)");
