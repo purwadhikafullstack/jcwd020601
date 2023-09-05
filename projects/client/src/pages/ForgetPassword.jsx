@@ -86,12 +86,11 @@ export default function ForgotPassword() {
         nav("/login");
       })
       .catch((err) => {
-        alert("Token hasdasds expired");
+        alert("Token has expired");
         console.log(err);
         // nav("/login");
       });
   }
-
   useEffect(() => {
     const token2 = location.pathname.split("/")[2]; // ini variable sementara untuk nampung
     fetchUser(token2);
@@ -158,6 +157,9 @@ export default function ForgotPassword() {
                       ></IconButton>
                     </InputRightElement>
                   </InputGroup>
+                  <Flex w={"100%"} fontSize={"12px"} color={"red"}>
+                    {formik.errors.password}
+                  </Flex>
                   <InputGroup>
                     <Input
                       id="password2"
