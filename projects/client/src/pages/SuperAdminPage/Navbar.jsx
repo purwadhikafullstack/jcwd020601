@@ -21,9 +21,6 @@ import {
   IconButton,
   Stack,
   useDisclosure,
-
-  Link,
-
 } from "@chakra-ui/react";
 import {
   HamburgerIcon,
