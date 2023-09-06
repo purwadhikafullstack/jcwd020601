@@ -121,11 +121,11 @@ export default function AdminTables(props) {
               {props.admins?.map((val) => {
                 return (
                   <Tr>
-                    <Td>{val.id}</Td>
-                    <Td>{val.name}</Td>
-                    <Td>{val.Branch.name}</Td>
-                    <Td>{val.phone}</Td>
-                    <Td>{val.email}</Td>
+                    <Td>{val?.id}</Td>
+                    <Td>{val?.name}</Td>
+                    <Td>{val?.Branch?.name}</Td>
+                    <Td>{val?.phone}</Td>
+                    <Td>{val?.email}</Td>
                     <Td>
                       <Flex gap={"0.6rem"}>
                         <ModalEditAdmin

@@ -29,7 +29,7 @@ export default function ReportChart() {
     time: "allTime",
     BranchId: "",
   });
-  const [time, setTime] = useState("allTime");
+  const [time, setTime] = useState("weekly");
   const [transactionChart, setTransactionChart] = useState();
   const userSelector = useSelector((state) => state.login.auth);
   const modalFilter = useDisclosure();
@@ -45,21 +45,21 @@ export default function ReportChart() {
   const objects = [
     {
       No1: `EARNINGS (${time?.toUpperCase() || ""})`,
-      No2: salesCardData.TotalSales,
+      No2: salesChart?.total,
       No3: `Earnings from ${time?.toLowerCase() || ""}`,
       No4: AiFillCalendar,
       No4Color: "#6777ef",
     },
     {
       No1: `PRODUCT SOLD (${time?.toUpperCase() || ""})`,
-      No2: salesCardData.TotalSold,
+      No2: quantityChart?.total,
       No3: `Product sold from ${time?.toLowerCase() || ""}`,
       No4: FaCartShopping,
       No4Color: "#3cde50",
     },
     {
       No1: `TRANSACTIONS (${time?.toUpperCase() || ""})`,
-      No2: salesCardData.TotalTransaction,
+      No2: transactionChart?.total,
       No3: `Transactions from ${time?.toLowerCase() || ""}`,
       No4: RxLoop,
       No4Color: "#ffa425",
@@ -163,7 +163,6 @@ export default function ReportChart() {
                   justifyContent={"center"}
                   alignItems={"center"}
                   // bgColor={"red.100"}
-
                 >
                   {objects.map((val, index) => {
                     return (
@@ -401,7 +400,7 @@ export default function ReportChart() {
                             type="number"
                             domain={[
                               0,
-                              parseInt(quantityChart?.highest.qty_sold),
+                              parseInt(quantityChart?.highest?.qty_sold),
                             ]}
                           />
                           <Tooltip

@@ -98,28 +98,6 @@ export default function ModalFilter(props) {
                     })}
                   </Select>
                 </Flex>{" "}
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Created Before
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="before"
-                    type="datetime-local"
-                    variant={"filled"}
-                  ></Input>
-                </Flex>{" "}
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Created After
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="after"
-                    type="datetime-local"
-                    variant={"filled"}
-                  ></Input>
-                </Flex>
                 <Flex mt={"20px"} flexDir={"row-reverse"} gap={"20px"}>
                   <Button
                     onClick={() => {

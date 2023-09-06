@@ -103,7 +103,11 @@ export default function LoginPage() {
                 >
                   Login Admin
                 </Center>
-                <Center flexDir={"column"} className="loginpage-inputs">
+                <Center
+                  pb={"40px"}
+                  flexDir={"column"}
+                  className="loginpage-inputs"
+                >
                   <Input
                     fontSize={"12px"}
                     bgColor={"#fafafa"}
@@ -148,15 +152,6 @@ export default function LoginPage() {
                   >
                     Login
                   </Button>
-
-                  <Flex
-                    pb={"24px"}
-                    fontSize={"12px"}
-                    className="loginpage-forgot-password"
-                    onClick={() => nav("/forgot-password/request")}
-                  >
-                    Forgot password?
-                  </Flex>
                 </Center>
               </Center>
               <Center
@@ -166,16 +161,8 @@ export default function LoginPage() {
                 border={"1px solid #dbdbdb"}
                 paddingY={"20px"}
               >
-                <Flex fontSize={"14px"}>
-                  Don't Have An Account?{" "}
-                  <Flex
-                    fontSize={"14px"}
-                    color={"#0060ae"}
-                    cursor={"pointer"}
-                    onClick={() => nav("/register")}
-                  >
-                    &nbsp;Sign Up
-                  </Flex>
+                <Flex color={"blackAlpha.700"} fontSize={"13px"}>
+                  If you forgot your password, please contact your supervisor
                 </Flex>
               </Center>
               <Center></Center>

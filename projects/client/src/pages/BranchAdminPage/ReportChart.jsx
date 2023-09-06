@@ -42,21 +42,21 @@ export default function ReportChart() {
   const objects = [
     {
       No1: `EARNINGS (${time?.toUpperCase() || ""})`,
-      No2: salesCardData.TotalSales,
+      No2: salesChart?.total,
       No3: `Earnings from ${time?.toLowerCase() || ""}`,
       No4: AiFillCalendar,
       No4Color: "#6777ef",
     },
     {
       No1: `PRODUCT SOLD (${time?.toUpperCase() || ""})`,
-      No2: salesCardData.TotalSold,
+      No2: quantityChart?.total,
       No3: `Product sold from ${time?.toLowerCase() || ""}`,
       No4: FaCartShopping,
       No4Color: "#3cde50",
     },
     {
       No1: `TRANSACTIONS (${time?.toUpperCase() || ""})`,
-      No2: salesCardData.TotalTransaction,
+      No2: transactionChart?.total,
       No3: `Transactions from ${time?.toLowerCase() || ""}`,
       No4: RxLoop,
       No4Color: "#ffa425",

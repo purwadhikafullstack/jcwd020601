@@ -69,6 +69,7 @@ export default function ModalSort(props) {
                     <option display="none" disabled selected hidden>
                       Sorted by....
                     </option>
+                    <option value="id">Admin-Id</option>
                     <option value="email">Email</option>
                     <option value="name">Admin-Name</option>
                     <option value="branchName">Branch Name</option>

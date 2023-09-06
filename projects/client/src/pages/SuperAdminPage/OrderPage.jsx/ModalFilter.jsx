@@ -91,11 +91,11 @@ export default function ModalFilter(props) {
                 </Flex>
                 <Flex flexDir={"column"} gap={"5px"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    OrderId
+                    invoiceCode
                   </Flex>
                   <Input
                     onChange={inputHandler}
-                    id="OrderId"
+                    id="invoiceCode"
                     variant={"filled"}
                   ></Input>
                 </Flex>{" "}
@@ -120,17 +120,6 @@ export default function ModalFilter(props) {
                 </Flex>{" "}
                 <Flex flexDir={"column"} gap={"5px"}>
                   <Flex fontWeight={"600"} fontSize={"1.1rem"}>
-                    Created Before
-                  </Flex>
-                  <Input
-                    onChange={inputHandler}
-                    id="before"
-                    type="datetime-local"
-                    variant={"filled"}
-                  ></Input>
-                </Flex>{" "}
-                <Flex flexDir={"column"} gap={"5px"}>
-                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
                     Created After
                   </Flex>
                   <Input
@@ -140,6 +129,17 @@ export default function ModalFilter(props) {
                     variant={"filled"}
                   ></Input>
                 </Flex>
+                <Flex flexDir={"column"} gap={"5px"}>
+                  <Flex fontWeight={"600"} fontSize={"1.1rem"}>
+                    Created Before
+                  </Flex>
+                  <Input
+                    onChange={inputHandler}
+                    id="before"
+                    type="datetime-local"
+                    variant={"filled"}
+                  ></Input>
+                </Flex>{" "}
                 <Flex mt={"20px"} flexDir={"row-reverse"} gap={"20px"}>
                   <Button onClick={props.modalFilter.onClose}>Cancel</Button>
                   <Button

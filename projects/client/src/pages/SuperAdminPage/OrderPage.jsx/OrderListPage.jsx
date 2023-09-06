@@ -20,6 +20,7 @@ import ReactPaginate from "react-paginate";
 import ModalFilter from "./ModalFilter";
 import Greetings from "../Greetings";
 import ModalSort from "./ModalSort";
+import moment from "moment";
 
 export default function BranchOrder() {
   const [trans, setTrans] = useState();
@@ -126,10 +127,11 @@ export default function BranchOrder() {
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th>Order-ID</Th>
+                <Th>Invoice-Code</Th>
                 <Th>Branch-Name</Th>
                 <Th>Transaction Price</Th>
                 <Th>Transaction Status</Th>
+                <Th>Created Date</Th>
                 <Th>Check</Th>
               </Tr>
             </Thead>
@@ -137,12 +139,15 @@ export default function BranchOrder() {
               {trans?.map((val) => {
                 return (
                   <Tr>
-                    <Td>{val.id}</Td>
-                    <Td>{val.Branch.name}</Td>
-                    <Td>Rp {Number(val.total).toLocaleString("id-ID")},-</Td>
+                    <Td>{val?.invoiceCode}</Td>
+                    <Td>{val?.Branch?.name}</Td>
+                    <Td>Rp {Number(val?.total).toLocaleString("id-ID")},-</Td>
                     <Td>
-                      {val.status.charAt(0).toUpperCase() + val.status.slice(1)}{" "}
+                      {val?.status.charAt(0).toUpperCase() +
+                        val?.status.slice(1)}{" "}
                     </Td>
+                    <Td>{moment(val?.createdAt).format("L")}</Td>
+
                     <Td>
                       <Flex gap={"0.6rem"}>
                         <ModalPayment noEdit={true} val={val} />

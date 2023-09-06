@@ -7,7 +7,7 @@ const { nanoid } = require("nanoid");
 const moment = require("moment");
 const orderReportServices = {
   getByFilter: async (
-    { BranchName, OrderId, status, before, after, sort },
+    { BranchName, OrderId, status, before, after, sort, invoiceCode },
     page1,
     limit1
   ) => {
@@ -34,6 +34,9 @@ const orderReportServices = {
     }
     if (OrderId) {
       whereClause.where.id = OrderId;
+    }
+    if (invoiceCode) {
+      whereClause.where.invoiceCode = invoiceCode;
     }
     if (status) {
       whereClause.where.status = status;
@@ -178,6 +181,8 @@ const orderReportServices = {
     return { Order, page, limit, totalRows, totalPage };
   },
   getSalesOnTime: async (time) => {
+    let total = 0;
+
     const today = new Date();
     const Duration = new Date(today);
     if (time == "allTime") {
@@ -201,11 +206,18 @@ const orderReportServices = {
       group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
       raw: true,
     });
+    Sales.map((val) => {
+      total = total + parseInt(val.total_sales);
+    });
+    total = "Rp." + parseInt(total).toLocaleString("id-ID");
+
     let max = Math.max(...Sales.map((item) => parseInt(item.total_sales)));
     let highest = Sales.filter((item) => parseInt(item.total_sales) === max);
-    return { sales: Sales, highest: highest[0] };
+    return { sales: Sales, highest: highest[0], total };
   },
   getSalesFromBranchIdOnTime: async (BranchId, time) => {
+    console.log("dsakd");
+    let total = 0;
     const today = new Date();
     const Duration = new Date(today);
     if (time == "allTime") {
@@ -230,12 +242,17 @@ const orderReportServices = {
       group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
       raw: true,
     });
+    Sales.map((val) => {
+      total = total + parseInt(val.total_sales);
+    });
+    total = "Rp." + parseInt(total).toLocaleString("id-ID");
     let max = Math.max(...Sales.map((item) => parseInt(item.total_sales)));
     let highest = Sales.filter((item) => parseInt(item.total_sales) === max);
 
-    return { sales: Sales, highest: highest[0] };
+    return { sales: Sales, highest: highest[0], total };
   },
   getSalesQuantityOnTime: async (time) => {
+    let total = 0;
     const today = new Date();
     const Duration = new Date(today);
     if (time == "allTime") {
@@ -258,12 +275,17 @@ const orderReportServices = {
       group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
       raw: true,
     });
+    Sales.map((val) => {
+      total = total + parseInt(val.qty_sold);
+    });
+
     let max = Math.max(...Sales.map((item) => parseInt(item.qty_sold)));
     let highest = Sales.filter((item) => parseInt(item.qty_sold) === max);
 
-    return { sales: Sales, highest: highest[0] };
+    return { sales: Sales, highest: highest[0], total };
   },
   getSalesQuantityFromBranchIdOnTime: async (BranchId, time) => {
+    let total = 0;
     const today = new Date();
     const Duration = new Date(today);
     if (time == "allTime") {
@@ -291,12 +313,16 @@ const orderReportServices = {
       },
       raw: true,
     });
+    Sales.map((val) => {
+      total = total + parseInt(val.qty_sold);
+    });
     let max = Math.max(...Sales.map((item) => parseInt(item.qty_sold)));
     let highest = Sales.filter((item) => parseInt(item.qty_sold) === max);
 
-    return { sales: Sales, highest: highest[0] };
+    return { sales: Sales, highest: highest[0], total };
   },
   getTransactionOnTime: async (time) => {
+    let total = 0;
     const today = new Date();
     const Duration = new Date(today);
     if (time == "allTime") {
@@ -320,6 +346,9 @@ const orderReportServices = {
       group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
       raw: true,
     });
+    Sales.map((val) => {
+      total = total + parseInt(val.total_transaction);
+    });
     let max = Math.max(
       ...Sales.map((item) => parseInt(item.total_transaction))
     );
@@ -327,9 +356,10 @@ const orderReportServices = {
       (item) => parseInt(item.total_transaction) === max
     );
 
-    return { sales: Sales, highest: highest[0] };
+    return { sales: Sales, highest: highest[0], total };
   },
   getTransactionFromBranchIdOnTime: async (BranchId, time) => {
+    let total = 0;
     const today = new Date();
     const Duration = new Date(today);
     if (time == "allTime") {
@@ -354,13 +384,16 @@ const orderReportServices = {
       group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
       raw: true,
     });
+    Sales.map((val) => {
+      total = total + parseInt(val.total_transaction);
+    });
     let max = Math.max(
       ...Sales.map((item) => parseInt(item.total_transaction))
     );
     let highest = Sales.filter(
       (item) => parseInt(item.total_transaction) === max
     );
-    return { sales: Sales, highest: highest[0] };
+    return { sales: Sales, highest: highest[0], total };
   },
 };
 module.exports = orderReportServices;
