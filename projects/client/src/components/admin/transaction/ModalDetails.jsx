@@ -18,6 +18,7 @@ import {
   Th,
   Td,
   TableContainer,
+  Text,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FcViewDetails } from "react-icons/fc";
@@ -40,6 +41,16 @@ export default function ModalDetails(props) {
     }
   }, [isOpen]);
 
+  const date = new Date(props.val.createdAt);
+  const formattedDateTime = date.toLocaleString("id-ID", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
   return (
     <>
       <Flex
@@ -55,7 +66,14 @@ export default function ModalDetails(props) {
       <Modal size={"full"} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Order Details</ModalHeader>
+          <ModalHeader>
+            <Flex gap={"1rem"} flexDir={"column"}>
+              <Text>Order Details: {props.val.invoiceCode}</Text>
+              <Text fontWeight={"normal"} fontSize={"smaller"}>
+                {formattedDateTime}
+              </Text>
+            </Flex>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <TableContainer>

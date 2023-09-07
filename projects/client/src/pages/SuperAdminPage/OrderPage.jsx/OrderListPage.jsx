@@ -127,11 +127,11 @@ export default function BranchOrder() {
           <Table variant="simple">
             <Thead>
               <Tr>
+                <Th>Date</Th>
                 <Th>Invoice-Code</Th>
                 <Th>Branch-Name</Th>
                 <Th>Transaction Price</Th>
                 <Th>Transaction Status</Th>
-                <Th>Created Date</Th>
                 <Th>Check</Th>
               </Tr>
             </Thead>
@@ -139,6 +139,7 @@ export default function BranchOrder() {
               {trans?.map((val) => {
                 return (
                   <Tr>
+                    <Td>{moment(val?.createdAt).format("L")}</Td>
                     <Td>{val?.invoiceCode}</Td>
                     <Td>{val?.Branch?.name}</Td>
                     <Td>Rp {Number(val?.total).toLocaleString("id-ID")},-</Td>
@@ -146,7 +147,6 @@ export default function BranchOrder() {
                       {val?.status.charAt(0).toUpperCase() +
                         val?.status.slice(1)}{" "}
                     </Td>
-                    <Td>{moment(val?.createdAt).format("L")}</Td>
 
                     <Td>
                       <Flex gap={"0.6rem"}>

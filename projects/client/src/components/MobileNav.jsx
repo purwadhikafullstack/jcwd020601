@@ -23,6 +23,7 @@ import logo from "../assets/images/gramedia-icon-2.png";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import CartButton from "./CartButton";
 
 export default function MobileNav({
   category,
@@ -159,28 +160,7 @@ export default function MobileNav({
         >
           <Image src={logo} w={{ base: "10em", sm: "12em" }} />
         </Box>
-        <Box
-          display={"flex"}
-          alignItems={"center"}
-          justifyContent={"space-evenly"}
-          h={"60px"}
-        >
-          <Box>
-            <Menu>
-              <MenuButton onClick={() => nav("/cart")}>
-                <Flex alignItems={"center"} gap={"0.1rem"}>
-                  <Icon
-                    as={BsCart}
-                    w={{ base: "5em", sm: "5em" }}
-                    h={{ base: 8, sm: 10 }}
-                    color="blue.700"
-                    cursor={"pointer"}
-                  />
-                </Flex>
-              </MenuButton>
-            </Menu>
-          </Box>
-        </Box>
+        <CartButton></CartButton>
       </Box>
 
       <Box
