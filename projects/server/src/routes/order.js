@@ -25,8 +25,8 @@ router.get("/pending/:UserId", orderController.getPendingByUserId);
 router.get("/history/:UserId", orderController.getHistoryByUserId);
 
 router.post("/branch", getAdminByToken, orderController.getBranchOrder);
-router.post("/filter", orderController.getByFilter);
-router.post("/allbranch", orderController.getAllBranchOrder);
+router.post("/filter", getAdminByToken, orderController.getByFilter);
+router.post("/allbranch", getAdminByToken, orderController.getAllBranchOrder);
 router.post("/v1", getUserByToken, orderController.insertOrder);
 router.post(
   "/",
