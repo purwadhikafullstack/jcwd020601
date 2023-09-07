@@ -321,6 +321,9 @@ export default function RegisterPage() {
                       ></IconButton>
                     </InputRightElement>
                   </InputGroup>
+                  <Flex w={"100%"} fontSize={"12px"} color={"red"}>
+                    {formik.errors.password2}
+                  </Flex>
                   <Center gap={"10px"}>
                     <Flex
                       h={"2px"}
@@ -335,9 +338,7 @@ export default function RegisterPage() {
                     ></Flex>
                   </Center>
                   <div id="signInDiv"></div>
-                  <Flex w={"100%"} fontSize={"12px"} color={"red"}>
-                    {formik.errors.password2}
-                  </Flex>
+
                   <Center textAlign={"center"} fontSize={"12px"} maxW={"300px"}>
                     <Flex>
                       <span>
