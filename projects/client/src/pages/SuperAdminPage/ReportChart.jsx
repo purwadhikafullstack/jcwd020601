@@ -91,6 +91,7 @@ export default function ReportChart() {
     );
     setTime(val.time);
     setSalesChart(sales.data);
+    console.log(sales.data);
     setQuantityChart(quantity.data);
     setTransactionChart(transaction.data);
     setFiltered(true);
@@ -210,7 +211,9 @@ export default function ReportChart() {
                 <Flex flexDir={"column"} gap={"10px"}>
                   <Flex gap={"20px"}>
                     <Button
-                      onClick={modalFilter.onOpen}
+                      onClick={() => {
+                        modalFilter.onOpen();
+                      }}
                       w={"150px"}
                       color={"white"}
                       bgColor={"#2c5282"}
@@ -222,6 +225,10 @@ export default function ReportChart() {
                       isDisabled={filtered ? false : true}
                       onClick={() => {
                         fetchData();
+                        setFilter({
+                          time: "allTime",
+                          BranchId: "",
+                        });
                         setFiltered(false);
                       }}
                     >

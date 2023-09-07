@@ -79,10 +79,9 @@ export default function ModalFilterSales(props) {
                     onChange={inputHandler}
                     id="BranchId"
                     variant={"filled"}
+                    value={props.filter.BranchId}
                   >
-                    <option display="none" disabled selected hidden>
-                      Select BranchName
-                    </option>
+                    <option value="">Select BranchName</option>
                     {branch.map((val) => {
                       return (
                         <>

@@ -145,6 +145,7 @@ const orderReportServices = {
           },
         ],
       },
+      order: [["id", "DESC"]],
       include: {
         model: db.Address,
       },
@@ -159,6 +160,7 @@ const orderReportServices = {
           { status: { [Op.or]: ["delivery confirm", "canceled"] } },
         ],
       },
+      order: [["id", "DESC"]],
       include: {
         model: db.Address,
       },
@@ -216,18 +218,10 @@ const orderReportServices = {
     return { sales: Sales, highest: highest[0], total };
   },
   getSalesFromBranchIdOnTime: async (BranchId, time) => {
-    console.log("dsakd");
     let total = 0;
     const today = new Date();
     const Duration = new Date(today);
-    if (time == "allTime") {
-      Duration.setDate(today.getDate() - 20000);
-    } else if (time == "monthly") {
-      Duration.setDate(today.getDate() - 30);
-    } else {
-      Duration.setDate(today.getDate() - 7);
-    }
-    const Sales = await db.Order.findAll({
+    const whereClause = {
       attributes: [
         [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
         [Sequelize.fn("sum", Sequelize.col("total")), "total_sales"],
@@ -241,14 +235,24 @@ const orderReportServices = {
       },
       group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
       raw: true,
-    });
+    };
+    if (BranchId) {
+      whereClause.where.BranchId = BranchId;
+    }
+    if (time == "allTime") {
+      Duration.setDate(today.getDate() - 20000);
+    } else if (time == "monthly") {
+      Duration.setDate(today.getDate() - 30);
+    } else {
+      Duration.setDate(today.getDate() - 7);
+    }
+    const Sales = await db.Order.findAll(whereClause);
     Sales.map((val) => {
       total = total + parseInt(val.total_sales);
     });
     total = "Rp." + parseInt(total).toLocaleString("id-ID");
     let max = Math.max(...Sales.map((item) => parseInt(item.total_sales)));
     let highest = Sales.filter((item) => parseInt(item.total_sales) === max);
-
     return { sales: Sales, highest: highest[0], total };
   },
   getSalesQuantityOnTime: async (time) => {
@@ -264,7 +268,7 @@ const orderReportServices = {
     }
     const Sales = await db.OrderDetail.findAll({
       attributes: [
-        [Sequelize.fn("date", Sequelize.col("createdAt")), "date"],
+        [Sequelize.fn("date", Sequelize.col("OrderDetails.createdAt")), "date"],
         [Sequelize.fn("sum", Sequelize.col("quantity")), "qty_sold"],
       ],
       where: {
@@ -272,7 +276,15 @@ const orderReportServices = {
           [Sequelize.Op.between]: [Duration, today],
         },
       },
-      group: [Sequelize.fn("date", Sequelize.col("createdAt"))],
+      include: [
+        {
+          model: db.Order, // Include the Order model
+          where: {
+            status: "delivery confirm", // Filter by the 'confirmed' status
+          },
+        },
+      ],
+      group: [Sequelize.fn("date", Sequelize.col("OrderDetails.createdAt"))],
       raw: true,
     });
     Sales.map((val) => {
@@ -309,7 +321,7 @@ const orderReportServices = {
       include: {
         model: db.Order,
         as: "Order",
-        where: { BranchId },
+        where: { BranchId, status: "delivery confirm" },
       },
       raw: true,
     });
@@ -318,7 +330,7 @@ const orderReportServices = {
     });
     let max = Math.max(...Sales.map((item) => parseInt(item.qty_sold)));
     let highest = Sales.filter((item) => parseInt(item.qty_sold) === max);
-
+    console.log(Sales);
     return { sales: Sales, highest: highest[0], total };
   },
   getTransactionOnTime: async (time) => {
