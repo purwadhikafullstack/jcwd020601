@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Image, useToast } from "@chakra-ui/react";
+import { Box, Flex, Icon, Image, useToast, Text } from "@chakra-ui/react";
 import DeleteModal from "../components/DeleteCart";
 import { AiFillPlusCircle, AiFillMinusCircle } from "react-icons/ai";
 import { IoStorefrontSharp } from "react-icons/io5";
@@ -87,6 +87,9 @@ export default function CartBooks(props) {
     setTotal(totalPrice);
     props.setTotal(totalPrice);
   }, [totalPrice]);
+
+  console.log(cart);
+
   return (
     <>
       <Flex
@@ -131,9 +134,35 @@ export default function CartBooks(props) {
                     {val.Stock.Book.author} -{" "}
                     {val.Stock.Book.publish_date.slice(0, 4)}
                   </Box>
-                  <Box>{`Rp ${val.Stock?.Book?.price.toLocaleString(
-                    "id-ID"
-                  )},-`}</Box>
+                  {val.Stock.Discount ? (
+                    <Flex gap={".4rem"}>
+                      <Text
+                        as={"del"}
+                      >{`Rp ${val.Stock?.Book?.price.toLocaleString(
+                        "id-ID"
+                      )},-`}</Text>
+                      <Text fontWeight={"semibold"}>
+                        {val.Stock?.Discount?.isPercent
+                          ? `Rp ${(
+                              val.Stock?.Book?.price -
+                              val.Stock?.Book?.price *
+                                val.Stock?.Discount?.discount *
+                                0.01
+                            ).toLocaleString("id-ID")} ,-`
+                          : `Rp ${(
+                              val.Stock?.Book?.price -
+                              val.Stock?.Discount?.discount
+                            ).toLocaleString("id-ID")} ,-`}
+                      </Text>
+                    </Flex>
+                  ) : (
+                    <Flex>
+                      <Text>{`Rp ${val.Stock?.Book?.price.toLocaleString(
+                        "id-ID"
+                      )},-`}</Text>
+                    </Flex>
+                  )}
+
                   <Box>{`${val.Stock?.Book?.weight} gr`}</Box>
                 </Flex>
                 <Flex gap={"1rem"} flexDir={{ md: "column" }}>
