@@ -13,6 +13,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Text,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { api } from "../../../api/api";
@@ -21,7 +22,7 @@ import ModalDetails from "../../../components/admin/transaction/ModalDetails";
 import ModalConfirm from "../../../components/admin/transaction/ModalConfirm";
 import { useSelector } from "react-redux";
 import ReactPaginate from "react-paginate";
-import { BiSearchAlt2 } from "react-icons/bi";
+import { BiSearchAlt2, BiSolidUpArrow, BiSolidDownArrow } from "react-icons/bi";
 import Greetings from "../Greetings";
 export default function BranchOrder() {
   const [trans, setTrans] = useState();
@@ -31,6 +32,7 @@ export default function BranchOrder() {
   const [rows, setRows] = useState(0);
   const [status, setStatus] = useState("all");
   const [search, setSearch] = useState();
+  const [sort, setSort] = useState("");
   function inputHandler(e) {
     setSearch(e.target.value);
   }
@@ -39,6 +41,7 @@ export default function BranchOrder() {
       BranchId: userSelector.branchId,
       status: status,
       search: search,
+      sort,
     });
     setPage(result.data.page);
     setRows(result.data.totalRows);
@@ -47,7 +50,7 @@ export default function BranchOrder() {
   }
   useEffect(() => {
     fetch();
-  }, [page, status]);
+  }, [page, status, sort]);
 
   const changePage = ({ selected }) => {
     setPage(selected);
@@ -66,6 +69,23 @@ export default function BranchOrder() {
               <Thead>
                 <Tr>
                   <Th>
+                    <Flex alignItems={"center"} gap={"4px"}>
+                      <Text>Date</Text>
+                      <Icon
+                        cursor={"pointer"}
+                        _hover={{ color: "#90caf9" }}
+                        as={BiSolidUpArrow}
+                        onClick={() => setSort("dup")}
+                      ></Icon>
+                      <Icon
+                        cursor={"pointer"}
+                        _hover={{ color: "#90caf9" }}
+                        as={BiSolidDownArrow}
+                        onClick={() => setSort("ddown")}
+                      ></Icon>
+                    </Flex>
+                  </Th>
+                  <Th>
                     <InputGroup>
                       <Input
                         value={search}
@@ -83,7 +103,23 @@ export default function BranchOrder() {
                       </InputRightElement>
                     </InputGroup>
                   </Th>
-                  <Th>Transaction Price</Th>
+                  <Th>
+                    <Flex alignItems={"center"} gap={"4px"}>
+                      <Text>Transaction Price</Text>
+                      <Icon
+                        cursor={"pointer"}
+                        _hover={{ color: "#90caf9" }}
+                        as={BiSolidUpArrow}
+                        onClick={() => setSort("tup")}
+                      ></Icon>
+                      <Icon
+                        cursor={"pointer"}
+                        _hover={{ color: "#90caf9" }}
+                        as={BiSolidDownArrow}
+                        onClick={() => setSort("tdown")}
+                      ></Icon>
+                    </Flex>
+                  </Th>
                   <Th>
                     <Flex alignItems={"center"} gap={"0.3rem"}>
                       <Box>Filter by Status:</Box>
@@ -116,8 +152,10 @@ export default function BranchOrder() {
               </Thead>
               <Tbody>
                 {trans?.map((val) => {
+                  const date = new Date(val.createdAt);
                   return (
                     <Tr>
+                      <Td>{date.toLocaleDateString()}</Td>
                       <Td>{val.invoiceCode}</Td>
                       <Td>Rp {Number(val.total).toLocaleString("id-ID")},-</Td>
                       <Td>
@@ -126,7 +164,7 @@ export default function BranchOrder() {
                       <Td>
                         <Flex gap={"0.6rem"}>
                           <ModalPayment val={val} fetch={fetch} />
-                          <ModalDetails val={val} />
+                          <ModalDetails val={val} date={date} />
                         </Flex>
                       </Td>
                     </Tr>

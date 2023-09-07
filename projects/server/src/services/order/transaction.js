@@ -108,7 +108,7 @@ module.exports = {
   },
   getBranchOrder: async (body, page1, limit1) => {
     try {
-      const { BranchId, status, search } = body;
+      const { BranchId, status, search, sort } = body;
       let page = parseInt(page1) || 0;
       const limit = parseInt(limit1) || 10;
 
@@ -133,13 +133,28 @@ module.exports = {
       });
       const totalPage = Math.ceil(totalRows / limit);
 
+      let order = [["createdAt", "DESC"]];
+
+      switch (sort) {
+        case "dup":
+          order = [["createdAt", "ASC"]];
+          break;
+        case "ddown":
+          order = [["createdAt", "DESC"]];
+          break;
+        case "tup":
+          order = [["total", "ASC"]];
+          break;
+        case "tdown":
+          order = [["total", "DESC"]];
+          break;
+      }
+
       const Order = await db.Order.findAll({
         where: condition,
         offset: offset,
         limit: limit,
-        order: [
-          ["createdAt", "DESC"], // Order by createdAt in descending order
-        ],
+        order,
       });
 
       return { Order, page, limit, totalRows, totalPage };
