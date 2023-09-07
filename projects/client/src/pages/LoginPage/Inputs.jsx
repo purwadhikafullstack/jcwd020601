@@ -119,7 +119,7 @@ export default function Inputs(props) {
             fontSize={"12px"}
             type={props.seePassword ? "text" : "password"}
             border={"1px #878787 solid"}
-            placeholder="Create your password"
+            placeholder="Enter your password"
           ></Input>
           <InputRightElement width={"2.5rem"} h={"100%"}>
             <IconButton
