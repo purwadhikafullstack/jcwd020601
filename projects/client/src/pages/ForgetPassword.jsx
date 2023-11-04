@@ -86,7 +86,7 @@ export default function ForgotPassword() {
         nav("/login");
       })
       .catch((err) => {
-        alert("Token hasdasds expired");
+        alert("Token has expired");
         console.log(err);
         // nav("/login");
       });
