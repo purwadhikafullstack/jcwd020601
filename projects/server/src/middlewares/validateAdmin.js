@@ -6,7 +6,7 @@ const verifyToken = async (req, res, next) => {
   try {
     const token = req.headers["authorization"];
     if (!token) {
-      return res.status(400).json({ message: "Token not found" });
+      return res.status(400).json({ message: "Token not foundaaa" });
     }
     let payload = await db.Token.findOne({
       where: {

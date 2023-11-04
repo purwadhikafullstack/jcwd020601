@@ -20,7 +20,10 @@ const bookController = {
         category,
         list
       );
-      res.json(bookData);
+      return res.json({
+        value: bookData,
+        message: "success get detail",
+      });
     } catch (err) {
       res.status(500).send({
         message: err.message,
@@ -30,7 +33,7 @@ const bookController = {
   getAllBook: async (req, res) => {
     try {
       const result = await bookServices.getAllBook();
-      res.json(result);
+      return res.json(result);
     } catch (err) {
       res.status(500).send({
         message: err.message,
