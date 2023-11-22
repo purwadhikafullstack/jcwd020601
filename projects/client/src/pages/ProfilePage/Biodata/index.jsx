@@ -206,7 +206,7 @@ export default function Biodata(props) {
     >
       <Flex flexDir={"column"} gap={"10px"}>
         <Flex color={"grey"} fontSize={"0.8rem"}>
-          Profile Picture
+          Profile Pict
         </Flex>
         <Input
           type="file"
@@ -285,7 +285,6 @@ export default function Biodata(props) {
           </Flex>
         </Flex>
       </Flex>
-
       <Flex flexDir={"column"}>
         <Flex color={"grey"} fontSize={"0.8rem"}>
           Jenis Kelamin
