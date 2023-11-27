@@ -44,23 +44,23 @@ export default function ReportChart() {
 
   const objects = [
     {
-      No1: `EARNINGS (${time?.toUpperCase() || ""})`,
+      No1: `EARNINGS (Monthly})`,
       No2: salesCardData.TotalSales,
-      No3: `Earnings from ${time?.toLowerCase() || ""}`,
+      No3: `Earnings from last month`,
       No4: AiFillCalendar,
       No4Color: "#6777ef",
     },
     {
-      No1: `PRODUCT SOLD (${time?.toUpperCase() || ""})`,
+      No1: `PRODUCT SOLD (Monthly})`,
       No2: salesCardData.TotalSold,
-      No3: `Product sold from ${time?.toLowerCase() || ""}`,
+      No3: `Product sold from last month`,
       No4: FaCartShopping,
       No4Color: "#3cde50",
     },
     {
-      No1: `TRANSACTIONS (${time?.toUpperCase() || ""})`,
+      No1: `TRANSACTIONS (Monthly})`,
       No2: salesCardData.TotalTransaction,
-      No3: `Transactions from ${time?.toLowerCase() || ""}`,
+      No3: `Transactions from last month`,
       No4: RxLoop,
       No4Color: "#ffa425",
     },
