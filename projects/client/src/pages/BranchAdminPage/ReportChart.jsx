@@ -385,15 +385,10 @@ export default function ReportChart() {
                       </Flex>
                       <Flex bgColor={"#f2f2f2"}>
                         <BarChart
-                          margin={{ top: 20, right: 40, left: -10, bottom: 0 }}
-                          width={350}
-                          height={550}
+                          margin={{ top: 10, right: 30, left: 30, bottom: 0 }}
+                          width={400}
+                          height={560}
                           data={quantityChart?.sales}
-                          css={{
-                            "@media (min-width: 992px)": {
-                              width: 450, // Adjust as needed
-                            },
-                          }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis dataKey="date" />

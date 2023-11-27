@@ -77,6 +77,11 @@ export default function ReportChart() {
     setSalesChart(sales.data);
     setQuantityChart(quantity.data);
     setTransactionChart(transaction.data);
+    console.log({
+      sales: sales.data,
+      quantity: quantity.data,
+      transaction: transaction.data,
+    });
     setLoading(false);
   }
   async function submitFilter(val) {
@@ -163,7 +168,6 @@ export default function ReportChart() {
                   justifyContent={"center"}
                   alignItems={"center"}
                   // bgColor={"red.100"}
-
                 >
                   {objects.map((val, index) => {
                     return (
@@ -401,7 +405,7 @@ export default function ReportChart() {
                             type="number"
                             domain={[
                               0,
-                              parseInt(quantityChart?.highest.qty_sold),
+                              parseInt(quantityChart?.highest?.qty_sold),
                             ]}
                           />
                           <Tooltip
